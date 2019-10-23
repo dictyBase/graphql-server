@@ -9,7 +9,7 @@ require (
 	github.com/emirpasic/gods v1.12.0
 	github.com/fatih/structs v1.1.0
 	github.com/go-chi/cors v1.0.0
-	github.com/go-redis/redis v6.15.5+incompatible
+	github.com/go-redis/redis v6.15.6+incompatible
 	github.com/gogo/protobuf v1.3.0 // indirect
 	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
