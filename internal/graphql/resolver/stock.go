@@ -14,6 +14,10 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+/**
+* BEGIN MUTATIONS SECTION
+ */
+
 func (m *MutationResolver) CreateStrain(ctx context.Context, input *models.CreateStrainInput) (*models.Strain, error) {
 	attr := &pb.NewStrainAttributes{}
 	norm := normalizeCreateStrainAttr(input)
@@ -214,6 +218,10 @@ func (m *MutationResolver) DeleteStock(ctx context.Context, id string) (*models.
 	}, nil
 }
 
+/**
+* BEGIN QUERIES SECTION
+ */
+
 func (q *QueryResolver) Plasmid(ctx context.Context, id string) (*models.Plasmid, error) {
 	n, err := q.GetStockClient(registry.STOCK).GetPlasmid(ctx, &pb.StockId{Id: id})
 	if err != nil {
@@ -223,7 +231,19 @@ func (q *QueryResolver) Plasmid(ctx context.Context, id string) (*models.Plasmid
 	}
 	plasmidID := n.Data.Id
 	q.Logger.Debugf("successfully found plasmid with ID %s", plasmidID)
-	return stock.ConvertToPlasmidModel(plasmidID, n.Data.Attributes), nil
+	plasmids := stock.ConvertToPlasmidModel(plasmidID, n.Data.Attributes)
+	genes := []*string{}
+	for _, v := range plasmids.Genes {
+		gene, err := q.Gene(ctx, *v)
+		if err != nil {
+			errorutils.AddGQLError(ctx, err)
+			q.Logger.Error(err)
+			return plasmids, err
+		}
+		genes = append(genes, &gene.Name)
+	}
+	plasmids.Genes = genes
+	return plasmids, nil
 }
 
 func (q *QueryResolver) Strain(ctx context.Context, id string) (*models.Strain, error) {
@@ -235,7 +255,19 @@ func (q *QueryResolver) Strain(ctx context.Context, id string) (*models.Strain, 
 	}
 	strainID := n.Data.Id
 	q.Logger.Debugf("successfully found strain with ID %s", strainID)
-	return stock.ConvertToStrainModel(strainID, n.Data.Attributes), nil
+	strains := stock.ConvertToStrainModel(strainID, n.Data.Attributes)
+	genes := []*string{}
+	for _, v := range strains.Genes {
+		gene, err := q.Gene(ctx, *v)
+		if err != nil {
+			errorutils.AddGQLError(ctx, err)
+			q.Logger.Error(err)
+			return strains, err
+		}
+		genes = append(genes, &gene.Name)
+	}
+	strains.Genes = genes
+	return strains, nil
 }
 
 func (q *QueryResolver) ListStrains(ctx context.Context, cursor *int, limit *int, filter *string) (*models.StrainListWithCursor, error) {
