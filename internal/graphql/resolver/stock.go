@@ -232,15 +232,10 @@ func (q *QueryResolver) Plasmid(ctx context.Context, id string) (*models.Plasmid
 	plasmidID := n.Data.Id
 	q.Logger.Debugf("successfully found plasmid with ID %s", plasmidID)
 	plasmids := stock.ConvertToPlasmidModel(plasmidID, n.Data.Attributes)
-	genes := []*string{}
-	for _, v := range plasmids.Genes {
-		gene, err := q.Gene(ctx, *v)
-		if err != nil {
-			errorutils.AddGQLError(ctx, err)
-			q.Logger.Error(err)
-			return plasmids, err
-		}
-		genes = append(genes, &gene.Name)
+	genes, err := convertGeneIDToName(ctx, plasmids.Genes, q)
+	if err != nil {
+		q.Logger.Error(err)
+		return plasmids, err
 	}
 	plasmids.Genes = genes
 	return plasmids, nil
@@ -256,15 +251,10 @@ func (q *QueryResolver) Strain(ctx context.Context, id string) (*models.Strain, 
 	strainID := n.Data.Id
 	q.Logger.Debugf("successfully found strain with ID %s", strainID)
 	strains := stock.ConvertToStrainModel(strainID, n.Data.Attributes)
-	genes := []*string{}
-	for _, v := range strains.Genes {
-		gene, err := q.Gene(ctx, *v)
-		if err != nil {
-			errorutils.AddGQLError(ctx, err)
-			q.Logger.Error(err)
-			return strains, err
-		}
-		genes = append(genes, &gene.Name)
+	genes, err := convertGeneIDToName(ctx, strains.Genes, q)
+	if err != nil {
+		q.Logger.Error(err)
+		return strains, err
 	}
 	strains.Genes = genes
 	return strains, nil
@@ -284,6 +274,11 @@ func (q *QueryResolver) ListStrains(ctx context.Context, cursor *int, limit *int
 	for _, n := range list.Data {
 		attr := n.Attributes
 		item := stock.ConvertToStrainModel(n.Id, attr)
+		genes, err := convertGeneIDToName(ctx, item.Genes, q)
+		if err != nil {
+			q.Logger.Error(err)
+		}
+		item.Genes = genes
 		strains = append(strains, item)
 	}
 	lm := int(list.Meta.Limit)
@@ -311,6 +306,11 @@ func (q *QueryResolver) ListPlasmids(ctx context.Context, cursor *int, limit *in
 	for _, n := range list.Data {
 		attr := n.Attributes
 		item := stock.ConvertToPlasmidModel(n.Id, attr)
+		genes, err := convertGeneIDToName(ctx, item.Genes, q)
+		if err != nil {
+			q.Logger.Error(err)
+		}
+		item.Genes = genes
 		plasmids = append(plasmids, item)
 	}
 	lm := int(list.Meta.Limit)
@@ -340,13 +340,18 @@ func (q *QueryResolver) ListStrainsWithAnnotation(ctx context.Context, cursor *i
 		return nil, err
 	}
 	for _, v := range a.Data {
-		strain, err := q.GetStockClient(registry.STOCK).GetStrain(ctx, &pb.StockId{Id: v.Attributes.EntryId})
+		s, err := q.GetStockClient(registry.STOCK).GetStrain(ctx, &pb.StockId{Id: v.Attributes.EntryId})
 		if err != nil {
-			// errorutils.AddGQLError(ctx, err)
 			q.Logger.Error(err)
 			continue
 		}
-		strains = append(strains, stock.ConvertToStrainModel(strain.Data.Id, strain.Data.Attributes))
+		strain := stock.ConvertToStrainModel(s.Data.Id, s.Data.Attributes)
+		genes, err := convertGeneIDToName(ctx, strain.Genes, q)
+		if err != nil {
+			q.Logger.Error(err)
+		}
+		strain.Genes = genes
+		strains = append(strains, strain)
 	}
 	/**
 	  Some phenotypes list the same strain ID more than once. Consider a new approach
@@ -378,13 +383,18 @@ func (q *QueryResolver) ListPlasmidsWithAnnotation(ctx context.Context, cursor *
 		return nil, err
 	}
 	for _, v := range a.Data {
-		plasmid, err := q.GetStockClient(registry.STOCK).GetPlasmid(ctx, &pb.StockId{Id: v.Attributes.EntryId})
+		p, err := q.GetStockClient(registry.STOCK).GetPlasmid(ctx, &pb.StockId{Id: v.Attributes.EntryId})
 		if err != nil {
-			// errorutils.AddGQLError(ctx, err)
 			q.Logger.Error(err)
 			continue
 		}
-		plasmids = append(plasmids, stock.ConvertToPlasmidModel(plasmid.Data.Id, plasmid.Data.Attributes))
+		plasmid := stock.ConvertToPlasmidModel(p.Data.Id, p.Data.Attributes)
+		genes, err := convertGeneIDToName(ctx, plasmid.Genes, q)
+		if err != nil {
+			q.Logger.Error(err)
+		}
+		plasmid.Genes = genes
+		plasmids = append(plasmids, plasmid)
 	}
 	lm := int(a.Meta.Limit)
 	return &models.PlasmidListWithCursor{
@@ -441,4 +451,21 @@ func getOntology(onto string) string {
 		o = "invalid ontology"
 	}
 	return o
+}
+
+/**
+* convertGeneIDToName gets a list of gene IDs and uses the Gene resolver to
+* convert them to their equivalent names.
+ */
+func convertGeneIDToName(ctx context.Context, genes []*string, qr *QueryResolver) ([]*string, error) {
+	g := []*string{}
+	for _, v := range genes {
+		gene, err := qr.Gene(ctx, *v)
+		if err != nil {
+			qr.Logger.Error(err)
+			return g, err
+		}
+		genes = append(genes, &gene.Name)
+	}
+	return g, nil
 }
