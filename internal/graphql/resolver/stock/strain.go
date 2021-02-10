@@ -74,6 +74,9 @@ func (r *StrainResolver) Genes(ctx context.Context, obj *models.Strain) ([]*mode
 
 func (r *StrainResolver) Publications(ctx context.Context, obj *models.Strain) ([]*publication.Publication, error) {
 	pubs := []*publication.Publication{}
+	if len(pubs) == 0 {
+		return pubs, nil
+	}
 	for _, id := range obj.Publications {
 		if len(*id) < 1 {
 			continue

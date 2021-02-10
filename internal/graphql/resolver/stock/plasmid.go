@@ -72,6 +72,9 @@ func (r *PlasmidResolver) Genes(ctx context.Context, obj *models.Plasmid) ([]*mo
 
 func (r *PlasmidResolver) Publications(ctx context.Context, obj *models.Plasmid) ([]*publication.Publication, error) {
 	pubs := []*publication.Publication{}
+	if len(pubs) == 0 {
+		return pubs, nil
+	}
 	for _, id := range obj.Publications {
 		if len(*id) < 1 {
 			continue
