@@ -385,6 +385,22 @@ func (r *queryResolver) ListPlasmidsWithAnnotation(ctx context.Context, cursor *
 	panic("not implemented")
 }
 
+func (r *queryResolver) ListRegularStrains(ctx context.Context, cursor *int, limit *int, filter *string) (*models.StrainListWithCursor, error) {
+	panic("not implemented")
+}
+
+func (r *queryResolver) ListGWDIStrains(ctx context.Context, cursor *int, limit *int, filter *string) (*models.StrainListWithCursor, error) {
+	panic("not implemented")
+}
+
+func (r *queryResolver) ListStrainsInventory(ctx context.Context, cursor *int, limit *int, filter *string, strainType *models.StrainTypeEnum) (*models.StrainListWithCursor, error) {
+	panic("not implemented")
+}
+
+func (r *queryResolver) ListBacterialStrains(ctx context.Context, cursor *int, limit *int, filter *string) (*models.StrainListWithCursor, error) {
+	panic("not implemented")
+}
+
 func (r *queryResolver) User(ctx context.Context, id string) (*user.User, error) {
 	panic("not implemented")
 }

@@ -365,3 +365,46 @@ func (e *StatusEnum) UnmarshalGQL(v interface{}) error {
 func (e StatusEnum) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
+
+type StrainTypeEnum string
+
+const (
+	StrainTypeEnumAll     StrainTypeEnum = "ALL"
+	StrainTypeEnumRegular StrainTypeEnum = "REGULAR"
+	StrainTypeEnumGwdi    StrainTypeEnum = "GWDI"
+)
+
+var AllStrainTypeEnum = []StrainTypeEnum{
+	StrainTypeEnumAll,
+	StrainTypeEnumRegular,
+	StrainTypeEnumGwdi,
+}
+
+func (e StrainTypeEnum) IsValid() bool {
+	switch e {
+	case StrainTypeEnumAll, StrainTypeEnumRegular, StrainTypeEnumGwdi:
+		return true
+	}
+	return false
+}
+
+func (e StrainTypeEnum) String() string {
+	return string(e)
+}
+
+func (e *StrainTypeEnum) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = StrainTypeEnum(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid StrainTypeEnum", str)
+	}
+	return nil
+}
+
+func (e StrainTypeEnum) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}

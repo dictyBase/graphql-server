@@ -287,13 +287,17 @@ type ComplexityRoot struct {
 		ContentBySlug              func(childComplexity int, slug string) int
 		Gene                       func(childComplexity int, gene string) int
 		GetRefreshToken            func(childComplexity int, token string) int
+		ListBacterialStrains       func(childComplexity int, cursor *int, limit *int, filter *string) int
+		ListGWDIStrains            func(childComplexity int, cursor *int, limit *int, filter *string) int
 		ListOrders                 func(childComplexity int, cursor *int, limit *int, filter *string) int
 		ListOrganisms              func(childComplexity int) int
 		ListPermissions            func(childComplexity int) int
 		ListPlasmids               func(childComplexity int, cursor *int, limit *int, filter *string) int
 		ListPlasmidsWithAnnotation func(childComplexity int, cursor *int, limit *int, typeArg string, annotation string) int
+		ListRegularStrains         func(childComplexity int, cursor *int, limit *int, filter *string) int
 		ListRoles                  func(childComplexity int) int
 		ListStrains                func(childComplexity int, cursor *int, limit *int, filter *string) int
+		ListStrainsInventory       func(childComplexity int, cursor *int, limit *int, filter *string, strainType *models.StrainTypeEnum) int
 		ListStrainsWithAnnotation  func(childComplexity int, cursor *int, limit *int, typeArg string, annotation string) int
 		ListUsers                  func(childComplexity int, pagenum string, pagesize string, filter string) int
 		Order                      func(childComplexity int, id string) int
@@ -500,6 +504,10 @@ type QueryResolver interface {
 	ListPlasmids(ctx context.Context, cursor *int, limit *int, filter *string) (*models.PlasmidListWithCursor, error)
 	ListStrainsWithAnnotation(ctx context.Context, cursor *int, limit *int, typeArg string, annotation string) (*models.StrainListWithCursor, error)
 	ListPlasmidsWithAnnotation(ctx context.Context, cursor *int, limit *int, typeArg string, annotation string) (*models.PlasmidListWithCursor, error)
+	ListRegularStrains(ctx context.Context, cursor *int, limit *int, filter *string) (*models.StrainListWithCursor, error)
+	ListGWDIStrains(ctx context.Context, cursor *int, limit *int, filter *string) (*models.StrainListWithCursor, error)
+	ListStrainsInventory(ctx context.Context, cursor *int, limit *int, filter *string, strainType *models.StrainTypeEnum) (*models.StrainListWithCursor, error)
+	ListBacterialStrains(ctx context.Context, cursor *int, limit *int, filter *string) (*models.StrainListWithCursor, error)
 	User(ctx context.Context, id string) (*user.User, error)
 	UserByEmail(ctx context.Context, email string) (*user.User, error)
 	ListUsers(ctx context.Context, pagenum string, pagesize string, filter string) (*models.UserList, error)
@@ -1743,6 +1751,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetRefreshToken(childComplexity, args["token"].(string)), true
 
+	case "Query.listBacterialStrains":
+		if e.complexity.Query.ListBacterialStrains == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listBacterialStrains_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListBacterialStrains(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string)), true
+
+	case "Query.listGWDIStrains":
+		if e.complexity.Query.ListGWDIStrains == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listGWDIStrains_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListGWDIStrains(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string)), true
+
 	case "Query.listOrders":
 		if e.complexity.Query.ListOrders == nil {
 			break
@@ -1793,6 +1825,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ListPlasmidsWithAnnotation(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["type"].(string), args["annotation"].(string)), true
 
+	case "Query.listRegularStrains":
+		if e.complexity.Query.ListRegularStrains == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listRegularStrains_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListRegularStrains(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string)), true
+
 	case "Query.listRoles":
 		if e.complexity.Query.ListRoles == nil {
 			break
@@ -1811,6 +1855,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ListStrains(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string)), true
+
+	case "Query.listStrainsInventory":
+		if e.complexity.Query.ListStrainsInventory == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listStrainsInventory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListStrainsInventory(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string), args["strain_type"].(*models.StrainTypeEnum)), true
 
 	case "Query.listStrainsWithAnnotation":
 		if e.complexity.Query.ListStrainsWithAnnotation == nil {
@@ -2720,6 +2776,23 @@ type Author {
     type: String!
     annotation: String!
   ): PlasmidListWithCursor
+  listRegularStrains(
+    cursor: Int
+    limit: Int
+    filter: String
+  ): StrainListWithCursor
+  listGWDIStrains(cursor: Int, limit: Int, filter: String): StrainListWithCursor
+  listStrainsInventory(
+    cursor: Int
+    limit: Int
+    filter: String
+    strain_type: StrainTypeEnum
+  ): StrainListWithCursor
+  listBacterialStrains(
+    cursor: Int
+    limit: Int
+    filter: String
+  ): StrainListWithCursor
   # User queries
   user(id: ID!): User
   userByEmail(email: String!): User
@@ -2909,6 +2982,12 @@ input UpdatePlasmidInput {
   in_stock: Boolean
   keywords: [String]
   genbank_accession: String
+}
+
+enum StrainTypeEnum {
+  ALL
+  REGULAR
+  GWDI
 }
 `, BuiltIn: false},
 	{Name: "api/user.graphql", Input: `type Permission {
@@ -3505,6 +3584,72 @@ func (ec *executionContext) field_Query_getRefreshToken_args(ctx context.Context
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_listBacterialStrains_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["cursor"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cursor"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cursor"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_listGWDIStrains_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["cursor"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cursor"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cursor"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg2
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_listOrders_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3610,6 +3755,81 @@ func (ec *executionContext) field_Query_listPlasmids_args(ctx context.Context, r
 		}
 	}
 	args["filter"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_listRegularStrains_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["cursor"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cursor"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cursor"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_listStrainsInventory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["cursor"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cursor"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cursor"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg2
+	var arg3 *models.StrainTypeEnum
+	if tmp, ok := rawArgs["strain_type"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("strain_type"))
+		arg3, err = ec.unmarshalOStrainTypeEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainTypeEnum(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["strain_type"] = arg3
 	return args, nil
 }
 
@@ -9492,6 +9712,162 @@ func (ec *executionContext) _Query_listPlasmidsWithAnnotation(ctx context.Contex
 	res := resTmp.(*models.PlasmidListWithCursor)
 	fc.Result = res
 	return ec.marshalOPlasmidListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidListWithCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listRegularStrains(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listRegularStrains_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ListRegularStrains(rctx, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.StrainListWithCursor)
+	fc.Result = res
+	return ec.marshalOStrainListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListWithCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listGWDIStrains(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listGWDIStrains_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ListGWDIStrains(rctx, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.StrainListWithCursor)
+	fc.Result = res
+	return ec.marshalOStrainListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListWithCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listStrainsInventory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listStrainsInventory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ListStrainsInventory(rctx, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string), args["strain_type"].(*models.StrainTypeEnum))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.StrainListWithCursor)
+	fc.Result = res
+	return ec.marshalOStrainListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListWithCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listBacterialStrains(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listBacterialStrains_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ListBacterialStrains(rctx, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.StrainListWithCursor)
+	fc.Result = res
+	return ec.marshalOStrainListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListWithCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -15857,6 +16233,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_listPlasmidsWithAnnotation(ctx, field)
 				return res
 			})
+		case "listRegularStrains":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listRegularStrains(ctx, field)
+				return res
+			})
+		case "listGWDIStrains":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listGWDIStrains(ctx, field)
+				return res
+			})
+		case "listStrainsInventory":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listStrainsInventory(ctx, field)
+				return res
+			})
+		case "listBacterialStrains":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listBacterialStrains(ctx, field)
+				return res
+			})
 		case "user":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -18308,6 +18728,22 @@ func (ec *executionContext) marshalOStrainListWithCursor2ᚖgithubᚗcomᚋdicty
 		return graphql.Null
 	}
 	return ec._StrainListWithCursor(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOStrainTypeEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainTypeEnum(ctx context.Context, v interface{}) (*models.StrainTypeEnum, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(models.StrainTypeEnum)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOStrainTypeEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainTypeEnum(ctx context.Context, sel ast.SelectionSet, v *models.StrainTypeEnum) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
