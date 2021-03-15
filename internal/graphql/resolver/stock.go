@@ -364,6 +364,22 @@ func (q *QueryResolver) ListPlasmidsWithAnnotation(ctx context.Context, cursor *
 	}, nil
 }
 
+func (q *QueryResolver) ListRegularStrains(ctx context.Context, cursor *int, limit *int, filter *string) (*models.StrainListWithCursor, error) {
+	panic("not implemented")
+}
+
+func (q *QueryResolver) ListGWDIStrains(ctx context.Context, cursor *int, limit *int, filter *string) (*models.StrainListWithCursor, error) {
+	panic("not implemented")
+}
+
+func (q *QueryResolver) ListStrainsInventory(ctx context.Context, cursor *int, limit *int, filter *string, strainType *models.StrainTypeEnum) (*models.StrainListWithCursor, error) {
+	panic("not implemented")
+}
+
+func (q *QueryResolver) ListBacterialStrains(ctx context.Context, cursor *int, limit *int, filter *string) (*models.StrainListWithCursor, error) {
+	panic("not implemented")
+}
+
 func getCursor(c *int) int64 {
 	var cursor int64
 	if c != nil {
