@@ -18414,6 +18414,22 @@ func (ec *executionContext) marshalOStrainListWithCursor2ᚖgithubᚗcomᚋdicty
 	return ec._StrainListWithCursor(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOStrainTypeEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainTypeEnum(ctx context.Context, v interface{}) (*models.StrainTypeEnum, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(models.StrainTypeEnum)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOStrainTypeEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainTypeEnum(ctx context.Context, sel ast.SelectionSet, v *models.StrainTypeEnum) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
