@@ -12,7 +12,10 @@ require (
 	github.com/go-chi/cors v1.2.0
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/gogo/protobuf v1.3.1 // indirect
-	github.com/golang/protobuf v1.5.2
+	github.com/golang/protobuf v1.5.1
+	github.com/google/go-github v17.0.0+incompatible // indirect
+	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway v1.12.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.1
@@ -23,7 +26,9 @@ require (
 	github.com/urfave/cli v1.22.5
 	github.com/vektah/gqlparser v1.3.1
 	github.com/vektah/gqlparser/v2 v2.1.0
-	google.golang.org/grpc v1.39.0
+	golang.org/x/net v0.0.0-20200202094626-16171245cfb2 // indirect
+	golang.org/x/sys v0.0.0-20200202164722-d101bd2416d5 // indirect
+	google.golang.org/grpc v1.36.0
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
 
