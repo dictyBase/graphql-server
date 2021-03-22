@@ -2927,7 +2927,7 @@ input StrainListFilter {
   summary: String
   id: ID
   in_stock: Boolean
-  strain_type: StrainTypeEnum!
+  strain_type: StrainTypeEnum
 }
 `, BuiltIn: false},
 	{Name: "api/user.graphql", Input: `type Permission {
@@ -13593,7 +13593,7 @@ func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("strain_type"))
-			it.StrainType, err = ec.unmarshalNStrainTypeEnum2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainTypeEnum(ctx, v)
+			it.StrainType, err = ec.unmarshalOStrainTypeEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainTypeEnum(ctx, v)
 			if err != nil {
 				return it, err
 			}
