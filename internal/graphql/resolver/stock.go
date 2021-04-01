@@ -238,31 +238,11 @@ func (q *QueryResolver) Strain(ctx context.Context, id string) (*models.Strain, 
 	return stock.ConvertToStrainModel(strainID, n.Data.Attributes), nil
 }
 
-func (q *QueryResolver) ListStrains(ctx context.Context, cursor *int, limit *int, filter *string) (*models.StrainListWithCursor, error) {
-	c := getCursor(cursor)
-	l := getLimit(limit)
-	f := getFilter(filter)
-	list, err := q.GetStockClient(registry.STOCK).ListStrains(ctx, &pb.StockParameters{Cursor: c, Limit: l, Filter: f})
-	if err != nil {
-		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
-		return nil, err
-	}
-	strains := []*models.Strain{}
-	for _, n := range list.Data {
-		attr := n.Attributes
-		item := stock.ConvertToStrainModel(n.Id, attr)
-		strains = append(strains, item)
-	}
-	lm := int(list.Meta.Limit)
-	q.Logger.Debugf("successfully retrieved list of %v strains", list.Meta.Total)
-	return &models.StrainListWithCursor{
-		Strains:        strains,
-		NextCursor:     int(list.Meta.NextCursor),
-		PreviousCursor: int(c),
-		Limit:          &lm,
-		TotalCount:     int(list.Meta.Total),
-	}, nil
+func (q *QueryResolver) ListStrains(ctx context.Context, cursor *int, limit *int, filter *models.StrainListFilter) (*models.StrainListWithCursor, error) {
+	// 1. need to use filter.StrainType to get a list of IDs of a given stock type
+	// 2. check the value of InStock
+	// 3. convert label/summary/ID into a filter string to pass in stock backend method
+	panic("not implemented")
 }
 
 func (q *QueryResolver) ListPlasmids(ctx context.Context, cursor *int, limit *int, filter *string) (*models.PlasmidListWithCursor, error) {
