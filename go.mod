@@ -10,7 +10,7 @@ require (
 	github.com/fatih/structs v1.1.0
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0
-	github.com/go-redis/redis/v7 v7.4.0
+	github.com/go-redis/redis/v7 v7.4.1
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.5.2
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
