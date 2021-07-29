@@ -102,7 +102,7 @@ var MockUpdatePlasmidAttributes = &stock.PlasmidAttributes{
 	Name:            "pTest",
 }
 
-var mockStrainList = &stock.StrainCollection_Data{
+var mockStrainData = &stock.StrainCollection_Data{
 	Type:       "strain",
 	Id:         "DBS123456",
 	Attributes: MockStrainAttributes,
@@ -116,7 +116,9 @@ var mockPlasmidList = &stock.PlasmidCollection_Data{
 
 func mockStrainCollection() *stock.StrainCollection {
 	var strains []*stock.StrainCollection_Data
-	strains = append(strains, mockStrainList, mockStrainList, mockStrainList)
+	for i := 0; i < 3; i++ {
+		strains = append(strains, mockStrainData)
+	}
 	return &stock.StrainCollection{
 		Data: strains,
 		Meta: &stock.Meta{
@@ -124,6 +126,18 @@ func mockStrainCollection() *stock.StrainCollection {
 			Total: int64(len(strains)),
 		},
 	}
+}
+
+func mockStrainList() *stock.StrainList {
+	strains := make([]*stock.StrainList_Data, 0)
+	for i := 10; i < 10; i++ {
+		strains = append(strains, &stock.StrainList_Data{
+			Type:       "strain",
+			Id:         "DBS987654",
+			Attributes: MockStrainAttributes,
+		})
+	}
+	return &stock.StrainList{Data: strains}
 }
 
 func mockPlasmidCollection() *stock.PlasmidCollection {
@@ -195,50 +209,66 @@ func mockUpdateStrain() *stock.Strain {
 
 func MockedStockClient() *clients.StockServiceClient {
 	mockedStockClient := new(clients.StockServiceClient)
-	mockedStockClient.On(
-		"GetPlasmid",
-		mock.AnythingOfType("*context.emptyCtx"),
-		mock.AnythingOfType("*stock.StockId"),
-	).Return(mockPlasmidWithParams("kenny@bania.com"), nil).On(
-		"GetStrain",
-		mock.AnythingOfType("*context.emptyCtx"),
-		&stock.StockId{Id: "DBS987654"},
-	).Return(mockStrainWithParams("kenny@bania.com", "DBS987654"), nil).On(
-		"GetStrain",
-		mock.AnythingOfType("*context.emptyCtx"),
-		&stock.StockId{Id: "DBS123456"},
-	).Return(MockStrain(), nil).On(
-		"GetStrain",
-		mock.AnythingOfType("*context.emptyCtx"),
-		&stock.StockId{Id: "DBS000001"},
-	).Return(MockStrain(), nil).On(
-		"GetStrain",
-		mock.AnythingOfType("*context.emptyCtx"),
-		&stock.StockId{Id: "DBS000002"},
-	).Return(MockStrain(), nil).On(
-		"ListStrains",
-		mock.AnythingOfType("*context.emptyCtx"),
-		mock.AnythingOfType("*stock.StockParameters"),
-	).Return(mockStrainCollection(), nil).On(
-		"ListPlasmids",
-		mock.AnythingOfType("*context.emptyCtx"),
-		mock.AnythingOfType("*stock.StockParameters"),
-	).Return(mockPlasmidCollection(), nil).On(
-		"CreateStrain",
-		mock.AnythingOfType("*context.emptyCtx"),
-		mock.AnythingOfType("*stock.NewStrain"),
-	).Return(mockStrainWithParams("kenny@bania.com", "DBS987654"), nil).On(
-		"CreatePlasmid",
-		mock.AnythingOfType("*context.emptyCtx"),
-		mock.AnythingOfType("*stock.NewPlasmid"),
-	).Return(mockPlasmidWithParams("kenny@bania.com"), nil).On(
-		"UpdatePlasmid",
-		mock.AnythingOfType("*context.emptyCtx"),
-		mock.AnythingOfType("*stock.PlasmidUpdate"),
-	).Return(mockUpdatePlasmid(), nil).On(
-		"UpdateStrain",
-		mock.AnythingOfType("*context.emptyCtx"),
-		mock.AnythingOfType("*stock.StrainUpdate"),
-	).Return(mockUpdateStrain(), nil)
+	mockedStockClient.
+		On(
+			"GetPlasmid",
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("*stock.StockId")).
+		Return(mockPlasmidWithParams("kenny@bania.com"), nil).
+		On(
+			"GetStrain",
+			mock.AnythingOfType("*context.emptyCtx"),
+			&stock.StockId{Id: "DBS987654"}).
+		Return(mockStrainWithParams("kenny@bania.com", "DBS987654"), nil).
+		On(
+			"GetStrain",
+			mock.AnythingOfType("*context.emptyCtx"),
+			&stock.StockId{Id: "DBS123456"}).
+		Return(MockStrain(), nil).
+		On(
+			"GetStrain",
+			mock.AnythingOfType("*context.emptyCtx"),
+			&stock.StockId{Id: "DBS000001"}).
+		Return(MockStrain(), nil).
+		On(
+			"GetStrain",
+			mock.AnythingOfType("*context.emptyCtx"),
+			&stock.StockId{Id: "DBS000002"}).
+		Return(MockStrain(), nil).
+		On(
+			"ListStrains",
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("*stock.StockParameters"),
+		).Return(mockStrainCollection(), nil).
+		On(
+			"ListPlasmids",
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("*stock.StockParameters")).
+		Return(mockPlasmidCollection(), nil).
+		On(
+			"CreateStrain",
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("*stock.NewStrain")).
+		Return(mockStrainWithParams("kenny@bania.com", "DBS987654"), nil).
+		On(
+			"CreatePlasmid",
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("*stock.NewPlasmid")).
+		Return(mockPlasmidWithParams("kenny@bania.com"), nil).
+		On(
+			"UpdatePlasmid",
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("*stock.PlasmidUpdate")).
+		Return(mockUpdatePlasmid(), nil).
+		On(
+			"UpdateStrain",
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("*stock.StrainUpdate")).
+		Return(mockUpdateStrain(), nil).
+		On(
+			"ListStrainsByIds",
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("*stock.StockIdList")).
+		Return(mockStrainList(), nil)
 	return mockedStockClient
 }
