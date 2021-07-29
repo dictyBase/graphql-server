@@ -53,16 +53,16 @@ func (r *OrderResolver) PurchaseOrderNum(ctx context.Context, obj *pb.Order) (*s
 func (r *OrderResolver) Status(ctx context.Context, obj *pb.Order) (*models.StatusEnum, error) {
 	status := obj.Data.Attributes.Status
 	switch status {
-	case pb.OrderStatus_In_preparation:
+	case pb.OrderStatus_IN_PREPARATION:
 		s := models.StatusEnumInPreparation
 		return &s, nil
-	case pb.OrderStatus_Growing:
+	case pb.OrderStatus_GROWING:
 		s := models.StatusEnumGrowing
 		return &s, nil
-	case pb.OrderStatus_Cancelled:
+	case pb.OrderStatus_CANCELLED:
 		s := models.StatusEnumCancelled
 		return &s, nil
-	case pb.OrderStatus_Shipped:
+	case pb.OrderStatus_SHIPPED:
 		s := models.StatusEnumShipped
 		return &s, nil
 	default:
