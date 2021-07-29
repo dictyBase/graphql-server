@@ -6,7 +6,9 @@ import (
 	"context"
 	"time"
 
+	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/graphql/resolver/stock"
 	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
@@ -45,10 +47,21 @@ func NewRetriever() Retriever {
 func newStrainById(ctx context.Context, nr registry.Registry) *StrainLoader {
 	return NewStrainLoader(StrainLoaderConfig{
 		MaxBatch: 100,
-		Wait:     1 * time.Millisecond,
+		Wait:     100 * time.Millisecond,
 		Fetch: func(ids []string) ([]*models.Strain, []error) {
-			strains := []*models.Strain{}
-			// add logic here...
+			strains := make([]*models.Strain, 0)
+			sl, err := nr.GetStockClient(registry.STOCK).ListStrainsByIds(
+				context.Background(),
+				&pb.StockIdList{Id: ids},
+			)
+			if err != nil {
+				return strains, []error{err}
+			}
+			for _, sd := range sl.Data {
+				strains = append(
+					strains,
+					stock.ConvertToStrainModel(sd.Id, sd.Attributes))
+			}
 			return strains, nil
 		},
 	})
