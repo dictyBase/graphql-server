@@ -46,13 +46,13 @@ func statusConverter(e models.StatusEnum) pb.OrderStatus {
 	var status pb.OrderStatus
 	switch e {
 	case "IN_PREPARATION":
-		status = pb.OrderStatus_In_preparation
+		status = pb.OrderStatus_IN_PREPARATION
 	case "GROWING":
-		status = pb.OrderStatus_Growing
+		status = pb.OrderStatus_GROWING
 	case "CANCELLED":
-		status = pb.OrderStatus_Cancelled
+		status = pb.OrderStatus_CANCELLED
 	case "SHIPPED":
-		status = pb.OrderStatus_Shipped
+		status = pb.OrderStatus_SHIPPED
 	}
 	return status
 }
