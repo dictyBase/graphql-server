@@ -345,31 +345,25 @@ func (q *QueryResolver) ListPlasmidsWithAnnotation(ctx context.Context, cursor *
 }
 
 func getCursor(c *int) int64 {
-	var cursor int64
+	cursor := int64(0)
 	if c != nil {
 		cursor = int64(*c)
-	} else {
-		cursor = 0
 	}
 	return cursor
 }
 
 func getLimit(l *int) int64 {
-	var limit int64
+	limit := int64(10)
 	if l != nil {
 		limit = int64(*l)
-	} else {
-		limit = 10
 	}
 	return limit
 }
 
 func getFilter(f *string) string {
-	var filter string
+	filter := ""
 	if f != nil {
 		filter = *f
-	} else {
-		filter = ""
 	}
 	return filter
 }
