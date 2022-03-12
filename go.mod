@@ -23,7 +23,7 @@ require (
 	github.com/urfave/cli v1.22.5
 	github.com/vektah/gqlparser v1.3.1
 	github.com/vektah/gqlparser/v2 v2.1.0
-	google.golang.org/grpc v1.41.0
+	google.golang.org/grpc v1.45.0
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
 
