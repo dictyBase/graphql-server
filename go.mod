@@ -22,9 +22,8 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/urfave/cli v1.22.5
 	github.com/vektah/gqlparser v1.3.1
-	github.com/vektah/gqlparser/v2 v2.1.0
+	github.com/vektah/gqlparser/v2 v2.4.5
 	google.golang.org/grpc v1.41.0
-	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
 
 go 1.16
