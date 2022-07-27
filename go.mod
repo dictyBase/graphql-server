@@ -13,7 +13,7 @@ require (
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.5.2
 	github.com/kr/pretty v0.2.0 // indirect
-	github.com/mitchellh/mapstructure v1.4.2
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/mwitkow/go-proto-validators v0.3.0 // indirect
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/objx v0.1.1 // indirect
