@@ -19,7 +19,7 @@ require (
 	github.com/stretchr/testify v1.8.0
 	github.com/urfave/cli v1.22.9
 	github.com/vektah/gqlparser v1.3.1
-	github.com/vektah/gqlparser/v2 v2.4.6
+	github.com/vektah/gqlparser/v2 v2.4.7
 	google.golang.org/grpc v1.48.0
 )
 
