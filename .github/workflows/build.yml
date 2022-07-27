@@ -49,7 +49,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
       - name: log into dockerhub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -59,7 +59,7 @@ jobs:
           sha=$(git rev-parse --short HEAD)
           echo ::set-output name=id::${sha}
       - name: docker build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           push: true
           file: build/package/Dockerfile
