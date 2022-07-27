@@ -1,7 +1,11 @@
-FROM golang:1.16.0-alpine3.13
-LABEL maintainer="Eric Hartline <eric.hartline@northwestern.edu>"
+FROM golang:1.18.3-buster AS builder
 LABEL maintainer="Siddhartha Basu <siddhartha-basu@northwestern.edu>"
 ENV GOPROXY https://proxy.golang.org
+ENV CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
+RUN apt-get -qq update \
+    && apt-get -yqq install upx
 RUN mkdir -p /graphql-server
 WORKDIR /graphql-server
 COPY go.mod ./
@@ -9,8 +13,14 @@ COPY go.sum ./
 RUN go mod download
 ADD cmd cmd
 ADD internal internal
-RUN CGO_ENABLED=0 go build -o app cmd/graphql-server/main.go
+RUN go build \
+    -a \
+    -ldflags "-s -w -extldflags '-static'" \
+    -installsuffix cgo \
+    -tags netgo \
+    -o /bin/app \
+    cmd/graphql-server/main.go
 
 FROM gcr.io/distroless/static
-COPY --from=0 /graphql-server/app /usr/local/bin/
+COPY --from=0 /bin/app /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/app"]
