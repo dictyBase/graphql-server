@@ -1,7 +1,7 @@
 module github.com/dictyBase/graphql-server
 
 require (
-	github.com/99designs/gqlgen v0.13.0
+	github.com/99designs/gqlgen v0.17.13
 	github.com/Jeffail/gabs/v2 v2.6.1
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/dictyBase/aphgrpc v1.3.0
@@ -19,7 +19,7 @@ require (
 	github.com/mwitkow/go-proto-validators v0.3.0 // indirect
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/objx v0.1.1 // indirect
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.7.1
 	github.com/urfave/cli v1.22.5
 	github.com/vektah/gqlparser v1.3.1
 	github.com/vektah/gqlparser/v2 v2.1.0
