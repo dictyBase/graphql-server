@@ -21,7 +21,7 @@ require (
 	github.com/urfave/cli v1.22.9
 	github.com/vektah/gqlparser v1.3.1
 	github.com/vektah/gqlparser/v2 v2.4.6
-	google.golang.org/grpc v1.41.0
+	google.golang.org/grpc v1.48.0
 )
 
 go 1.16
