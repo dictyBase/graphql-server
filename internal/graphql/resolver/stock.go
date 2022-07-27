@@ -238,22 +238,41 @@ func (q *QueryResolver) Strain(ctx context.Context, id string) (*models.Strain, 
 	return stock.ConvertToStrainModel(strainID, n.Data.Attributes), nil
 }
 
-func (q *QueryResolver) ListStrains(ctx context.Context, cursor *int, limit *int, filter *models.StrainListFilter) (*models.StrainListWithCursor, error) {
+func (q *QueryResolver) ListStrains(ctx context.Context, cursor *int,
+	limit *int, filter *models.StrainListFilter,
+) (*models.StrainListWithCursor, error) {
 	// 1. need to use filter.StrainType to get a list of IDs of a given stock type
 	// 2. check the value of InStock
 	// 3. convert label/summary/ID into a filter string to pass in stock backend method
+	c := getCursor(cursor)
+	// no filter , get a limited set of strain
+	if filter == nil {
+
+	}
+	// with filter can have two pathways
+	// in there's a StrainType defined then get a list from annotation resource first,
+	// and then apply rest of the attribute
+	// otherwise apply the rest of the filter attribute
+	alist, err := q.GetAnnotationClient(registry.ANNOTATION).ListAnnotations(
+		ctx, &anno.ListParameters{
+			Cursor: c,
+			Limit:  getLimit(limit),
+		})
 	panic("not implemented")
 }
 
 func (q *QueryResolver) ListPlasmids(ctx context.Context, cursor *int, limit *int, filter *string) (*models.PlasmidListWithCursor, error) {
 	c := getCursor(cursor)
-	l := getLimit(limit)
-	f := getFilter(filter)
-	list, err := q.GetStockClient(registry.STOCK).ListPlasmids(ctx, &pb.StockParameters{Cursor: c, Limit: l, Filter: f})
+	list, err := q.GetStockClient(registry.STOCK).
+		ListPlasmids(ctx, &pb.StockParameters{
+			Cursor: c,
+			Limit:  getLimit(limit),
+			Filter: getFilter(filter),
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		q.Logger.Error(err)
-		return nil, err
+		return &models.PlasmidListWithCursor{}, err
 	}
 	plasmids := []*models.Plasmid{}
 	for _, n := range list.Data {
@@ -261,14 +280,13 @@ func (q *QueryResolver) ListPlasmids(ctx context.Context, cursor *int, limit *in
 		item := stock.ConvertToPlasmidModel(n.Id, attr)
 		plasmids = append(plasmids, item)
 	}
-	lm := int(list.Meta.Limit)
 	q.Logger.Debugf("successfully retrieved list of %v plasmids", list.Meta.Total)
 	return &models.PlasmidListWithCursor{
-		Plasmids:       plasmids,
+		Limit:          func(i int64) *int { lm := int(i); return &lm }(list.Meta.Limit),
 		NextCursor:     int(list.Meta.NextCursor),
-		PreviousCursor: int(c),
-		Limit:          &lm,
 		TotalCount:     int(list.Meta.Total),
+		PreviousCursor: int(c),
+		Plasmids:       plasmids,
 	}, nil
 }
 
@@ -345,27 +363,24 @@ func (q *QueryResolver) ListPlasmidsWithAnnotation(ctx context.Context, cursor *
 }
 
 func getCursor(c *int) int64 {
-	cursor := int64(0)
-	if c != nil {
-		cursor = int64(*c)
+	if c == nil {
+		return int64(0)
 	}
-	return cursor
+	return int64(*c)
 }
 
 func getLimit(l *int) int64 {
-	limit := int64(10)
-	if l != nil {
-		limit = int64(*l)
+	if l == nil {
+		return int64(10)
 	}
-	return limit
+	return int64(*l)
 }
 
 func getFilter(f *string) string {
-	filter := ""
-	if f != nil {
-		filter = *f
+	if f == nil {
+		return ""
 	}
-	return filter
+	return *f
 }
 
 func getOntology(onto string) string {
