@@ -4,7 +4,7 @@ require (
 	github.com/99designs/gqlgen v0.17.13
 	github.com/Jeffail/gabs/v2 v2.6.1
 	github.com/dictyBase/aphgrpc v1.4.2
-	github.com/dictyBase/go-genproto v0.0.0-20200122001226-b1ccbdee4aa3
+	github.com/dictyBase/go-genproto v0.0.0-20211001224012-6cf691015622
 	github.com/emirpasic/gods v1.18.1
 	github.com/fatih/structs v1.1.0
 	github.com/go-chi/chi v4.1.2+incompatible
