@@ -419,17 +419,19 @@ func getFilter(f *string) string {
 
 func getOntology(onto string) string {
 	var o string
+	var oname string
 	switch onto {
 	case "phenotype":
-		o = registry.PhenoOntology
+		oname = registry.PhenoOntology
 	case "characteristic":
-		o = registry.StrainCharOnto
+		oname = registry.StrainCharOnto
 	case "strain_inventory":
-		o = registry.StrainInvOnto
+		oname = registry.StrainInvOnto
 	case "plasmid_inventory":
-		o = registry.PlasmidInvOnto
+		oname = registry.PlasmidInvOnto
 	default:
-		o = "invalid ontology"
+		oname = "invalid ontology"
 	}
-	return o
+	return oname
 }
+
