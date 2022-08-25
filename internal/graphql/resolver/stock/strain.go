@@ -30,7 +30,10 @@ type StrainResolver struct {
 	Logger           *logrus.Entry
 }
 
-func (r *StrainResolver) CreatedBy(ctx context.Context, obj *models.Strain) (*user.User, error) {
+func (r *StrainResolver) CreatedBy(
+	ctx context.Context,
+	obj *models.Strain,
+) (*user.User, error) {
 	u, err := getUserByEmail(ctx, r.UserClient, obj.CreatedBy)
 	if err != nil {
 		r.Logger.Error(err)
@@ -39,7 +42,10 @@ func (r *StrainResolver) CreatedBy(ctx context.Context, obj *models.Strain) (*us
 	return u, nil
 }
 
-func (r *StrainResolver) UpdatedBy(ctx context.Context, obj *models.Strain) (*user.User, error) {
+func (r *StrainResolver) UpdatedBy(
+	ctx context.Context,
+	obj *models.Strain,
+) (*user.User, error) {
 	u, err := getUserByEmail(ctx, r.UserClient, obj.UpdatedBy)
 	if err != nil {
 		r.Logger.Error(err)
@@ -48,7 +54,10 @@ func (r *StrainResolver) UpdatedBy(ctx context.Context, obj *models.Strain) (*us
 	return u, nil
 }
 
-func (r *StrainResolver) Depositor(ctx context.Context, obj *models.Strain) (*user.User, error) {
+func (r *StrainResolver) Depositor(
+	ctx context.Context,
+	obj *models.Strain,
+) (*user.User, error) {
 	d, err := getUserByEmail(ctx, r.UserClient, *obj.Depositor)
 	if err != nil {
 		r.Logger.Error(err)
@@ -57,7 +66,10 @@ func (r *StrainResolver) Depositor(ctx context.Context, obj *models.Strain) (*us
 	return d, nil
 }
 
-func (r *StrainResolver) Genes(ctx context.Context, obj *models.Strain) ([]*models.Gene, error) {
+func (r *StrainResolver) Genes(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]*models.Gene, error) {
 	g := []*models.Gene{}
 	redis := r.Registry.GetRedisRepository(cache.RedisKey)
 	for _, v := range obj.Genes {
@@ -74,7 +86,10 @@ func (r *StrainResolver) Genes(ctx context.Context, obj *models.Strain) ([]*mode
 	return g, nil
 }
 
-func (r *StrainResolver) Publications(ctx context.Context, obj *models.Strain) ([]*publication.Publication, error) {
+func (r *StrainResolver) Publications(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]*publication.Publication, error) {
 	pubs := []*publication.Publication{}
 	for _, id := range obj.Publications {
 		if len(*id) < 1 {
@@ -106,7 +121,10 @@ func (r *StrainResolver) Publications(ctx context.Context, obj *models.Strain) (
 	return pubs, nil
 }
 
-func (r *StrainResolver) Parent(ctx context.Context, obj *models.Strain) (*models.Strain, error) {
+func (r *StrainResolver) Parent(
+	ctx context.Context,
+	obj *models.Strain,
+) (*models.Strain, error) {
 	parent := obj.Parent
 	if parent == nil {
 		return &models.Strain{}, nil
@@ -120,7 +138,10 @@ func (r *StrainResolver) Parent(ctx context.Context, obj *models.Strain) (*model
 	return ConvertToStrainModel(*parent, n.Data.Attributes), nil
 }
 
-func (r *StrainResolver) Names(ctx context.Context, obj *models.Strain) ([]*string, error) {
+func (r *StrainResolver) Names(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]*string, error) {
 	names := []*string{}
 	if len(obj.Names) > 0 {
 		for _, v := range obj.Names {
@@ -149,7 +170,10 @@ func (r *StrainResolver) Names(ctx context.Context, obj *models.Strain) ([]*stri
 	return names, nil
 }
 
-func (r *StrainResolver) Phenotypes(ctx context.Context, obj *models.Strain) ([]*models.Phenotype, error) {
+func (r *StrainResolver) Phenotypes(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]*models.Phenotype, error) {
 	p := []*models.Phenotype{}
 	strainId := obj.ID
 	gc, err := r.AnnotationClient.ListAnnotationGroups(
@@ -174,7 +198,10 @@ func (r *StrainResolver) Phenotypes(ctx context.Context, obj *models.Strain) ([]
 	return p, nil
 }
 
-func (r *StrainResolver) GeneticModification(ctx context.Context, obj *models.Strain) (*string, error) {
+func (r *StrainResolver) GeneticModification(
+	ctx context.Context,
+	obj *models.Strain,
+) (*string, error) {
 	var gm string
 	gc, err := r.AnnotationClient.GetEntryAnnotation(
 		ctx,
@@ -196,7 +223,10 @@ func (r *StrainResolver) GeneticModification(ctx context.Context, obj *models.St
 	return &gm, nil
 }
 
-func (r *StrainResolver) MutagenesisMethod(ctx context.Context, obj *models.Strain) (*string, error) {
+func (r *StrainResolver) MutagenesisMethod(
+	ctx context.Context,
+	obj *models.Strain,
+) (*string, error) {
 	var m string
 	gc, err := r.AnnotationClient.GetEntryAnnotation(
 		ctx,
@@ -218,7 +248,10 @@ func (r *StrainResolver) MutagenesisMethod(ctx context.Context, obj *models.Stra
 	return &m, nil
 }
 
-func (r *StrainResolver) SystematicName(ctx context.Context, obj *models.Strain) (string, error) {
+func (r *StrainResolver) SystematicName(
+	ctx context.Context,
+	obj *models.Strain,
+) (string, error) {
 	sn, err := r.AnnotationClient.GetEntryAnnotation(
 		ctx,
 		&annotation.EntryAnnotationRequest{
@@ -238,8 +271,11 @@ func (r *StrainResolver) SystematicName(ctx context.Context, obj *models.Strain)
 	return sn.Data.Attributes.Value, nil
 }
 
-func (r *StrainResolver) Characteristics(ctx context.Context, obj *models.Strain) ([]*string, error) {
-	c := []*string{}
+func (r *StrainResolver) Characteristics(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]*string, error) {
+	pslice := []*string{}
 	cg, err := r.AnnotationClient.ListAnnotations(
 		ctx, &annotation.ListParameters{Filter: fmt.Sprintf(
 			"entry_id===%s;ontology===%s",
@@ -248,19 +284,22 @@ func (r *StrainResolver) Characteristics(ctx context.Context, obj *models.Strain
 	)
 	if err != nil {
 		if grpc.Code(err) == codes.NotFound {
-			return c, nil
+			return pslice, nil
 		}
 		errorutils.AddGQLError(ctx, err)
 		r.Logger.Error(err)
-		return c, err
+		return pslice, err
 	}
 	for _, item := range cg.Data {
-		c = append(c, &item.Attributes.Tag)
+		pslice = append(pslice, &item.Attributes.Tag)
 	}
-	return c, nil
+	return pslice, nil
 }
 
-func (r *StrainResolver) Genotypes(ctx context.Context, obj *models.Strain) ([]*string, error) {
+func (r *StrainResolver) Genotypes(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]*string, error) {
 	g := []*string{}
 	gl, err := r.AnnotationClient.GetEntryAnnotation(
 		ctx,
@@ -281,7 +320,10 @@ func (r *StrainResolver) Genotypes(ctx context.Context, obj *models.Strain) ([]*
 	return g, nil
 }
 
-func (r *StrainResolver) InStock(ctx context.Context, obj *models.Strain) (bool, error) {
+func (r *StrainResolver) InStock(
+	ctx context.Context,
+	obj *models.Strain,
+) (bool, error) {
 	id := obj.ID
 	_, err := r.AnnotationClient.GetEntryAnnotation(
 		ctx,
@@ -302,7 +344,11 @@ func (r *StrainResolver) InStock(ctx context.Context, obj *models.Strain) (bool,
 	return true, nil
 }
 
-func getPhenotypes(ctx context.Context, r *StrainResolver, data []*annotation.TaggedAnnotationGroupCollection_Data) []*models.Phenotype {
+func getPhenotypes(
+	ctx context.Context,
+	r *StrainResolver,
+	data []*annotation.TaggedAnnotationGroupCollection_Data,
+) []*models.Phenotype {
 	p := []*models.Phenotype{}
 	for _, item := range data {
 		m := &models.Phenotype{}
@@ -317,7 +363,11 @@ func getPhenotypes(ctx context.Context, r *StrainResolver, data []*annotation.Ta
 			case registry.DictyAnnoOntology:
 				if g.Attributes.Tag == registry.LiteratureTag {
 					endpoint := r.Registry.GetAPIEndpoint(registry.PUBLICATION)
-					pub, err := fetch.FetchPublication(ctx, endpoint, g.Attributes.Value)
+					pub, err := fetch.FetchPublication(
+						ctx,
+						endpoint,
+						g.Attributes.Value,
+					)
 					if err != nil {
 						r.Logger.Error(err)
 						errorutils.AddGQLError(ctx, err)
@@ -341,38 +391,49 @@ func ConvertToStrainModel(id string, attr *pb.StrainAttributes) *models.Strain {
 		UpdatedAt:       aphgrpc.ProtoTimeStamp(attr.UpdatedAt),
 		CreatedBy:       attr.CreatedBy,
 		UpdatedBy:       attr.UpdatedBy,
+		Label:           attr.Label,
+		Species:         attr.Species,
 		Summary:         &attr.Summary,
 		EditableSummary: &attr.EditableSummary,
 		Depositor:       &attr.Depositor,
+		Plasmid:         &attr.Plasmid,
+		Parent:          &attr.Parent,
 		Genes:           sliceConverter(attr.Genes),
 		Dbxrefs:         sliceConverter(attr.Dbxrefs),
 		Publications:    sliceConverter(attr.Publications),
-		Label:           attr.Label,
-		Species:         attr.Species,
-		Plasmid:         &attr.Plasmid,
 		Names:           sliceConverter(attr.Names),
-		Parent:          &attr.Parent,
 	}
 }
 
-func sliceConverter(s []string) []*string {
-	c := []*string{}
-	// need to use for loop here, not range
-	// https://github.com/golang/go/issues/22791#issuecomment-345391395
-	for i := 0; i < len(s); i++ {
-		c = append(c, &s[i])
+func sliceConverter[T any](aslice []T) []*T {
+	// make a copy so that the passed slice gets
+	// garbage collected
+	// https://stackoverflow.com/a/48459980
+	nslice := make([]T, 0)
+	nslice = append(nslice, aslice...)
+	pslice := make([]*T, 0)
+	for i := range nslice {
+		pslice = append(pslice, &nslice[i])
 	}
-	return c
+
+	return pslice
 }
 
-func getUserByEmail(ctx context.Context, uc user.UserServiceClient, email string) (*user.User, error) {
+func getUserByEmail(
+	ctx context.Context,
+	uc user.UserServiceClient,
+	email string,
+) (*user.User, error) {
 	u := &user.User{}
 	if email == "" {
 		return u, fmt.Errorf("got an empty email address %s", email)
 	}
 	g, err := uc.GetUserByEmail(ctx, &jsonapi.GetEmailRequest{Email: email})
 	if err != nil {
-		errorutils.AddGQLError(ctx, fmt.Errorf("could not find user with email %s", email))
+		errorutils.AddGQLError(
+			ctx,
+			fmt.Errorf("could not find user with email %s", email),
+		)
 		return u, err
 	}
 	return g, nil
