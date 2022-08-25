@@ -25,6 +25,7 @@ const (
 	PlasmidInvOnto      = "plasmid_inventory"
 	StrainInvTag        = "strain_inventory"
 	PlasmidInvTag       = "plasmid inventory"
+	DictyStrainProp     = "dicty_strain_property"
 	InvLocationTag      = "location"
 	LiteratureTag       = "pubmed id"
 	NoteTag             = "public note"
@@ -123,7 +124,9 @@ func (c *collection) GetRoleClient(key string) user.RoleServiceClient {
 	return user.NewRoleServiceClient(c.GetAPIConnection(key))
 }
 
-func (c *collection) GetPermissionClient(key string) user.PermissionServiceClient {
+func (c *collection) GetPermissionClient(
+	key string,
+) user.PermissionServiceClient {
 	return user.NewPermissionServiceClient(c.GetAPIConnection(key))
 }
 
@@ -139,7 +142,9 @@ func (c *collection) GetContentClient(key string) content.ContentServiceClient {
 	return content.NewContentServiceClient(c.GetAPIConnection(key))
 }
 
-func (c *collection) GetAnnotationClient(key string) annotation.TaggedAnnotationServiceClient {
+func (c *collection) GetAnnotationClient(
+	key string,
+) annotation.TaggedAnnotationServiceClient {
 	return annotation.NewTaggedAnnotationServiceClient(c.GetAPIConnection(key))
 }
 
@@ -147,7 +152,9 @@ func (c *collection) GetAuthClient(key string) auth.AuthServiceClient {
 	return auth.NewAuthServiceClient(c.GetAPIConnection(key))
 }
 
-func (c *collection) GetIdentityClient(key string) identity.IdentityServiceClient {
+func (c *collection) GetIdentityClient(
+	key string,
+) identity.IdentityServiceClient {
 	return identity.NewIdentityServiceClient(c.GetAPIConnection(key))
 }
 
