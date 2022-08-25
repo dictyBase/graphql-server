@@ -418,7 +418,6 @@ func getFilter(f *string) string {
 }
 
 func getOntology(onto string) string {
-	var o string
 	var oname string
 	switch onto {
 	case "phenotype":
@@ -435,3 +434,67 @@ func getOntology(onto string) string {
 	return oname
 }
 
+func strainFilterToQuery(filter *models.StrainListFilter) (string, error) {
+	var query strings.Builder
+	query.WriteString(strainFieldsQuery(filter))
+	typeQuery, err := strainTypeQuery(filter)
+	if err != nil {
+		return query.String(), err
+	}
+	if query.Len() > 0 {
+		query.WriteString(fmt.Sprintf(";%s", typeQuery))
+	} else {
+		query.WriteString(typeQuery)
+	}
+
+	return query.String(), nil
+}
+
+func strainFieldsQuery(filter *models.StrainListFilter) string {
+	var query strings.Builder
+	if len(*filter.Label) > 0 {
+		query.WriteString(fmt.Sprintf("label==%s", *filter.Label))
+	}
+	if len(*filter.Summary) > 0 {
+		if query.Len() > 0 {
+			query.WriteString(fmt.Sprintf(";summary==%s", *filter.Summary))
+		} else {
+			query.WriteString(fmt.Sprintf("summary==%s", *filter.Summary))
+		}
+	}
+
+	return query.String()
+}
+
+func strainTypeQuery(filter *models.StrainListFilter) (string, error) {
+	switch filter.StrainType {
+	case models.StrainTypeEnumAll:
+		return fmt.Sprintf(
+			"ontology==%s;tag==%s,tag==%s,tag==%s",
+			registry.DictyStrainPropOntology,
+			registry.GeneralStrainTag,
+			registry.GwdiStrainTag,
+			registry.BacterialStrainTag,
+		), nil
+	case models.StrainTypeEnumBacterial:
+		return fmt.Sprintf(
+			"ontology==%s;tag==%s",
+			registry.DictyStrainPropOntology,
+			registry.BacterialStrainTag,
+		), nil
+	case models.StrainTypeEnumRegular:
+		return fmt.Sprintf(
+			"ontology==%s;tag==%s",
+			registry.DictyStrainPropOntology,
+			registry.GeneralStrainTag,
+		), nil
+	case models.StrainTypeEnumGwdi:
+		return fmt.Sprintf(
+			"ontology==%s;tag==%s",
+			registry.DictyStrainPropOntology,
+			registry.GwdiStrainTag,
+		), nil
+	}
+
+	return "", fmt.Errorf("invalid strain type %s", filter.StrainType.String())
+}
