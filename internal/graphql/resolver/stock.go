@@ -3,6 +3,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
@@ -359,6 +360,39 @@ func (q *QueryResolver) ListPlasmidsWithAnnotation(ctx context.Context, cursor *
 		PreviousCursor: int(c),
 		Limit:          &lm,
 		TotalCount:     len(a.Data),
+	}, nil
+}
+
+func (q *QueryResolver) listStrainsWithoutFilter(
+	ctx context.Context,
+	cus int64,
+	lmt int64,
+) (*models.StrainListWithCursor, error) {
+	strainList, err := q.GetStockClient(registry.STOCK).
+		ListStrains(ctx, &pb.StockParameters{Cursor: cus, Limit: lmt})
+	if err != nil {
+		errorutils.AddGQLError(ctx, err)
+		q.Logger.Error(err)
+		return &models.StrainListWithCursor{}, err
+	}
+	strains := make([]*models.Strain, 0)
+	for _, sdata := range strainList.Data {
+		strains = append(
+			strains,
+			stock.ConvertToStrainModel(sdata.Id, sdata.Attributes),
+		)
+	}
+	q.Logger.Debugf(
+		"successfully retrieved list of %d strains",
+		strainList.Meta.Total,
+	)
+	limit := int(lmt)
+	return &models.StrainListWithCursor{
+		Limit:          &limit,
+		NextCursor:     int(strainList.Meta.NextCursor),
+		TotalCount:     int(strainList.Meta.Total),
+		PreviousCursor: int(cus),
+		Strains:        strains,
 	}, nil
 }
 
