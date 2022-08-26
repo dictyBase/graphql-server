@@ -396,6 +396,28 @@ func (q *QueryResolver) listStrainsWithoutFilter(
 	}, nil
 }
 
+func (q *QueryResolver) toStrainModelList(
+	strainList *pb.StrainCollection, limit int64, cursor int64,
+) *models.StrainListWithCursor {
+	smodelList := make([]*models.Strain, 0)
+	for _, strain := range strainList.Data {
+		smodelList = append(
+			smodelList,
+			stock.ConvertToStrainModel(strain.Id, strain.Attributes),
+		)
+	}
+
+	lmt := int(limit)
+	return &models.StrainListWithCursor{
+		Strains:        smodelList,
+		Limit:          &lmt,
+		PreviousCursor: int(cursor),
+		NextCursor:     int(strainList.Meta.NextCursor),
+		TotalCount:     int(strainList.Meta.Total),
+	}
+}
+
+func (q *QueryResolver) reportStrainListError(
 func getCursor(c *int) int64 {
 	if c == nil {
 		return int64(0)
