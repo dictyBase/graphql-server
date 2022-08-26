@@ -15,7 +15,10 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-func (m *MutationResolver) CreateStrain(ctx context.Context, input *models.CreateStrainInput) (*models.Strain, error) {
+func (m *MutationResolver) CreateStrain(
+	ctx context.Context,
+	input *models.CreateStrainInput,
+) (*models.Strain, error) {
 	attr := &pb.NewStrainAttributes{}
 	norm := normalizeCreateStrainAttr(input)
 	err := mapstructure.Decode(norm, attr)
@@ -40,7 +43,9 @@ func (m *MutationResolver) CreateStrain(ctx context.Context, input *models.Creat
 	return stock.ConvertToStrainModel(strainID, n.Data.Attributes), nil
 }
 
-func normalizeCreateStrainAttr(attr *models.CreateStrainInput) map[string]interface{} {
+func normalizeCreateStrainAttr(
+	attr *models.CreateStrainInput,
+) map[string]interface{} {
 	fields := structs.Fields(attr)
 	newAttr := make(map[string]interface{})
 	for _, k := range fields {
@@ -70,7 +75,10 @@ func normalizeCreateStrainAttr(attr *models.CreateStrainInput) map[string]interf
 	return newAttr
 }
 
-func (m *MutationResolver) CreatePlasmid(ctx context.Context, input *models.CreatePlasmidInput) (*models.Plasmid, error) {
+func (m *MutationResolver) CreatePlasmid(
+	ctx context.Context,
+	input *models.CreatePlasmidInput,
+) (*models.Plasmid, error) {
 	attr := &pb.NewPlasmidAttributes{}
 	norm := normalizeCreatePlasmidAttr(input)
 	err := mapstructure.Decode(norm, attr)
@@ -78,12 +86,13 @@ func (m *MutationResolver) CreatePlasmid(ctx context.Context, input *models.Crea
 		m.Logger.Error(err)
 		return nil, err
 	}
-	n, err := m.GetStockClient(registry.STOCK).CreatePlasmid(ctx, &pb.NewPlasmid{
-		Data: &pb.NewPlasmid_Data{
-			Type:       "plasmid",
-			Attributes: attr,
-		},
-	})
+	n, err := m.GetStockClient(registry.STOCK).
+		CreatePlasmid(ctx, &pb.NewPlasmid{
+			Data: &pb.NewPlasmid_Data{
+				Type:       "plasmid",
+				Attributes: attr,
+			},
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
@@ -95,7 +104,9 @@ func (m *MutationResolver) CreatePlasmid(ctx context.Context, input *models.Crea
 	return stock.ConvertToPlasmidModel(plasmidID, n.Data.Attributes), nil
 }
 
-func normalizeCreatePlasmidAttr(attr *models.CreatePlasmidInput) map[string]interface{} {
+func normalizeCreatePlasmidAttr(
+	attr *models.CreatePlasmidInput,
+) map[string]interface{} {
 	fields := structs.Fields(attr)
 	newAttr := make(map[string]interface{})
 	for _, k := range fields {
@@ -119,8 +130,13 @@ func normalizeCreatePlasmidAttr(attr *models.CreatePlasmidInput) map[string]inte
 	return newAttr
 }
 
-func (m *MutationResolver) UpdateStrain(ctx context.Context, id string, input *models.UpdateStrainInput) (*models.Strain, error) {
-	_, err := m.GetStockClient(registry.STOCK).GetStrain(ctx, &pb.StockId{Id: id})
+func (m *MutationResolver) UpdateStrain(
+	ctx context.Context,
+	id string,
+	input *models.UpdateStrainInput,
+) (*models.Strain, error) {
+	_, err := m.GetStockClient(registry.STOCK).
+		GetStrain(ctx, &pb.StockId{Id: id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
@@ -133,13 +149,14 @@ func (m *MutationResolver) UpdateStrain(ctx context.Context, id string, input *m
 		m.Logger.Error(err)
 		return nil, err
 	}
-	n, err := m.GetStockClient(registry.STOCK).UpdateStrain(ctx, &pb.StrainUpdate{
-		Data: &pb.StrainUpdate_Data{
-			Type:       "strain",
-			Id:         id,
-			Attributes: attr,
-		},
-	})
+	n, err := m.GetStockClient(registry.STOCK).
+		UpdateStrain(ctx, &pb.StrainUpdate{
+			Data: &pb.StrainUpdate_Data{
+				Type:       "strain",
+				Id:         id,
+				Attributes: attr,
+			},
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
@@ -150,7 +167,9 @@ func (m *MutationResolver) UpdateStrain(ctx context.Context, id string, input *m
 	return stock.ConvertToStrainModel(strainID, n.Data.Attributes), nil
 }
 
-func normalizeUpdateStrainAttr(attr *models.UpdateStrainInput) map[string]interface{} {
+func normalizeUpdateStrainAttr(
+	attr *models.UpdateStrainInput,
+) map[string]interface{} {
 	fields := structs.Fields(attr)
 	newAttr := make(map[string]interface{})
 	for _, k := range fields {
@@ -161,8 +180,13 @@ func normalizeUpdateStrainAttr(attr *models.UpdateStrainInput) map[string]interf
 	return newAttr
 }
 
-func (m *MutationResolver) UpdatePlasmid(ctx context.Context, id string, input *models.UpdatePlasmidInput) (*models.Plasmid, error) {
-	_, err := m.GetStockClient(registry.STOCK).GetPlasmid(ctx, &pb.StockId{Id: id})
+func (m *MutationResolver) UpdatePlasmid(
+	ctx context.Context,
+	id string,
+	input *models.UpdatePlasmidInput,
+) (*models.Plasmid, error) {
+	_, err := m.GetStockClient(registry.STOCK).
+		GetPlasmid(ctx, &pb.StockId{Id: id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
@@ -175,13 +199,14 @@ func (m *MutationResolver) UpdatePlasmid(ctx context.Context, id string, input *
 		m.Logger.Error(err)
 		return nil, err
 	}
-	n, err := m.GetStockClient(registry.STOCK).UpdatePlasmid(ctx, &pb.PlasmidUpdate{
-		Data: &pb.PlasmidUpdate_Data{
-			Type:       "plasmid",
-			Id:         id,
-			Attributes: attr,
-		},
-	})
+	n, err := m.GetStockClient(registry.STOCK).
+		UpdatePlasmid(ctx, &pb.PlasmidUpdate{
+			Data: &pb.PlasmidUpdate_Data{
+				Type:       "plasmid",
+				Id:         id,
+				Attributes: attr,
+			},
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
@@ -192,7 +217,9 @@ func (m *MutationResolver) UpdatePlasmid(ctx context.Context, id string, input *
 	return stock.ConvertToPlasmidModel(plasmidID, n.Data.Attributes), nil
 }
 
-func normalizeUpdatePlasmidAttr(attr *models.UpdatePlasmidInput) map[string]interface{} {
+func normalizeUpdatePlasmidAttr(
+	attr *models.UpdatePlasmidInput,
+) map[string]interface{} {
 	fields := structs.Fields(attr)
 	newAttr := make(map[string]interface{})
 	for _, k := range fields {
@@ -203,7 +230,10 @@ func normalizeUpdatePlasmidAttr(attr *models.UpdatePlasmidInput) map[string]inte
 	return newAttr
 }
 
-func (m *MutationResolver) DeleteStock(ctx context.Context, id string) (*models.DeleteStock, error) {
+func (m *MutationResolver) DeleteStock(
+	ctx context.Context,
+	id string,
+) (*models.DeleteStock, error) {
 	if _, err := m.GetStockClient(registry.STOCK).RemoveStock(ctx, &pb.StockId{Id: id}); err != nil {
 		return &models.DeleteStock{
 			Success: false,
@@ -215,8 +245,12 @@ func (m *MutationResolver) DeleteStock(ctx context.Context, id string) (*models.
 	}, nil
 }
 
-func (q *QueryResolver) Plasmid(ctx context.Context, id string) (*models.Plasmid, error) {
-	n, err := q.GetStockClient(registry.STOCK).GetPlasmid(ctx, &pb.StockId{Id: id})
+func (q *QueryResolver) Plasmid(
+	ctx context.Context,
+	id string,
+) (*models.Plasmid, error) {
+	n, err := q.GetStockClient(registry.STOCK).
+		GetPlasmid(ctx, &pb.StockId{Id: id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		q.Logger.Error(err)
@@ -227,8 +261,12 @@ func (q *QueryResolver) Plasmid(ctx context.Context, id string) (*models.Plasmid
 	return stock.ConvertToPlasmidModel(plasmidID, n.Data.Attributes), nil
 }
 
-func (q *QueryResolver) Strain(ctx context.Context, id string) (*models.Strain, error) {
-	n, err := q.GetStockClient(registry.STOCK).GetStrain(ctx, &pb.StockId{Id: id})
+func (q *QueryResolver) Strain(
+	ctx context.Context,
+	id string,
+) (*models.Strain, error) {
+	n, err := q.GetStockClient(registry.STOCK).
+		GetStrain(ctx, &pb.StockId{Id: id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		q.Logger.Error(err)
@@ -242,27 +280,35 @@ func (q *QueryResolver) Strain(ctx context.Context, id string) (*models.Strain, 
 func (q *QueryResolver) ListStrains(ctx context.Context, cursor *int,
 	limit *int, filter *models.StrainListFilter,
 ) (*models.StrainListWithCursor, error) {
-	// 1. need to use filter.StrainType to get a list of IDs of a given stock type
-	// 2. check the value of InStock
-	// 3. convert label/summary/ID into a filter string to pass in stock backend method
-	c := getCursor(cursor)
+	cus := getCursor(cursor)
+	lmt := getLimit(limit)
 	// no filter , get a limited set of strain
 	if filter == nil {
-
+		return q.listStrainsWithoutFilter(ctx, cus, lmt)
 	}
-	// with filter can have two pathways
-	// in there's a StrainType defined then get a list from annotation resource first,
-	// and then apply rest of the attribute
-	// otherwise apply the rest of the filter attribute
-	alist, err := q.GetAnnotationClient(registry.ANNOTATION).ListAnnotations(
-		ctx, &anno.ListParameters{
-			Cursor: c,
-			Limit:  getLimit(limit),
+	stypeQuery, err := strainFilterToQuery(filter)
+	if err != nil {
+		return q.reportStrainListError(ctx, err)
+	}
+	strainList, err := q.GetStockClient(registry.STOCK).
+		ListStrains(ctx, &pb.StockParameters{
+			Cursor: cus,
+			Limit:  lmt,
+			Filter: stypeQuery,
 		})
-	panic("not implemented")
+	if err != nil {
+		return q.reportStrainListError(ctx, err)
+	}
+
+	return q.toStrainModelList(strainList, lmt, cus), nil
 }
 
-func (q *QueryResolver) ListPlasmids(ctx context.Context, cursor *int, limit *int, filter *string) (*models.PlasmidListWithCursor, error) {
+func (q *QueryResolver) ListPlasmids(
+	ctx context.Context,
+	cursor *int,
+	limit *int,
+	filter *string,
+) (*models.PlasmidListWithCursor, error) {
 	c := getCursor(cursor)
 	list, err := q.GetStockClient(registry.STOCK).
 		ListPlasmids(ctx, &pb.StockParameters{
@@ -281,9 +327,14 @@ func (q *QueryResolver) ListPlasmids(ctx context.Context, cursor *int, limit *in
 		item := stock.ConvertToPlasmidModel(n.Id, attr)
 		plasmids = append(plasmids, item)
 	}
-	q.Logger.Debugf("successfully retrieved list of %v plasmids", list.Meta.Total)
+	q.Logger.Debugf(
+		"successfully retrieved list of %v plasmids",
+		list.Meta.Total,
+	)
 	return &models.PlasmidListWithCursor{
-		Limit:          func(i int64) *int { lm := int(i); return &lm }(list.Meta.Limit),
+		Limit: func(i int64) *int { lm := int(i); return &lm }(
+			list.Meta.Limit,
+		),
 		NextCursor:     int(list.Meta.NextCursor),
 		TotalCount:     int(list.Meta.Total),
 		PreviousCursor: int(c),
@@ -291,29 +342,40 @@ func (q *QueryResolver) ListPlasmids(ctx context.Context, cursor *int, limit *in
 	}, nil
 }
 
-func (q *QueryResolver) ListStrainsWithAnnotation(ctx context.Context, cursor *int, limit *int, typeArg string, annotation string) (*models.StrainListWithCursor, error) {
+func (q *QueryResolver) ListStrainsWithAnnotation(
+	ctx context.Context,
+	cursor *int,
+	limit *int,
+	typeArg string,
+	annotation string,
+) (*models.StrainListWithCursor, error) {
 	strains := []*models.Strain{}
 	c := getCursor(cursor)
 	l := getLimit(limit)
 	o := getOntology(typeArg)
-	a, err := q.GetAnnotationClient(registry.ANNOTATION).ListAnnotations(ctx, &anno.ListParameters{
-		Cursor: c,
-		Limit:  l,
-		Filter: fmt.Sprintf("ontology==%s;tag==%s", o, annotation),
-	})
+	a, err := q.GetAnnotationClient(registry.ANNOTATION).
+		ListAnnotations(ctx, &anno.ListParameters{
+			Cursor: c,
+			Limit:  l,
+			Filter: fmt.Sprintf("ontology==%s;tag==%s", o, annotation),
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		q.Logger.Error(err)
 		return nil, err
 	}
 	for _, v := range a.Data {
-		strain, err := q.GetStockClient(registry.STOCK).GetStrain(ctx, &pb.StockId{Id: v.Attributes.EntryId})
+		strain, err := q.GetStockClient(registry.STOCK).
+			GetStrain(ctx, &pb.StockId{Id: v.Attributes.EntryId})
 		if err != nil {
 			// errorutils.AddGQLError(ctx, err)
 			q.Logger.Error(err)
 			continue
 		}
-		strains = append(strains, stock.ConvertToStrainModel(strain.Data.Id, strain.Data.Attributes))
+		strains = append(
+			strains,
+			stock.ConvertToStrainModel(strain.Data.Id, strain.Data.Attributes),
+		)
 	}
 	/**
 	  Some phenotypes list the same strain ID more than once. Consider a new approach
@@ -329,29 +391,43 @@ func (q *QueryResolver) ListStrainsWithAnnotation(ctx context.Context, cursor *i
 	}, nil
 }
 
-func (q *QueryResolver) ListPlasmidsWithAnnotation(ctx context.Context, cursor *int, limit *int, typeArg string, annotation string) (*models.PlasmidListWithCursor, error) {
+func (q *QueryResolver) ListPlasmidsWithAnnotation(
+	ctx context.Context,
+	cursor *int,
+	limit *int,
+	typeArg string,
+	annotation string,
+) (*models.PlasmidListWithCursor, error) {
 	plasmids := []*models.Plasmid{}
 	c := getCursor(cursor)
 	l := getLimit(limit)
 	o := getOntology(typeArg)
-	a, err := q.GetAnnotationClient(registry.ANNOTATION).ListAnnotations(ctx, &anno.ListParameters{
-		Cursor: c,
-		Limit:  l,
-		Filter: fmt.Sprintf("ontology==%s;tag==%s", o, annotation),
-	})
+	a, err := q.GetAnnotationClient(registry.ANNOTATION).
+		ListAnnotations(ctx, &anno.ListParameters{
+			Cursor: c,
+			Limit:  l,
+			Filter: fmt.Sprintf("ontology==%s;tag==%s", o, annotation),
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		q.Logger.Error(err)
 		return nil, err
 	}
 	for _, v := range a.Data {
-		plasmid, err := q.GetStockClient(registry.STOCK).GetPlasmid(ctx, &pb.StockId{Id: v.Attributes.EntryId})
+		plasmid, err := q.GetStockClient(registry.STOCK).
+			GetPlasmid(ctx, &pb.StockId{Id: v.Attributes.EntryId})
 		if err != nil {
 			// errorutils.AddGQLError(ctx, err)
 			q.Logger.Error(err)
 			continue
 		}
-		plasmids = append(plasmids, stock.ConvertToPlasmidModel(plasmid.Data.Id, plasmid.Data.Attributes))
+		plasmids = append(
+			plasmids,
+			stock.ConvertToPlasmidModel(
+				plasmid.Data.Id,
+				plasmid.Data.Attributes,
+			),
+		)
 	}
 	lm := int(a.Meta.Limit)
 	return &models.PlasmidListWithCursor{
