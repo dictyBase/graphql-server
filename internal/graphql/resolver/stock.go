@@ -3,13 +3,13 @@ package resolver
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolver/stock"
+	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/fatih/structs"
 	"github.com/mitchellh/mapstructure"
@@ -280,13 +280,13 @@ func (q *QueryResolver) Strain(
 func (q *QueryResolver) ListStrains(ctx context.Context, cursor *int,
 	limit *int, filter *models.StrainListFilter,
 ) (*models.StrainListWithCursor, error) {
-	cus := getCursor(cursor)
-	lmt := getLimit(limit)
+	cus := resolverutils.GetCursor(cursor)
+	lmt := resolverutils.GetLimit(limit)
 	// no filter , get a limited set of strain
 	if filter == nil {
 		return q.listStrainsWithoutFilter(ctx, cus, lmt)
 	}
-	stypeQuery, err := strainFilterToQuery(filter)
+	stypeQuery, err := resolverutils.StrainFilterToQuery(filter)
 	if err != nil {
 		return q.reportStrainListError(ctx, err)
 	}
@@ -309,12 +309,12 @@ func (q *QueryResolver) ListPlasmids(
 	limit *int,
 	filter *string,
 ) (*models.PlasmidListWithCursor, error) {
-	c := getCursor(cursor)
+	c := resolverutils.GetCursor(cursor)
 	list, err := q.GetStockClient(registry.STOCK).
 		ListPlasmids(ctx, &pb.StockParameters{
 			Cursor: c,
-			Limit:  getLimit(limit),
-			Filter: getFilter(filter),
+			Limit:  resolverutils.GetLimit(limit),
+			Filter: resolverutils.GetFilter(filter),
 		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
@@ -350,21 +350,21 @@ func (q *QueryResolver) ListStrainsWithAnnotation(
 	annotation string,
 ) (*models.StrainListWithCursor, error) {
 	strains := []*models.Strain{}
-	c := getCursor(cursor)
-	l := getLimit(limit)
-	o := getOntology(typeArg)
-	a, err := q.GetAnnotationClient(registry.ANNOTATION).
+	cur := resolverutils.GetCursor(cursor)
+	lmt := resolverutils.GetLimit(limit)
+	onto := resolverutils.GetOntology(typeArg)
+	ann, err := q.GetAnnotationClient(registry.ANNOTATION).
 		ListAnnotations(ctx, &anno.ListParameters{
-			Cursor: c,
-			Limit:  l,
-			Filter: fmt.Sprintf("ontology==%s;tag==%s", o, annotation),
+			Cursor: cur,
+			Limit:  lmt,
+			Filter: fmt.Sprintf("ontology==%s;tag==%s", onto, annotation),
 		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		q.Logger.Error(err)
 		return nil, err
 	}
-	for _, v := range a.Data {
+	for _, v := range ann.Data {
 		strain, err := q.GetStockClient(registry.STOCK).
 			GetStrain(ctx, &pb.StockId{Id: v.Attributes.EntryId})
 		if err != nil {
@@ -381,13 +381,13 @@ func (q *QueryResolver) ListStrainsWithAnnotation(
 	  Some phenotypes list the same strain ID more than once. Consider a new approach
 	  to de-duping this list while also keeping the Meta data from the annotations list.
 	*/
-	lm := int(a.Meta.Limit)
+	lm := int(ann.Meta.Limit)
 	return &models.StrainListWithCursor{
 		Strains:        strains,
-		NextCursor:     int(a.Meta.NextCursor),
-		PreviousCursor: int(c),
+		NextCursor:     int(ann.Meta.NextCursor),
+		PreviousCursor: int(cur),
 		Limit:          &lm,
-		TotalCount:     len(a.Data),
+		TotalCount:     len(ann.Data),
 	}, nil
 }
 
@@ -399,21 +399,21 @@ func (q *QueryResolver) ListPlasmidsWithAnnotation(
 	annotation string,
 ) (*models.PlasmidListWithCursor, error) {
 	plasmids := []*models.Plasmid{}
-	c := getCursor(cursor)
-	l := getLimit(limit)
-	o := getOntology(typeArg)
-	a, err := q.GetAnnotationClient(registry.ANNOTATION).
+	cus := resolverutils.GetCursor(cursor)
+	lmt := resolverutils.GetLimit(limit)
+	onto := resolverutils.GetOntology(typeArg)
+	ann, err := q.GetAnnotationClient(registry.ANNOTATION).
 		ListAnnotations(ctx, &anno.ListParameters{
-			Cursor: c,
-			Limit:  l,
-			Filter: fmt.Sprintf("ontology==%s;tag==%s", o, annotation),
+			Cursor: cus,
+			Limit:  lmt,
+			Filter: fmt.Sprintf("ontology==%s;tag==%s", onto, annotation),
 		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		q.Logger.Error(err)
 		return nil, err
 	}
-	for _, v := range a.Data {
+	for _, v := range ann.Data {
 		plasmid, err := q.GetStockClient(registry.STOCK).
 			GetPlasmid(ctx, &pb.StockId{Id: v.Attributes.EntryId})
 		if err != nil {
@@ -429,13 +429,13 @@ func (q *QueryResolver) ListPlasmidsWithAnnotation(
 			),
 		)
 	}
-	lm := int(a.Meta.Limit)
+	lm := int(ann.Meta.Limit)
 	return &models.PlasmidListWithCursor{
 		Plasmids:       plasmids,
-		NextCursor:     int(a.Meta.NextCursor),
-		PreviousCursor: int(c),
+		NextCursor:     int(ann.Meta.NextCursor),
+		PreviousCursor: int(cus),
 		Limit:          &lm,
-		TotalCount:     len(a.Data),
+		TotalCount:     len(ann.Data),
 	}, nil
 }
 
@@ -500,107 +500,4 @@ func (q *QueryResolver) reportStrainListError(
 	errorutils.AddGQLError(ctx, err)
 	q.Logger.Error(err)
 	return &models.StrainListWithCursor{}, err
-}
-
-func getCursor(c *int) int64 {
-	if c == nil {
-		return int64(0)
-	}
-	return int64(*c)
-}
-
-func getLimit(l *int) int64 {
-	if l == nil {
-		return int64(10)
-	}
-	return int64(*l)
-}
-
-func getFilter(f *string) string {
-	if f == nil {
-		return ""
-	}
-	return *f
-}
-
-func getOntology(onto string) string {
-	var oname string
-	switch onto {
-	case "phenotype":
-		oname = registry.PhenoOntology
-	case "characteristic":
-		oname = registry.StrainCharOnto
-	case "strain_inventory":
-		oname = registry.StrainInvOnto
-	case "plasmid_inventory":
-		oname = registry.PlasmidInvOnto
-	default:
-		oname = "invalid ontology"
-	}
-	return oname
-}
-
-func strainFilterToQuery(filter *models.StrainListFilter) (string, error) {
-	var query strings.Builder
-	query.WriteString(strainFieldsQuery(filter))
-	typeQuery, err := strainTypeQuery(filter)
-	if err != nil {
-		return query.String(), err
-	}
-	if query.Len() > 0 {
-		query.WriteString(fmt.Sprintf(";%s", typeQuery))
-	} else {
-		query.WriteString(typeQuery)
-	}
-
-	return query.String(), nil
-}
-
-func strainFieldsQuery(filter *models.StrainListFilter) string {
-	var query strings.Builder
-	if len(*filter.Label) > 0 {
-		query.WriteString(fmt.Sprintf("label==%s", *filter.Label))
-	}
-	if len(*filter.Summary) > 0 {
-		if query.Len() > 0 {
-			query.WriteString(fmt.Sprintf(";summary==%s", *filter.Summary))
-		} else {
-			query.WriteString(fmt.Sprintf("summary==%s", *filter.Summary))
-		}
-	}
-
-	return query.String()
-}
-
-func strainTypeQuery(filter *models.StrainListFilter) (string, error) {
-	switch filter.StrainType {
-	case models.StrainTypeEnumAll:
-		return fmt.Sprintf(
-			"ontology==%s;tag==%s,tag==%s,tag==%s",
-			registry.DictyStrainPropOntology,
-			registry.GeneralStrainTag,
-			registry.GwdiStrainTag,
-			registry.BacterialStrainTag,
-		), nil
-	case models.StrainTypeEnumBacterial:
-		return fmt.Sprintf(
-			"ontology==%s;tag==%s",
-			registry.DictyStrainPropOntology,
-			registry.BacterialStrainTag,
-		), nil
-	case models.StrainTypeEnumRegular:
-		return fmt.Sprintf(
-			"ontology==%s;tag==%s",
-			registry.DictyStrainPropOntology,
-			registry.GeneralStrainTag,
-		), nil
-	case models.StrainTypeEnumGwdi:
-		return fmt.Sprintf(
-			"ontology==%s;tag==%s",
-			registry.DictyStrainPropOntology,
-			registry.GwdiStrainTag,
-		), nil
-	}
-
-	return "", fmt.Errorf("invalid strain type %s", filter.StrainType.String())
 }
