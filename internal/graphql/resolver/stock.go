@@ -418,6 +418,14 @@ func (q *QueryResolver) toStrainModelList(
 }
 
 func (q *QueryResolver) reportStrainListError(
+	ctx context.Context,
+	err error,
+) (*models.StrainListWithCursor, error) {
+	errorutils.AddGQLError(ctx, err)
+	q.Logger.Error(err)
+	return &models.StrainListWithCursor{}, err
+}
+
 func getCursor(c *int) int64 {
 	if c == nil {
 		return int64(0)
