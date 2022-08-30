@@ -6,13 +6,17 @@ import (
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/order"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/fatih/structs"
 	"github.com/mitchellh/mapstructure"
 )
 
 // CreateOrder creates a new stock order.
-func (m *MutationResolver) CreateOrder(ctx context.Context, input *models.CreateOrderInput) (*pb.Order, error) {
+func (m *MutationResolver) CreateOrder(
+	ctx context.Context,
+	input *models.CreateOrderInput,
+) (*pb.Order, error) {
 	attr := &pb.NewOrderAttributes{}
 	if input.Comments != nil {
 		attr.Comments = *input.Comments
@@ -67,8 +71,13 @@ func convertPtrToStr(items []*string) []string {
 }
 
 // UpdateOrder updates an existing stock order.
-func (m *MutationResolver) UpdateOrder(ctx context.Context, id string, input *models.UpdateOrderInput) (*pb.Order, error) {
-	g, err := m.GetOrderClient(registry.ORDER).GetOrder(ctx, &pb.OrderId{Id: id})
+func (m *MutationResolver) UpdateOrder(
+	ctx context.Context,
+	id string,
+	input *models.UpdateOrderInput,
+) (*pb.Order, error) {
+	g, err := m.GetOrderClient(registry.ORDER).
+		GetOrder(ctx, &pb.OrderId{Id: id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
@@ -102,7 +111,9 @@ func (m *MutationResolver) UpdateOrder(ctx context.Context, id string, input *mo
 	return o, nil
 }
 
-func normalizeUpdateOrderAttr(attr *models.UpdateOrderInput) map[string]interface{} {
+func normalizeUpdateOrderAttr(
+	attr *models.UpdateOrderInput,
+) map[string]interface{} {
 	fields := structs.Fields(attr)
 	newAttr := make(map[string]interface{})
 	for _, k := range fields {
@@ -116,8 +127,12 @@ func normalizeUpdateOrderAttr(attr *models.UpdateOrderInput) map[string]interfac
 }
 
 // Order retrieves an individual order by ID.
-func (q *QueryResolver) Order(ctx context.Context, id string) (*pb.Order, error) {
-	g, err := q.GetOrderClient(registry.ORDER).GetOrder(ctx, &pb.OrderId{Id: id})
+func (q *QueryResolver) Order(
+	ctx context.Context,
+	id string,
+) (*pb.Order, error) {
+	g, err := q.GetOrderClient(registry.ORDER).
+		GetOrder(ctx, &pb.OrderId{Id: id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		q.Logger.Error(err)
@@ -128,11 +143,17 @@ func (q *QueryResolver) Order(ctx context.Context, id string) (*pb.Order, error)
 }
 
 // ListOrders retrieves all orders in the database.
-func (q *QueryResolver) ListOrders(ctx context.Context, cursor *int, limit *int, filter *string) (*models.OrderListWithCursor, error) {
-	c := getCursor(cursor)
-	l := getLimit(limit)
-	f := getFilter(filter)
-	list, err := q.GetOrderClient(registry.ORDER).ListOrders(ctx, &pb.ListParameters{Cursor: c, Limit: l, Filter: f})
+func (q *QueryResolver) ListOrders(
+	ctx context.Context,
+	cursor *int,
+	limit *int,
+	filter *string,
+) (*models.OrderListWithCursor, error) {
+	c := resolverutils.GetCursor(cursor)
+	l := resolverutils.GetLimit(limit)
+	f := resolverutils.GetFilter(filter)
+	list, err := q.GetOrderClient(registry.ORDER).
+		ListOrders(ctx, &pb.ListParameters{Cursor: c, Limit: l, Filter: f})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		q.Logger.Error(err)
