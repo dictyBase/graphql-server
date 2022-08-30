@@ -26,7 +26,9 @@ func MockTagAnno(value, tag string) *annotation.TaggedAnnotation {
 	}
 }
 
-func MockTagList(onto, tag, value string) *annotation.TaggedAnnotationCollection_Data {
+func MockTagList(
+	onto, tag, value string,
+) *annotation.TaggedAnnotationCollection_Data {
 	return &annotation.TaggedAnnotationCollection_Data{
 		Type: "annotation",
 		Id:   "888888",
@@ -42,7 +44,9 @@ func MockTagList(onto, tag, value string) *annotation.TaggedAnnotationCollection
 	}
 }
 
-func MockTagGroupAnno(onto, tag, value string) *annotation.TaggedAnnotationGroup_Data {
+func MockTagGroupAnno(
+	onto, tag, value string,
+) *annotation.TaggedAnnotationGroup_Data {
 	return &annotation.TaggedAnnotationGroup_Data{
 		Type: "annotation",
 		Id:   "99999999",
@@ -60,8 +64,18 @@ func MockTagGroupAnno(onto, tag, value string) *annotation.TaggedAnnotationGroup
 
 func MockNamesAnno() *annotation.TaggedAnnotationCollection {
 	gcdata := []*annotation.TaggedAnnotationCollection_Data{}
-	gcdata = append(gcdata, MockTagList(registry.DictyAnnoOntology, registry.SynTag, "catenin null"))
-	gcdata = append(gcdata, MockTagList(registry.DictyAnnoOntology, registry.SynTag, "aar1-"))
+	gcdata = append(
+		gcdata,
+		MockTagList(
+			registry.DictyAnnoOntology,
+			registry.SynTag,
+			"catenin null",
+		),
+	)
+	gcdata = append(
+		gcdata,
+		MockTagList(registry.DictyAnnoOntology, registry.SynTag, "aar1-"),
+	)
 	return &annotation.TaggedAnnotationCollection{
 		Data: gcdata,
 	}
@@ -69,8 +83,18 @@ func MockNamesAnno() *annotation.TaggedAnnotationCollection {
 
 func MockCharacteristicsAnno() *annotation.TaggedAnnotationCollection {
 	gcdata := []*annotation.TaggedAnnotationCollection_Data{}
-	gcdata = append(gcdata, MockTagList(registry.StrainCharOnto, "null mutant", registry.EmptyValue))
-	gcdata = append(gcdata, MockTagList(registry.StrainCharOnto, "axenic", registry.EmptyValue))
+	gcdata = append(
+		gcdata,
+		MockTagList(
+			registry.StrainCharOnto,
+			"null mutant",
+			registry.EmptyValue,
+		),
+	)
+	gcdata = append(
+		gcdata,
+		MockTagList(registry.StrainCharOnto, "axenic", registry.EmptyValue),
+	)
 	return &annotation.TaggedAnnotationCollection{
 		Data: gcdata,
 	}
@@ -80,10 +104,38 @@ func MockPhenotypeAnno() *annotation.TaggedAnnotationGroupCollection {
 	gcdata := []*annotation.TaggedAnnotationGroupCollection_Data{}
 	gdata := []*annotation.TaggedAnnotationGroup_Data{}
 	// gdata = append(gdata, MockTagGroupAnno(registry.DictyAnnoOntology, registry.LiteratureTag, "23967067"))
-	gdata = append(gdata, MockTagGroupAnno(registry.PhenoOntology, "delayed culmination", registry.EmptyValue))
-	gdata = append(gdata, MockTagGroupAnno(registry.AssayOntology, "confocal microscopy", registry.EmptyValue))
-	gdata = append(gdata, MockTagGroupAnno(registry.EnvOntology, "in the presence of 8-Br-cAMP", registry.EmptyValue))
-	gdata = append(gdata, MockTagGroupAnno(registry.DictyAnnoOntology, registry.NoteTag, "this is a test note"))
+	gdata = append(
+		gdata,
+		MockTagGroupAnno(
+			registry.PhenoOntology,
+			"delayed culmination",
+			registry.EmptyValue,
+		),
+	)
+	gdata = append(
+		gdata,
+		MockTagGroupAnno(
+			registry.AssayOntology,
+			"confocal microscopy",
+			registry.EmptyValue,
+		),
+	)
+	gdata = append(
+		gdata,
+		MockTagGroupAnno(
+			registry.EnvOntology,
+			"in the presence of 8-Br-cAMP",
+			registry.EmptyValue,
+		),
+	)
+	gdata = append(
+		gdata,
+		MockTagGroupAnno(
+			registry.DictyAnnoOntology,
+			registry.NoteTag,
+			"this is a test note",
+		),
+	)
 	gcdata = append(gcdata, &annotation.TaggedAnnotationGroupCollection_Data{
 		Type: "annotation_group",
 		Group: &annotation.TaggedAnnotationGroup{
@@ -99,7 +151,9 @@ func MockPhenotypeAnno() *annotation.TaggedAnnotationGroupCollection {
 }
 
 // MockPhenoCollectionAnno is used to test the ListStrainsWithPhenotype method.
-func MockPhenoCollectionAnno(tag, id string) *annotation.TaggedAnnotationCollection_Data {
+func MockPhenoCollectionAnno(
+	tag, id string,
+) *annotation.TaggedAnnotationCollection_Data {
 	return &annotation.TaggedAnnotationCollection_Data{
 		Type: "annotation",
 		Id:   "99999999",
@@ -117,10 +171,22 @@ func MockPhenoCollectionAnno(tag, id string) *annotation.TaggedAnnotationCollect
 
 func MockPhenotypeListAnno() *annotation.TaggedAnnotationCollection {
 	cdata := []*annotation.TaggedAnnotationCollection_Data{}
-	cdata = append(cdata, MockPhenoCollectionAnno("delayed culmination", "DBS123456"))
-	cdata = append(cdata, MockPhenoCollectionAnno("delayed culmination", "DBS987654"))
-	cdata = append(cdata, MockPhenoCollectionAnno("delayed culmination", "DBS000001"))
-	cdata = append(cdata, MockPhenoCollectionAnno("delayed culmination", "DBS000001"))
+	cdata = append(
+		cdata,
+		MockPhenoCollectionAnno("delayed culmination", "DBS123456"),
+	)
+	cdata = append(
+		cdata,
+		MockPhenoCollectionAnno("delayed culmination", "DBS987654"),
+	)
+	cdata = append(
+		cdata,
+		MockPhenoCollectionAnno("delayed culmination", "DBS000001"),
+	)
+	cdata = append(
+		cdata,
+		MockPhenoCollectionAnno("delayed culmination", "DBS000001"),
+	)
 	return &annotation.TaggedAnnotationCollection{
 		Data: cdata,
 		Meta: &annotation.Meta{
@@ -132,7 +198,11 @@ func MockPhenotypeListAnno() *annotation.TaggedAnnotationCollection {
 var MockSysNameAnno = MockTagAnno("DBS0236922", registry.SysnameTag)
 var MockGenModAnno = MockTagAnno("exogenous mutation", registry.MuttypeTag)
 var MockMutMethodAnno = MockTagAnno("Random Insertion", registry.MutmethodTag)
-var MockGenotypeAnno = MockTagAnno("axeA1,axeB1,axeC1,sadA-[sadA-KO],[pSadA-GFP],bsR,neoR", registry.GenoTag)
+
+var MockGenotypeAnno = MockTagAnno(
+	"axeA1,axeB1,axeC1,sadA-[sadA-KO],[pSadA-GFP],bsR,neoR",
+	registry.GenoTag,
+)
 var MockInStockAnno = MockTagAnno("DBS0236922", registry.SysnameTag)
 
 func MockedAnnotationClient() *clients.TaggedAnnotationServiceClient {
