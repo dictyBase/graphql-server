@@ -64,10 +64,10 @@ func strainTypeQuery(filter *models.StrainListFilter) (string, error) {
 
 func strainFieldsQuery(filter *models.StrainListFilter) string {
 	var query strings.Builder
-	if len(*filter.Label) > 0 {
+	if filter.Label != nil {
 		query.WriteString(fmt.Sprintf("label==%s", *filter.Label))
 	}
-	if len(*filter.Summary) > 0 {
+	if filter.Summary !=nil {
 		if query.Len() > 0 {
 			query.WriteString(fmt.Sprintf(";summary==%s", *filter.Summary))
 		} else {
