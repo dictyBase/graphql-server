@@ -18,7 +18,7 @@ require (
 	github.com/vektah/gqlparser v1.3.1
 	github.com/vektah/gqlparser/v2 v2.5.0
 	google.golang.org/grpc v1.49.0
-	google.golang.org/protobuf v1.28.0
+	google.golang.org/protobuf v1.28.1
 )
 
 require (
