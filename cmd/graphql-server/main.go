@@ -6,7 +6,6 @@ import (
 
 	"github.com/dictyBase/graphql-server/internal/app/server"
 	"github.com/urfave/cli"
-	_ "github.com/vektah/dataloaden"
 )
 
 func main() {
