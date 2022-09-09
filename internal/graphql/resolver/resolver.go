@@ -1,4 +1,4 @@
-//go:generate go run ../../../scripts/gqlgen.go
+//go:generate go run github.com/99designs/gqlgen generate
 package resolver
 
 import (
