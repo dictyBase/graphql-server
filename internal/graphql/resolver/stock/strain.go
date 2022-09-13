@@ -58,7 +58,7 @@ func (r *StrainResolver) Depositor(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*user.User, error) {
-	d, err := getUserByEmail(ctx, r.UserClient, *obj.Depositor)
+	d, err := getUserByEmail(ctx, r.UserClient, obj.Depositor)
 	if err != nil {
 		r.Logger.Error(err)
 		return newUser(), nil
@@ -389,19 +389,21 @@ func ConvertToStrainModel(id string, attr *pb.StrainAttributes) *models.Strain {
 		ID:              id,
 		CreatedAt:       aphgrpc.ProtoTimeStamp(attr.CreatedAt),
 		UpdatedAt:       aphgrpc.ProtoTimeStamp(attr.UpdatedAt),
-		CreatedBy:       attr.CreatedBy,
-		UpdatedBy:       attr.UpdatedBy,
 		Label:           attr.Label,
 		Species:         attr.Species,
 		Summary:         &attr.Summary,
 		EditableSummary: &attr.EditableSummary,
-		Depositor:       &attr.Depositor,
 		Plasmid:         &attr.Plasmid,
 		Parent:          &attr.Parent,
-		Genes:           sliceConverter(attr.Genes),
 		Dbxrefs:         sliceConverter(attr.Dbxrefs),
-		Publications:    sliceConverter(attr.Publications),
 		Names:           sliceConverter(attr.Names),
+		LazyStrain: models.LazyStrain{
+			CreatedBy: attr.CreatedBy,
+			UpdatedBy: attr.UpdatedBy,
+			Depositor: attr.Depositor,
+			Genes: sliceConverter[string](attr.Genes),
+			Publications: sliceConverter[string](attr.Publications),
+		},
 	}
 }
 

@@ -8,12 +8,12 @@ import (
 )
 
 // LazyStrain contains fields that are not directly mapped from model to graphql
-// type.
+// type. The gets resolved to their expected type on demand only
 type LazyStrain struct {
-	RawCreatedBy              string
-	RawUpdatedBy              string
-	RawDepositor              string
-	RawGenes, RawPublications, RawPhenotypes []string
+	CreatedBy              string
+	UpdatedBy              string
+	Depositor              string
+	Genes, Publications []*string
 }
 
 type Strain struct {
@@ -21,18 +21,9 @@ type Strain struct {
 	ID                  string                     `json:"id"`
 	CreatedAt           time.Time                  `json:"created_at"`
 	UpdatedAt           time.Time                  `json:"updated_at"`
-	// CreatedBy gets resolved on demand
-	CreatedBy           *user.User                 `json:"created_by"`
-	// UpdatedBy gets resolved on demand
-	UpdatedBy           *user.User                 `json:"updated_by"`
 	Summary             *string                    `json:"summary"`
 	EditableSummary     *string                    `json:"editable_summary"`
-	Depositor           *user.User                 `json:"depositor"`
-	// Genes gets resolved on demand
-	Genes               []*Gene                    `json:"genes"`
 	Dbxrefs             []*string                  `json:"dbxrefs"`
-	// Publications gets resolved on demand
-	Publications        []*publication.Publication `json:"publications"`
 	SystematicName      string                     `json:"systematic_name"`
 	Label               string                     `json:"label"`
 	Species             string                     `json:"species"`
@@ -40,8 +31,6 @@ type Strain struct {
 	Parent              *string                    `json:"parent"`
 	Names               []*string                  `json:"names"`
 	InStock             bool                       `json:"in_stock"`
-	// Phenotypes gets resolved on demand
-	Phenotypes          []*Phenotype               `json:"phenotypes"`
 	GeneticModification *string                    `json:"genetic_modification"`
 	MutagenesisMethod   *string                    `json:"mutagenesis_method"`
 	Characteristics     []*string                  `json:"characteristics"`
