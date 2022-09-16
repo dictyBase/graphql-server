@@ -2,6 +2,9 @@ schema:
   - "api/src/schema/*.graphql"
 exec:
   filename: internal/graphql/generated/generated.go
+  # filename: internal/graphql/generated/generated.go
+  layout: follow-schema
+  dir: internal/graphql/generated
   package: generated
 model:
   filename: internal/graphql/models/models_gen.go
