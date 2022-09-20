@@ -8,7 +8,9 @@ model:
   filename: internal/graphql/models/models_gen.go
   package: models
 resolver:
-  filename: internal/graphql/genresolver/genresolver.go
+  # filename: internal/graphql/genresolver/genresolver.go
+  layout: follow-schema
+  dir: internal/graphql/genresolver
   package: genresolver
   type: Resolver
   filename_template: "{name}.resolvers.go"
