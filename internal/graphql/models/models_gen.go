@@ -13,8 +13,19 @@ import (
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
 )
 
+type BasePublication interface {
+	IsBasePublication()
+}
+
 type Stock interface {
 	IsStock()
+}
+
+type AssociatedSequences struct {
+	GenbankGenomicFragment *NameWithLink   `json:"genbank_genomic_fragment"`
+	GenbankMrna            *NameWithLink   `json:"genbank_mrna"`
+	Ests                   []*NameWithLink `json:"ests"`
+	MoreLink               string          `json:"more_link"`
 }
 
 type Citation struct {
@@ -41,7 +52,7 @@ type CreateOrderInput struct {
 	Consumer         string     `json:"consumer"`
 	Payer            string     `json:"payer"`
 	Purchaser        string     `json:"purchaser"`
-	Items            []*string  `json:"items"`
+	Items            []string   `json:"items"`
 }
 
 type CreatePermissionInput struct {
@@ -51,20 +62,20 @@ type CreatePermissionInput struct {
 }
 
 type CreatePlasmidInput struct {
-	CreatedBy        string    `json:"created_by"`
-	UpdatedBy        string    `json:"updated_by"`
-	Summary          *string   `json:"summary"`
-	EditableSummary  *string   `json:"editable_summary"`
-	Depositor        *string   `json:"depositor"`
-	Genes            []*string `json:"genes"`
-	Dbxrefs          []*string `json:"dbxrefs"`
-	Publications     []*string `json:"publications"`
-	Name             string    `json:"name"`
-	ImageMap         *string   `json:"image_map"`
-	Sequence         *string   `json:"sequence"`
-	InStock          bool      `json:"in_stock"`
-	Keywords         []*string `json:"keywords"`
-	GenbankAccession *string   `json:"genbank_accession"`
+	CreatedBy        string   `json:"created_by"`
+	UpdatedBy        string   `json:"updated_by"`
+	Summary          *string  `json:"summary"`
+	EditableSummary  *string  `json:"editable_summary"`
+	Depositor        *string  `json:"depositor"`
+	Genes            []string `json:"genes"`
+	Dbxrefs          []string `json:"dbxrefs"`
+	Publications     []string `json:"publications"`
+	Name             string   `json:"name"`
+	ImageMap         *string  `json:"image_map"`
+	Sequence         *string  `json:"sequence"`
+	InStock          bool     `json:"in_stock"`
+	Keywords         []string `json:"keywords"`
+	GenbankAccession *string  `json:"genbank_accession"`
 }
 
 type CreateRoleInput struct {
@@ -73,26 +84,26 @@ type CreateRoleInput struct {
 }
 
 type CreateStrainInput struct {
-	CreatedBy           string    `json:"created_by"`
-	UpdatedBy           string    `json:"updated_by"`
-	Summary             *string   `json:"summary"`
-	EditableSummary     *string   `json:"editable_summary"`
-	Depositor           *string   `json:"depositor"`
-	Genes               []*string `json:"genes"`
-	Dbxrefs             []*string `json:"dbxrefs"`
-	Publications        []*string `json:"publications"`
-	SystematicName      string    `json:"systematic_name"`
-	Label               string    `json:"label"`
-	Species             string    `json:"species"`
-	Plasmid             *string   `json:"plasmid"`
-	Parent              *string   `json:"parent"`
-	Names               []*string `json:"names"`
-	InStock             bool      `json:"in_stock"`
-	Phenotypes          []*string `json:"phenotypes"`
-	GeneticModification *string   `json:"genetic_modification"`
-	MutagenesisMethod   *string   `json:"mutagenesis_method"`
-	Characteristics     []*string `json:"characteristics"`
-	Genotypes           []*string `json:"genotypes"`
+	CreatedBy           string   `json:"created_by"`
+	UpdatedBy           string   `json:"updated_by"`
+	Summary             *string  `json:"summary"`
+	EditableSummary     *string  `json:"editable_summary"`
+	Depositor           *string  `json:"depositor"`
+	Genes               []string `json:"genes"`
+	Dbxrefs             []string `json:"dbxrefs"`
+	Publications        []string `json:"publications"`
+	SystematicName      string   `json:"systematic_name"`
+	Label               string   `json:"label"`
+	Species             string   `json:"species"`
+	Plasmid             *string  `json:"plasmid"`
+	Parent              *string  `json:"parent"`
+	Names               []string `json:"names"`
+	InStock             bool     `json:"in_stock"`
+	Phenotypes          []string `json:"phenotypes"`
+	GeneticModification *string  `json:"genetic_modification"`
+	MutagenesisMethod   *string  `json:"mutagenesis_method"`
+	Characteristics     []string `json:"characteristics"`
+	Genotypes           []string `json:"genotypes"`
 }
 
 type CreateUserInput struct {
@@ -162,9 +173,30 @@ type GOAnnotation struct {
 }
 
 type Gene struct {
-	ID   string          `json:"id"`
-	Name string          `json:"name"`
-	Goas []*GOAnnotation `json:"goas"`
+	ID                  string                `json:"id"`
+	Name                string                `json:"name"`
+	Goas                []*GOAnnotation       `json:"goas"`
+	Strains             []*Strain             `json:"strains"`
+	Orthologs           []*Orthologs          `json:"orthologs"`
+	ProductInfo         []*ProductInformation `json:"product_info"`
+	GeneralInfo         *GeneralInfo          `json:"general_info"`
+	AssociatedSequences *AssociatedSequences  `json:"associated_sequences"`
+	Links               *Links                `json:"links"`
+	ProteinInformation  *ProteinInformation   `json:"protein_information"`
+}
+
+type GeneralInfo struct {
+	NameDescription []string `json:"name_description"`
+	AltGeneName     []string `json:"alt_gene_name"`
+	GeneProduct     string   `json:"gene_product"`
+	AltProteinNames []string `json:"alt_protein_names"`
+	Description     string   `json:"description"`
+}
+
+type GenomicCoordinates struct {
+	Exon        string `json:"exon"`
+	LocalCoords string `json:"local_coords"`
+	ChromCoords string `json:"chrom_coords"`
 }
 
 type Identity struct {
@@ -174,6 +206,12 @@ type Identity struct {
 	UserID     string    `json:"user_id"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+type Links struct {
+	Expression   []*NameWithLink `json:"expression"`
+	Colleagues   *NameWithLink   `json:"colleagues"`
+	ExtResources []*NameWithLink `json:"ext_resources"`
 }
 
 type LoginInput struct {
@@ -187,6 +225,16 @@ type LoginInput struct {
 
 type Logout struct {
 	Success bool `json:"success"`
+}
+
+type NameWithLink struct {
+	Name string `json:"name"`
+	Link string `json:"link"`
+}
+
+type NumberOfPublicationsWithGene struct {
+	NumPubs      int                    `json:"num_pubs"`
+	Publications []*PublicationWithGene `json:"publications"`
 }
 
 type OrderListWithCursor struct {
@@ -204,12 +252,20 @@ type Organism struct {
 	Downloads      []*Download `json:"downloads"`
 }
 
+type Orthologs struct {
+	ID          *NameWithLink `json:"id"`
+	Species     string        `json:"species"`
+	Uniprotkb   *NameWithLink `json:"uniprotkb"`
+	GeneProduct string        `json:"gene_product"`
+	Source      []string      `json:"source"`
+}
+
 type Phenotype struct {
-	Phenotype   string                   `json:"phenotype"`
-	Note        *string                  `json:"note"`
-	Assay       *string                  `json:"assay"`
-	Environment *string                  `json:"environment"`
-	Publication *publication.Publication `json:"publication"`
+	Phenotype   string       `json:"phenotype"`
+	Note        *string      `json:"note"`
+	Assay       *string      `json:"assay"`
+	Environment *string      `json:"environment"`
+	Publication *Publication `json:"publication"`
 }
 
 type PlasmidListWithCursor struct {
@@ -220,12 +276,77 @@ type PlasmidListWithCursor struct {
 	TotalCount     int        `json:"totalCount"`
 }
 
+type ProductInformation struct {
+	ProteinCodingGene      *NameWithLink         `json:"protein_coding_gene"`
+	ProteinLength          string                `json:"protein_length"`
+	ProteinMolecularWeight string                `json:"protein_molecular_weight"`
+	MoreProteinData        string                `json:"more_protein_data"`
+	GenomicCoords          []*GenomicCoordinates `json:"genomic_coords"`
+}
+
+type ProteinGeneralInfo struct {
+	GeneProduct         string        `json:"gene_product"`
+	DictybaseID         string        `json:"dictybase_id"`
+	Description         string        `json:"description"`
+	ProteinLength       string        `json:"protein_length"`
+	MolecularWeight     string        `json:"molecular_weight"`
+	AaComposition       *NameWithLink `json:"aa_composition"`
+	SubcellularLocation string        `json:"subcellular_location"`
+	ProteinExistence    string        `json:"protein_existence"`
+	Note                string        `json:"note"`
+}
+
+type ProteinInformation struct {
+	GeneralInfo     *ProteinGeneralInfo `json:"general_info"`
+	ExternalLinks   []*NameWithLink     `json:"external_links"`
+	ProteinSequence string              `json:"protein_sequence"`
+}
+
+type Publication struct {
+	ID       string                `json:"id"`
+	Doi      *string               `json:"doi"`
+	Title    string                `json:"title"`
+	Abstract string                `json:"abstract"`
+	Journal  string                `json:"journal"`
+	PubDate  *time.Time            `json:"pub_date"`
+	Volume   *string               `json:"volume"`
+	Pages    *string               `json:"pages"`
+	Issn     *string               `json:"issn"`
+	PubType  string                `json:"pub_type"`
+	Source   string                `json:"source"`
+	Issue    *string               `json:"issue"`
+	Status   *string               `json:"status"`
+	Authors  []*publication.Author `json:"authors"`
+}
+
+func (Publication) IsBasePublication() {}
+
+type PublicationWithGene struct {
+	RelatedGenes []*Gene               `json:"related_genes"`
+	ID           string                `json:"id"`
+	Doi          *string               `json:"doi"`
+	Title        string                `json:"title"`
+	Abstract     string                `json:"abstract"`
+	Journal      string                `json:"journal"`
+	PubDate      *time.Time            `json:"pub_date"`
+	Volume       *string               `json:"volume"`
+	Pages        *string               `json:"pages"`
+	Issn         *string               `json:"issn"`
+	PubType      string                `json:"pub_type"`
+	Source       string                `json:"source"`
+	Issue        *string               `json:"issue"`
+	Status       *string               `json:"status"`
+	Authors      []*publication.Author `json:"authors"`
+}
+
+func (PublicationWithGene) IsBasePublication() {}
+
 type StrainListFilter struct {
-	Label      *string        `json:"label"`
-	Summary    *string        `json:"summary"`
-	ID         *string        `json:"id"`
-	InStock    *bool          `json:"in_stock"`
-	StrainType StrainTypeEnum `json:"strain_type"`
+	Label      *string    `json:"label"`
+	Summary    *string    `json:"summary"`
+	ID         *string    `json:"id"`
+	InStock    *bool      `json:"in_stock"`
+	StrainType StrainType `json:"strain_type"`
 }
 
 type StrainListWithCursor struct {
@@ -249,7 +370,7 @@ type UpdateOrderInput struct {
 	Payment          *string     `json:"payment"`
 	PurchaseOrderNum *string     `json:"purchase_order_num"`
 	Status           *StatusEnum `json:"status"`
-	Items            []*string   `json:"items"`
+	Items            []string    `json:"items"`
 }
 
 type UpdatePermissionInput struct {
@@ -259,19 +380,19 @@ type UpdatePermissionInput struct {
 }
 
 type UpdatePlasmidInput struct {
-	UpdatedBy        string    `json:"updated_by"`
-	Summary          *string   `json:"summary"`
-	EditableSummary  *string   `json:"editable_summary"`
-	Depositor        *string   `json:"depositor"`
-	Genes            []*string `json:"genes"`
-	Dbxrefs          []*string `json:"dbxrefs"`
-	Publications     []*string `json:"publications"`
-	Name             *string   `json:"name"`
-	ImageMap         *string   `json:"image_map"`
-	Sequence         *string   `json:"sequence"`
-	InStock          *bool     `json:"in_stock"`
-	Keywords         []*string `json:"keywords"`
-	GenbankAccession *string   `json:"genbank_accession"`
+	UpdatedBy        string   `json:"updated_by"`
+	Summary          *string  `json:"summary"`
+	EditableSummary  *string  `json:"editable_summary"`
+	Depositor        *string  `json:"depositor"`
+	Genes            []string `json:"genes"`
+	Dbxrefs          []string `json:"dbxrefs"`
+	Publications     []string `json:"publications"`
+	Name             *string  `json:"name"`
+	ImageMap         *string  `json:"image_map"`
+	Sequence         *string  `json:"sequence"`
+	InStock          *bool    `json:"in_stock"`
+	Keywords         []string `json:"keywords"`
+	GenbankAccession *string  `json:"genbank_accession"`
 }
 
 type UpdateRoleInput struct {
@@ -280,25 +401,25 @@ type UpdateRoleInput struct {
 }
 
 type UpdateStrainInput struct {
-	UpdatedBy           string    `json:"updated_by"`
-	Summary             *string   `json:"summary"`
-	EditableSummary     *string   `json:"editable_summary"`
-	Depositor           *string   `json:"depositor"`
-	Genes               []*string `json:"genes"`
-	Dbxrefs             []*string `json:"dbxrefs"`
-	Publications        []*string `json:"publications"`
-	SystematicName      *string   `json:"systematic_name"`
-	Label               *string   `json:"label"`
-	Species             *string   `json:"species"`
-	Plasmid             *string   `json:"plasmid"`
-	Parent              *string   `json:"parent"`
-	Names               []*string `json:"names"`
-	InStock             *bool     `json:"in_stock"`
-	Phenotypes          []*string `json:"phenotypes"`
-	GeneticModification *string   `json:"genetic_modification"`
-	MutagenesisMethod   *string   `json:"mutagenesis_method"`
-	Characteristics     []*string `json:"characteristics"`
-	Genotypes           []*string `json:"genotypes"`
+	UpdatedBy           string   `json:"updated_by"`
+	Summary             *string  `json:"summary"`
+	EditableSummary     *string  `json:"editable_summary"`
+	Depositor           *string  `json:"depositor"`
+	Genes               []string `json:"genes"`
+	Dbxrefs             []string `json:"dbxrefs"`
+	Publications        []string `json:"publications"`
+	SystematicName      *string  `json:"systematic_name"`
+	Label               *string  `json:"label"`
+	Species             *string  `json:"species"`
+	Plasmid             *string  `json:"plasmid"`
+	Parent              *string  `json:"parent"`
+	Names               []string `json:"names"`
+	InStock             *bool    `json:"in_stock"`
+	Phenotypes          []string `json:"phenotypes"`
+	GeneticModification *string  `json:"genetic_modification"`
+	MutagenesisMethod   *string  `json:"mutagenesis_method"`
+	Characteristics     []string `json:"characteristics"`
+	Genotypes           []string `json:"genotypes"`
 }
 
 type UpdateUserInput struct {
@@ -374,47 +495,47 @@ func (e StatusEnum) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type StrainTypeEnum string
+type StrainType string
 
 const (
-	StrainTypeEnumAll       StrainTypeEnum = "ALL"
-	StrainTypeEnumRegular   StrainTypeEnum = "REGULAR"
-	StrainTypeEnumGwdi      StrainTypeEnum = "GWDI"
-	StrainTypeEnumBacterial StrainTypeEnum = "BACTERIAL"
+	StrainTypeAll       StrainType = "ALL"
+	StrainTypeRegular   StrainType = "REGULAR"
+	StrainTypeGwdi      StrainType = "GWDI"
+	StrainTypeBacterial StrainType = "BACTERIAL"
 )
 
-var AllStrainTypeEnum = []StrainTypeEnum{
-	StrainTypeEnumAll,
-	StrainTypeEnumRegular,
-	StrainTypeEnumGwdi,
-	StrainTypeEnumBacterial,
+var AllStrainType = []StrainType{
+	StrainTypeAll,
+	StrainTypeRegular,
+	StrainTypeGwdi,
+	StrainTypeBacterial,
 }
 
-func (e StrainTypeEnum) IsValid() bool {
+func (e StrainType) IsValid() bool {
 	switch e {
-	case StrainTypeEnumAll, StrainTypeEnumRegular, StrainTypeEnumGwdi, StrainTypeEnumBacterial:
+	case StrainTypeAll, StrainTypeRegular, StrainTypeGwdi, StrainTypeBacterial:
 		return true
 	}
 	return false
 }
 
-func (e StrainTypeEnum) String() string {
+func (e StrainType) String() string {
 	return string(e)
 }
 
-func (e *StrainTypeEnum) UnmarshalGQL(v interface{}) error {
+func (e *StrainType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = StrainTypeEnum(str)
+	*e = StrainType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid StrainTypeEnum", str)
+		return fmt.Errorf("%s is not a valid StrainType", str)
 	}
 	return nil
 }
 
-func (e StrainTypeEnum) MarshalGQL(w io.Writer) {
+func (e StrainType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
