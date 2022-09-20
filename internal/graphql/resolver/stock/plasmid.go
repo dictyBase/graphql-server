@@ -68,10 +68,7 @@ func (r *PlasmidResolver) Genes(
 	g := []*models.Gene{}
 	redis := r.Registry.GetRedisRepository(cache.RedisKey)
 	for _, v := range obj.Genes {
-		if *v == "" {
-			continue
-		}
-		gene, err := cache.GetGeneFromCache(ctx, redis, *v)
+		gene, err := cache.GetGeneFromCache(ctx, redis, v)
 		if err != nil {
 			r.Logger.Error(err)
 			continue
@@ -129,9 +126,8 @@ func (r *PlasmidResolver) InStock(
 func (r *PlasmidResolver) Keywords(
 	ctx context.Context,
 	obj *models.Plasmid,
-) ([]*string, error) {
-	s := ""
-	return []*string{&s}, nil
+) ([]string, error) {
+	return []string{""}, nil
 }
 
 func (r *PlasmidResolver) GenbankAccession(
@@ -160,8 +156,8 @@ func ConvertToPlasmidModel(
 			CreatedBy:    attr.CreatedBy,
 			UpdatedBy:    attr.UpdatedBy,
 			Depositor:    attr.Depositor,
-			Genes:        sliceConverter(attr.Genes),
-			Publications: sliceConverter(attr.Publications),
+			Genes:        attr.Genes,
+			Publications: attr.Publications,
 		},
 	}
 }
