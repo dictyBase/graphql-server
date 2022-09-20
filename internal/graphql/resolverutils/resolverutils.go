@@ -34,7 +34,7 @@ func GetFilter(f *string) string {
 
 func strainTypeQuery(filter *models.StrainListFilter) (string, error) {
 	switch filter.StrainType {
-	case models.StrainTypeEnumAll:
+	case models.StrainTypeAll:
 		return fmt.Sprintf(
 			"ontology==%s;tag==%s,tag==%s,tag==%s",
 			registry.DictyStrainPropOntology,
@@ -42,19 +42,19 @@ func strainTypeQuery(filter *models.StrainListFilter) (string, error) {
 			registry.GwdiStrainTag,
 			registry.BacterialStrainTag,
 		), nil
-	case models.StrainTypeEnumBacterial:
+	case models.StrainTypeBacterial:
 		return fmt.Sprintf(
 			"ontology==%s;tag==%s",
 			registry.DictyStrainPropOntology,
 			registry.BacterialStrainTag,
 		), nil
-	case models.StrainTypeEnumRegular:
+	case models.StrainTypeRegular:
 		return fmt.Sprintf(
 			"ontology==%s;tag==%s",
 			registry.DictyStrainPropOntology,
 			registry.GeneralStrainTag,
 		), nil
-	case models.StrainTypeEnumGwdi:
+	case models.StrainTypeGwdi:
 		return fmt.Sprintf(
 			"ontology==%s;tag==%s",
 			registry.DictyStrainPropOntology,
