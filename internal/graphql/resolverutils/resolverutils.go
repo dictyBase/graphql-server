@@ -3,9 +3,12 @@ package resolverutils
 import (
 	"fmt"
 	"strings"
+	"time"
 
+	"github.com/dictyBase/aphgrpc"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func GetCursor(c *int) int64 {
@@ -67,7 +70,7 @@ func strainFieldsQuery(filter *models.StrainListFilter) string {
 	if filter.Label != nil {
 		query.WriteString(fmt.Sprintf("label==%s", *filter.Label))
 	}
-	if filter.Summary !=nil {
+	if filter.Summary != nil {
 		if query.Len() > 0 {
 			query.WriteString(fmt.Sprintf(";summary==%s", *filter.Summary))
 		} else {
@@ -109,4 +112,9 @@ func GetOntology(onto string) string {
 		oname = "invalid ontology"
 	}
 	return oname
+}
+
+func TimeWithPointer(pbt *timestamppb.Timestamp) *time.Time {
+	tstmp := aphgrpc.ProtoTimeStamp(pbt)
+	return &tstmp
 }
