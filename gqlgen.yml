@@ -25,11 +25,8 @@ models:
     model: github.com/dictyBase/go-genproto/dictybaseapis/user.Permission
   Content:
     model: github.com/dictyBase/go-genproto/dictybaseapis/content.Content
-  Publication:
-    model: github.com/dictyBase/graphql-server/internal/graphql/models.Publication
-    fields:
-      authors:
-        resolver: true
+  # Publication:
+  #   model: github.com/dictyBase/go-genproto/dictybaseapis/publication.Publication
   Author:
     model: github.com/dictyBase/go-genproto/dictybaseapis/publication.Author
   Strain:
