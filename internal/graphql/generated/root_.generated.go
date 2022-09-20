@@ -39,6 +39,7 @@ type ResolverRoot interface {
 	Organism() OrganismResolver
 	Permission() PermissionResolver
 	Plasmid() PlasmidResolver
+	Publication() PublicationResolver
 	Query() QueryResolver
 	Role() RoleResolver
 	Strain() StrainResolver

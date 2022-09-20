@@ -2020,9 +2020,9 @@ func (ec *executionContext) _Strain_dbxrefs(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstringᚄ(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Strain_dbxrefs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {

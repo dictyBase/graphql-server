@@ -22,6 +22,9 @@ import (
 type AuthorResolver interface {
 	Rank(ctx context.Context, obj *publication.Author) (*string, error)
 }
+type PublicationResolver interface {
+	Authors(ctx context.Context, obj *models.Publication) ([]*publication.Author, error)
+}
 
 // endregion ************************** generated!.gotpl **************************
 
@@ -887,7 +890,7 @@ func (ec *executionContext) _Publication_authors(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Authors, nil
+		return ec.resolvers.Publication().Authors(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -908,8 +911,8 @@ func (ec *executionContext) fieldContext_Publication_authors(ctx context.Context
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "last_name":
@@ -1736,7 +1739,7 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Publication_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "doi":
 
@@ -1747,21 +1750,21 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Publication_title(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "abstract":
 
 			out.Values[i] = ec._Publication_abstract(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "journal":
 
 			out.Values[i] = ec._Publication_journal(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "pub_date":
 
@@ -1784,14 +1787,14 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Publication_pub_type(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "source":
 
 			out.Values[i] = ec._Publication_source(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "issue":
 
@@ -1802,12 +1805,25 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Publication_status(ctx, field, obj)
 
 		case "authors":
+			field := field
 
-			out.Values[i] = ec._Publication_authors(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Publication_authors(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

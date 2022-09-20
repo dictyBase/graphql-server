@@ -14,6 +14,13 @@ type PublicationResolver struct {
 	Logger *logrus.Entry
 }
 
+func (r *PublicationResolver) ID(
+	ctx context.Context,
+	obj *models.Publication,
+) (string, error) {
+	return obj.ID, nil
+}
+
 func (r *PublicationResolver) Doi(
 	ctx context.Context,
 	obj *models.Publication,
