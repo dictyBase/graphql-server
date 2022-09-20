@@ -45,7 +45,7 @@ func TestGetResp(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(goasHandler))
 	defer ts.Close()
 	assert := assert.New(t)
-	g, err := GetResp(context.Background(), ts.URL)
+	resp, err := GetResp(context.Background(), ts.URL)
 	assert.NoError(err, "should not have error when getting http response")
-	assert.Equal(g.StatusCode, 200, "should have ok status code")
+	assert.Equal(resp.StatusCode, 200, "should have ok status code")
 }

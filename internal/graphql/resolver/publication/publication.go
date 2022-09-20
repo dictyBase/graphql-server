@@ -2,7 +2,6 @@ package publication
 
 import (
 	"context"
-	"time"
 
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 
