@@ -52,6 +52,5 @@ type Plasmid struct {
 	InStock          bool      `json:"in_stock"`
 	CreatedAt        time.Time `json:"created_at"`
 	UpdatedAt        time.Time `json:"updated_at"`
-	Keywords         []*string `json:"keywords"`
 	Dbxrefs          []*string `json:"dbxrefs"`
 }

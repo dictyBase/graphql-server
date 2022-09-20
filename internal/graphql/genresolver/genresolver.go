@@ -17,55 +17,94 @@ import (
 
 type Resolver struct{}
 
-func (r *authResolver) Identity(ctx context.Context, obj *auth.Auth) (*models.Identity, error) {
+func (r *authResolver) Identity(
+	ctx context.Context,
+	obj *auth.Auth,
+) (*models.Identity, error) {
 	panic("not implemented")
 }
 
-func (r *authorResolver) Rank(ctx context.Context, obj *publication.Author) (*string, error) {
+func (r *authorResolver) Rank(
+	ctx context.Context,
+	obj *publication.Author,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *contentResolver) ID(ctx context.Context, obj *content.Content) (string, error) {
+func (r *contentResolver) ID(
+	ctx context.Context,
+	obj *content.Content,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *contentResolver) Name(ctx context.Context, obj *content.Content) (string, error) {
+func (r *contentResolver) Name(
+	ctx context.Context,
+	obj *content.Content,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *contentResolver) Slug(ctx context.Context, obj *content.Content) (string, error) {
+func (r *contentResolver) Slug(
+	ctx context.Context,
+	obj *content.Content,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *contentResolver) CreatedBy(ctx context.Context, obj *content.Content) (*user.User, error) {
+func (r *contentResolver) CreatedBy(
+	ctx context.Context,
+	obj *content.Content,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *contentResolver) UpdatedBy(ctx context.Context, obj *content.Content) (*user.User, error) {
+func (r *contentResolver) UpdatedBy(
+	ctx context.Context,
+	obj *content.Content,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *contentResolver) CreatedAt(ctx context.Context, obj *content.Content) (*time.Time, error) {
+func (r *contentResolver) CreatedAt(
+	ctx context.Context,
+	obj *content.Content,
+) (*time.Time, error) {
 	panic("not implemented")
 }
 
-func (r *contentResolver) UpdatedAt(ctx context.Context, obj *content.Content) (*time.Time, error) {
+func (r *contentResolver) UpdatedAt(
+	ctx context.Context,
+	obj *content.Content,
+) (*time.Time, error) {
 	panic("not implemented")
 }
 
-func (r *contentResolver) Content(ctx context.Context, obj *content.Content) (string, error) {
+func (r *contentResolver) Content(
+	ctx context.Context,
+	obj *content.Content,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *contentResolver) Namespace(ctx context.Context, obj *content.Content) (string, error) {
+func (r *contentResolver) Namespace(
+	ctx context.Context,
+	obj *content.Content,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *geneResolver) Goas(ctx context.Context, obj *models.Gene) ([]*models.GOAnnotation, error) {
+func (r *geneResolver) Goas(
+	ctx context.Context,
+	obj *models.Gene,
+) ([]*models.GOAnnotation, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) Login(ctx context.Context, input *models.LoginInput) (*auth.Auth, error) {
+func (r *mutationResolver) Login(
+	ctx context.Context,
+	input *models.LoginInput,
+) (*auth.Auth, error) {
 	panic("not implemented")
 }
 
@@ -73,331 +112,598 @@ func (r *mutationResolver) Logout(ctx context.Context) (*models.Logout, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) CreateContent(ctx context.Context, input *models.CreateContentInput) (*content.Content, error) {
+func (r *mutationResolver) CreateContent(
+	ctx context.Context,
+	input *models.CreateContentInput,
+) (*content.Content, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) UpdateContent(ctx context.Context, input *models.UpdateContentInput) (*content.Content, error) {
+func (r *mutationResolver) UpdateContent(
+	ctx context.Context,
+	input *models.UpdateContentInput,
+) (*content.Content, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) DeleteContent(ctx context.Context, id string) (*models.DeleteContent, error) {
+func (r *mutationResolver) DeleteContent(
+	ctx context.Context,
+	id string,
+) (*models.DeleteContent, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) CreateOrder(ctx context.Context, input *models.CreateOrderInput) (*order.Order, error) {
+func (r *mutationResolver) CreateOrder(
+	ctx context.Context,
+	input *models.CreateOrderInput,
+) (*order.Order, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) UpdateOrder(ctx context.Context, id string, input *models.UpdateOrderInput) (*order.Order, error) {
+func (r *mutationResolver) UpdateOrder(
+	ctx context.Context,
+	id string,
+	input *models.UpdateOrderInput,
+) (*order.Order, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) CreateStrain(ctx context.Context, input *models.CreateStrainInput) (*models.Strain, error) {
+func (r *mutationResolver) CreateStrain(
+	ctx context.Context,
+	input *models.CreateStrainInput,
+) (*models.Strain, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) CreatePlasmid(ctx context.Context, input *models.CreatePlasmidInput) (*models.Plasmid, error) {
+func (r *mutationResolver) CreatePlasmid(
+	ctx context.Context,
+	input *models.CreatePlasmidInput,
+) (*models.Plasmid, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) UpdateStrain(ctx context.Context, id string, input *models.UpdateStrainInput) (*models.Strain, error) {
+func (r *mutationResolver) UpdateStrain(
+	ctx context.Context,
+	id string,
+	input *models.UpdateStrainInput,
+) (*models.Strain, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) UpdatePlasmid(ctx context.Context, id string, input *models.UpdatePlasmidInput) (*models.Plasmid, error) {
+func (r *mutationResolver) UpdatePlasmid(
+	ctx context.Context,
+	id string,
+	input *models.UpdatePlasmidInput,
+) (*models.Plasmid, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) DeleteStock(ctx context.Context, id string) (*models.DeleteStock, error) {
+func (r *mutationResolver) DeleteStock(
+	ctx context.Context,
+	id string,
+) (*models.DeleteStock, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) CreateUser(ctx context.Context, input *models.CreateUserInput) (*user.User, error) {
+func (r *mutationResolver) CreateUser(
+	ctx context.Context,
+	input *models.CreateUserInput,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) CreateUserRoleRelationship(ctx context.Context, userID string, roleID string) (*user.User, error) {
+func (r *mutationResolver) CreateUserRoleRelationship(
+	ctx context.Context,
+	userID string,
+	roleID string,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *models.UpdateUserInput) (*user.User, error) {
+func (r *mutationResolver) UpdateUser(
+	ctx context.Context,
+	id string,
+	input *models.UpdateUserInput,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*models.DeleteUser, error) {
+func (r *mutationResolver) DeleteUser(
+	ctx context.Context,
+	id string,
+) (*models.DeleteUser, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) CreateRole(ctx context.Context, input *models.CreateRoleInput) (*user.Role, error) {
+func (r *mutationResolver) CreateRole(
+	ctx context.Context,
+	input *models.CreateRoleInput,
+) (*user.Role, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) CreateRolePermissionRelationship(ctx context.Context, roleID string, permissionID string) (*user.Role, error) {
+func (r *mutationResolver) CreateRolePermissionRelationship(
+	ctx context.Context,
+	roleID string,
+	permissionID string,
+) (*user.Role, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) UpdateRole(ctx context.Context, id string, input *models.UpdateRoleInput) (*user.Role, error) {
+func (r *mutationResolver) UpdateRole(
+	ctx context.Context,
+	id string,
+	input *models.UpdateRoleInput,
+) (*user.Role, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) DeleteRole(ctx context.Context, id string) (*models.DeleteRole, error) {
+func (r *mutationResolver) DeleteRole(
+	ctx context.Context,
+	id string,
+) (*models.DeleteRole, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) CreatePermission(ctx context.Context, input *models.CreatePermissionInput) (*user.Permission, error) {
+func (r *mutationResolver) CreatePermission(
+	ctx context.Context,
+	input *models.CreatePermissionInput,
+) (*user.Permission, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) UpdatePermission(ctx context.Context, id string, input *models.UpdatePermissionInput) (*user.Permission, error) {
+func (r *mutationResolver) UpdatePermission(
+	ctx context.Context,
+	id string,
+	input *models.UpdatePermissionInput,
+) (*user.Permission, error) {
 	panic("not implemented")
 }
 
-func (r *mutationResolver) DeletePermission(ctx context.Context, id string) (*models.DeletePermission, error) {
+func (r *mutationResolver) DeletePermission(
+	ctx context.Context,
+	id string,
+) (*models.DeletePermission, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) ID(ctx context.Context, obj *order.Order) (string, error) {
+func (r *orderResolver) ID(
+	ctx context.Context,
+	obj *order.Order,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) CreatedAt(ctx context.Context, obj *order.Order) (*time.Time, error) {
+func (r *orderResolver) CreatedAt(
+	ctx context.Context,
+	obj *order.Order,
+) (*time.Time, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) UpdatedAt(ctx context.Context, obj *order.Order) (*time.Time, error) {
+func (r *orderResolver) UpdatedAt(
+	ctx context.Context,
+	obj *order.Order,
+) (*time.Time, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) Courier(ctx context.Context, obj *order.Order) (*string, error) {
+func (r *orderResolver) Courier(
+	ctx context.Context,
+	obj *order.Order,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) CourierAccount(ctx context.Context, obj *order.Order) (*string, error) {
+func (r *orderResolver) CourierAccount(
+	ctx context.Context,
+	obj *order.Order,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) Comments(ctx context.Context, obj *order.Order) (*string, error) {
+func (r *orderResolver) Comments(
+	ctx context.Context,
+	obj *order.Order,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) Payment(ctx context.Context, obj *order.Order) (*string, error) {
+func (r *orderResolver) Payment(
+	ctx context.Context,
+	obj *order.Order,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) PurchaseOrderNum(ctx context.Context, obj *order.Order) (*string, error) {
+func (r *orderResolver) PurchaseOrderNum(
+	ctx context.Context,
+	obj *order.Order,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) Status(ctx context.Context, obj *order.Order) (*models.StatusEnum, error) {
+func (r *orderResolver) Status(
+	ctx context.Context,
+	obj *order.Order,
+) (*models.StatusEnum, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) Consumer(ctx context.Context, obj *order.Order) (*user.User, error) {
+func (r *orderResolver) Consumer(
+	ctx context.Context,
+	obj *order.Order,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) Payer(ctx context.Context, obj *order.Order) (*user.User, error) {
+func (r *orderResolver) Payer(
+	ctx context.Context,
+	obj *order.Order,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) Purchaser(ctx context.Context, obj *order.Order) (*user.User, error) {
+func (r *orderResolver) Purchaser(
+	ctx context.Context,
+	obj *order.Order,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *orderResolver) Items(ctx context.Context, obj *order.Order) ([]models.Stock, error) {
+func (r *orderResolver) Items(
+	ctx context.Context,
+	obj *order.Order,
+) ([]models.Stock, error) {
 	panic("not implemented")
 }
 
-func (r *organismResolver) Downloads(ctx context.Context, obj *models.Organism) ([]*models.Download, error) {
+func (r *organismResolver) Downloads(
+	ctx context.Context,
+	obj *models.Organism,
+) ([]*models.Download, error) {
 	panic("not implemented")
 }
 
-func (r *permissionResolver) ID(ctx context.Context, obj *user.Permission) (string, error) {
+func (r *permissionResolver) ID(
+	ctx context.Context,
+	obj *user.Permission,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *permissionResolver) Permission(ctx context.Context, obj *user.Permission) (string, error) {
+func (r *permissionResolver) Permission(
+	ctx context.Context,
+	obj *user.Permission,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *permissionResolver) Description(ctx context.Context, obj *user.Permission) (string, error) {
+func (r *permissionResolver) Description(
+	ctx context.Context,
+	obj *user.Permission,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *permissionResolver) CreatedAt(ctx context.Context, obj *user.Permission) (*time.Time, error) {
+func (r *permissionResolver) CreatedAt(
+	ctx context.Context,
+	obj *user.Permission,
+) (*time.Time, error) {
 	panic("not implemented")
 }
 
-func (r *permissionResolver) UpdatedAt(ctx context.Context, obj *user.Permission) (*time.Time, error) {
+func (r *permissionResolver) UpdatedAt(
+	ctx context.Context,
+	obj *user.Permission,
+) (*time.Time, error) {
 	panic("not implemented")
 }
 
-func (r *permissionResolver) Resource(ctx context.Context, obj *user.Permission) (*string, error) {
+func (r *permissionResolver) Resource(
+	ctx context.Context,
+	obj *user.Permission,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *plasmidResolver) CreatedBy(ctx context.Context, obj *models.Plasmid) (*user.User, error) {
+func (r *plasmidResolver) CreatedBy(
+	ctx context.Context,
+	obj *models.Plasmid,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *plasmidResolver) UpdatedBy(ctx context.Context, obj *models.Plasmid) (*user.User, error) {
+func (r *plasmidResolver) UpdatedBy(
+	ctx context.Context,
+	obj *models.Plasmid,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *plasmidResolver) Depositor(ctx context.Context, obj *models.Plasmid) (*user.User, error) {
+func (r *plasmidResolver) Depositor(
+	ctx context.Context,
+	obj *models.Plasmid,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *plasmidResolver) Genes(ctx context.Context, obj *models.Plasmid) ([]*models.Gene, error) {
+func (r *plasmidResolver) Genes(
+	ctx context.Context,
+	obj *models.Plasmid,
+) ([]*models.Gene, error) {
 	panic("not implemented")
 }
 
-func (r *plasmidResolver) Publications(ctx context.Context, obj *models.Plasmid) ([]*publication.Publication, error) {
+func (r *plasmidResolver) Publications(
+	ctx context.Context,
+	obj *models.Plasmid,
+) ([]*models.Publication, error) {
 	panic("not implemented")
 }
 
-func (r *plasmidResolver) InStock(ctx context.Context, obj *models.Plasmid) (bool, error) {
+func (r *plasmidResolver) InStock(
+	ctx context.Context,
+	obj *models.Plasmid,
+) (bool, error) {
 	panic("not implemented")
 }
 
-func (r *plasmidResolver) Keywords(ctx context.Context, obj *models.Plasmid) ([]*string, error) {
+func (r *plasmidResolver) Keywords(
+	ctx context.Context,
+	obj *models.Plasmid,
+) ([]string, error) {
 	panic("not implemented")
 }
 
-func (r *plasmidResolver) GenbankAccession(ctx context.Context, obj *models.Plasmid) (*string, error) {
+func (r *plasmidResolver) GenbankAccession(
+	ctx context.Context,
+	obj *models.Plasmid,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) ID(ctx context.Context, obj *publication.Publication) (string, error) {
+func (r *publicationResolver) ID(
+	ctx context.Context,
+	obj *models.Publication,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) Doi(ctx context.Context, obj *publication.Publication) (*string, error) {
+func (r *publicationResolver) Doi(
+	ctx context.Context,
+	obj *models.Publication,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) Title(ctx context.Context, obj *publication.Publication) (*string, error) {
+func (r *publicationResolver) Title(
+	ctx context.Context,
+	obj *models.Publication,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) Abstract(ctx context.Context, obj *publication.Publication) (*string, error) {
+func (r *publicationResolver) Abstract(
+	ctx context.Context,
+	obj *models.Publication,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) Journal(ctx context.Context, obj *publication.Publication) (*string, error) {
+func (r *publicationResolver) Journal(
+	ctx context.Context,
+	obj *models.Publication,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) PubDate(ctx context.Context, obj *publication.Publication) (*time.Time, error) {
+func (r *publicationResolver) PubDate(
+	ctx context.Context,
+	obj *models.Publication,
+) (*time.Time, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) Volume(ctx context.Context, obj *publication.Publication) (*string, error) {
+func (r *publicationResolver) Volume(
+	ctx context.Context,
+	obj *models.Publication,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) Pages(ctx context.Context, obj *publication.Publication) (*string, error) {
+func (r *publicationResolver) Pages(
+	ctx context.Context,
+	obj *models.Publication,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) Issn(ctx context.Context, obj *publication.Publication) (*string, error) {
+func (r *publicationResolver) Issn(
+	ctx context.Context,
+	obj *models.Publication,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) PubType(ctx context.Context, obj *publication.Publication) (*string, error) {
+func (r *publicationResolver) PubType(
+	ctx context.Context,
+	obj *models.Publication,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) Source(ctx context.Context, obj *publication.Publication) (*string, error) {
+func (r *publicationResolver) Source(
+	ctx context.Context,
+	obj *models.Publication,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) Issue(ctx context.Context, obj *publication.Publication) (*string, error) {
+func (r *publicationResolver) Issue(
+	ctx context.Context,
+	obj *models.Publication,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) Status(ctx context.Context, obj *publication.Publication) (*string, error) {
+func (r *publicationResolver) Status(
+	ctx context.Context,
+	obj *models.Publication,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *publicationResolver) Authors(ctx context.Context, obj *publication.Publication) ([]*publication.Author, error) {
+func (r *publicationResolver) Authors(
+	ctx context.Context,
+	obj *models.Publication,
+) ([]*publication.Author, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) GetRefreshToken(ctx context.Context, token string) (*auth.Auth, error) {
+func (r *queryResolver) GetRefreshToken(
+	ctx context.Context,
+	token string,
+) (*auth.Auth, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) Content(ctx context.Context, id string) (*content.Content, error) {
+func (r *queryResolver) Content(
+	ctx context.Context,
+	id string,
+) (*content.Content, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) ContentBySlug(ctx context.Context, slug string) (*content.Content, error) {
+func (r *queryResolver) ContentBySlug(
+	ctx context.Context,
+	slug string,
+) (*content.Content, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) Organism(ctx context.Context, taxonID string) (*models.Organism, error) {
+func (r *queryResolver) Organism(
+	ctx context.Context,
+	taxonID string,
+) (*models.Organism, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) ListOrganisms(ctx context.Context) ([]*models.Organism, error) {
+func (r *queryResolver) ListOrganisms(
+	ctx context.Context,
+) ([]*models.Organism, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) Gene(ctx context.Context, gene string) (*models.Gene, error) {
+func (r *queryResolver) Gene(
+	ctx context.Context,
+	gene string,
+) (*models.Gene, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) Order(ctx context.Context, id string) (*order.Order, error) {
+func (r *queryResolver) Order(
+	ctx context.Context,
+	id string,
+) (*order.Order, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) ListOrders(ctx context.Context, cursor *int, limit *int, filter *string) (*models.OrderListWithCursor, error) {
+func (r *queryResolver) ListOrders(
+	ctx context.Context,
+	cursor *int,
+	limit *int,
+	filter *string,
+) (*models.OrderListWithCursor, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) Publication(ctx context.Context, id string) (*publication.Publication, error) {
+func (r *queryResolver) Publication(
+	ctx context.Context,
+	id string,
+) (*publication.Publication, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) Plasmid(ctx context.Context, id string) (*models.Plasmid, error) {
+func (r *queryResolver) Plasmid(
+	ctx context.Context,
+	id string,
+) (*models.Plasmid, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) Strain(ctx context.Context, id string) (*models.Strain, error) {
+func (r *queryResolver) Strain(
+	ctx context.Context,
+	id string,
+) (*models.Strain, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) ListStrains(ctx context.Context, cursor *int, limit *int, filter *models.StrainListFilter) (*models.StrainListWithCursor, error) {
+func (r *queryResolver) ListStrains(
+	ctx context.Context,
+	cursor *int,
+	limit *int,
+	filter *models.StrainListFilter,
+) (*models.StrainListWithCursor, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) ListPlasmids(ctx context.Context, cursor *int, limit *int, filter *string) (*models.PlasmidListWithCursor, error) {
+func (r *queryResolver) ListPlasmids(
+	ctx context.Context,
+	cursor *int,
+	limit *int,
+	filter *string,
+) (*models.PlasmidListWithCursor, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) ListStrainsWithAnnotation(ctx context.Context, cursor *int, limit *int, typeArg string, annotation string) (*models.StrainListWithCursor, error) {
+func (r *queryResolver) ListStrainsWithAnnotation(
+	ctx context.Context,
+	cursor *int,
+	limit *int,
+	typeArg string,
+	annotation string,
+) (*models.StrainListWithCursor, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) ListPlasmidsWithAnnotation(ctx context.Context, cursor *int, limit *int, typeArg string, annotation string) (*models.PlasmidListWithCursor, error) {
+func (r *queryResolver) ListPlasmidsWithAnnotation(
+	ctx context.Context,
+	cursor *int,
+	limit *int,
+	typeArg string,
+	annotation string,
+) (*models.PlasmidListWithCursor, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) User(ctx context.Context, id string) (*user.User, error) {
+func (r *queryResolver) User(
+	ctx context.Context,
+	id string,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*user.User, error) {
+func (r *queryResolver) UserByEmail(
+	ctx context.Context,
+	email string,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) ListUsers(ctx context.Context, pagenum string, pagesize string, filter string) (*models.UserList, error) {
+func (r *queryResolver) ListUsers(
+	ctx context.Context,
+	pagenum string,
+	pagesize string,
+	filter string,
+) (*models.UserList, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) Role(ctx context.Context, id string) (*user.Role, error) {
+func (r *queryResolver) Role(
+	ctx context.Context,
+	id string,
+) (*user.Role, error) {
 	panic("not implemented")
 }
 
@@ -405,11 +711,16 @@ func (r *queryResolver) ListRoles(ctx context.Context) ([]*user.Role, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) Permission(ctx context.Context, id string) (*user.Permission, error) {
+func (r *queryResolver) Permission(
+	ctx context.Context,
+	id string,
+) (*user.Permission, error) {
 	panic("not implemented")
 }
 
-func (r *queryResolver) ListPermissions(ctx context.Context) ([]*user.Permission, error) {
+func (r *queryResolver) ListPermissions(
+	ctx context.Context,
+) ([]*user.Permission, error) {
 	panic("not implemented")
 }
 
@@ -417,79 +728,136 @@ func (r *roleResolver) ID(ctx context.Context, obj *user.Role) (string, error) {
 	panic("not implemented")
 }
 
-func (r *roleResolver) Role(ctx context.Context, obj *user.Role) (string, error) {
+func (r *roleResolver) Role(
+	ctx context.Context,
+	obj *user.Role,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *roleResolver) Description(ctx context.Context, obj *user.Role) (string, error) {
+func (r *roleResolver) Description(
+	ctx context.Context,
+	obj *user.Role,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *roleResolver) CreatedAt(ctx context.Context, obj *user.Role) (*time.Time, error) {
+func (r *roleResolver) CreatedAt(
+	ctx context.Context,
+	obj *user.Role,
+) (*time.Time, error) {
 	panic("not implemented")
 }
 
-func (r *roleResolver) UpdatedAt(ctx context.Context, obj *user.Role) (*time.Time, error) {
+func (r *roleResolver) UpdatedAt(
+	ctx context.Context,
+	obj *user.Role,
+) (*time.Time, error) {
 	panic("not implemented")
 }
 
-func (r *roleResolver) Permissions(ctx context.Context, obj *user.Role) ([]*user.Permission, error) {
+func (r *roleResolver) Permissions(
+	ctx context.Context,
+	obj *user.Role,
+) ([]*user.Permission, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) CreatedBy(ctx context.Context, obj *models.Strain) (*user.User, error) {
+func (r *strainResolver) CreatedBy(
+	ctx context.Context,
+	obj *models.Strain,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) UpdatedBy(ctx context.Context, obj *models.Strain) (*user.User, error) {
+func (r *strainResolver) UpdatedBy(
+	ctx context.Context,
+	obj *models.Strain,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) Depositor(ctx context.Context, obj *models.Strain) (*user.User, error) {
+func (r *strainResolver) Depositor(
+	ctx context.Context,
+	obj *models.Strain,
+) (*user.User, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) Genes(ctx context.Context, obj *models.Strain) ([]*models.Gene, error) {
+func (r *strainResolver) Genes(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]*models.Gene, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) Publications(ctx context.Context, obj *models.Strain) ([]*publication.Publication, error) {
+func (r *strainResolver) Publications(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]*models.Publication, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) SystematicName(ctx context.Context, obj *models.Strain) (string, error) {
+func (r *strainResolver) SystematicName(
+	ctx context.Context,
+	obj *models.Strain,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) Parent(ctx context.Context, obj *models.Strain) (*models.Strain, error) {
+func (r *strainResolver) Parent(
+	ctx context.Context,
+	obj *models.Strain,
+) (*models.Strain, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) Names(ctx context.Context, obj *models.Strain) ([]*string, error) {
+func (r *strainResolver) Names(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]string, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) InStock(ctx context.Context, obj *models.Strain) (bool, error) {
+func (r *strainResolver) InStock(
+	ctx context.Context,
+	obj *models.Strain,
+) (bool, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) Phenotypes(ctx context.Context, obj *models.Strain) ([]*models.Phenotype, error) {
+func (r *strainResolver) Phenotypes(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]*models.Phenotype, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) GeneticModification(ctx context.Context, obj *models.Strain) (*string, error) {
+func (r *strainResolver) GeneticModification(
+	ctx context.Context,
+	obj *models.Strain,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) MutagenesisMethod(ctx context.Context, obj *models.Strain) (*string, error) {
+func (r *strainResolver) MutagenesisMethod(
+	ctx context.Context,
+	obj *models.Strain,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) Characteristics(ctx context.Context, obj *models.Strain) ([]*string, error) {
+func (r *strainResolver) Characteristics(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]string, error) {
 	panic("not implemented")
 }
 
-func (r *strainResolver) Genotypes(ctx context.Context, obj *models.Strain) ([]*string, error) {
+func (r *strainResolver) Genotypes(
+	ctx context.Context,
+	obj *models.Strain,
+) ([]string, error) {
 	panic("not implemented")
 }
 
@@ -497,67 +865,115 @@ func (r *userResolver) ID(ctx context.Context, obj *user.User) (string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) FirstName(ctx context.Context, obj *user.User) (string, error) {
+func (r *userResolver) FirstName(
+	ctx context.Context,
+	obj *user.User,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) LastName(ctx context.Context, obj *user.User) (string, error) {
+func (r *userResolver) LastName(
+	ctx context.Context,
+	obj *user.User,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) Email(ctx context.Context, obj *user.User) (string, error) {
+func (r *userResolver) Email(
+	ctx context.Context,
+	obj *user.User,
+) (string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) Organization(ctx context.Context, obj *user.User) (*string, error) {
+func (r *userResolver) Organization(
+	ctx context.Context,
+	obj *user.User,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) GroupName(ctx context.Context, obj *user.User) (*string, error) {
+func (r *userResolver) GroupName(
+	ctx context.Context,
+	obj *user.User,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) FirstAddress(ctx context.Context, obj *user.User) (*string, error) {
+func (r *userResolver) FirstAddress(
+	ctx context.Context,
+	obj *user.User,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) SecondAddress(ctx context.Context, obj *user.User) (*string, error) {
+func (r *userResolver) SecondAddress(
+	ctx context.Context,
+	obj *user.User,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) City(ctx context.Context, obj *user.User) (*string, error) {
+func (r *userResolver) City(
+	ctx context.Context,
+	obj *user.User,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) State(ctx context.Context, obj *user.User) (*string, error) {
+func (r *userResolver) State(
+	ctx context.Context,
+	obj *user.User,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) Zipcode(ctx context.Context, obj *user.User) (*string, error) {
+func (r *userResolver) Zipcode(
+	ctx context.Context,
+	obj *user.User,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) Country(ctx context.Context, obj *user.User) (*string, error) {
+func (r *userResolver) Country(
+	ctx context.Context,
+	obj *user.User,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) Phone(ctx context.Context, obj *user.User) (*string, error) {
+func (r *userResolver) Phone(
+	ctx context.Context,
+	obj *user.User,
+) (*string, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) IsActive(ctx context.Context, obj *user.User) (bool, error) {
+func (r *userResolver) IsActive(
+	ctx context.Context,
+	obj *user.User,
+) (bool, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) CreatedAt(ctx context.Context, obj *user.User) (*time.Time, error) {
+func (r *userResolver) CreatedAt(
+	ctx context.Context,
+	obj *user.User,
+) (*time.Time, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) UpdatedAt(ctx context.Context, obj *user.User) (*time.Time, error) {
+func (r *userResolver) UpdatedAt(
+	ctx context.Context,
+	obj *user.User,
+) (*time.Time, error) {
 	panic("not implemented")
 }
 
-func (r *userResolver) Roles(ctx context.Context, obj *user.User) ([]*user.Role, error) {
+func (r *userResolver) Roles(
+	ctx context.Context,
+	obj *user.User,
+) ([]*user.Role, error) {
 	panic("not implemented")
 }
 
