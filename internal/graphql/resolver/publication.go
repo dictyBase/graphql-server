@@ -27,3 +27,21 @@ func (q *QueryResolver) Publication(
 	}
 	return pub, nil
 }
+
+// AllPublications is the resolver for the allPublications field.
+func (q *QueryResolver) AllPublications(
+	ctx context.Context,
+	gene string,
+	limit *int,
+	sortBy *string,
+) (*models.NumberOfPublicationsWithGene, error) {
+	return &models.NumberOfPublicationsWithGene{NumPubs: 0}, nil
+}
+
+// ListRecentPublications is the resolver for the listRecentPublications field.
+func (q *QueryResolver) ListRecentPublications(
+	ctx context.Context,
+	limit int,
+) ([]*models.Publication, error) {
+	return []*models.Publication{&models.Publication{}}, nil
+}

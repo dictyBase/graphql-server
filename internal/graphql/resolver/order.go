@@ -24,7 +24,7 @@ func (m *MutationResolver) CreateOrder(
 	attr.Consumer = input.Consumer
 	attr.Courier = input.Courier
 	attr.CourierAccount = input.CourierAccount
-	attr.Items = convertPtrToStr(input.Items)
+	attr.Items = input.Items
 	attr.Payer = input.Payer
 	attr.Payment = input.Payment
 	attr.PurchaseOrderNum = *input.PurchaseOrderNum

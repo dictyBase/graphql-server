@@ -439,6 +439,29 @@ func (q *QueryResolver) ListPlasmidsWithAnnotation(
 	}, nil
 }
 
+func (q *QueryResolver) AllStrains(
+	ctx context.Context,
+	gene string,
+) (*models.Gene, error) {
+	return &models.Gene{}, nil
+}
+
+// ListRecentPlasmids is the resolver for the listRecentPlasmids field.
+func (q *QueryResolver) ListRecentPlasmids(
+	ctx context.Context,
+	limit int,
+) ([]*models.Plasmid, error) {
+	return []*models.Plasmid{&models.Plasmid{}}, nil
+}
+
+// ListRecentStrains is the resolver for the listRecentStrains field.
+func (q *QueryResolver) ListRecentStrains(
+	ctx context.Context,
+	limit int,
+) ([]*models.Strain, error) {
+	return []*models.Strain{&models.Strain{}}, nil
+}
+
 func (q *QueryResolver) listStrainsWithoutFilter(
 	ctx context.Context,
 	cus int64,

@@ -73,7 +73,7 @@ func TestCreateOrder(t *testing.T) {
 		Consumer:         "art@vandelayindustries.com",
 		Payer:            "george@costanza.com",
 		Purchaser:        "thatsgold@jerry.org",
-		Items:            []*string{&id},
+		Items:            []string{id},
 	}
 	o, err := ord.CreateOrder(context.Background(), input)
 	assert.NoError(err, "expect no error from creating an order")
