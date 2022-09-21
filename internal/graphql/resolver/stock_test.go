@@ -6,8 +6,8 @@ import (
 
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
-	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -213,7 +213,7 @@ func TestListStrains(t *testing.T) {
 		context.Background(),
 		&cursor,
 		&limit,
-		&models.StrainListFilter{StrainType: models.StrainTypeEnumGwdi},
+		&models.StrainListFilter{StrainType: models.StrainTypeGwdi},
 	)
 	assert.NoError(err, "expect no error from getting list of strains")
 	assert.Equal(s.Limit, &limit, "should match limit")
@@ -285,8 +285,8 @@ func TestCreatePlasmid(t *testing.T) {
 		"should match editable summary",
 	)
 	assert.Equal(
-		*p.Depositor,
-		*input.Depositor,
+		p.Depositor,
+		input.Depositor,
 		"should match depositor (he's gold)",
 	)
 }
@@ -324,8 +324,8 @@ func TestCreateStrain(t *testing.T) {
 		"should match editable summary",
 	)
 	assert.Equal(
-		*p.Depositor,
-		*input.Depositor,
+		p.Depositor,
+		input.Depositor,
 		"should match depositor (he's gold)",
 	)
 	assert.Equal(p.Label, input.Label, "should match label")
