@@ -264,8 +264,8 @@ func (r *StrainResolver) SystematicName(
 func (r *StrainResolver) Characteristics(
 	ctx context.Context,
 	obj *models.Strain,
-) ([]*string, error) {
-	pslice := make([]*string, 0)
+) ([]string, error) {
+	pslice := make([]string, 0)
 	cg, err := r.AnnotationClient.ListAnnotations(
 		ctx, &annotation.ListParameters{Filter: fmt.Sprintf(
 			"entry_id===%s;ontology===%s",
@@ -281,7 +281,7 @@ func (r *StrainResolver) Characteristics(
 		return pslice, err
 	}
 	for _, item := range cg.Data {
-		pslice = append(pslice, &item.Attributes.Tag)
+		pslice = append(pslice, item.Attributes.Tag)
 	}
 	return pslice, nil
 }
