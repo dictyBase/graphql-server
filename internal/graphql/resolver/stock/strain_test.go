@@ -11,7 +11,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func strainResolver(annoClient *clients.TaggedAnnotationServiceClient) *StrainResolver {
+func strainResolver(
+	annoClient *clients.TaggedAnnotationServiceClient,
+) *StrainResolver {
 	return &StrainResolver{
 		Client:           mocks.MockedStockClient(),
 		UserClient:       mocks.MockedUserClient(),
@@ -21,8 +23,15 @@ func strainResolver(annoClient *clients.TaggedAnnotationServiceClient) *StrainRe
 	}
 }
 
-var mockStrainInput = ConvertToStrainModel("DBS123456", mocks.MockStrainInputWithParams("kenny@bania.com", ""))
-var mockStrainInputWithParent = ConvertToStrainModel("DBS123456", mocks.MockStrainInputWithParams("kenny@bania.com", "DBS987654"))
+var mockStrainInput = ConvertToStrainModel(
+	"DBS123456",
+	mocks.MockStrainInputWithParams("kenny@bania.com", ""),
+)
+
+var mockStrainInputWithParent = ConvertToStrainModel(
+	"DBS123456",
+	mocks.MockStrainInputWithParams("kenny@bania.com", "DBS987654"),
+)
 
 func TestSystematicName(t *testing.T) {
 	t.Parallel()
@@ -30,7 +39,11 @@ func TestSystematicName(t *testing.T) {
 	r := strainResolver(mocks.MockedSysNameAnnoClient())
 	sn, err := r.SystematicName(context.Background(), mockStrainInput)
 	assert.NoError(err, "expect no error from getting systematic name")
-	assert.Equal(sn, mocks.MockSysNameAnno.Data.Attributes.Value, "should match systematic name")
+	assert.Equal(
+		sn,
+		mocks.MockSysNameAnno.Data.Attributes.Value,
+		"should match systematic name",
+	)
 }
 
 func TestGeneticModification(t *testing.T) {
@@ -39,7 +52,11 @@ func TestGeneticModification(t *testing.T) {
 	r := strainResolver(mocks.MockedGenModClient())
 	g, err := r.GeneticModification(context.Background(), mockStrainInput)
 	assert.NoError(err, "expect no error from getting genetic modification")
-	assert.Equal(g, &mocks.MockGenModAnno.Data.Attributes.Value, "should match genetic modification")
+	assert.Equal(
+		g,
+		&mocks.MockGenModAnno.Data.Attributes.Value,
+		"should match genetic modification",
+	)
 }
 
 func TestMutagenesisMethod(t *testing.T) {
@@ -48,7 +65,11 @@ func TestMutagenesisMethod(t *testing.T) {
 	r := strainResolver(mocks.MockedMutMethodClient())
 	m, err := r.MutagenesisMethod(context.Background(), mockStrainInput)
 	assert.NoError(err, "expect no error from getting mutagenesis method")
-	assert.Equal(m, &mocks.MockMutMethodAnno.Data.Attributes.Value, "should match mutagenesis method")
+	assert.Equal(
+		m,
+		&mocks.MockMutMethodAnno.Data.Attributes.Value,
+		"should match mutagenesis method",
+	)
 }
 
 func TestGenotypes(t *testing.T) {
@@ -56,9 +77,11 @@ func TestGenotypes(t *testing.T) {
 	assert := assert.New(t)
 	r := strainResolver(mocks.MockedMutMethodClient())
 	g, err := r.Genotypes(context.Background(), mockStrainInput)
-	gl := []*string{}
-	gl = append(gl, &mocks.MockMutMethodAnno.Data.Attributes.Value)
+	gl := []string{}
+	gl = append(gl, mocks.MockMutMethodAnno.Data.Attributes.Value)
 	assert.NoError(err, "expect no error from getting genotypes")
+	t.Log(g)
+	t.Log(gl)
 	assert.ElementsMatch(g, gl, "should match genotypes")
 }
 
@@ -68,9 +91,21 @@ func TestNames(t *testing.T) {
 	r := strainResolver(mocks.MockedNamesClient())
 	n, err := r.Names(context.Background(), mockStrainInput)
 	assert.NoError(err, "expect no error from getting names")
-	assert.Equal(n[0], &mocks.MockStrainAttributes.Names[0], "should match name value from strain attributes")
-	assert.Equal(n[1], &mocks.MockNamesAnno().Data[0].Attributes.Value, "should match first synonym value")
-	assert.Equal(n[2], &mocks.MockNamesAnno().Data[1].Attributes.Value, "should match second synonym value")
+	assert.Equal(
+		n[0],
+		mocks.MockStrainAttributes.Names[0],
+		"should match name value from strain attributes",
+	)
+	assert.Equal(
+		n[1],
+		mocks.MockNamesAnno().Data[0].Attributes.Value,
+		"should match first synonym value",
+	)
+	assert.Equal(
+		n[2],
+		mocks.MockNamesAnno().Data[1].Attributes.Value,
+		"should match second synonym value",
+	)
 }
 
 func TestCharacteristics(t *testing.T) {
@@ -79,8 +114,16 @@ func TestCharacteristics(t *testing.T) {
 	r := strainResolver(mocks.MockedCharacteristicsClient())
 	c, err := r.Characteristics(context.Background(), mockStrainInput)
 	assert.NoError(err, "expect no error from getting characteristics")
-	assert.Equal(c[0], &mocks.MockCharacteristicsAnno().Data[0].Attributes.Tag, "should match first characteristics value")
-	assert.Equal(c[1], &mocks.MockCharacteristicsAnno().Data[1].Attributes.Tag, "should match second characteristics value")
+	assert.Equal(
+		c[0],
+		mocks.MockCharacteristicsAnno().Data[0].Attributes.Tag,
+		"should match first characteristics value",
+	)
+	assert.Equal(
+		c[1],
+		mocks.MockCharacteristicsAnno().Data[1].Attributes.Tag,
+		"should match second characteristics value",
+	)
 }
 
 func TestPhenotypes(t *testing.T) {
@@ -91,10 +134,26 @@ func TestPhenotypes(t *testing.T) {
 	pd := mocks.MockPhenotypeAnno().Data[0]
 	assert.NoError(err, "expect no error from getting phenotypes")
 	for _, n := range p {
-		assert.Equal(n.Phenotype, pd.Group.Data[0].Attributes.Tag, "should match phenotype")
-		assert.Equal(n.Assay, &pd.Group.Data[1].Attributes.Tag, "should match assay")
-		assert.Equal(n.Environment, &pd.Group.Data[2].Attributes.Tag, "should match environment")
-		assert.Equal(n.Note, &pd.Group.Data[3].Attributes.Value, "should match note")
+		assert.Equal(
+			n.Phenotype,
+			pd.Group.Data[0].Attributes.Tag,
+			"should match phenotype",
+		)
+		assert.Equal(
+			n.Assay,
+			&pd.Group.Data[1].Attributes.Tag,
+			"should match assay",
+		)
+		assert.Equal(
+			n.Environment,
+			&pd.Group.Data[2].Attributes.Tag,
+			"should match environment",
+		)
+		assert.Equal(
+			n.Note,
+			&pd.Group.Data[3].Attributes.Value,
+			"should match note",
+		)
 	}
 }
 
@@ -130,9 +189,21 @@ func TestStrainDepositor(t *testing.T) {
 	r := strainResolver(mocks.MockedAnnotationClient())
 	d, err := r.Depositor(context.Background(), mockStrainInput)
 	assert.NoError(err, "expect no error from getting depositor")
-	assert.Equal(d.Data.Attributes.Email, "kenny@bania.com", "should match depositor email")
-	assert.Equal(d.Data.Attributes.FirstName, "Kenny", "should match depositor first name")
-	assert.Equal(d.Data.Attributes.LastName, "Bania", "should match depositor last name")
+	assert.Equal(
+		d.Data.Attributes.Email,
+		"kenny@bania.com",
+		"should match depositor email",
+	)
+	assert.Equal(
+		d.Data.Attributes.FirstName,
+		"Kenny",
+		"should match depositor first name",
+	)
+	assert.Equal(
+		d.Data.Attributes.LastName,
+		"Bania",
+		"should match depositor last name",
+	)
 }
 
 func TestParent(t *testing.T) {
@@ -142,5 +213,9 @@ func TestParent(t *testing.T) {
 	p, err := r.Parent(context.Background(), mockStrainInputWithParent)
 	assert.NoError(err, "expect no error from getting parent strain")
 	assert.Equal(p.ID, "DBS987654", "should match parent id")
-	assert.Equal(p.Label, mocks.MockStrainAttributes.Label, "should match label for parent")
+	assert.Equal(
+		p.Label,
+		mocks.MockStrainAttributes.Label,
+		"should match label for parent",
+	)
 }
