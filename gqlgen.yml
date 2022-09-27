@@ -8,7 +8,6 @@ model:
   filename: internal/graphql/models/models_gen.go
   package: models
 resolver:
-  # filename: internal/graphql/genresolver/genresolver.go
   layout: follow-schema
   dir: internal/graphql/genresolver
   package: genresolver
@@ -16,7 +15,6 @@ resolver:
   filename_template: "{name}.resolvers.go"
 omit_getters: true
 models:
-  # Custom scalars point to the name without the Marshal|Unmarshal in front
   Timestamp:
     model: github.com/dictyBase/graphql-server/internal/graphql/models.Timestamp
   User:
