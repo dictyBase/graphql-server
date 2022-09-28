@@ -19,8 +19,7 @@ var MockPlasmidAttributes = &stock.PlasmidAttributes{
 	UpdatedBy:       "art@vandelay.com",
 	Summary:         "test summary",
 	EditableSummary: "editable test summary",
-	Depositor:       "",
-	Genes:           []string{"DDB_G0285425", ""},
+	Genes:           []string{"DDB_G0285425"},
 	Dbxrefs:         []string{"test1"},
 	Publications:    []string{"99999"},
 	ImageMap:        "https://eric.dictybase.dev/test.jpg",
@@ -35,15 +34,13 @@ var MockStrainAttributes = &stock.StrainAttributes{
 	UpdatedBy:       "art@vandelay.com",
 	Summary:         "test summary",
 	EditableSummary: "editable test summary",
-	Depositor:       "",
-	Genes:           []string{"DDB_G0285425", ""},
+	Genes:           []string{"DDB_G0285425"},
 	Dbxrefs:         []string{"test1"},
 	Publications:    []string{"99999"},
 	Label:           "test99",
 	Species:         "human",
 	Plasmid:         "pTest",
 	Names:           []string{"fusilli"},
-	Parent:          "",
 }
 
 func MockStrain() *stock.Strain {

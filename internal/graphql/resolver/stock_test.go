@@ -6,8 +6,8 @@ import (
 
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
-	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -44,12 +44,12 @@ func TestPlasmid(t *testing.T) {
 	)
 	assert.Equal(
 		p.Depositor,
-		&mocks.MockPlasmidAttributes.Depositor,
+		mocks.MockPlasmidAttributes.Depositor,
 		"should match depositor (he's gold)",
 	)
 	assert.ElementsMatch(
 		p.Genes,
-		sliceConverter(mocks.MockPlasmidAttributes.Genes),
+		mocks.MockPlasmidAttributes.Genes,
 		"should match genes list",
 	)
 	assert.ElementsMatch(
@@ -59,7 +59,7 @@ func TestPlasmid(t *testing.T) {
 	)
 	assert.ElementsMatch(
 		p.Publications,
-		sliceConverter(mocks.MockPlasmidAttributes.Publications),
+		mocks.MockPlasmidAttributes.Publications,
 		"should match publications",
 	)
 	assert.Equal(
@@ -108,22 +108,22 @@ func TestStrain(t *testing.T) {
 	)
 	assert.Equal(
 		p.Depositor,
-		&mocks.MockStrainAttributes.Depositor,
+		mocks.MockStrainAttributes.Depositor,
 		"should match depositor (he's gold)",
 	)
 	assert.ElementsMatch(
 		p.Genes,
-		sliceConverter(mocks.MockStrainAttributes.Genes),
+		mocks.MockStrainAttributes.Genes,
 		"should match genes list",
 	)
 	assert.ElementsMatch(
 		p.Dbxrefs,
-		sliceConverter(mocks.MockStrainAttributes.Dbxrefs),
+		mocks.MockStrainAttributes.Dbxrefs,
 		"should match dbxrefs",
 	)
 	assert.ElementsMatch(
 		p.Publications,
-		sliceConverter(mocks.MockStrainAttributes.Publications),
+		mocks.MockStrainAttributes.Publications,
 		"should match publications",
 	)
 	assert.Equal(
@@ -143,7 +143,7 @@ func TestStrain(t *testing.T) {
 	)
 	assert.ElementsMatch(
 		p.Names,
-		sliceConverter(mocks.MockStrainAttributes.Names),
+		mocks.MockStrainAttributes.Names,
 		"should match names",
 	)
 }
@@ -213,7 +213,7 @@ func TestListStrains(t *testing.T) {
 		context.Background(),
 		&cursor,
 		&limit,
-		&models.StrainListFilter{StrainType: models.StrainTypeEnumGwdi},
+		&models.StrainListFilter{StrainType: models.StrainTypeGwdi},
 	)
 	assert.NoError(err, "expect no error from getting list of strains")
 	assert.Equal(s.Limit, &limit, "should match limit")
@@ -285,7 +285,7 @@ func TestCreatePlasmid(t *testing.T) {
 		"should match editable summary",
 	)
 	assert.Equal(
-		*p.Depositor,
+		p.Depositor,
 		*input.Depositor,
 		"should match depositor (he's gold)",
 	)
@@ -324,7 +324,7 @@ func TestCreateStrain(t *testing.T) {
 		"should match editable summary",
 	)
 	assert.Equal(
-		*p.Depositor,
+		p.Depositor,
 		*input.Depositor,
 		"should match depositor (he's gold)",
 	)
@@ -363,12 +363,12 @@ func TestUpdatePlasmid(t *testing.T) {
 	)
 	assert.Equal(
 		p.Depositor,
-		input.Depositor,
+		*input.Depositor,
 		"should match updated depositor (he's gold)",
 	)
 	assert.ElementsMatch(
 		p.Genes,
-		sliceConverter(mocks.MockUpdatePlasmidAttributes.Genes),
+		mocks.MockUpdatePlasmidAttributes.Genes,
 		"should match existing genes list",
 	)
 	assert.ElementsMatch(
@@ -378,7 +378,7 @@ func TestUpdatePlasmid(t *testing.T) {
 	)
 	assert.ElementsMatch(
 		p.Publications,
-		sliceConverter(mocks.MockUpdatePlasmidAttributes.Publications),
+		mocks.MockUpdatePlasmidAttributes.Publications,
 		"should match existing publications",
 	)
 	assert.Equal(
@@ -429,22 +429,22 @@ func TestUpdateStrain(t *testing.T) {
 	)
 	assert.Equal(
 		p.Depositor,
-		input.Depositor,
+		*input.Depositor,
 		"should match updated depositor (he's gold)",
 	)
 	assert.ElementsMatch(
 		p.Genes,
-		sliceConverter(mocks.MockUpdateStrainAttributes.Genes),
+		mocks.MockUpdateStrainAttributes.Genes,
 		"should match existing genes list",
 	)
 	assert.ElementsMatch(
 		p.Dbxrefs,
-		sliceConverter(mocks.MockUpdateStrainAttributes.Dbxrefs),
+		mocks.MockUpdateStrainAttributes.Dbxrefs,
 		"should match existing dbxrefs",
 	)
 	assert.ElementsMatch(
 		p.Publications,
-		sliceConverter(mocks.MockUpdateStrainAttributes.Publications),
+		mocks.MockUpdateStrainAttributes.Publications,
 		"should match existing publications",
 	)
 	assert.Equal(

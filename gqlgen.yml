@@ -1,17 +1,20 @@
 schema:
-  - "api/*.graphql"
+  - "api/src/schema/*.graphql"
 exec:
-  filename: internal/graphql/generated/generated.go
+  layout: follow-schema
+  dir: internal/graphql/generated
   package: generated
 model:
   filename: internal/graphql/models/models_gen.go
   package: models
 resolver:
-  filename: internal/graphql/genresolver/genresolver.go
+  layout: follow-schema
+  dir: internal/graphql/genresolver
   package: genresolver
   type: Resolver
+  filename_template: "{name}.resolvers.go"
+omit_getters: true
 models:
-  # Custom scalars point to the name without the Marshal|Unmarshal in front
   Timestamp:
     model: github.com/dictyBase/graphql-server/internal/graphql/models.Timestamp
   User:
@@ -22,8 +25,8 @@ models:
     model: github.com/dictyBase/go-genproto/dictybaseapis/user.Permission
   Content:
     model: github.com/dictyBase/go-genproto/dictybaseapis/content.Content
-  Publication:
-    model: github.com/dictyBase/go-genproto/dictybaseapis/publication.Publication
+  # Publication:
+  #   model: github.com/dictyBase/go-genproto/dictybaseapis/publication.Publication
   Author:
     model: github.com/dictyBase/go-genproto/dictybaseapis/publication.Author
   Strain:

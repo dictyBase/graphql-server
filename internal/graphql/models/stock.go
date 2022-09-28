@@ -4,51 +4,53 @@ import (
 	"time"
 )
 
+type StockCommon struct{}
+
+func (stck StockCommon) IsStock() {}
+
+// LazyStock contains fields that are not directly mapped from model to graphql
+// type. These fields gets resolved on demand only
+type LazyStock struct {
+	CreatedBy           string
+	UpdatedBy           string
+	Depositor           string
+	Genes, Publications []string
+}
+
 type Strain struct {
+	LazyStock
+	StockCommon
 	ID                  string    `json:"id"`
 	CreatedAt           time.Time `json:"created_at"`
 	UpdatedAt           time.Time `json:"updated_at"`
-	CreatedBy           string    `json:"created_by"`
-	UpdatedBy           string    `json:"updated_by"`
 	Summary             *string   `json:"summary"`
 	EditableSummary     *string   `json:"editable_summary"`
-	Depositor           *string   `json:"depositor"`
-	Genes               []*string `json:"genes"`
-	Dbxrefs             []*string `json:"dbxrefs"`
-	Publications        []*string `json:"publications"`
+	Dbxrefs             []string `json:"dbxrefs"`
 	SystematicName      string    `json:"systematic_name"`
 	Label               string    `json:"label"`
 	Species             string    `json:"species"`
 	Plasmid             *string   `json:"plasmid"`
 	Parent              *string   `json:"parent"`
-	Names               []*string `json:"names"`
+	Names               []string `json:"names"`
 	InStock             bool      `json:"in_stock"`
-	Phenotypes          []*string `json:"phenotypes"`
 	GeneticModification *string   `json:"genetic_modification"`
 	MutagenesisMethod   *string   `json:"mutagenesis_method"`
-	Characteristics     []*string `json:"characteristics"`
-	Genotypes           []*string `json:"genotypes"`
+	Characteristics     []string `json:"characteristics"`
+	Genotypes           []string `json:"genotypes"`
 }
 
 type Plasmid struct {
+	StockCommon
+	LazyStock
 	ID               string    `json:"id"`
-	CreatedAt        time.Time `json:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at"`
-	CreatedBy        string    `json:"created_by"`
-	UpdatedBy        string    `json:"updated_by"`
 	Summary          *string   `json:"summary"`
 	EditableSummary  *string   `json:"editable_summary"`
-	Depositor        *string   `json:"depositor"`
-	Genes            []*string `json:"genes"`
-	Dbxrefs          []*string `json:"dbxrefs"`
-	Publications     []*string `json:"publications"`
 	ImageMap         *string   `json:"image_map"`
 	Sequence         *string   `json:"sequence"`
 	Name             string    `json:"name"`
-	InStock          bool      `json:"in_stock"`
-	Keywords         []*string `json:"keywords"`
 	GenbankAccession *string   `json:"genbank_accession"`
+	InStock          bool      `json:"in_stock"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	Dbxrefs          []*string `json:"dbxrefs"`
 }
-
-func (Strain) IsStock()  {}
-func (Plasmid) IsStock() {}
