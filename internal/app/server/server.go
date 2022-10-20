@@ -34,7 +34,12 @@ func RunGraphQLServer(c *cli.Context) error {
 		// establish grpc connections
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
-		conn, err := grpc.DialContext(ctx, fmt.Sprintf("%s:%s", host, port), grpc.WithInsecure(), grpc.WithBlock())
+		conn, err := grpc.DialContext(
+			ctx,
+			fmt.Sprintf("%s:%s", host, port),
+			grpc.WithInsecure(),
+			grpc.WithBlock(),
+		)
 		if err != nil {
 			return cli.NewExitError(
 				fmt.Sprintf("cannot connect to grpc microservice %s", err),
@@ -44,7 +49,10 @@ func RunGraphQLServer(c *cli.Context) error {
 		// add api clients to hashmap
 		nr.AddAPIConnection(v, conn)
 	}
-	endpoints := []string{c.String("publication-api") + "/" + "30048658", c.String("organism-api")}
+	endpoints := []string{
+		c.String("publication-api") + "/" + "30048658",
+		c.String("organism-api"),
+	}
 	// test all api endpoints
 	if err := checkEndpoints(endpoints); err != nil {
 		return err
@@ -53,7 +61,11 @@ func RunGraphQLServer(c *cli.Context) error {
 	nr.AddAPIEndpoint(registry.PUBLICATION, c.String("publication-api"))
 	nr.AddAPIEndpoint(registry.ORGANISM, c.String("organism-api"))
 	// add redis to registry
-	radd := fmt.Sprintf("%s:%s", c.String("redis-master-service-host"), c.String("redis-master-service-port"))
+	radd := fmt.Sprintf(
+		"%s:%s",
+		c.String("redis-master-service-host"),
+		c.String("redis-master-service-port"),
+	)
 	cache, err := redis.NewCache(radd)
 	if err != nil {
 		return cli.NewExitError(
@@ -89,7 +101,10 @@ func checkEndpoints(urls []string) error {
 		}
 		if res.StatusCode != http.StatusOK {
 			return cli.NewExitError(
-				fmt.Sprintf("did not get ok status from api endpoint, got %v instead", res.StatusCode),
+				fmt.Sprintf(
+					"did not get ok status from api endpoint, got %v instead",
+					res.StatusCode,
+				),
 				2,
 			)
 		}
@@ -99,7 +114,7 @@ func checkEndpoints(urls []string) error {
 
 func getCORS(origins []string) *cors.Cors {
 	return cors.New(cors.Options{
-		AllowedOrigins:   origins,
+		AllowedOrigins:   append(origins, "http://localhost:*"),
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"*"},
