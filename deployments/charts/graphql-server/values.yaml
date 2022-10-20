@@ -24,7 +24,7 @@ allowedOrigins:
   - "https://*.dictycr.org"
   - "https://dictybase.dev"
   - "https://*.dictybase.dev"
-  # - "http://localhost:*"
+  - "http://localhost:*"
 
 # values for http endpoints
 dictybaseConfiguration:
