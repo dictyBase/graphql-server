@@ -28,7 +28,9 @@ spec:
             {{ range .Values.allowedOrigins }}
             "--allowed-origin",
             {{ . | quote }},
-            {{ end }}
+            {{ end }},
+            "--allowed-origin",
+            "http://localhost:*"
           ]
           env:
           - name: PUBLICATION_API_ENDPOINT

@@ -18,13 +18,13 @@ logLevel: debug
 
 # necessary to prevent CORS issues
 allowedOrigins:
+  - "http://localhost:*"
   - "https://dictybase.org"
   - "https://*.dictybase.org"
   - "https://dictycr.org"
   - "https://*.dictycr.org"
   - "https://dictybase.dev"
   - "https://*.dictybase.dev"
-  - "http://localhost:*"
 
 # values for http endpoints
 dictybaseConfiguration:
