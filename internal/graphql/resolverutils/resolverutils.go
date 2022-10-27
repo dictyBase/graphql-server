@@ -68,14 +68,16 @@ func strainTypeQuery(filter *models.StrainListFilter) (string, error) {
 func strainFieldsQuery(filter *models.StrainListFilter) string {
 	var query strings.Builder
 	if filter.Label != nil {
+		if query.Len() > 0 {
+			query.WriteString(";")
+		}
 		query.WriteString(fmt.Sprintf("label==%s", *filter.Label))
 	}
 	if filter.Summary != nil {
 		if query.Len() > 0 {
-			query.WriteString(fmt.Sprintf(";summary==%s", *filter.Summary))
-		} else {
-			query.WriteString(fmt.Sprintf("summary==%s", *filter.Summary))
+			query.WriteString(";")
 		}
+		query.WriteString(fmt.Sprintf("summary==%s", *filter.Summary))
 	}
 
 	return query.String()
@@ -89,10 +91,9 @@ func StrainFilterToQuery(filter *models.StrainListFilter) (string, error) {
 		return query.String(), err
 	}
 	if query.Len() > 0 {
-		query.WriteString(fmt.Sprintf(";%s", typeQuery))
-	} else {
-		query.WriteString(typeQuery)
+		query.WriteString(";")
 	}
+	query.WriteString(typeQuery)
 
 	return query.String(), nil
 }
