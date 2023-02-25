@@ -13,7 +13,7 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/sirupsen/logrus v1.9.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	github.com/urfave/cli v1.22.12
 	github.com/vektah/dataloaden v0.3.0
 	github.com/vektah/gqlparser v1.3.1
