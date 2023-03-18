@@ -13,7 +13,7 @@ jobs:
           - 6379/tcp
     steps:
       - name: set up golang
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: 1.18
       - name: check out code
