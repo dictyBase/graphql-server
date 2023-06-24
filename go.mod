@@ -17,7 +17,7 @@ require (
 	github.com/urfave/cli v1.22.14
 	github.com/vektah/dataloaden v0.3.0
 	github.com/vektah/gqlparser v1.3.1
-	github.com/vektah/gqlparser/v2 v2.5.3
+	github.com/vektah/gqlparser/v2 v2.5.5
 	google.golang.org/grpc v1.56.1
 	google.golang.org/protobuf v1.30.0
 )
