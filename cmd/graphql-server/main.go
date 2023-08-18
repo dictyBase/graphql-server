@@ -96,13 +96,13 @@ func redisFlags() []cli.Flag {
 	return []cli.Flag{
 		cli.StringFlag{
 			Name:   "redis-master-service-host",
-			EnvVar: "REDIS_MASTER_SERVICE_HOST",
-			Usage:  "redis master grpc host",
+			EnvVar: "REDIS_SERVICE_HOST",
+			Usage:  "redis grpc host",
 		},
 		cli.StringFlag{
 			Name:   "redis-master-service-port",
-			EnvVar: "REDIS_MASTER_SERVICE_PORT",
-			Usage:  "redis master grpc port",
+			EnvVar: "REDIS_SERVICE_PORT",
+			Usage:  "redis grpc port",
 		},
 	}
 }
