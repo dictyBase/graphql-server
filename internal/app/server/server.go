@@ -49,14 +49,14 @@ func RunGraphQLServer(c *cli.Context) error {
 		// add api clients to hashmap
 		nr.AddAPIConnection(v, conn)
 	}
-	endpoints := []string{
+	/* endpoints := []string{
 		c.String("publication-api") + "/" + "30048658",
 		c.String("organism-api"),
 	}
 	// test all api endpoints
 	if err := checkEndpoints(endpoints); err != nil {
 		return err
-	}
+	} */
 	// apis came back ok, add to registry
 	nr.AddAPIEndpoint(registry.PUBLICATION, c.String("publication-api"))
 	nr.AddAPIEndpoint(registry.ORGANISM, c.String("organism-api"))
