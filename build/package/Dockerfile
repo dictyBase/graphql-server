@@ -20,6 +20,7 @@ RUN go build \
     -tags netgo \
     -o /bin/app \
     cmd/graphql-server/main.go
+RUN upx -q -9 /bin/app
 
 FROM gcr.io/distroless/static
 COPY --from=0 /bin/app /usr/local/bin/
