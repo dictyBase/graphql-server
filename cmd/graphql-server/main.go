@@ -40,13 +40,15 @@ func main() {
 
 func getServerFlags() []cli.Flag {
 	var f []cli.Flag
-	f = append(f, userFlags()...)
 	f = append(f, redisFlags()...)
 	f = append(f, dscFlags()...)
-	f = append(f, contentFlags()...)
 	f = append(f, nonGRPCFlags()...)
 	f = append(f, allowedOriginFlags()...)
-	return append(f, authFlags()...)
+	f = append(f, authFlags()...)
+	f = append(f, userFlags()...)
+	f = append(f, contentFlags()...)
+
+	return f
 }
 
 func userFlags() []cli.Flag {
