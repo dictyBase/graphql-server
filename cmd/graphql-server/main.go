@@ -44,9 +44,9 @@ func getServerFlags() []cli.Flag {
 	f = append(f, dscFlags()...)
 	f = append(f, nonGRPCFlags()...)
 	f = append(f, allowedOriginFlags()...)
-	f = append(f, authFlags()...)
+	/* f = append(f, authFlags()...)
 	f = append(f, userFlags()...)
-	f = append(f, contentFlags()...)
+	f = append(f, contentFlags()...) */
 
 	return f
 }
