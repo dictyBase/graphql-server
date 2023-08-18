@@ -1,4 +1,4 @@
-FROM golang:1.18.3-buster AS builder
+FROM golang:1.20.6-bullseye
 LABEL maintainer="Siddhartha Basu <siddhartha-basu@northwestern.edu>"
 ENV GOPROXY https://proxy.golang.org
 ENV CGO_ENABLED=0 \
