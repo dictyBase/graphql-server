@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var redisAddr = fmt.Sprintf("%s:%s", os.Getenv("REDIS_MASTER_SERVICE_HOST"), os.Getenv("REDIS_MASTER_SERVICE_PORT"))
+var redisAddr = fmt.Sprintf("%s:%s", os.Getenv("REDIS_SERVICE_HOST"), os.Getenv("REDIS_SERVICE_PORT"))
 
 const (
 	testHash = "testHash"
@@ -18,12 +18,12 @@ const (
 
 // CheckRedisEnv checks for the presence of the following
 // environment variables
-//   REDIS_MASTER_SERVICE_HOST
-//   REDIS_MASTER_SERVICE_PORT
+//   REDIS_SERVICE_HOST
+//   REDIS_SERVICE_PORT
 func CheckRedisEnv() error {
 	envs := []string{
-		"REDIS_MASTER_SERVICE_HOST",
-		"REDIS_MASTER_SERVICE_PORT",
+		"REDIS_SERVICE_HOST",
+		"REDIS_SERVICE_PORT",
 	}
 	for _, e := range envs {
 		if len(os.Getenv(e)) == 0 {
