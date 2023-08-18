@@ -55,13 +55,13 @@ const (
 )
 
 var ServiceMap = map[string]string{
+	"stock":      STOCK,
+	"order":      ORDER,
+	"annotation": ANNOTATION,
 	"user":       USER,
 	"role":       ROLE,
 	"permission": PERMISSION,
-	"stock":      STOCK,
-	"order":      ORDER,
 	"content":    CONTENT,
-	"annotation": ANNOTATION,
 	"auth":       AUTH,
 	"identity":   IDENTITY,
 }
