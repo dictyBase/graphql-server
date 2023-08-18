@@ -58,12 +58,12 @@ var ServiceMap = map[string]string{
 	"stock":      STOCK,
 	"order":      ORDER,
 	"annotation": ANNOTATION,
-	"user":       USER,
+	/* "user":       USER,
 	"role":       ROLE,
 	"permission": PERMISSION,
 	"content":    CONTENT,
 	"auth":       AUTH,
-	"identity":   IDENTITY,
+	"identity":   IDENTITY, */
 }
 
 type collection struct {
