@@ -86,7 +86,7 @@ func (mr MockRegistry) GetAPIEndpoint(key string) string {
 }
 
 func (mr MockRegistry) GetRedisRepository(key string) repository.Repository {
-	radd := fmt.Sprintf("%s:%s", os.Getenv("REDIS_MASTER_SERVICE_HOST"), os.Getenv("REDIS_MASTER_SERVICE_PORT"))
+	radd := fmt.Sprintf("%s:%s", os.Getenv("REDIS_SERVICE_HOST"), os.Getenv("REDIS_SERVICE_PORT"))
 	c, _ := redis.NewCache(radd)
 	return c
 }
