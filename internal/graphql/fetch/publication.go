@@ -11,7 +11,104 @@ import (
 	"github.com/Jeffail/gabs/v2"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/publication"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/repository"
+	"github.com/fatih/structs"
 )
+
+const (
+	REDIS_KEY = "PUBLICATION_KEY"
+)
+
+var Status string = "published"
+
+type EuroPMC struct {
+	HitCount       int64  `json:"hitCount"`
+	NextCursorMark string `json:"nextCursorMark"`
+	Request        struct {
+		CursorMark string `json:"cursorMark"`
+		PageSize   int64  `json:"pageSize"`
+		Query      string `json:"query"`
+		ResultType string `json:"resultType"`
+		Sort       string `json:"sort"`
+		Synonym    bool   `json:"synonym"`
+	} `json:"request"`
+	ResultList struct {
+		Result []struct {
+			AbstractText string `json:"abstractText"`
+			Affiliation  string `json:"affiliation"`
+			AuthMan      string `json:"authMan"`
+			AuthorList   struct {
+				Author []struct {
+					Affiliation string `json:"affiliation"`
+					FirstName   string `json:"firstName"`
+					FullName    string `json:"fullName"`
+					Initials    string `json:"initials"`
+					LastName    string `json:"lastName"`
+				} `json:"author"`
+			} `json:"authorList"`
+			AuthorString              string `json:"authorString"`
+			CitedByCount              int64  `json:"citedByCount"`
+			DateOfCreation            string `json:"dateOfCreation"`
+			DateOfRevision            string `json:"dateOfRevision"`
+			Doi                       string `json:"doi"`
+			ElectronicPublicationDate string `json:"electronicPublicationDate"`
+			EpmcAuthMan               string `json:"epmcAuthMan"`
+			FirstPublicationDate      string `json:"firstPublicationDate"`
+			FullTextURLList           struct {
+				FullTextURL []struct {
+					Availability     string `json:"availability"`
+					AvailabilityCode string `json:"availabilityCode"`
+					DocumentStyle    string `json:"documentStyle"`
+					Site             string `json:"site"`
+					URL              string `json:"url"`
+				} `json:"fullTextUrl"`
+			} `json:"fullTextUrlList"`
+			HasBook               string `json:"hasBook"`
+			HasDBCrossReferences  string `json:"hasDbCrossReferences"`
+			HasLabsLinks          string `json:"hasLabsLinks"`
+			HasPDF                string `json:"hasPDF"`
+			HasReferences         string `json:"hasReferences"`
+			HasTMAccessionNumbers string `json:"hasTMAccessionNumbers"`
+			HasTextMinedTerms     string `json:"hasTextMinedTerms"`
+			ID                    string `json:"id"`
+			InEPMC                string `json:"inEPMC"`
+			InPMC                 string `json:"inPMC"`
+			IsOpenAccess          string `json:"isOpenAccess"`
+			JournalInfo           struct {
+				DateOfPublication string `json:"dateOfPublication"`
+				Journal           struct {
+					Essn                string `json:"essn"`
+					Isoabbreviation     string `json:"isoabbreviation"`
+					Issn                string `json:"issn"`
+					MedlineAbbreviation string `json:"medlineAbbreviation"`
+					Nlmid               string `json:"nlmid"`
+					Title               string `json:"title"`
+				} `json:"journal"`
+				JournalIssueID       int64  `json:"journalIssueId"`
+				MonthOfPublication   int64  `json:"monthOfPublication"`
+				PrintPublicationDate string `json:"printPublicationDate"`
+				YearOfPublication    int64  `json:"yearOfPublication"`
+				Issue                string `json:"issue"`
+				Volume               string `json:"volume"`
+			} `json:"journalInfo"`
+			KeywordList struct {
+				Keyword []string `json:"keyword"`
+			} `json:"keywordList"`
+			Language    string `json:"language"`
+			NihAuthMan  string `json:"nihAuthMan"`
+			PageInfo    string `json:"pageInfo"`
+			Pmid        string `json:"pmid"`
+			PubModel    string `json:"pubModel"`
+			PubTypeList struct {
+				PubType []string `json:"pubType"`
+			} `json:"pubTypeList"`
+			PubYear string `json:"pubYear"`
+			Source  string `json:"source"`
+			Title   string `json:"title"`
+		} `json:"result"`
+	} `json:"resultList"`
+	Version string `json:"version"`
+}
 
 type PubJsonAPI struct {
 	Data  *PubData `json:"data"`
@@ -52,6 +149,102 @@ type Author struct {
 	LastName  string `json:"last_name"`
 	FullName  string `json:"full_name"`
 	Initials  string `json:"initials"`
+}
+
+func EuroPMC2Pub(pmc *EuroPMC) (*models.Publication, error) {
+	if len(pmc.ResultList.Result) < 1 {
+		return &models.Publication{}, nil
+	}
+	result := pmc.ResultList.Result[0]
+	pub := &models.Publication{
+		ID:       result.Pmid,
+		Title:    result.Title,
+		Abstract: result.AbstractText,
+		Journal:  result.JournalInfo.Journal.Title,
+		Source:   result.Source,
+		Doi:      &result.Doi,
+		Issue:    &result.JournalInfo.Issue,
+		Status:   &Status,
+		Volume:   &result.JournalInfo.Volume,
+		Pages:    &result.PageInfo,
+		Issn:     &result.JournalInfo.Journal.Issn,
+	}
+	pdate, err := time.Parse(time.DateOnly, result.FirstPublicationDate)
+	if err != nil {
+		return pub, fmt.Errorf("error in parsing date %s", err)
+	}
+	pub.PubDate = &pdate
+	rstruct := structs.New(result)
+	if !rstruct.Field("PubTypeList").IsZero() {
+		pub.PubType = result.PubTypeList.PubType[0]
+	}
+	for i, a := range result.AuthorList.Author {
+		pub.Authors = append(pub.Authors, &pb.Author{
+			FirstName: a.FirstName,
+			LastName:  a.LastName,
+			Rank:      int64(i),
+			Initials:  a.Initials,
+		})
+	}
+	return pub, nil
+}
+
+func FetchPublicationFromEuroPMC(
+	ctx context.Context,
+	repo repository.Repository,
+	endpoint, id string,
+) (*models.Publication, error) {
+	pmodel := new(models.Publication)
+	rkey := fmt.Sprintf(
+		"%s/%s",
+		REDIS_KEY, id,
+	)
+	ok, err := repo.Exists(rkey)
+	if err != nil {
+		return pmodel, fmt.Errorf(
+			"error in checking for key %s",
+			err,
+		)
+	}
+	if ok {
+		pubr, err := repo.Get(rkey)
+		if err != nil {
+			return pmodel, fmt.Errorf(
+				"error in getting existing key %s",
+				err,
+			)
+		}
+		if err := json.Unmarshal([]byte(pubr), pmodel); err != nil {
+			return pmodel, fmt.Errorf("error in decoding json %s", err)
+		}
+		return pmodel, nil
+	}
+	url := fmt.Sprintf(
+		"%s?format=json&resultType=core&query=ext_id:%s",
+		endpoint, id,
+	)
+	res, err := http.Get(url)
+	if err != nil {
+		return pmodel, fmt.Errorf("error in fetching data %s", err)
+	}
+	defer res.Body.Close()
+	epmc := &EuroPMC{}
+	err = json.NewDecoder(res.Body).Decode(epmc)
+	if err != nil {
+		return pmodel, fmt.Errorf("error in decoding data %s", err)
+	}
+	npmodel, err := EuroPMC2Pub(epmc)
+	if err != nil {
+		return npmodel, err
+	}
+	cnt, err := json.Marshal(npmodel)
+	if err != nil {
+		return npmodel, fmt.Errorf("error in converting json to byte %s", err)
+	}
+	if err := repo.Set(rkey, string(cnt)); err != nil {
+		return npmodel, fmt.Errorf("error in setting key in redis %s", err)
+	}
+	return npmodel, nil
 }
 
 func FetchPublication(
