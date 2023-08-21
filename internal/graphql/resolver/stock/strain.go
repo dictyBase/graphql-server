@@ -88,6 +88,7 @@ func (r *StrainResolver) Publications(
 	ctx context.Context,
 	obj *models.Strain,
 ) ([]*models.Publication, error) {
+	redis := r.Registry.GetRedisRepository(cache.RedisKey)
 	pubs := make([]*models.Publication, 0)
 	for _, id := range obj.Publications {
 		// GWDI IDs come back as 10.1101/582072 or doi:10.1101/582072
@@ -100,7 +101,6 @@ func (r *StrainResolver) Publications(
 			}
 			pubs = append(pubs, p)
 		} else {
-			redis := r.Registry.GetRedisRepository(cache.RedisKey)
 			p, err := fetch.FetchPublicationFromEuroPMC(
 				ctx,
 				redis,
@@ -344,6 +344,7 @@ func getPhenotypes(
 	r *StrainResolver,
 	data []*annotation.TaggedAnnotationGroupCollection_Data,
 ) []*models.Phenotype {
+	redis := r.Registry.GetRedisRepository(cache.RedisKey)
 	p := []*models.Phenotype{}
 	for _, item := range data {
 		m := &models.Phenotype{}
@@ -357,10 +358,10 @@ func getPhenotypes(
 				m.Assay = &gntype.Attributes.Tag
 			case registry.DictyAnnoOntology:
 				if gntype.Attributes.Tag == registry.LiteratureTag {
-					endpoint := r.Registry.GetAPIEndpoint(registry.PUBLICATION)
-					pub, err := fetch.FetchPublication(
+					pub, err := fetch.FetchPublicationFromEuroPMC(
 						ctx,
-						endpoint,
+						redis,
+						r.Registry.GetAPIEndpoint(registry.PUBLICATION),
 						gntype.Attributes.Value,
 					)
 					if err != nil {
