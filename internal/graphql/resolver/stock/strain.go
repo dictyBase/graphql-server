@@ -100,8 +100,13 @@ func (r *StrainResolver) Publications(
 			}
 			pubs = append(pubs, p)
 		} else {
-			endpoint := r.Registry.GetAPIEndpoint(registry.PUBLICATION)
-			p, err := fetch.FetchPublication(ctx, endpoint, id)
+			redis := r.Registry.GetRedisRepository(cache.RedisKey)
+			p, err := fetch.FetchPublicationFromEuroPMC(
+				ctx,
+				redis,
+				r.Registry.GetAPIEndpoint(registry.PUBLICATION),
+				id,
+			)
 			if err != nil {
 				errorutils.AddGQLError(ctx, err)
 				r.Logger.Error(err)
