@@ -58,10 +58,10 @@ var ServiceMap = map[string]string{
 	"stock":      STOCK,
 	"order":      ORDER,
 	"annotation": ANNOTATION,
-	/* "user":       USER,
 	"role":       ROLE,
 	"permission": PERMISSION,
-	"content":    CONTENT,
+	"user":       USER,
+	/*"content":    CONTENT,
 	"auth":       AUTH,
 	"identity":   IDENTITY, */
 }
