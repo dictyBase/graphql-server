@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
@@ -15,8 +16,10 @@ func (q *QueryResolver) Publication(
 	ctx context.Context,
 	id string,
 ) (*models.Publication, error) {
-	pub, err := fetch.FetchPublication(
+	redis := q.GetRedisRepository(cache.RedisKey)
+	pub, err := fetch.FetchPublicationFromEuroPMC(
 		ctx,
+		redis,
 		q.Registry.GetAPIEndpoint(registry.PUBLICATION),
 		id,
 	)
