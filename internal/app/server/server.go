@@ -113,8 +113,12 @@ func checkEndpoints(urls []string) error {
 }
 
 func getCORS(origins []string) *cors.Cors {
+	aorg := append(origins,"http://localhost:*")
+	aorg = append(aorg,"https://dictybase.dev")
+	aorg = append(aorg,"https://dictybase.dev/")
+	aorg = append(aorg,"https://dictybase.dev*")
 	return cors.New(cors.Options{
-		AllowedOrigins:   append(origins, "http://localhost:*"),
+		AllowedOrigins:   aorg,
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"*"},
