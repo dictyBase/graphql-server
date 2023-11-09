@@ -45,8 +45,8 @@ func getServerFlags() []cli.Flag {
 	f = append(f, nonGRPCFlags()...)
 	f = append(f, allowedOriginFlags()...)
 	f = append(f, userFlags()...)
-	/* f = append(f, authFlags()...)
-	f = append(f, contentFlags()...) */
+	f = append(f, authFlags()...)
+	/*f = append(f, contentFlags()...) */
 
 	return f
 }
@@ -110,27 +110,18 @@ func redisFlags() []cli.Flag {
 func authFlags() []cli.Flag {
 	return []cli.Flag{
 		cli.StringFlag{
-			Name:     "auth-grpc-host",
-			EnvVar:   "AUTH_API_SERVICE_HOST",
-			Usage:    "auth grpc host",
+			Name:     "jwks-uri",
+			Usage:    "url to retreive JWK public key set",
 			Required: true,
 		},
 		cli.StringFlag{
-			Name:     "auth-grpc-port",
-			EnvVar:   "AUTH_API_SERVICE_PORT",
-			Usage:    "auth grpc port",
+			Name:     "jwt-issuer",
+			Usage:    "expected jwt issuer of the token",
 			Required: true,
 		},
 		cli.StringFlag{
-			Name:     "identity-grpc-host",
-			EnvVar:   "IDENTITY_API_SERVICE_HOST",
-			Usage:    "identity grpc host",
-			Required: true,
-		},
-		cli.StringFlag{
-			Name:     "identity-grpc-port",
-			EnvVar:   "IDENTITY_API_SERVICE_PORT",
-			Usage:    "identity grpc port",
+			Name:     "jwt-audience",
+			Usage:    "expect jwt audience of the token",
 			Required: true,
 		},
 	}
@@ -211,10 +202,12 @@ func nonGRPCFlags() []cli.Flag {
 	}
 }
 
-/**
-  A list of allowed origins is necessary since server has set
-  allow-credentials to true.
-  See https://github.com/rs/cors/issues/55
+/*
+*
+
+	A list of allowed origins is necessary since server has set
+	allow-credentials to true.
+	See https://github.com/rs/cors/issues/55
 */
 func allowedOriginFlags() []cli.Flag {
 	return []cli.Flag{
