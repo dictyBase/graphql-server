@@ -28,9 +28,9 @@ func RunGraphQLServer(cltx *cli.Context) error {
 	log := getLogger(cltx)
 	router := chi.NewRouter()
 	nreg := registry.NewRegistry()
-	for k, v := range nreg.ServiceMap() {
-		host := cltx.String(fmt.Sprintf("%s-grpc-host", k))
-		port := cltx.String(fmt.Sprintf("%s-grpc-port", k))
+	for key, val := range nreg.ServiceMap() {
+		host := cltx.String(fmt.Sprintf("%s-grpc-host", key))
+		port := cltx.String(fmt.Sprintf("%s-grpc-port", key))
 		// establish grpc connections
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
@@ -47,7 +47,7 @@ func RunGraphQLServer(cltx *cli.Context) error {
 			)
 		}
 		// add api clients to hashmap
-		nreg.AddAPIConnection(v, conn)
+		nreg.AddAPIConnection(val, conn)
 	}
 	/* endpoints := []string{
 		c.String("publication-api") + "/" + "30048658",
