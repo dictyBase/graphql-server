@@ -2,9 +2,11 @@ package middleware
 
 import (
 	"context"
-	"time"
-
+	"fmt"
 	"net/http"
+
+	"github.com/lestrrat-go/jwx/v2/jwk"
+	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
 type contextKey string
@@ -14,64 +16,57 @@ func (c contextKey) String() string {
 	return "context key " + string(c)
 }
 
-var (
-	AuthContextKey = contextKey("refreshToken")
-	CookieStr      = "refresh-token"
-)
+var AuthContextKey = contextKey("jwtToken")
 
-type authResponseWriter struct {
-	http.ResponseWriter
-	RefreshToken string
-	Identifier   string
+type Middleware struct {
+	Set      jwk.Set
+	Audience string
+	Issuer   string
 }
 
-func (w *authResponseWriter) Write(b []byte) (int, error) {
-	if w.Identifier == "logout" {
-		http.SetCookie(w, &http.Cookie{
-			Name:     CookieStr,
-			Value:    "",
-			HttpOnly: true,
-			Expires:  time.Unix(0, 0), // expired
-			Secure:   true,
-			SameSite: http.SameSiteLaxMode,
-		})
+func NewMiddleware(url, audience, issuer string) (*Middleware, error) {
+	set, err := jwk.Fetch(context.Background(), url)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching JWK resource: %w", err)
 	}
-	if w.Identifier == "login" {
-		http.SetCookie(w, &http.Cookie{
-			Name:     CookieStr,
-			Value:    w.RefreshToken,
-			HttpOnly: true,
-			Expires:  time.Now().AddDate(0, 1, 0), // one month
-			Secure:   true,
-			SameSite: http.SameSiteLaxMode,
-		})
-	}
-	return w.ResponseWriter.Write(b)
+
+	return &Middleware{Set: set, Audience: audience, Issuer: issuer}, nil
 }
 
-func AuthMiddleWare(h http.Handler) http.Handler {
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		arw := authResponseWriter{w, "", ""}
-		w = &arw
-		// get refresh token from cookie
-		c, err := r.Cookie(CookieStr)
+func (mdw *Middleware) validateToken(req *http.Request) (jwt.Token, error) {
+	if len(req.Header.Get("Authorization")) <= 0 {
+		return nil, nil
+	}
+	token, err := jwt.ParseRequest(
+		req,
+		jwt.WithHeaderKey("Authorization"),
+		jwt.WithKeySet(mdw.Set),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing token: %s", err)
+	}
+	options := []jwt.ValidateOption{
+		jwt.WithAudience(mdw.Audience),
+		jwt.WithIssuer(mdw.Issuer),
+	}
+	if err := jwt.Validate(token, options...); err != nil {
+		return nil, fmt.Errorf("error validating token: %s", err)
+	}
+	return token, nil
+}
+
+func (mdw *Middleware) JwtHandler(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(wrt http.ResponseWriter, req *http.Request) {
+		token, err := mdw.validateToken(req)
 		if err != nil {
-			if err == http.ErrNoCookie {
-				newCtx := context.WithValue(ctx, AuthContextKey, w)
-				h.ServeHTTP(w, r.WithContext(newCtx))
-				return
-			}
-			http.Error(w, "could not retrieve cookie", http.StatusInternalServerError)
+			http.Error(wrt, err.Error(), http.StatusUnauthorized)
+			return
 		}
-		arw.RefreshToken = c.Value
-		newCtx := context.WithValue(ctx, AuthContextKey, w)
-		h.ServeHTTP(w, r.WithContext(newCtx))
-	}
-	return http.HandlerFunc(fn)
+		newCtx := context.WithValue(req.Context(), AuthContextKey, token)
+		next.ServeHTTP(wrt, req.WithContext(newCtx))
+	})
 }
 
-// WriterFromContext finds the HTTP response writer from the context.
-func WriterFromContext(ctx context.Context) *authResponseWriter {
-	return ctx.Value(AuthContextKey).(*authResponseWriter)
+func TokenFromContext(ctx context.Context) jwt.Token {
+	return ctx.Value(AuthContextKey).(jwt.Token)
 }
