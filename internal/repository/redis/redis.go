@@ -35,6 +35,18 @@ func (rs *RedisStorage) Set(key string, value string) error {
 	return rs.client.Set(key, value, 24*time.Hour).Err()
 }
 
+func (rs *RedisStorage) SetWithTTL(
+	key, value string,
+	expiration time.Duration,
+) error {
+	err := rs.client.Set(key, value, expiration).Err()
+	if err != nil {
+		return fmt.Errorf("error in setting key with expiration %s", err)
+	}
+
+	return nil
+}
+
 func (rs *RedisStorage) Exists(key string) (bool, error) {
 	h, err := rs.client.Exists(key).Result()
 	if err != nil {
