@@ -49,15 +49,6 @@ func RunGraphQLServer(cltx *cli.Context) error {
 		// add api clients to hashmap
 		nreg.AddAPIConnection(val, conn)
 	}
-	/* endpoints := []string{
-		c.String("publication-api") + "/" + "30048658",
-		c.String("organism-api"),
-	}
-	// test all api endpoints
-	if err := checkEndpoints(endpoints); err != nil {
-		return err
-	} */
-	// apis came back ok, add to registry
 	nreg.AddAPIEndpoint(registry.PUBLICATION, cltx.String("publication-api"))
 	nreg.AddAPIEndpoint(registry.ORGANISM, cltx.String("organism-api"))
 	// add redis to registry
@@ -98,28 +89,6 @@ func RunGraphQLServer(cltx *cli.Context) error {
 	router.Handle("/graphql", srv)
 	log.Debugf("connect to port 8080 for GraphQL playground")
 	log.Fatal(http.ListenAndServe(":8080", router))
-	return nil
-}
-
-func checkEndpoints(urls []string) error {
-	for _, url := range urls {
-		res, err := http.Get(url)
-		if err != nil {
-			return cli.NewExitError(
-				fmt.Sprintf("cannot reach api endpoint %s", err),
-				2,
-			)
-		}
-		if res.StatusCode != http.StatusOK {
-			return cli.NewExitError(
-				fmt.Sprintf(
-					"did not get ok status from api endpoint, got %v instead",
-					res.StatusCode,
-				),
-				2,
-			)
-		}
-	}
 	return nil
 }
 
