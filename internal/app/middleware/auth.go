@@ -18,22 +18,22 @@ func (c contextKey) String() string {
 
 var AuthContextKey = contextKey("jwtToken")
 
-type Middleware struct {
+type JWTAuth struct {
 	Set      jwk.Set
 	Audience string
 	Issuer   string
 }
 
-func NewMiddleware(url, audience, issuer string) (*Middleware, error) {
+func NewJWTAuth(url, audience, issuer string) (*JWTAuth, error) {
 	set, err := jwk.Fetch(context.Background(), url)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching JWK resource: %w", err)
 	}
 
-	return &Middleware{Set: set, Audience: audience, Issuer: issuer}, nil
+	return &JWTAuth{Set: set, Audience: audience, Issuer: issuer}, nil
 }
 
-func (mdw *Middleware) validateToken(req *http.Request) (jwt.Token, error) {
+func (mdw *JWTAuth) validateToken(req *http.Request) (jwt.Token, error) {
 	if len(req.Header.Get("Authorization")) <= 0 {
 		return nil, nil
 	}
@@ -55,7 +55,7 @@ func (mdw *Middleware) validateToken(req *http.Request) (jwt.Token, error) {
 	return token, nil
 }
 
-func (mdw *Middleware) JwtHandler(next http.Handler) http.Handler {
+func (mdw *JWTAuth) JwtHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(wrt http.ResponseWriter, req *http.Request) {
 		token, err := mdw.validateToken(req)
 		if err != nil {
