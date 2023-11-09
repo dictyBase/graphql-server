@@ -28,7 +28,7 @@ func RunGraphQLServer(cltx *cli.Context) error {
 	log := getLogger(cltx)
 	r := chi.NewRouter()
 	nr := registry.NewRegistry()
-	for k, v := range registry.ServiceMap {
+	for k, v := range nr.ServiceMap() {
 		host := cltx.String(fmt.Sprintf("%s-grpc-host", k))
 		port := cltx.String(fmt.Sprintf("%s-grpc-port", k))
 		// establish grpc connections
