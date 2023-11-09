@@ -54,23 +54,12 @@ const (
 	ORGANISM    = "organism"
 )
 
-var ServiceMap = map[string]string{
-	"stock":      STOCK,
-	"order":      ORDER,
-	"annotation": ANNOTATION,
-	"role":       ROLE,
-	"permission": PERMISSION,
-	"user":       USER,
-	"content":    CONTENT,
-	/*"auth":       AUTH,
-	"identity":   IDENTITY, */
-}
-
 type collection struct {
 	connMap *hashmap.Map
 }
 
 type Registry interface {
+	ServiceMap() map[string]string
 	AddAPIEndpoint(key, endpoint string)
 	AddAPIConnection(key string, conn *grpc.ClientConn)
 	AddRepository(key string, st repository.Repository)
@@ -92,6 +81,20 @@ type Registry interface {
 func NewRegistry() Registry {
 	m := hashmap.New()
 	return &collection{connMap: m}
+}
+
+func (c *collection) ServiceMap() map[string]string {
+	return map[string]string{
+		"stock":      STOCK,
+		"order":      ORDER,
+		"annotation": ANNOTATION,
+		"role":       ROLE,
+		"permission": PERMISSION,
+		"user":       USER,
+		"content":    CONTENT,
+		/*"auth":       AUTH,
+		"identity":   IDENTITY, */
+	}
 }
 
 // AddAPIEndpoint adds a new REST endpoint to the hashmap
