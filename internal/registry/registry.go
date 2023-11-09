@@ -61,8 +61,8 @@ var ServiceMap = map[string]string{
 	"role":       ROLE,
 	"permission": PERMISSION,
 	"user":       USER,
-	/*"content":    CONTENT,
-	"auth":       AUTH,
+	"content":    CONTENT,
+	/*"auth":       AUTH,
 	"identity":   IDENTITY, */
 }
 
