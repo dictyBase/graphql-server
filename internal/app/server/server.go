@@ -24,13 +24,13 @@ import (
 )
 
 // RunGraphQLServer starts the GraphQL backend
-func RunGraphQLServer(c *cli.Context) error {
-	log := getLogger(c)
+func RunGraphQLServer(cltx *cli.Context) error {
+	log := getLogger(cltx)
 	r := chi.NewRouter()
 	nr := registry.NewRegistry()
 	for k, v := range registry.ServiceMap {
-		host := c.String(fmt.Sprintf("%s-grpc-host", k))
-		port := c.String(fmt.Sprintf("%s-grpc-port", k))
+		host := cltx.String(fmt.Sprintf("%s-grpc-host", k))
+		port := cltx.String(fmt.Sprintf("%s-grpc-port", k))
 		// establish grpc connections
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
@@ -58,13 +58,13 @@ func RunGraphQLServer(c *cli.Context) error {
 		return err
 	} */
 	// apis came back ok, add to registry
-	nr.AddAPIEndpoint(registry.PUBLICATION, c.String("publication-api"))
-	nr.AddAPIEndpoint(registry.ORGANISM, c.String("organism-api"))
+	nr.AddAPIEndpoint(registry.PUBLICATION, cltx.String("publication-api"))
+	nr.AddAPIEndpoint(registry.ORGANISM, cltx.String("organism-api"))
 	// add redis to registry
 	radd := fmt.Sprintf(
 		"%s:%s",
-		c.String("redis-master-service-host"),
-		c.String("redis-master-service-port"),
+		cltx.String("redis-master-service-host"),
+		cltx.String("redis-master-service-port"),
 	)
 	cache, err := redis.NewCache(radd)
 	if err != nil {
@@ -77,12 +77,12 @@ func RunGraphQLServer(c *cli.Context) error {
 	// initialize the dataloaders
 	dl := dataloader.NewRetriever()
 	s := resolver.NewResolver(nr, dl, log)
-	crs := getCORS(c.StringSlice("allowed-origin"))
+	crs := getCORS(cltx.StringSlice("allowed-origin"))
 	r.Use(crs.Handler)
 	authMdw, err := middleware.NewJWTAuth(
-		c.String("jwks-uri"),
-		c.String("jwt-audience"),
-		c.String("issuer"),
+		cltx.String("jwks-uri"),
+		cltx.String("jwt-audience"),
+		cltx.String("issuer"),
 	)
 	if err != nil {
 		return cli.NewExitError(
