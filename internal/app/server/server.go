@@ -149,8 +149,8 @@ func getLogger(c *cli.Context) *logrus.Entry {
 			TimestampFormat: "02/Jan/2006:15:04:05",
 		}
 	}
-	l := c.GlobalString("log-level")
-	switch l {
+	lvl := c.GlobalString("log-level")
+	switch lvl {
 	case "debug":
 		log.Level = logrus.DebugLevel
 	case "warn":
