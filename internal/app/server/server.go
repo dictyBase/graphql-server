@@ -79,7 +79,18 @@ func RunGraphQLServer(c *cli.Context) error {
 	s := resolver.NewResolver(nr, dl, log)
 	crs := getCORS(c.StringSlice("allowed-origin"))
 	r.Use(crs.Handler)
-	r.Use(middleware.AuthMiddleWare)
+	authMdw, err := middleware.NewJWTAuth(
+		c.String("jwks-uri"),
+		c.String("jwt-audience"),
+		c.String("issuer"),
+	)
+	if err != nil {
+		return cli.NewExitError(
+			fmt.Sprintf("error in creating jwt auth middleware %s", err),
+			2,
+		)
+	}
+	r.Use(authMdw.JwtHandler)
 	r.Use(dataloader.DataloaderMiddleware(nr))
 	execSchema := generated.NewExecutableSchema(generated.Config{Resolvers: s})
 	srv := handler.NewDefaultServer(execSchema)
@@ -113,10 +124,10 @@ func checkEndpoints(urls []string) error {
 }
 
 func getCORS(origins []string) *cors.Cors {
-	aorg := append(origins,"http://localhost:*")
-	aorg = append(aorg,"https://dictybase.dev")
-	aorg = append(aorg,"https://dictybase.dev/")
-	aorg = append(aorg,"https://dictybase.dev*")
+	aorg := append(origins, "http://localhost:*")
+	aorg = append(aorg, "https://dictybase.dev")
+	aorg = append(aorg, "https://dictybase.dev/")
+	aorg = append(aorg, "https://dictybase.dev*")
 	return cors.New(cors.Options{
 		AllowedOrigins:   aorg,
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
