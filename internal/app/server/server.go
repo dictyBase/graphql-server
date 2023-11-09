@@ -26,9 +26,9 @@ import (
 // RunGraphQLServer starts the GraphQL backend
 func RunGraphQLServer(cltx *cli.Context) error {
 	log := getLogger(cltx)
-	r := chi.NewRouter()
-	nr := registry.NewRegistry()
-	for k, v := range nr.ServiceMap() {
+	router := chi.NewRouter()
+	nreg := registry.NewRegistry()
+	for k, v := range nreg.ServiceMap() {
 		host := cltx.String(fmt.Sprintf("%s-grpc-host", k))
 		port := cltx.String(fmt.Sprintf("%s-grpc-port", k))
 		// establish grpc connections
@@ -47,7 +47,7 @@ func RunGraphQLServer(cltx *cli.Context) error {
 			)
 		}
 		// add api clients to hashmap
-		nr.AddAPIConnection(v, conn)
+		nreg.AddAPIConnection(v, conn)
 	}
 	/* endpoints := []string{
 		c.String("publication-api") + "/" + "30048658",
@@ -58,8 +58,8 @@ func RunGraphQLServer(cltx *cli.Context) error {
 		return err
 	} */
 	// apis came back ok, add to registry
-	nr.AddAPIEndpoint(registry.PUBLICATION, cltx.String("publication-api"))
-	nr.AddAPIEndpoint(registry.ORGANISM, cltx.String("organism-api"))
+	nreg.AddAPIEndpoint(registry.PUBLICATION, cltx.String("publication-api"))
+	nreg.AddAPIEndpoint(registry.ORGANISM, cltx.String("organism-api"))
 	// add redis to registry
 	radd := fmt.Sprintf(
 		"%s:%s",
@@ -73,12 +73,12 @@ func RunGraphQLServer(cltx *cli.Context) error {
 			2,
 		)
 	}
-	nr.AddRepository("redis", cache)
+	nreg.AddRepository("redis", cache)
 	// initialize the dataloaders
 	dl := dataloader.NewRetriever()
-	s := resolver.NewResolver(nr, dl, log)
+	s := resolver.NewResolver(nreg, dl, log)
 	crs := getCORS(cltx.StringSlice("allowed-origin"))
-	r.Use(crs.Handler)
+	router.Use(crs.Handler)
 	authMdw, err := middleware.NewJWTAuth(
 		cltx.String("jwks-uri"),
 		cltx.String("jwt-audience"),
@@ -90,14 +90,14 @@ func RunGraphQLServer(cltx *cli.Context) error {
 			2,
 		)
 	}
-	r.Use(authMdw.JwtHandler)
-	r.Use(dataloader.DataloaderMiddleware(nr))
+	router.Use(authMdw.JwtHandler)
+	router.Use(dataloader.DataloaderMiddleware(nreg))
 	execSchema := generated.NewExecutableSchema(generated.Config{Resolvers: s})
 	srv := handler.NewDefaultServer(execSchema)
-	r.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
-	r.Handle("/graphql", srv)
+	router.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
+	router.Handle("/graphql", srv)
 	log.Debugf("connect to port 8080 for GraphQL playground")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Fatal(http.ListenAndServe(":8080", router))
 	return nil
 }
 
