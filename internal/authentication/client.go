@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dictyBase/graphql-server/internal/collection"
 	"github.com/dictyBase/graphql-server/internal/repository"
-	"github.com/schollz/logger"
 	"golang.org/x/exp/slices"
 )
 
@@ -122,31 +122,6 @@ func (clnt *LogtoClient) AccessToken() (*AccessTokenResp, error) {
 	}
 
 	return acresp, nil
-}
-
-func (clnt *LogtoClient) reqToResponse(
-	creq *http.Request,
-) (*http.Response, error) {
-	uresp, err := clnt.httpClient.Do(creq)
-	if err != nil {
-		return uresp, fmt.Errorf("error in making request %s", err)
-	}
-	if uresp.StatusCode != 200 {
-		cnt, err := io.ReadAll(uresp.Body)
-		if err != nil {
-			return uresp, fmt.Errorf(
-				"error in response and the reading the body %d %s",
-				uresp.StatusCode,
-				err,
-			)
-		}
-		return uresp, fmt.Errorf(
-			"unexpected error response %d %s",
-			uresp.StatusCode,
-			string(cnt),
-		)
-	}
-	return uresp, nil
 }
 
 func (clnt *LogtoClient) CheckUserWithUserName(
@@ -261,6 +236,40 @@ func (clnt *LogtoClient) AddCustomUserInformation(
 }
 
 func (clnt *LogtoClient) Roles(userId string) ([]string, error) {
+	var roles []string
+	token, err := clnt.retrieveToken()
+	if err != nil {
+		return roles, fmt.Errorf("error in getting token %s", err)
+	}
+	ureq, err := http.NewRequest(
+		"GET",
+		fmt.Sprintf("%s/api/users/%s/roles", clnt.baseURL, userId),
+		nil,
+	)
+	if err != nil {
+		return roles, fmt.Errorf(
+			"error in making new request for fetching user roles %s",
+			err,
+		)
+	}
+	commonHeader(ureq, token)
+	uresp, err := clnt.reqToResponse(ureq)
+	if err != nil {
+		return roles, fmt.Errorf(
+			"error in getting response during fetching of roles %s",
+			err,
+		)
+	}
+	defer uresp.Body.Close()
+	rolesStruct := make([]*RoleResp, 0)
+	if err := json.NewDecoder(uresp.Body).Decode(&rolesStruct); err != nil {
+		return roles, fmt.Errorf("error in decoding json response %s", err)
+	}
+
+	return collection.Map(
+		rolesStruct,
+		func(rsp *RoleResp) string { return rsp.Name },
+	), nil
 }
 
 func (clnt *LogtoClient) CreateUser(
@@ -328,4 +337,29 @@ func commonHeader(lreq *http.Request, token string) {
 	lreq.Header.Set("Content-Type", "application/json")
 	lreq.Header.Set("Accept", "application/json")
 	lreq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+}
+
+func (clnt *LogtoClient) reqToResponse(
+	creq *http.Request,
+) (*http.Response, error) {
+	uresp, err := clnt.httpClient.Do(creq)
+	if err != nil {
+		return uresp, fmt.Errorf("error in making request %s", err)
+	}
+	if uresp.StatusCode != 200 {
+		cnt, err := io.ReadAll(uresp.Body)
+		if err != nil {
+			return uresp, fmt.Errorf(
+				"error in response and the reading the body %d %s",
+				uresp.StatusCode,
+				err,
+			)
+		}
+		return uresp, fmt.Errorf(
+			"unexpected error response %d %s",
+			uresp.StatusCode,
+			string(cnt),
+		)
+	}
+	return uresp, nil
 }
