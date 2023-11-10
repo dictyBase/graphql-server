@@ -2,12 +2,12 @@ package registry
 
 import (
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
-	"github.com/dictyBase/go-genproto/dictybaseapis/auth"
 	"github.com/dictyBase/go-genproto/dictybaseapis/content"
 	"github.com/dictyBase/go-genproto/dictybaseapis/identity"
 	"github.com/dictyBase/go-genproto/dictybaseapis/order"
 	"github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
+	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	"github.com/emirpasic/gods/maps/hashmap"
 	"google.golang.org/grpc"
@@ -63,6 +63,8 @@ type Registry interface {
 	AddAPIEndpoint(key, endpoint string)
 	AddAPIConnection(key string, conn *grpc.ClientConn)
 	AddRepository(key string, st repository.Repository)
+	AddAuthClient(key string, auth *authentication.LogtoClient)
+	GetAuthClient(key string) *authentication.LogtoClient
 	GetAPIConnection(key string) (conn *grpc.ClientConn)
 	GetAPIEndpoint(key string) string
 	GetUserClient(key string) user.UserServiceClient
@@ -72,7 +74,6 @@ type Registry interface {
 	GetOrderClient(key string) order.OrderServiceClient
 	GetContentClient(key string) content.ContentServiceClient
 	GetAnnotationClient(key string) annotation.TaggedAnnotationServiceClient
-	GetAuthClient(key string) auth.AuthServiceClient
 	GetIdentityClient(key string) identity.IdentityServiceClient
 	GetRedisRepository(key string) repository.Repository
 }
@@ -92,9 +93,13 @@ func (coll *collection) ServiceMap() map[string]string {
 		"permission": PERMISSION,
 		"user":       USER,
 		"content":    CONTENT,
-		/*"auth":       AUTH,
-		"identity":   IDENTITY, */
 	}
+}
+
+func (coll *collection) AddAuthClient(
+	key string, auth *authentication.LogtoClient,
+) {
+	coll.connMap.Put(key, auth)
 }
 
 // AddAPIEndpoint adds a new REST endpoint to the hashmap
@@ -110,6 +115,15 @@ func (coll *collection) AddAPIConnection(key string, conn *grpc.ClientConn) {
 // AddRepository adds a new repository client to the hashmap
 func (coll *collection) AddRepository(key string, st repository.Repository) {
 	coll.connMap.Put(key, st)
+}
+
+func (coll *collection) GetAuthClient(key string) *authentication.LogtoClient {
+	val, ok := coll.connMap.Get(key)
+	if !ok {
+		panic("could not get authentication client")
+	}
+	client, _ := val.(*authentication.LogtoClient)
+	return client
 }
 
 // GetAPIClient looks up a client in the hashmap
@@ -144,18 +158,18 @@ func (coll *collection) GetOrderClient(key string) order.OrderServiceClient {
 	return order.NewOrderServiceClient(coll.GetAPIConnection(key))
 }
 
-func (coll *collection) GetContentClient(key string) content.ContentServiceClient {
+func (coll *collection) GetContentClient(
+	key string,
+) content.ContentServiceClient {
 	return content.NewContentServiceClient(coll.GetAPIConnection(key))
 }
 
 func (coll *collection) GetAnnotationClient(
 	key string,
 ) annotation.TaggedAnnotationServiceClient {
-	return annotation.NewTaggedAnnotationServiceClient(coll.GetAPIConnection(key))
-}
-
-func (coll *collection) GetAuthClient(key string) auth.AuthServiceClient {
-	return auth.NewAuthServiceClient(coll.GetAPIConnection(key))
+	return annotation.NewTaggedAnnotationServiceClient(
+		coll.GetAPIConnection(key),
+	)
 }
 
 func (coll *collection) GetIdentityClient(
