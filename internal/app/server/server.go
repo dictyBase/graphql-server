@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/dictyBase/graphql-server/internal/app/middleware"
+	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/dataloader"
 	"github.com/dictyBase/graphql-server/internal/graphql/generated"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolver"
@@ -104,6 +105,17 @@ func connectToGrpcService(
 func addEndpoints(ctx *cli.Context, nreg registry.Registry) {
 	nreg.AddAPIEndpoint(registry.PUBLICATION, ctx.String("publication-api"))
 	nreg.AddAPIEndpoint(registry.ORGANISM, ctx.String("organism-api"))
+	nreg.AddAuthClient(
+		registry.AUTH,
+		authentication.NewClient(&authentication.LogtoClientParams{
+			URL:         ctx.String("auth-api-endpoint"),
+			AppId:       ctx.String("app-id"),
+			AppSecret:   ctx.String("app-secret"),
+			APIResource: ctx.String("api-resource"),
+			Key:         "AUTHTOKEN",
+			TokenCache:  nreg.GetRedisRepository(registry.REDISREPO),
+		}),
+	)
 }
 
 func initRedis(ctx *cli.Context, nreg registry.Registry) error {
@@ -116,11 +128,9 @@ func initRedis(ctx *cli.Context, nreg registry.Registry) error {
 	if err != nil {
 		return fmt.Errorf("cannot create redis cache: %v", err)
 	}
-	nreg.AddRepository("redis", cache)
+	nreg.AddRepository(registry.REDISREPO, cache)
 	return nil
 }
-
-
 
 func getCORS(origins []string) *cors.Cors {
 	aorg := append(origins, "http://localhost:*")
