@@ -83,7 +83,7 @@ func NewRegistry() Registry {
 	return &collection{connMap: m}
 }
 
-func (c *collection) ServiceMap() map[string]string {
+func (coll *collection) ServiceMap() map[string]string {
 	return map[string]string{
 		"stock":      STOCK,
 		"order":      ORDER,
@@ -98,23 +98,23 @@ func (c *collection) ServiceMap() map[string]string {
 }
 
 // AddAPIEndpoint adds a new REST endpoint to the hashmap
-func (c *collection) AddAPIEndpoint(key, endpoint string) {
-	c.connMap.Put(key, endpoint)
+func (coll *collection) AddAPIEndpoint(key, endpoint string) {
+	coll.connMap.Put(key, endpoint)
 }
 
 // AddAPIClient adds a new gRPC client to the hashmap
-func (c *collection) AddAPIConnection(key string, conn *grpc.ClientConn) {
-	c.connMap.Put(key, conn)
+func (coll *collection) AddAPIConnection(key string, conn *grpc.ClientConn) {
+	coll.connMap.Put(key, conn)
 }
 
 // AddRepository adds a new repository client to the hashmap
-func (c *collection) AddRepository(key string, st repository.Repository) {
-	c.connMap.Put(key, st)
+func (coll *collection) AddRepository(key string, st repository.Repository) {
+	coll.connMap.Put(key, st)
 }
 
 // GetAPIClient looks up a client in the hashmap
-func (c *collection) GetAPIConnection(key string) (conn *grpc.ClientConn) {
-	v, ok := c.connMap.Get(key)
+func (coll *collection) GetAPIConnection(key string) (conn *grpc.ClientConn) {
+	v, ok := coll.connMap.Get(key)
 	if !ok {
 		panic("could not get grpc client connection")
 	}
@@ -122,56 +122,56 @@ func (c *collection) GetAPIConnection(key string) (conn *grpc.ClientConn) {
 	return conn
 }
 
-func (c *collection) GetUserClient(key string) user.UserServiceClient {
-	return user.NewUserServiceClient(c.GetAPIConnection(key))
+func (coll *collection) GetUserClient(key string) user.UserServiceClient {
+	return user.NewUserServiceClient(coll.GetAPIConnection(key))
 }
 
-func (c *collection) GetRoleClient(key string) user.RoleServiceClient {
-	return user.NewRoleServiceClient(c.GetAPIConnection(key))
+func (coll *collection) GetRoleClient(key string) user.RoleServiceClient {
+	return user.NewRoleServiceClient(coll.GetAPIConnection(key))
 }
 
-func (c *collection) GetPermissionClient(
+func (coll *collection) GetPermissionClient(
 	key string,
 ) user.PermissionServiceClient {
-	return user.NewPermissionServiceClient(c.GetAPIConnection(key))
+	return user.NewPermissionServiceClient(coll.GetAPIConnection(key))
 }
 
-func (c *collection) GetStockClient(key string) stock.StockServiceClient {
-	return stock.NewStockServiceClient(c.GetAPIConnection(key))
+func (coll *collection) GetStockClient(key string) stock.StockServiceClient {
+	return stock.NewStockServiceClient(coll.GetAPIConnection(key))
 }
 
-func (c *collection) GetOrderClient(key string) order.OrderServiceClient {
-	return order.NewOrderServiceClient(c.GetAPIConnection(key))
+func (coll *collection) GetOrderClient(key string) order.OrderServiceClient {
+	return order.NewOrderServiceClient(coll.GetAPIConnection(key))
 }
 
-func (c *collection) GetContentClient(key string) content.ContentServiceClient {
-	return content.NewContentServiceClient(c.GetAPIConnection(key))
+func (coll *collection) GetContentClient(key string) content.ContentServiceClient {
+	return content.NewContentServiceClient(coll.GetAPIConnection(key))
 }
 
-func (c *collection) GetAnnotationClient(
+func (coll *collection) GetAnnotationClient(
 	key string,
 ) annotation.TaggedAnnotationServiceClient {
-	return annotation.NewTaggedAnnotationServiceClient(c.GetAPIConnection(key))
+	return annotation.NewTaggedAnnotationServiceClient(coll.GetAPIConnection(key))
 }
 
-func (c *collection) GetAuthClient(key string) auth.AuthServiceClient {
-	return auth.NewAuthServiceClient(c.GetAPIConnection(key))
+func (coll *collection) GetAuthClient(key string) auth.AuthServiceClient {
+	return auth.NewAuthServiceClient(coll.GetAPIConnection(key))
 }
 
-func (c *collection) GetIdentityClient(
+func (coll *collection) GetIdentityClient(
 	key string,
 ) identity.IdentityServiceClient {
-	return identity.NewIdentityServiceClient(c.GetAPIConnection(key))
+	return identity.NewIdentityServiceClient(coll.GetAPIConnection(key))
 }
 
-func (c *collection) GetAPIEndpoint(key string) string {
-	v, _ := c.connMap.Get(key)
+func (coll *collection) GetAPIEndpoint(key string) string {
+	v, _ := coll.connMap.Get(key)
 	endpoint, _ := v.(string)
 	return endpoint
 }
 
-func (c *collection) GetRedisRepository(key string) repository.Repository {
-	v, _ := c.connMap.Get(key)
+func (coll *collection) GetRedisRepository(key string) repository.Repository {
+	v, _ := coll.connMap.Get(key)
 	st, _ := v.(repository.Repository)
 	return st
 }
