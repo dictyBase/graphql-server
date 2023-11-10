@@ -110,6 +110,26 @@ func redisFlags() []cli.Flag {
 func authFlags() []cli.Flag {
 	return []cli.Flag{
 		cli.StringFlag{
+			Name:     "auth-api-endpoint",
+			Usage:    "base http url of logto authentication api endpoint",
+			Required: true,
+		},
+		cli.StringFlag{
+			Name: "app-id",
+			Usage: "api identifier",
+			Required: true,
+		},
+		cli.StringFlag{
+			Name: "api-resource",
+			Usage: "http url that represents the identity of the resource",
+			Value: "https://default.logto.app/api",
+		},
+		cli.StringFlag{
+			Name: "app-secret",
+			Usage: "secret to access the authentication api",
+			Required: true,
+		},
+		cli.StringFlag{
 			Name:     "jwks-uri",
 			Usage:    "url to retreive JWK public key set",
 			Required: true,
