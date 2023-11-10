@@ -26,7 +26,7 @@ type LogtoClient struct {
 }
 
 type LogtoClientParams struct {
-	URL, AppId, AppSecret, APIResource, key string
+	URL, AppId, AppSecret, APIResource, Key string
 	TokenCache                              repository.Repository
 }
 
@@ -92,7 +92,7 @@ func NewClient(params *LogtoClientParams) *LogtoClient {
 		appSecret:   params.AppSecret,
 		apiResource: params.APIResource,
 		cache:       params.TokenCache,
-		cacheKey:    params.key,
+		cacheKey:    params.Key,
 	}
 }
 
