@@ -8,8 +8,10 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/dictyBase/graphql-server/internal/repository"
+	"github.com/schollz/logger"
 	"golang.org/x/exp/slices"
 )
 
@@ -20,11 +22,12 @@ type LogtoClient struct {
 	appSecret   string
 	apiResource string
 	cache       repository.Repository
+	cacheKey    string
 }
 
 type LogtoClientParams struct {
-	URL, AppId, AppSecret, APIResource string
-	TokenCache                         repository.Repository
+	URL, AppId, AppSecret, APIResource, key string
+	TokenCache                              repository.Repository
 }
 
 type AccessTokenResp struct {
@@ -89,16 +92,15 @@ func NewClient(params *LogtoClientParams) *LogtoClient {
 		appSecret:   params.AppSecret,
 		apiResource: params.APIResource,
 		cache:       params.TokenCache,
+		cacheKey:    params.key,
 	}
 }
 
-func (clnt *LogtoClient) AccessToken(
-	user, pass, resource string,
-) (*AccessTokenResp, error) {
+func (clnt *LogtoClient) AccessToken() (*AccessTokenResp, error) {
 	acresp := &AccessTokenResp{}
 	params := url.Values{}
 	params.Set("grant_type", "client_credentials")
-	params.Set("resource", resource)
+	params.Set("resource", clnt.apiResource)
 	params.Set("scope", "all")
 	req, err := http.NewRequest(
 		"POST",
@@ -108,7 +110,7 @@ func (clnt *LogtoClient) AccessToken(
 	if err != nil {
 		return acresp, fmt.Errorf("error in creating request %s ", err)
 	}
-	req.SetBasicAuth(user, pass)
+	req.SetBasicAuth(clnt.appId, clnt.appSecret)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	res, err := clnt.reqToResponse(req)
 	if err != nil {
@@ -118,6 +120,7 @@ func (clnt *LogtoClient) AccessToken(
 	if err := json.NewDecoder(res.Body).Decode(acresp); err != nil {
 		return acresp, fmt.Errorf("error in decoding json response %s", err)
 	}
+
 	return acresp, nil
 }
 
@@ -258,7 +261,6 @@ func (clnt *LogtoClient) AddCustomUserInformation(
 }
 
 func (clnt *LogtoClient) Roles(userId string) ([]string, error) {
-
 }
 
 func (clnt *LogtoClient) CreateUser(
@@ -289,6 +291,37 @@ func (clnt *LogtoClient) CreateUser(
 		return userId, fmt.Errorf("error in decoding json response %s", err)
 	}
 	return usr.Id, nil
+}
+
+func (clnt *LogtoClient) retrieveToken() (string, error) {
+	var token string
+	ok, err := clnt.cache.Exists(clnt.cacheKey)
+	if err != nil {
+		return token, fmt.Errorf("error in finding token key %s", err)
+	}
+	if ok {
+		token, err := clnt.cache.Get(clnt.cacheKey)
+		if err != nil {
+			return token, fmt.Errorf(
+				"error in fetching token from cache %s",
+				err,
+			)
+		}
+	}
+	aresp, err := clnt.AccessToken()
+	if err != nil {
+		return token, fmt.Errorf("error in retrieving access token %s", err)
+	}
+	dur, err := time.ParseDuration(fmt.Sprintf("%ds", aresp.ExpiresIn-1000))
+	if err != nil {
+		return token, fmt.Errorf(
+			"error in parsing duration %d",
+			aresp.ExpiresIn,
+		)
+	}
+	clnt.cache.SetWithTTL(token, aresp.AccessToken, dur)
+
+	return aresp.AccessToken, nil
 }
 
 func commonHeader(lreq *http.Request, token string) {
