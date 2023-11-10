@@ -52,6 +52,7 @@ const (
 	AUTH        = "auth"
 	IDENTITY    = "identity"
 	ORGANISM    = "organism"
+	REDISREPO   = "redis"
 )
 
 type collection struct {
