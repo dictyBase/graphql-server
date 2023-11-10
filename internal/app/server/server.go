@@ -25,47 +25,20 @@ import (
 
 // RunGraphQLServer starts the GraphQL backend
 func RunGraphQLServer(cltx *cli.Context) error {
+	nreg := registry.NewRegistry()
+	err := establishGrpcConnnections(cltx, nreg)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 2)
+	}
+	addEndpoints(cltx, nreg)
+	err = initRedis(cltx, nreg)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 2)
+	}
 	log := getLogger(cltx)
 	router := chi.NewRouter()
-	nreg := registry.NewRegistry()
-	for key, val := range nreg.ServiceMap() {
-		host := cltx.String(fmt.Sprintf("%s-grpc-host", key))
-		port := cltx.String(fmt.Sprintf("%s-grpc-port", key))
-		// establish grpc connections
-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-		defer cancel()
-		conn, err := grpc.DialContext(
-			ctx,
-			fmt.Sprintf("%s:%s", host, port),
-			grpc.WithInsecure(),
-			grpc.WithBlock(),
-		)
-		if err != nil {
-			return cli.NewExitError(
-				fmt.Sprintf("cannot connect to grpc microservice %s", err),
-				2,
-			)
-		}
-		// add api clients to hashmap
-		nreg.AddAPIConnection(val, conn)
-	}
-	nreg.AddAPIEndpoint(registry.PUBLICATION, cltx.String("publication-api"))
-	nreg.AddAPIEndpoint(registry.ORGANISM, cltx.String("organism-api"))
-	// add redis to registry
-	radd := fmt.Sprintf(
-		"%s:%s",
-		cltx.String("redis-master-service-host"),
-		cltx.String("redis-master-service-port"),
-	)
-	cache, err := redis.NewCache(radd)
-	if err != nil {
-		return cli.NewExitError(
-			fmt.Sprintf("cannot create redis cache: %v", err),
-			2,
-		)
-	}
-	nreg.AddRepository("redis", cache)
-	// initialize the dataloaders
+
+	// initialize the dataloaders, add middlewares, run the server etc...
 	dl := dataloader.NewRetriever()
 	s := resolver.NewResolver(nreg, dl, log)
 	crs := getCORS(cltx.StringSlice("allowed-origin"))
@@ -89,8 +62,65 @@ func RunGraphQLServer(cltx *cli.Context) error {
 	router.Handle("/graphql", srv)
 	log.Debugf("connect to port 8080 for GraphQL playground")
 	log.Fatal(http.ListenAndServe(":8080", router))
+
 	return nil
 }
+
+func establishGrpcConnnections(
+	ctx *cli.Context,
+	nreg registry.Registry,
+) error {
+	for key, val := range nreg.ServiceMap() {
+		conn, err := connectToGrpcService(ctx, key)
+		if err != nil {
+			return fmt.Errorf("error in connecting to grpc service %s", key)
+		}
+		nreg.AddAPIConnection(val, conn)
+	}
+	return nil
+}
+
+func connectToGrpcService(
+	ctx *cli.Context,
+	key string,
+) (*grpc.ClientConn, error) {
+	host := ctx.String(fmt.Sprintf("%s-grpc-host", key))
+	port := ctx.String(fmt.Sprintf("%s-grpc-port", key))
+
+	grpcCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	conn, err := grpc.DialContext(
+		grpcCtx,
+		fmt.Sprintf("%s:%s", host, port),
+		grpc.WithInsecure(),
+		grpc.WithBlock(),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("cannot connect to grpc microservice %s", err)
+	}
+	return conn, nil
+}
+
+func addEndpoints(ctx *cli.Context, nreg registry.Registry) {
+	nreg.AddAPIEndpoint(registry.PUBLICATION, ctx.String("publication-api"))
+	nreg.AddAPIEndpoint(registry.ORGANISM, ctx.String("organism-api"))
+}
+
+func initRedis(ctx *cli.Context, nreg registry.Registry) error {
+	radd := fmt.Sprintf(
+		"%s:%s",
+		ctx.String("redis-master-service-host"),
+		ctx.String("redis-master-service-port"),
+	)
+	cache, err := redis.NewCache(radd)
+	if err != nil {
+		return fmt.Errorf("cannot create redis cache: %v", err)
+	}
+	nreg.AddRepository("redis", cache)
+	return nil
+}
+
+
 
 func getCORS(origins []string) *cors.Cors {
 	aorg := append(origins, "http://localhost:*")
