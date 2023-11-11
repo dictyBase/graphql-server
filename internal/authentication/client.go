@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dictyBase/graphql-server/internal/collection"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	"golang.org/x/exp/slices"
 )
@@ -80,6 +79,23 @@ type RoleResp struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Rtype       string `json:"type"`
+}
+
+type PermissionResp struct {
+	TenantID    string    `json:"tenantId"`
+	ID          string    `json:"id"`
+	ResourceID  string    `json:"resourceId"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	Resource    struct {
+		TenantID       string `json:"tenantId"`
+		ID             string `json:"id"`
+		Name           string `json:"name"`
+		Indicator      string `json:"indicator"`
+		IsDefault      bool   `json:"isDefault"`
+		AccessTokenTTL int    `json:"accessTokenTtl"`
+	} `json:"resource"`
 }
 
 // NewClient creates a new instance of the Client struct.
@@ -235,11 +251,11 @@ func (clnt *LogtoClient) AddCustomUserInformation(
 	return nil
 }
 
-func (clnt *LogtoClient) Roles(userId string) ([]string, error) {
-	var roles []string
+func (clnt *LogtoClient) Roles(userId string) ([]*RoleResp, error) {
+	rolesStruct := make([]*RoleResp, 0)
 	token, err := clnt.retrieveToken()
 	if err != nil {
-		return roles, fmt.Errorf("error in getting token %s", err)
+		return rolesStruct, fmt.Errorf("error in getting token %s", err)
 	}
 	ureq, err := http.NewRequest(
 		"GET",
@@ -247,7 +263,7 @@ func (clnt *LogtoClient) Roles(userId string) ([]string, error) {
 		nil,
 	)
 	if err != nil {
-		return roles, fmt.Errorf(
+		return rolesStruct, fmt.Errorf(
 			"error in making new request for fetching user roles %s",
 			err,
 		)
@@ -255,21 +271,56 @@ func (clnt *LogtoClient) Roles(userId string) ([]string, error) {
 	commonHeader(ureq, token)
 	uresp, err := clnt.reqToResponse(ureq)
 	if err != nil {
-		return roles, fmt.Errorf(
+		return rolesStruct, fmt.Errorf(
 			"error in getting response during fetching of roles %s",
 			err,
 		)
 	}
 	defer uresp.Body.Close()
-	rolesStruct := make([]*RoleResp, 0)
 	if err := json.NewDecoder(uresp.Body).Decode(&rolesStruct); err != nil {
-		return roles, fmt.Errorf("error in decoding json response %s", err)
+		return rolesStruct, fmt.Errorf(
+			"error in decoding json response %s",
+			err,
+		)
 	}
 
-	return collection.Map(
-		rolesStruct,
-		func(rsp *RoleResp) string { return rsp.Name },
-	), nil
+	return rolesStruct, nil
+}
+
+func (clnt *LogtoClient) Permissions(roleId string) ([]*PermissionResp, error) {
+	permissionStruct := make([]*PermissionResp, 0)
+	token, err := clnt.retrieveToken()
+	if err != nil {
+		return permissionStruct, fmt.Errorf("error in getting token %s", err)
+	}
+	ureq, err := http.NewRequest(
+		"GET",
+		fmt.Sprintf("%s/api/roles/%s/scopes", clnt.baseURL, roleId),
+		nil,
+	)
+	if err != nil {
+		return permissionStruct, fmt.Errorf(
+			"error in making new request for fetching permissions %s",
+			err,
+		)
+	}
+	commonHeader(ureq, token)
+	uresp, err := clnt.reqToResponse(ureq)
+	if err != nil {
+		return permissionStruct, fmt.Errorf(
+			"error in getting response during fetching of permissions %s",
+			err,
+		)
+	}
+	defer uresp.Body.Close()
+	if err := json.NewDecoder(uresp.Body).Decode(&permissionStruct); err != nil {
+		return permissionStruct, fmt.Errorf(
+			"error in decoding json response %s",
+			err,
+		)
+	}
+
+	return permissionStruct, nil
 }
 
 func (clnt *LogtoClient) CreateUser(
