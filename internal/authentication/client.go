@@ -172,17 +172,17 @@ func (clnt *LogtoClient) AccessToken() (*AccessTokenResp, error) {
 func (clnt *LogtoClient) CheckUserWithUserName(
 	username string,
 ) (bool, string, error) {
-	var userId string
+	var userStruct string
 	token, err := clnt.retrieveToken()
 	if err != nil {
-		return false, userId, fmt.Errorf("error in getting token %s", err)
+		return false, userStruct, fmt.Errorf("error in getting token %s", err)
 	}
 	params := url.Values{}
 	params.Set("search.username", username)
 	params.Set("mode.name", "exact")
 	parsedURL, err := url.Parse(fmt.Sprintf("%s/api/users", clnt.baseURL))
 	if err != nil {
-		return false, userId, fmt.Errorf(
+		return false, userStruct, fmt.Errorf(
 			"error in parsing url for query %s",
 			err,
 		)
@@ -190,17 +190,20 @@ func (clnt *LogtoClient) CheckUserWithUserName(
 	parsedURL.RawQuery = params.Encode()
 	ureq, err := http.NewRequest("GET", parsedURL.String(), nil)
 	if err != nil {
-		return false, userId, fmt.Errorf("error in making new request %s", err)
+		return false, userStruct, fmt.Errorf(
+			"error in making new request %s",
+			err,
+		)
 	}
 	commonHeader(ureq, token)
 	uresp, err := clnt.reqToResponse(ureq)
 	if err != nil {
-		return false, userId, err
+		return false, userStruct, err
 	}
 	defer uresp.Body.Close()
 	usrs := make([]*APIUsersSearchRes, 0)
 	if err := json.NewDecoder(uresp.Body).Decode(&usrs); err != nil {
-		return false, userId, fmt.Errorf(
+		return false, userStruct, fmt.Errorf(
 			"error in decoding json response %s",
 			err,
 		)
@@ -209,23 +212,23 @@ func (clnt *LogtoClient) CheckUserWithUserName(
 		return usr.UserName == username
 	})
 	if index == -1 {
-		return false, userId, nil
+		return false, userStruct, nil
 	}
 	return true, usrs[index].Id, nil
 }
 
-func (clnt *LogtoClient) CheckUser(email string) (bool, string, error) {
-	var userId string
+func (clnt *LogtoClient) UserWithEmail(email string) (*UserResp, error) {
+	userStruct := &UserResp{}
 	token, err := clnt.retrieveToken()
 	if err != nil {
-		return false, userId, fmt.Errorf("error in getting token %s", err)
+		return userStruct, fmt.Errorf("error in getting token %s", err)
 	}
 	params := url.Values{}
 	params.Set("search.primaryEmail", email)
 	params.Set("mode.name", "exact")
 	parsedURL, err := url.Parse(fmt.Sprintf("%s/api/users", clnt.baseURL))
 	if err != nil {
-		return false, userId, fmt.Errorf(
+		return userStruct, fmt.Errorf(
 			"error in parsing url for query %s",
 			err,
 		)
@@ -233,17 +236,71 @@ func (clnt *LogtoClient) CheckUser(email string) (bool, string, error) {
 	parsedURL.RawQuery = params.Encode()
 	ureq, err := http.NewRequest("GET", parsedURL.String(), nil)
 	if err != nil {
-		return false, userId, fmt.Errorf("error in making new request %s", err)
+		return userStruct, fmt.Errorf(
+			"error in making new request %s",
+			err,
+		)
 	}
 	commonHeader(ureq, token)
 	uresp, err := clnt.reqToResponse(ureq)
 	if err != nil {
-		return false, userId, err
+		return userStruct, err
+	}
+	defer uresp.Body.Close()
+	usrs := make([]*UserResp, 0)
+	if err := json.NewDecoder(uresp.Body).Decode(&usrs); err != nil {
+		return userStruct, fmt.Errorf(
+			"error in decoding json response %s",
+			err,
+		)
+	}
+	index := slices.IndexFunc(usrs, func(usr *UserResp) bool {
+		return usr.PrimaryEmail == email
+	})
+	if index == -1 {
+		return userStruct, fmt.Errorf(
+			"user with email %d not found",
+			email,
+			err,
+		)
+	}
+
+	return usrs[index], nil
+}
+
+func (clnt *LogtoClient) CheckUser(email string) (bool, string, error) {
+	var userStruct string
+	token, err := clnt.retrieveToken()
+	if err != nil {
+		return false, userStruct, fmt.Errorf("error in getting token %s", err)
+	}
+	params := url.Values{}
+	params.Set("search.primaryEmail", email)
+	params.Set("mode.name", "exact")
+	parsedURL, err := url.Parse(fmt.Sprintf("%s/api/users", clnt.baseURL))
+	if err != nil {
+		return false, userStruct, fmt.Errorf(
+			"error in parsing url for query %s",
+			err,
+		)
+	}
+	parsedURL.RawQuery = params.Encode()
+	ureq, err := http.NewRequest("GET", parsedURL.String(), nil)
+	if err != nil {
+		return false, userStruct, fmt.Errorf(
+			"error in making new request %s",
+			err,
+		)
+	}
+	commonHeader(ureq, token)
+	uresp, err := clnt.reqToResponse(ureq)
+	if err != nil {
+		return false, userStruct, err
 	}
 	defer uresp.Body.Close()
 	usrs := make([]*APIUsersSearchRes, 0)
 	if err := json.NewDecoder(uresp.Body).Decode(&usrs); err != nil {
-		return false, userId, fmt.Errorf(
+		return false, userStruct, fmt.Errorf(
 			"error in decoding json response %s",
 			err,
 		)
@@ -252,14 +309,14 @@ func (clnt *LogtoClient) CheckUser(email string) (bool, string, error) {
 		return usr.Email == email
 	})
 	if index == -1 {
-		return false, userId, nil
+		return false, userStruct, nil
 	}
 	return true, usrs[index].Id, nil
 }
 
 func (clnt *LogtoClient) AddCustomUserInformation(
 	token,
-	userId string,
+	userStruct string,
 	user *APIUsersPatchCustomData,
 ) error {
 	content, err := json.Marshal(user)
@@ -268,7 +325,7 @@ func (clnt *LogtoClient) AddCustomUserInformation(
 	}
 	ureq, err := http.NewRequest(
 		"PATCH",
-		fmt.Sprintf("%s/api/users/%s/custom-data", clnt.baseURL, userId),
+		fmt.Sprintf("%s/api/users/%s/custom-data", clnt.baseURL, userStruct),
 		bytes.NewBuffer(content),
 	)
 	if err != nil {
@@ -286,7 +343,7 @@ func (clnt *LogtoClient) AddCustomUserInformation(
 	return nil
 }
 
-func (clnt *LogtoClient) User(userId string) (*UserResp, error) {
+func (clnt *LogtoClient) User(userStruct string) (*UserResp, error) {
 	userStruct := &UserResp{}
 	token, err := clnt.retrieveToken()
 	if err != nil {
@@ -294,7 +351,7 @@ func (clnt *LogtoClient) User(userId string) (*UserResp, error) {
 	}
 	ureq, err := http.NewRequest(
 		"GET",
-		fmt.Sprintf("%s/api/users/%s", clnt.baseURL, userId),
+		fmt.Sprintf("%s/api/users/%s", clnt.baseURL, userStruct),
 		nil,
 	)
 	if err != nil {
@@ -322,7 +379,7 @@ func (clnt *LogtoClient) User(userId string) (*UserResp, error) {
 	return userStruct, nil
 }
 
-func (clnt *LogtoClient) Roles(userId string) ([]*RoleResp, error) {
+func (clnt *LogtoClient) Roles(userStruct string) ([]*RoleResp, error) {
 	rolesStruct := make([]*RoleResp, 0)
 	token, err := clnt.retrieveToken()
 	if err != nil {
@@ -330,7 +387,7 @@ func (clnt *LogtoClient) Roles(userId string) ([]*RoleResp, error) {
 	}
 	ureq, err := http.NewRequest(
 		"GET",
-		fmt.Sprintf("%s/api/users/%s/roles", clnt.baseURL, userId),
+		fmt.Sprintf("%s/api/users/%s/roles", clnt.baseURL, userStruct),
 		nil,
 	)
 	if err != nil {
@@ -398,10 +455,10 @@ func (clnt *LogtoClient) CreateUser(
 	token string,
 	user *APIUsersPostReq,
 ) (string, error) {
-	var userId string
+	var userStruct string
 	content, err := json.Marshal(user)
 	if err != nil {
-		return userId, fmt.Errorf("error in converting to json %s", err)
+		return userStruct, fmt.Errorf("error in converting to json %s", err)
 	}
 	ureq, err := http.NewRequest(
 		"POST",
@@ -409,17 +466,17 @@ func (clnt *LogtoClient) CreateUser(
 		bytes.NewBuffer(content),
 	)
 	if err != nil {
-		return userId, fmt.Errorf("error in making new request %s", err)
+		return userStruct, fmt.Errorf("error in making new request %s", err)
 	}
 	commonHeader(ureq, token)
 	uresp, err := clnt.reqToResponse(ureq)
 	if err != nil {
-		return userId, err
+		return userStruct, err
 	}
 	defer uresp.Body.Close()
 	usr := &APIUsersPostRes{}
 	if err := json.NewDecoder(uresp.Body).Decode(usr); err != nil {
-		return userId, fmt.Errorf("error in decoding json response %s", err)
+		return userStruct, fmt.Errorf("error in decoding json response %s", err)
 	}
 	return usr.Id, nil
 }
