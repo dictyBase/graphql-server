@@ -210,10 +210,12 @@ func (clnt *LogtoClient) CheckUserWithUserName(
 	return true, usrs[index].Id, nil
 }
 
-func (clnt *LogtoClient) CheckUser(
-	token string, email string,
-) (bool, string, error) {
+func (clnt *LogtoClient) CheckUser(email string) (bool, string, error) {
 	var userId string
+	token, err := clnt.retrieveToken()
+	if err != nil {
+		return false, userId, fmt.Errorf("error in getting token %s", err)
+	}
 	params := url.Values{}
 	params.Set("search.primaryEmail", email)
 	params.Set("mode.name", "exact")
