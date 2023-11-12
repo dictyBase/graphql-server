@@ -33,7 +33,11 @@ type QueryResolver struct {
 	Logger      *logrus.Entry
 }
 
-func NewResolver(nr registry.Registry, dl dataloader.Retriever, l *logrus.Entry) *Resolver {
+func NewResolver(
+	nr registry.Registry,
+	dl dataloader.Retriever,
+	l *logrus.Entry,
+) *Resolver {
 	return &Resolver{Registry: nr, Dataloaders: dl, Logger: l}
 }
 
@@ -52,7 +56,7 @@ func (r *Resolver) Query() generated.QueryResolver {
 }
 func (r *Resolver) User() generated.UserResolver {
 	return &user.UserResolver{
-		Client: r.GetUserClient(registry.USER),
+		Client: r.GetAuthClient(registry.AUTH),
 		Logger: r.Logger,
 	}
 }
@@ -115,12 +119,7 @@ func (r *Resolver) Content() generated.ContentResolver {
 }
 
 func (r *Resolver) Auth() generated.AuthResolver {
-	return &auth.AuthResolver{
-		Client:         r.GetAuthClient(registry.AUTH),
-		UserClient:     r.GetUserClient(registry.USER),
-		IdentityClient: r.GetIdentityClient(registry.IDENTITY),
-		Logger:         r.Logger,
-	}
+	return &auth.AuthResolver{}
 }
 
 func (r *Resolver) Gene() generated.GeneResolver {
