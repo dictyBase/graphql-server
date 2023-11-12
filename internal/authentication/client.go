@@ -35,6 +35,35 @@ type AccessTokenResp struct {
 	TokenType   string `json:"token_type"`
 }
 
+type UserResp struct {
+	ID           string `json:"id"`
+	Username     string `json:"username"`
+	PrimaryEmail string `json:"primaryEmail"`
+	PrimaryPhone string `json:"primaryPhone"`
+	Name         string `json:"name"`
+	Avatar       any    `json:"avatar,omitempty"`
+	CustomData   struct {
+		City             string `json:"city,omitempty"`
+		Phone            string `json:"phone,omitempty"`
+		State            string `json:"state,omitempty"`
+		Region           string `json:"region,omitempty"`
+		Address          string `json:"address,omitempty"`
+		Country          string `json:"country,omitempty"`
+		Zipcode          string `json:"zipcode,omitempty"`
+		JobTitle         string `json:"job_title,omitempty"`
+		Profession       string `json:"profession,omitempty"`
+		Subscribed       bool   `json:"subscribed,omitempty"`
+		Institution      string `json:"institution,omitempty"`
+		ResearchInterest string `json:"research_interest,omitempty"`
+		SecondaryAddress string `json:"secondary_address,omitempty"`
+	} `json:"customData"`
+	Identities struct {
+	} `json:"identities,omitempty"`
+	CreatedAt     time.Time `json:"createdAt"`
+	ApplicationID any       `json:"applicationId,omitempty"`
+	IsSuspended   bool      `json:"isSuspended,omitempty"`
+}
+
 type APIUsersPostReq struct {
 	PrimaryPhone string `json:"primaryPhone"`
 	PrimaryEmail string `json:"primaryEmail"`
