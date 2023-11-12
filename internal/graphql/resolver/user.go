@@ -18,6 +18,10 @@ import (
 )
 
 func (m *MutationResolver) CreateUser(ctx context.Context, input *models.CreateUserInput) (*pb.User, error) {
+func (m *MutationResolver) CreateUser(
+	ctx context.Context,
+	input *models.CreateUserInput,
+) (*pb.User, error) {
 	attr := &pb.UserAttributes{}
 	a := normalizeCreateUserAttr(input)
 	err := mapstructure.Decode(a, attr)
@@ -25,26 +29,27 @@ func (m *MutationResolver) CreateUser(ctx context.Context, input *models.CreateU
 		m.Logger.Error(err)
 		return nil, err
 	}
-	n, err := m.GetUserClient(registry.USER).CreateUser(ctx, &pb.CreateUserRequest{
-		Data: &pb.CreateUserRequest_Data{
-			Type: "user",
-			Attributes: &pb.UserAttributes{
-				FirstName:     attr.FirstName,
-				LastName:      attr.LastName,
-				Email:         attr.Email,
-				Organization:  attr.Organization,
-				GroupName:     attr.GroupName,
-				FirstAddress:  attr.FirstAddress,
-				SecondAddress: attr.SecondAddress,
-				City:          attr.City,
-				State:         attr.State,
-				Zipcode:       attr.Zipcode,
-				Country:       attr.Country,
-				Phone:         attr.Phone,
-				IsActive:      attr.IsActive,
+	n, err := m.GetUserClient(registry.USER).
+		CreateUser(ctx, &pb.CreateUserRequest{
+			Data: &pb.CreateUserRequest_Data{
+				Type: "user",
+				Attributes: &pb.UserAttributes{
+					FirstName:     attr.FirstName,
+					LastName:      attr.LastName,
+					Email:         attr.Email,
+					Organization:  attr.Organization,
+					GroupName:     attr.GroupName,
+					FirstAddress:  attr.FirstAddress,
+					SecondAddress: attr.SecondAddress,
+					City:          attr.City,
+					State:         attr.State,
+					Zipcode:       attr.Zipcode,
+					Country:       attr.Country,
+					Phone:         attr.Phone,
+					IsActive:      attr.IsActive,
+				},
 			},
-		},
-	})
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
