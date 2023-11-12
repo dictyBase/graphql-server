@@ -170,9 +170,13 @@ func (clnt *LogtoClient) AccessToken() (*AccessTokenResp, error) {
 }
 
 func (clnt *LogtoClient) CheckUserWithUserName(
-	token, username string,
+	username string,
 ) (bool, string, error) {
 	var userId string
+	token, err := clnt.retrieveToken()
+	if err != nil {
+		return false, userId, fmt.Errorf("error in getting token %s", err)
+	}
 	params := url.Values{}
 	params.Set("search.username", username)
 	params.Set("mode.name", "exact")
