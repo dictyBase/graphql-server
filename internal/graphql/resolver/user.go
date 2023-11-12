@@ -17,7 +17,6 @@ import (
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/user"
 )
 
-func (m *MutationResolver) CreateUser(ctx context.Context, input *models.CreateUserInput) (*pb.User, error) {
 func (m *MutationResolver) CreateUser(
 	ctx context.Context,
 	input *models.CreateUserInput,
@@ -59,7 +58,9 @@ func (m *MutationResolver) CreateUser(
 	return n, nil
 }
 
-func normalizeCreateUserAttr(attr *models.CreateUserInput) map[string]interface{} {
+func normalizeCreateUserAttr(
+	attr *models.CreateUserInput,
+) map[string]interface{} {
 	fields := structs.Fields(attr)
 	newAttr := make(map[string]interface{})
 	for _, k := range fields {
@@ -72,30 +73,49 @@ func normalizeCreateUserAttr(attr *models.CreateUserInput) map[string]interface{
 	return newAttr
 }
 
-func (m *MutationResolver) CreateUserRoleRelationship(ctx context.Context, userId string, roleId string) (*pb.User, error) {
+func (m *MutationResolver) CreateUserRoleRelationship(
+	ctx context.Context,
+	userId string,
+	roleId string,
+) (*pb.User, error) {
 	uid, err := strconv.ParseInt(userId, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", userId, err)
+		return nil, fmt.Errorf(
+			"error in parsing string %s to int %s",
+			userId,
+			err,
+		)
 	}
 	rid, err := strconv.ParseInt(roleId, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", roleId, err)
+		return nil, fmt.Errorf(
+			"error in parsing string %s to int %s",
+			roleId,
+			err,
+		)
 	}
-	rr, err := m.GetUserClient(registry.USER).CreateRoleRelationship(ctx, &jsonapi.DataCollection{
-		Id: uid,
-		Data: []*jsonapi.Data{
-			{
-				Type: "role",
-				Id:   rid,
-			},
-		}})
+	rr, err := m.GetUserClient(registry.USER).
+		CreateRoleRelationship(ctx, &jsonapi.DataCollection{
+			Id: uid,
+			Data: []*jsonapi.Data{
+				{
+					Type: "role",
+					Id:   rid,
+				},
+			}})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
 		return nil, err
 	}
-	m.Logger.Debugf("successfully created user ID %d relationship role with ID %d %s", uid, rid, rr)
-	g, err := m.GetUserClient(registry.USER).GetUser(ctx, &jsonapi.GetRequest{Id: uid})
+	m.Logger.Debugf(
+		"successfully created user ID %d relationship role with ID %d %s",
+		uid,
+		rid,
+		rr,
+	)
+	g, err := m.GetUserClient(registry.USER).
+		GetUser(ctx, &jsonapi.GetRequest{Id: uid})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
@@ -104,12 +124,17 @@ func (m *MutationResolver) CreateUserRoleRelationship(ctx context.Context, userI
 	return g, nil
 }
 
-func (m *MutationResolver) UpdateUser(ctx context.Context, id string, input *models.UpdateUserInput) (*pb.User, error) {
+func (m *MutationResolver) UpdateUser(
+	ctx context.Context,
+	id string,
+	input *models.UpdateUserInput,
+) (*pb.User, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
 	}
-	f, err := m.GetUserClient(registry.USER).GetUser(ctx, &jsonapi.GetRequest{Id: i})
+	f, err := m.GetUserClient(registry.USER).
+		GetUser(ctx, &jsonapi.GetRequest{Id: i})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
@@ -118,20 +143,22 @@ func (m *MutationResolver) UpdateUser(ctx context.Context, id string, input *mod
 	attr := getUpdateUserAttributes(input, f)
 	attr.Email = f.Data.Attributes.Email
 	attr.UpdatedAt = aphgrpc.TimestampProto(time.Now())
-	n, err := m.GetUserClient(registry.USER).UpdateUser(ctx, &pb.UpdateUserRequest{
-		Id: i,
-		Data: &pb.UpdateUserRequest_Data{
-			Id:         i,
-			Type:       "user",
-			Attributes: attr,
-		},
-	})
+	n, err := m.GetUserClient(registry.USER).
+		UpdateUser(ctx, &pb.UpdateUserRequest{
+			Id: i,
+			Data: &pb.UpdateUserRequest_Data{
+				Id:         i,
+				Type:       "user",
+				Attributes: attr,
+			},
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
 		return nil, err
 	}
-	o, err := m.GetUserClient(registry.USER).GetUser(ctx, &jsonapi.GetRequest{Id: n.Data.Id})
+	o, err := m.GetUserClient(registry.USER).
+		GetUser(ctx, &jsonapi.GetRequest{Id: n.Data.Id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		m.Logger.Error(err)
@@ -141,7 +168,10 @@ func (m *MutationResolver) UpdateUser(ctx context.Context, id string, input *mod
 	return o, nil
 }
 
-func getUpdateUserAttributes(input *models.UpdateUserInput, f *pb.User) *pb.UserAttributes {
+func getUpdateUserAttributes(
+	input *models.UpdateUserInput,
+	f *pb.User,
+) *pb.UserAttributes {
 	attr := &pb.UserAttributes{}
 	if input.FirstName != nil {
 		attr.FirstName = *input.FirstName
@@ -206,7 +236,10 @@ func getUpdateUserAttributes(input *models.UpdateUserInput, f *pb.User) *pb.User
 	return attr
 }
 
-func (m *MutationResolver) DeleteUser(ctx context.Context, id string) (*models.DeleteUser, error) {
+func (m *MutationResolver) DeleteUser(
+	ctx context.Context,
+	id string,
+) (*models.DeleteUser, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
@@ -223,23 +256,53 @@ func (m *MutationResolver) DeleteUser(ctx context.Context, id string) (*models.D
 	}, nil
 }
 
-func (q *QueryResolver) User(ctx context.Context, id string) (*pb.User, error) {
-	i, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
-	}
-	g, err := q.GetUserClient(registry.USER).GetUser(ctx, &jsonapi.GetRequest{Id: i})
+func (qrs *QueryResolver) User(
+	ctx context.Context,
+	id string,
+) (*pb.User, error) {
+	userResp, err := qrs.GetAuthClient(registry.AUTH).User(id)
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
+		qrs.Logger.Error(err)
 		return nil, err
 	}
-	q.Logger.Debugf("successfully found user with ID %s", id)
-	return g, nil
+	userId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		errorutils.AddGQLError(
+			ctx,
+			fmt.Errorf("error in converting user id to int64"),
+		)
+		qrs.Logger.Error(err)
+		return nil, err
+	}
+	qrs.Logger.Debugf("successfully found user with ID %d", userId)
+	return &pb.User{
+		Data: &pb.UserData{
+			Type: "user",
+			Id:   userId,
+			Attributes: &pb.UserAttributes{
+				FirstName:    userResp.Username,
+				LastName:     userResp.Name,
+				Email:        userResp.PrimaryEmail,
+				Organization: userResp.CustomData.Institution,
+				FirstAddress: userResp.CustomData.Address,
+				City:         userResp.CustomData.City,
+				State:        userResp.CustomData.State,
+				Zipcode:      userResp.CustomData.Zipcode,
+				Country:      userResp.CustomData.Country,
+				Phone:        userResp.PrimaryPhone,
+				IsActive:     true,
+			},
+		},
+	}, nil
 }
 
-func (q *QueryResolver) UserByEmail(ctx context.Context, email string) (*pb.User, error) {
-	g, err := q.GetUserClient(registry.USER).GetUserByEmail(ctx, &jsonapi.GetEmailRequest{Email: email})
+func (q *QueryResolver) UserByEmail(
+	ctx context.Context,
+	email string,
+) (*pb.User, error) {
+	g, err := q.GetUserClient(registry.USER).
+		GetUserByEmail(ctx, &jsonapi.GetEmailRequest{Email: email})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		q.Logger.Error(err)
@@ -249,21 +312,35 @@ func (q *QueryResolver) UserByEmail(ctx context.Context, email string) (*pb.User
 	return g, nil
 }
 
-func (q *QueryResolver) ListUsers(ctx context.Context, pagenum string, pagesize string, filter string) (*models.UserList, error) {
+func (q *QueryResolver) ListUsers(
+	ctx context.Context,
+	pagenum string,
+	pagesize string,
+	filter string,
+) (*models.UserList, error) {
 	users := []*pb.User{}
 	pn, err := strconv.ParseInt(pagenum, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", pagenum, err)
+		return nil, fmt.Errorf(
+			"error in parsing string %s to int %s",
+			pagenum,
+			err,
+		)
 	}
 	ps, err := strconv.ParseInt(pagesize, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", pagesize, err)
+		return nil, fmt.Errorf(
+			"error in parsing string %s to int %s",
+			pagesize,
+			err,
+		)
 	}
-	g, err := q.GetUserClient(registry.USER).ListUsers(ctx, &jsonapi.ListRequest{
-		Pagenum:  pn,
-		Pagesize: ps,
-		Filter:   filter,
-	})
+	g, err := q.GetUserClient(registry.USER).
+		ListUsers(ctx, &jsonapi.ListRequest{
+			Pagenum:  pn,
+			Pagesize: ps,
+			Filter:   filter,
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		q.Logger.Error(err)
