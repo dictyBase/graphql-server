@@ -286,6 +286,42 @@ func (clnt *LogtoClient) AddCustomUserInformation(
 	return nil
 }
 
+func (clnt *LogtoClient) User(userId string) (*UserResp, error) {
+	userStruct := &UserResp{}
+	token, err := clnt.retrieveToken()
+	if err != nil {
+		return userStruct, fmt.Errorf("error in getting token %s", err)
+	}
+	ureq, err := http.NewRequest(
+		"GET",
+		fmt.Sprintf("%s/api/users/%s", clnt.baseURL, userId),
+		nil,
+	)
+	if err != nil {
+		return userStruct, fmt.Errorf(
+			"error in making new request for fetching user %s",
+			err,
+		)
+	}
+	commonHeader(ureq, token)
+	uresp, err := clnt.reqToResponse(ureq)
+	if err != nil {
+		return userStruct, fmt.Errorf(
+			"error in getting response during fetching of user %s",
+			err,
+		)
+	}
+	defer uresp.Body.Close()
+	if err := json.NewDecoder(uresp.Body).Decode(&userStruct); err != nil {
+		return userStruct, fmt.Errorf(
+			"error in decoding json response %s",
+			err,
+		)
+	}
+
+	return userStruct, nil
+}
+
 func (clnt *LogtoClient) Roles(userId string) ([]*RoleResp, error) {
 	rolesStruct := make([]*RoleResp, 0)
 	token, err := clnt.retrieveToken()
