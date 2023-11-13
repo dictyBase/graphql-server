@@ -11,6 +11,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type RoleResolver struct {
@@ -88,6 +89,8 @@ func (rrs *RoleResolver) Permissions(
 					Permission:  perm.Name,
 					Description: perm.Description,
 					Resource:    perm.Resource.Name,
+					CreatedAt:   timestamppb.Now(),
+					UpdatedAt:   timestamppb.Now(),
 				},
 			},
 		}
