@@ -18,15 +18,15 @@ func HasToken(ctx context.Context) (jwt.Token, error) {
 	return token, nil
 }
 
-func CheckReadUser(ctx context.Context) (bool, error) {
+func CheckReadUser(ctx context.Context) error {
 	token, err := HasToken(ctx)
 	if err != nil {
-		return false, err
+		return err
 	}
 	claims := token.PrivateClaims()
 	for _, clm := range []string{"roles", "scopes"} {
 		if _, ok := claims[clm]; !ok {
-			return false, fmt.Errorf(
+			return fmt.Errorf(
 				"query without claim %s is not allowed",
 				clm,
 			)
@@ -34,11 +34,11 @@ func CheckReadUser(ctx context.Context) (bool, error) {
 	}
 	roles := fmt.Sprintf("%v", claims["roles"])
 	if !strings.Contains(roles, "user-user") {
-		return false, errors.New("query without user-user roles not allowed")
+		return errors.New("query without user-user roles not allowed")
 	}
-	scopes := fmt.Sprintf("%v",claims["scopes"])
-	if !strings.Contains(scopes,"read:user") {
-		return false, errors.New("query without read:user scope not allowed")
+	scopes := fmt.Sprintf("%v", claims["scopes"])
+	if !strings.Contains(scopes, "read:user") {
+		return errors.New("query without read:user scope not allowed")
 	}
-	return true, nil
+	return nil
 }
