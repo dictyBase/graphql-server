@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/content"
+	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
@@ -15,6 +16,11 @@ func (mrs *MutationResolver) CreateContent(
 	ctx context.Context,
 	input *models.CreateContentInput,
 ) (*pb.Content, error) {
+	if err := authentication.CheckCreateContent(ctx); err != nil {
+		errorutils.AddGQLError(ctx, err)
+		mrs.Logger.Error(err)
+		return nil, err
+	}
 	cnt, err := mrs.GetContentClient(registry.CONTENT).
 		StoreContent(ctx, &pb.StoreContentRequest{
 			Data: &pb.StoreContentRequest_Data{
