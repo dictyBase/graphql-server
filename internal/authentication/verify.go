@@ -10,6 +10,11 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
+var (
+	contentCreatorRole  = []string{"content-writer", "content-admin"}
+	contentCreatorScope = "write:content"
+)
+
 func HasToken(ctx context.Context) (jwt.Token, error) {
 	token := middleware.TokenFromContext(ctx)
 	if token == nil {
@@ -32,6 +37,35 @@ func CheckReadUser(ctx context.Context) error {
 	roles := fmt.Sprintf("%v", claims["roles"])
 	if !strings.Contains(roles, "user-user") {
 		return errors.New("query without user-user roles not allowed")
+	}
+	return nil
+}
+
+func CheckCreateContent(ctx context.Context) error {
+	token, err := HasToken(ctx)
+	if err != nil {
+		return err
+	}
+	claims := token.PrivateClaims()
+	for _, clm := range []string{"roles", "scopes"} {
+		if _, ok := claims[clm]; !ok {
+			return fmt.Errorf("query without claim %s not allowed", err)
+		}
+	}
+	roles := fmt.Sprintf("%v", claims["roles"])
+	rolesOk := false
+	for _, rls := range contentCreatorRole {
+		if strings.Contains(roles, rls) {
+			rolesOk = true
+			break
+		}
+	}
+	if !rolesOk {
+		return errors.New("query without content creator role is not allowed")
+	}
+	scopes := fmt.Sprintf("%v", claims["scopes"])
+	if !strings.Contains(scopes, contentCreatorScope) {
+		return errors.New("query without content writing scope is not allowed")
 	}
 	return nil
 }
