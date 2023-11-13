@@ -41,96 +41,96 @@ func NewResolver(
 	return &Resolver{Registry: nr, Dataloaders: dl, Logger: l}
 }
 
-func (r *Resolver) Mutation() generated.MutationResolver {
+func (rrs *Resolver) Mutation() generated.MutationResolver {
 	return &MutationResolver{
-		Registry: r.Registry,
-		Logger:   r.Logger,
+		Registry: rrs.Registry,
+		Logger:   rrs.Logger,
 	}
 }
-func (r *Resolver) Query() generated.QueryResolver {
+func (rrs *Resolver) Query() generated.QueryResolver {
 	return &QueryResolver{
-		Registry:    r.Registry,
-		Dataloaders: r.Dataloaders,
-		Logger:      r.Logger,
+		Registry:    rrs.Registry,
+		Dataloaders: rrs.Dataloaders,
+		Logger:      rrs.Logger,
 	}
 }
-func (r *Resolver) User() generated.UserResolver {
+func (rrs *Resolver) User() generated.UserResolver {
 	return &user.UserResolver{
-		Client: r.GetAuthClient(registry.AUTH),
-		Logger: r.Logger,
+		Client: rrs.GetAuthClient(registry.AUTH),
+		Logger: rrs.Logger,
 	}
 }
-func (r *Resolver) Role() generated.RoleResolver {
+func (rrs *Resolver) Role() generated.RoleResolver {
 	return &user.RoleResolver{
-		Client: r.GetAuthClient(registry.AUTH),
-		Logger: r.Logger,
+		Client: rrs.GetAuthClient(registry.AUTH),
+		Logger: rrs.Logger,
 	}
 }
-func (r *Resolver) Permission() generated.PermissionResolver {
+func (rrs *Resolver) Permission() generated.PermissionResolver {
 	return &user.PermissionResolver{
-		Client: r.GetPermissionClient(registry.PERMISSION),
-		Logger: r.Logger,
+		Client: rrs.GetPermissionClient(registry.PERMISSION),
+		Logger: rrs.Logger,
 	}
 }
-func (r *Resolver) Publication() generated.PublicationResolver {
+func (rrs *Resolver) Publication() generated.PublicationResolver {
 	return &publication.PublicationResolver{
-		Logger: r.Logger,
+		Logger: rrs.Logger,
 	}
 }
-func (r *Resolver) Author() generated.AuthorResolver {
+func (rrs *Resolver) Author() generated.AuthorResolver {
 	return &publication.AuthorResolver{
-		Logger: r.Logger,
+		Logger: rrs.Logger,
 	}
 }
-func (r *Resolver) Strain() generated.StrainResolver {
+func (rrs *Resolver) Strain() generated.StrainResolver {
 	return &stock.StrainResolver{
-		Client:           r.GetStockClient(registry.STOCK),
-		UserClient:       r.GetUserClient(registry.USER),
-		AnnotationClient: r.GetAnnotationClient(registry.ANNOTATION),
-		Registry:         r.Registry,
-		Logger:           r.Logger,
+		Client:           rrs.GetStockClient(registry.STOCK),
+		UserClient:       rrs.GetUserClient(registry.USER),
+		AnnotationClient: rrs.GetAnnotationClient(registry.ANNOTATION),
+		Registry:         rrs.Registry,
+		Logger:           rrs.Logger,
 	}
 }
-func (r *Resolver) Plasmid() generated.PlasmidResolver {
+func (rrs *Resolver) Plasmid() generated.PlasmidResolver {
 	return &stock.PlasmidResolver{
-		Client:           r.GetStockClient(registry.STOCK),
-		UserClient:       r.GetUserClient(registry.USER),
-		AnnotationClient: r.GetAnnotationClient(registry.ANNOTATION),
-		Registry:         r.Registry,
-		Logger:           r.Logger,
+		Client:           rrs.GetStockClient(registry.STOCK),
+		UserClient:       rrs.GetUserClient(registry.USER),
+		AnnotationClient: rrs.GetAnnotationClient(registry.ANNOTATION),
+		Registry:         rrs.Registry,
+		Logger:           rrs.Logger,
 	}
 }
 
-func (r *Resolver) Order() generated.OrderResolver {
+func (rrs *Resolver) Order() generated.OrderResolver {
 	return &order.OrderResolver{
-		Client:      r.GetOrderClient(registry.ORDER),
-		StockClient: r.GetStockClient(registry.STOCK),
-		UserClient:  r.GetUserClient(registry.USER),
-		Logger:      r.Logger,
+		Client:      rrs.GetOrderClient(registry.ORDER),
+		StockClient: rrs.GetStockClient(registry.STOCK),
+		UserClient:  rrs.GetUserClient(registry.USER),
+		Logger:      rrs.Logger,
 	}
 }
 
-func (r *Resolver) Content() generated.ContentResolver {
+func (rrs *Resolver) Content() generated.ContentResolver {
 	return &content.ContentResolver{
-		Client:     r.GetContentClient(registry.CONTENT),
-		UserClient: r.GetAuthClient(registry.AUTH),
-		Logger:     r.Logger,
+		Client:     rrs.GetContentClient(registry.CONTENT),
+		UserClient: rrs.GetAuthClient(registry.AUTH),
+		Logger:     rrs.Logger,
 	}
 }
 
-func (r *Resolver) Auth() generated.AuthResolver {
+func (rrs *Resolver) Auth() generated.AuthResolver {
 	return &auth.AuthResolver{}
 }
 
-func (r *Resolver) Gene() generated.GeneResolver {
+func (rrs *Resolver) Gene() generated.GeneResolver {
 	return &gene.GeneResolver{
-		Redis:  r.GetRedisRepository("redis"),
-		Logger: r.Logger,
+		Redis:  rrs.GetRedisRepository("redis"),
+		Logger: rrs.Logger,
 	}
 }
 
-func (r *Resolver) Organism() generated.OrganismResolver {
+func (rrs *Resolver) Organism() generated.OrganismResolver {
 	return &organism.OrganismResolver{
-		Logger: r.Logger,
+		Logger: rrs.Logger,
 	}
 }
