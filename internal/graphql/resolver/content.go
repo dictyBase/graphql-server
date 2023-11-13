@@ -11,65 +11,78 @@ import (
 	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
-func (mrs *MutationResolver) CreateContent(ctx context.Context, input *models.CreateContentInput) (*pb.Content, error) {
-	cid, err := strconv.ParseInt(input.CreatedBy, 10, 64)
-	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", input.CreatedBy, err)
-	}
-	n, err := mrs.GetContentClient(registry.CONTENT).StoreContent(ctx, &pb.StoreContentRequest{
-		Data: &pb.StoreContentRequest_Data{
-			Type: "contents",
-			Attributes: &pb.NewContentAttributes{
-				Name:      input.Name,
-				CreatedBy: cid,
-				Content:   input.Content,
-				Namespace: input.Namespace,
+func (mrs *MutationResolver) CreateContent(
+	ctx context.Context,
+	input *models.CreateContentInput,
+) (*pb.Content, error) {
+	cnt, err := mrs.GetContentClient(registry.CONTENT).
+		StoreContent(ctx, &pb.StoreContentRequest{
+			Data: &pb.StoreContentRequest_Data{
+				Type: "contents",
+				Attributes: &pb.NewContentAttributes{
+					Name:      input.Name,
+					CreatedBy: input.CreatedBy,
+					Content:   input.Content,
+					Namespace: input.Namespace,
+				},
 			},
-		},
-	})
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
 		return nil, err
 	}
-	mrs.Logger.Debugf("successfully created new content with ID %d", n.Data.Id)
-	return n, nil
+	mrs.Logger.Debugf(
+		"successfully created new content with ID %d",
+		cnt.Data.Id,
+	)
+	return cnt, nil
 }
-func (mrs *MutationResolver) UpdateContent(ctx context.Context, input *models.UpdateContentInput) (*pb.Content, error) {
+
+func (mrs *MutationResolver) UpdateContent(
+	ctx context.Context,
+	input *models.UpdateContentInput,
+) (*pb.Content, error) {
 	cid, err := strconv.ParseInt(input.ID, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", input.ID, err)
+		return nil, fmt.Errorf(
+			"error in parsing string %s to int %s",
+			input.ID,
+			err,
+		)
 	}
-	uid, err := strconv.ParseInt(input.UpdatedBy, 10, 64)
-	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", input.UpdatedBy, err)
-	}
-	n, err := mrs.GetContentClient(registry.CONTENT).UpdateContent(ctx, &pb.UpdateContentRequest{
-		Id: cid,
-		Data: &pb.UpdateContentRequest_Data{
-			Type: "contents",
-			Id:   cid,
-			Attributes: &pb.ExistingContentAttributes{
-				UpdatedBy: uid,
-				Content:   input.Content,
+	cnt, err := mrs.GetContentClient(registry.CONTENT).
+		UpdateContent(ctx, &pb.UpdateContentRequest{
+			Id: cid,
+			Data: &pb.UpdateContentRequest_Data{
+				Type: "contents",
+				Id:   cid,
+				Attributes: &pb.ExistingContentAttributes{
+					UpdatedBy: input.UpdatedBy,
+					Content:   input.Content,
+				},
 			},
-		},
-	})
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
 		return nil, err
 	}
-	o, err := mrs.GetContentClient(registry.CONTENT).GetContent(ctx, &pb.ContentIdRequest{Id: n.Data.Id})
+	ucnt, err := mrs.GetContentClient(registry.CONTENT).
+		GetContent(ctx, &pb.ContentIdRequest{Id: cnt.Data.Id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
 		return nil, err
 	}
-	mrs.Logger.Debugf("successfully updated content with ID %d", o.Data.Id)
-	return o, nil
+	mrs.Logger.Debugf("successfully updated content with ID %d", ucnt.Data.Id)
+	return ucnt, nil
 }
-func (mrs *MutationResolver) DeleteContent(ctx context.Context, id string) (*models.DeleteContent, error) {
+
+func (mrs *MutationResolver) DeleteContent(
+	ctx context.Context,
+	id string,
+) (*models.DeleteContent, error) {
 	cid, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
@@ -85,12 +98,16 @@ func (mrs *MutationResolver) DeleteContent(ctx context.Context, id string) (*mod
 	}, nil
 }
 
-func (qrs *QueryResolver) Content(ctx context.Context, id string) (*pb.Content, error) {
+func (qrs *QueryResolver) Content(
+	ctx context.Context,
+	id string,
+) (*pb.Content, error) {
 	cid, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
 	}
-	content, err := qrs.GetContentClient(registry.CONTENT).GetContent(ctx, &pb.ContentIdRequest{Id: cid})
+	content, err := qrs.GetContentClient(registry.CONTENT).
+		GetContent(ctx, &pb.ContentIdRequest{Id: cid})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		qrs.Logger.Error(err)
@@ -99,8 +116,13 @@ func (qrs *QueryResolver) Content(ctx context.Context, id string) (*pb.Content, 
 	qrs.Logger.Debugf("successfully found content with ID %s", id)
 	return content, nil
 }
-func (qrs *QueryResolver) ContentBySlug(ctx context.Context, slug string) (*pb.Content, error) {
-	content, err := qrs.GetContentClient(registry.CONTENT).GetContentBySlug(ctx, &pb.ContentRequest{Slug: slug})
+
+func (qrs *QueryResolver) ContentBySlug(
+	ctx context.Context,
+	slug string,
+) (*pb.Content, error) {
+	content, err := qrs.GetContentClient(registry.CONTENT).
+		GetContentBySlug(ctx, &pb.ContentRequest{Slug: slug})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		qrs.Logger.Error(err)
