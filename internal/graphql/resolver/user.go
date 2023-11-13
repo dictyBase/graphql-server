@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
@@ -260,6 +261,11 @@ func (qrs *QueryResolver) User(
 	ctx context.Context,
 	id string,
 ) (*pb.User, error) {
+	if err := authentication.CheckReadUser(ctx); err != nil {
+		errorutils.AddGQLError(ctx, err)
+		qrs.Logger.Error(err)
+		return nil, err
+	}
 	userResp, err := qrs.GetAuthClient(registry.AUTH).User(id)
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
