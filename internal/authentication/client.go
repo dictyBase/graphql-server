@@ -259,7 +259,7 @@ func (clnt *LogtoClient) UserWithEmail(email string) (*UserResp, error) {
 	})
 	if index == -1 {
 		return userStruct, fmt.Errorf(
-			"user with email %d not found",
+			"user with email %s not found %s",
 			email,
 			err,
 		)
@@ -343,7 +343,7 @@ func (clnt *LogtoClient) AddCustomUserInformation(
 	return nil
 }
 
-func (clnt *LogtoClient) User(userStruct string) (*UserResp, error) {
+func (clnt *LogtoClient) User(userId string) (*UserResp, error) {
 	userStruct := &UserResp{}
 	token, err := clnt.retrieveToken()
 	if err != nil {
@@ -351,7 +351,7 @@ func (clnt *LogtoClient) User(userStruct string) (*UserResp, error) {
 	}
 	ureq, err := http.NewRequest(
 		"GET",
-		fmt.Sprintf("%s/api/users/%s", clnt.baseURL, userStruct),
+		fmt.Sprintf("%s/api/users/%s", clnt.baseURL, userId),
 		nil,
 	)
 	if err != nil {
