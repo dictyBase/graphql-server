@@ -24,21 +24,14 @@ func CheckReadUser(ctx context.Context) error {
 		return err
 	}
 	claims := token.PrivateClaims()
-	for _, clm := range []string{"roles", "scopes"} {
-		if _, ok := claims[clm]; !ok {
-			return fmt.Errorf(
-				"query without claim %s is not allowed",
-				clm,
-			)
-		}
+	if _, ok := claims["roles"]; !ok {
+		return errors.New(
+			"query without claim roles is not allowed",
+		)
 	}
 	roles := fmt.Sprintf("%v", claims["roles"])
 	if !strings.Contains(roles, "user-user") {
 		return errors.New("query without user-user roles not allowed")
-	}
-	scopes := fmt.Sprintf("%v", claims["scopes"])
-	if !strings.Contains(scopes, "read:user") {
-		return errors.New("query without read:user scope not allowed")
 	}
 	return nil
 }
