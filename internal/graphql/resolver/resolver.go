@@ -62,7 +62,7 @@ func (r *Resolver) User() generated.UserResolver {
 }
 func (r *Resolver) Role() generated.RoleResolver {
 	return &user.RoleResolver{
-		Client: r.GetRoleClient(registry.ROLE),
+		Client: r.GetAuthClient(registry.AUTH),
 		Logger: r.Logger,
 	}
 }
