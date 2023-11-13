@@ -297,19 +297,45 @@ func (qrs *QueryResolver) User(
 	}, nil
 }
 
-func (q *QueryResolver) UserByEmail(
+func (qrs *QueryResolver) UserByEmail(
 	ctx context.Context,
 	email string,
 ) (*pb.User, error) {
-	g, err := q.GetUserClient(registry.USER).
-		GetUserByEmail(ctx, &jsonapi.GetEmailRequest{Email: email})
+	userResp, err := qrs.GetAuthClient(registry.AUTH).UserWithEmail(email)
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
+		qrs.Logger.Error(err)
 		return nil, err
 	}
-	q.Logger.Debugf("successfully found user with email %s", email)
-	return g, nil
+	userId, err := strconv.ParseInt(userResp.ID, 10, 64)
+	if err != nil {
+		errorutils.AddGQLError(
+			ctx,
+			fmt.Errorf("error in converting user id to int64"),
+		)
+		qrs.Logger.Error(err)
+		return nil, err
+	}
+	qrs.Logger.Debugf("successfully found user with ID %d", userId)
+	return &pb.User{
+		Data: &pb.UserData{
+			Type: "user",
+			Id:   userId,
+			Attributes: &pb.UserAttributes{
+				FirstName:    userResp.Username,
+				LastName:     userResp.Name,
+				Email:        userResp.PrimaryEmail,
+				Organization: userResp.CustomData.Institution,
+				FirstAddress: userResp.CustomData.Address,
+				City:         userResp.CustomData.City,
+				State:        userResp.CustomData.State,
+				Zipcode:      userResp.CustomData.Zipcode,
+				Country:      userResp.CustomData.Country,
+				Phone:        userResp.PrimaryPhone,
+				IsActive:     true,
+			},
+		},
+	}, nil
 }
 
 func (q *QueryResolver) ListUsers(
