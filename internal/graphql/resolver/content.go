@@ -49,6 +49,11 @@ func (mrs *MutationResolver) UpdateContent(
 	ctx context.Context,
 	input *models.UpdateContentInput,
 ) (*pb.Content, error) {
+	if err := authentication.CheckUpdateContent(ctx); err != nil {
+		errorutils.AddGQLError(ctx, err)
+		mrs.Logger.Error(err)
+		return nil, err
+	}
 	cid, err := strconv.ParseInt(input.ID, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf(
