@@ -15,6 +15,7 @@ var (
 	contentEditorRole   = []string{"content-editor", "content-admin"}
 	contentCreatorScope = "write:content"
 	contentEditorScope  = "edit:content"
+	userReadRole        = "user-user"
 )
 
 func HasToken(ctx context.Context) (jwt.Token, error) {
@@ -37,7 +38,7 @@ func CheckReadUser(ctx context.Context) error {
 		)
 	}
 	roles := fmt.Sprintf("%v", claims["roles"])
-	if !strings.Contains(roles, "user-user") {
+	if !strings.Contains(roles, userReadRole) {
 		return errors.New("query without user-user roles not allowed")
 	}
 	return nil
@@ -62,13 +63,12 @@ func CheckCreateContent(ctx context.Context) error {
 	return nil
 }
 
-
 func CheckUpdateContent(ctx context.Context) error {
 	roles, scopes, err := checkTokenClaims(ctx, "roles", "scopes")
 	if err != nil {
 		return err
 	}
-	
+
 	err = checkRole(roles, contentEditorRole)
 	if err != nil {
 		return err
