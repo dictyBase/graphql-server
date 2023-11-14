@@ -94,6 +94,11 @@ func (mrs *MutationResolver) DeleteContent(
 	ctx context.Context,
 	id string,
 ) (*models.DeleteContent, error) {
+	if err := authentication.CheckDeleteContent(ctx); err != nil {
+		errorutils.AddGQLError(ctx, err)
+		mrs.Logger.Error(err)
+		return nil, err
+	}
 	cid, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
