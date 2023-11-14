@@ -12,7 +12,9 @@ import (
 
 var (
 	contentCreatorRole  = []string{"content-writer", "content-admin"}
+	contentEditorRole   = []string{"content-editor", "content-admin"}
 	contentCreatorScope = "write:content"
+	contentEditorScope  = "edit:content"
 )
 
 func HasToken(ctx context.Context) (jwt.Token, error) {
@@ -67,5 +69,35 @@ func CheckCreateContent(ctx context.Context) error {
 	if !strings.Contains(scopes, contentCreatorScope) {
 		return errors.New("query without content writing scope is not allowed")
 	}
+	return nil
+}
+
+func CheckUpdateContent(ctx context.Context) error {
+	token, err := HasToken(ctx)
+	if err != nil {
+		return err
+	}
+	claims := token.PrivateClaims()
+	for _, clm := range []string{"roles", "scopes"} {
+		if _, ok := claims[clm]; !ok {
+			return fmt.Errorf("query without claim %s not allowed", err)
+		}
+	}
+	roles := fmt.Sprintf("%v", claims["roles"])
+	rolesOk := false
+	for _, rls := range contentEditorRole {
+		if strings.Contains(roles, rls) {
+			rolesOk = true
+			break
+		}
+	}
+	if !rolesOk {
+		return errors.New("query without content editor role is not allowed")
+	}
+	scopes := fmt.Sprintf("%v", claims["scopes"])
+	if !strings.Contains(scopes, contentEditorScope) {
+		return errors.New("query without content editing scope is not allowed")
+	}
+
 	return nil
 }
