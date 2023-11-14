@@ -13,8 +13,10 @@ import (
 var (
 	contentCreatorRole  = []string{"content-writer", "content-admin"}
 	contentEditorRole   = []string{"content-editor", "content-admin"}
+	contentDeleteRole   = []string{"content-admin", "content-remover"}
 	contentCreatorScope = "write:content"
 	contentEditorScope  = "edit:content"
+	contentDeleteScope  = "delete:content"
 	userReadRole        = "user-user"
 )
 
@@ -56,6 +58,25 @@ func CheckCreateContent(ctx context.Context) error {
 	}
 
 	err = checkScope(scopes, contentCreatorScope)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CheckDeleteContent(ctx context.Context) error {
+	roles, scopes, err := checkTokenClaims(ctx, "roles", "scopes")
+	if err != nil {
+		return err
+	}
+
+	err = checkRole(roles, contentDeleteRole)
+	if err != nil {
+		return err
+	}
+
+	err = checkScope(scopes, contentDeleteScope)
 	if err != nil {
 		return err
 	}
