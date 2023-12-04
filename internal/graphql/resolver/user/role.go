@@ -63,7 +63,7 @@ func (rrs *RoleResolver) Permissions(
 	if err != nil {
 		errorutils.AddGQLError(
 			ctx,
-			fmt.Errorf("error in fetching permissions", err),
+			fmt.Errorf("error in fetching permissions %s", err),
 		)
 		rrs.Logger.Error(err)
 		return permissions, err
