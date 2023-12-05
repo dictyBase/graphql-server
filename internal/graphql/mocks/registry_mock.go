@@ -108,3 +108,11 @@ func (mr MockRegistry) GetRedisRepository(key string) repository.Repository {
 	c, _ := redis.NewCache(radd)
 	return c
 }
+
+func (mr *MockRegistry) ServiceMap() map[string]string {
+	return map[string]string{
+		"stock":   "stock",
+		"user":    "user",
+		"content": "content",
+	}
+}
