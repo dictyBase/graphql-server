@@ -14,7 +14,19 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-type LogtoClient struct {
+type LogtoClient interface {
+	AccessToken() (*AccessTokenResp, error)
+	CheckUserWithUserName(string) (bool, string, error)
+	UserWithEmail(string) (*UserResp, error)
+	CheckUser(string) (bool, string, error)
+	AddCustomUserInformation(string, string, *APIUsersPatchCustomData) error
+	User(string) (*UserResp, error)
+	Roles(string) ([]*RoleResp, error)
+	Permissions(string) ([]*PermissionResp, error)
+	CreateUser(string, *APIUsersPostReq) (string, error)
+}
+
+type authClient struct {
 	baseURL     string
 	httpClient  *http.Client
 	appId       string
@@ -129,8 +141,8 @@ type PermissionResp struct {
 
 // NewClient creates a new instance of the Client struct.
 // It takes an endpoint string as a parameter and returns a pointer to the Client struct.
-func NewClient(params *LogtoClientParams) *LogtoClient {
-	return &LogtoClient{
+func NewClient(params *LogtoClientParams) LogtoClient {
+	return &authClient{
 		baseURL:     params.URL,
 		httpClient:  &http.Client{},
 		appId:       params.AppId,
@@ -141,7 +153,7 @@ func NewClient(params *LogtoClientParams) *LogtoClient {
 	}
 }
 
-func (clnt *LogtoClient) AccessToken() (*AccessTokenResp, error) {
+func (clnt *authClient) AccessToken() (*AccessTokenResp, error) {
 	acresp := &AccessTokenResp{}
 	params := url.Values{}
 	params.Set("grant_type", "client_credentials")
@@ -169,7 +181,7 @@ func (clnt *LogtoClient) AccessToken() (*AccessTokenResp, error) {
 	return acresp, nil
 }
 
-func (clnt *LogtoClient) CheckUserWithUserName(
+func (clnt *authClient) CheckUserWithUserName(
 	username string,
 ) (bool, string, error) {
 	var userStruct string
@@ -217,7 +229,7 @@ func (clnt *LogtoClient) CheckUserWithUserName(
 	return true, usrs[index].Id, nil
 }
 
-func (clnt *LogtoClient) UserWithEmail(email string) (*UserResp, error) {
+func (clnt *authClient) UserWithEmail(email string) (*UserResp, error) {
 	userStruct := &UserResp{}
 	token, err := clnt.retrieveToken()
 	if err != nil {
@@ -268,7 +280,7 @@ func (clnt *LogtoClient) UserWithEmail(email string) (*UserResp, error) {
 	return usrs[index], nil
 }
 
-func (clnt *LogtoClient) CheckUser(email string) (bool, string, error) {
+func (clnt *authClient) CheckUser(email string) (bool, string, error) {
 	var userStruct string
 	token, err := clnt.retrieveToken()
 	if err != nil {
@@ -314,7 +326,7 @@ func (clnt *LogtoClient) CheckUser(email string) (bool, string, error) {
 	return true, usrs[index].Id, nil
 }
 
-func (clnt *LogtoClient) AddCustomUserInformation(
+func (clnt *authClient) AddCustomUserInformation(
 	token,
 	userStruct string,
 	user *APIUsersPatchCustomData,
@@ -343,7 +355,7 @@ func (clnt *LogtoClient) AddCustomUserInformation(
 	return nil
 }
 
-func (clnt *LogtoClient) User(userId string) (*UserResp, error) {
+func (clnt *authClient) User(userId string) (*UserResp, error) {
 	userStruct := &UserResp{}
 	token, err := clnt.retrieveToken()
 	if err != nil {
@@ -379,7 +391,7 @@ func (clnt *LogtoClient) User(userId string) (*UserResp, error) {
 	return userStruct, nil
 }
 
-func (clnt *LogtoClient) Roles(userStruct string) ([]*RoleResp, error) {
+func (clnt *authClient) Roles(userStruct string) ([]*RoleResp, error) {
 	rolesStruct := make([]*RoleResp, 0)
 	token, err := clnt.retrieveToken()
 	if err != nil {
@@ -415,7 +427,7 @@ func (clnt *LogtoClient) Roles(userStruct string) ([]*RoleResp, error) {
 	return rolesStruct, nil
 }
 
-func (clnt *LogtoClient) Permissions(roleId string) ([]*PermissionResp, error) {
+func (clnt *authClient) Permissions(roleId string) ([]*PermissionResp, error) {
 	permissionStruct := make([]*PermissionResp, 0)
 	token, err := clnt.retrieveToken()
 	if err != nil {
@@ -451,7 +463,7 @@ func (clnt *LogtoClient) Permissions(roleId string) ([]*PermissionResp, error) {
 	return permissionStruct, nil
 }
 
-func (clnt *LogtoClient) CreateUser(
+func (clnt *authClient) CreateUser(
 	token string,
 	user *APIUsersPostReq,
 ) (string, error) {
@@ -481,7 +493,7 @@ func (clnt *LogtoClient) CreateUser(
 	return usr.Id, nil
 }
 
-func (clnt *LogtoClient) retrieveToken() (string, error) {
+func (clnt *authClient) retrieveToken() (string, error) {
 	var token string
 	ok, err := clnt.cache.Exists(clnt.cacheKey)
 	if err != nil {
@@ -518,7 +530,7 @@ func commonHeader(lreq *http.Request, token string) {
 	lreq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 }
 
-func (clnt *LogtoClient) reqToResponse(
+func (clnt *authClient) reqToResponse(
 	creq *http.Request,
 ) (*http.Response, error) {
 	uresp, err := clnt.httpClient.Do(creq)
