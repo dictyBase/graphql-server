@@ -64,8 +64,8 @@ type Registry interface {
 	AddAPIEndpoint(key, endpoint string)
 	AddAPIConnection(key string, conn *grpc.ClientConn)
 	AddRepository(key string, st repository.Repository)
-	AddAuthClient(key string, auth *authentication.LogtoClient)
-	GetAuthClient(key string) *authentication.LogtoClient
+	AddAuthClient(key string, auth authentication.LogtoClient)
+	GetAuthClient(key string) authentication.LogtoClient
 	GetAPIConnection(key string) (conn *grpc.ClientConn)
 	GetAPIEndpoint(key string) string
 	GetUserClient(key string) user.UserServiceClient
@@ -98,7 +98,7 @@ func (coll *collection) ServiceMap() map[string]string {
 }
 
 func (coll *collection) AddAuthClient(
-	key string, auth *authentication.LogtoClient,
+	key string, auth authentication.LogtoClient,
 ) {
 	coll.connMap.Put(key, auth)
 }
@@ -118,12 +118,12 @@ func (coll *collection) AddRepository(key string, st repository.Repository) {
 	coll.connMap.Put(key, st)
 }
 
-func (coll *collection) GetAuthClient(key string) *authentication.LogtoClient {
+func (coll *collection) GetAuthClient(key string) authentication.LogtoClient {
 	val, ok := coll.connMap.Get(key)
 	if !ok {
 		panic("could not get authentication client")
 	}
-	client, _ := val.(*authentication.LogtoClient)
+	client, _ := val.(authentication.LogtoClient)
 	return client
 }
 
