@@ -17,12 +17,12 @@ type contextKey string
 const key = contextKey("dataloaders")
 
 type Loaders struct {
-	StrainById *StrainLoader
+	StrainByID *StrainLoader
 }
 
 func newLoaders(ctx context.Context, nr registry.Registry) *Loaders {
 	return &Loaders{
-		StrainById: newStrainById(ctx, nr),
+		StrainByID: newStrainById(ctx, nr),
 	}
 }
 
