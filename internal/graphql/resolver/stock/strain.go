@@ -170,13 +170,13 @@ func (r *StrainResolver) Phenotypes(
 	obj *models.Strain,
 ) ([]*models.Phenotype, error) {
 	p := []*models.Phenotype{}
-	strainId := obj.ID
+	strainID := obj.ID
 	gc, err := r.AnnotationClient.ListAnnotationGroups(
 		ctx,
 		&annotation.ListGroupParameters{
 			Filter: fmt.Sprintf(
 				"entry_id==%s;ontology==%s",
-				strainId,
+				strainID,
 				registry.PhenoOntology,
 			),
 			Limit: 30,

@@ -55,7 +55,7 @@ func (rcs *ContentResolver) CreatedBy(
 		rcs.Logger.Error(err)
 		return nil, err
 	}
-	userId, err := strconv.ParseInt(userResp.ID, 10, 64)
+	userID, err := strconv.ParseInt(userResp.ID, 10, 64)
 	if err != nil {
 		errorutils.AddGQLError(
 			ctx,
@@ -68,7 +68,7 @@ func (rcs *ContentResolver) CreatedBy(
 	return &user.User{
 		Data: &user.UserData{
 			Type: "user",
-			Id:   userId,
+			Id:   userID,
 			Attributes: &user.UserAttributes{
 				FirstName:    userResp.Username,
 				LastName:     userResp.Name,
@@ -100,7 +100,7 @@ func (rcs *ContentResolver) UpdatedBy(
 		rcs.Logger.Error(err)
 		return nil, err
 	}
-	userId, err := strconv.ParseInt(userResp.ID, 10, 64)
+	userID, err := strconv.ParseInt(userResp.ID, 10, 64)
 	if err != nil {
 		errorutils.AddGQLError(
 			ctx,
@@ -113,7 +113,7 @@ func (rcs *ContentResolver) UpdatedBy(
 	return &user.User{
 		Data: &user.UserData{
 			Type: "user",
-			Id:   userId,
+			Id:   userID,
 			Attributes: &user.UserAttributes{
 				FirstName:    userResp.Username,
 				LastName:     userResp.Name,
