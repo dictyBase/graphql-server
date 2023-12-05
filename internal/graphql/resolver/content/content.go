@@ -16,7 +16,7 @@ import (
 
 type ContentResolver struct {
 	Client     pb.ContentServiceClient
-	UserClient *authentication.LogtoClient
+	UserClient authentication.LogtoClient
 	Logger     *logrus.Entry
 }
 

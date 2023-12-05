@@ -13,7 +13,7 @@ import (
 )
 
 type UserResolver struct {
-	Client *authentication.LogtoClient
+	Client authentication.LogtoClient
 	Logger *logrus.Entry
 }
 
