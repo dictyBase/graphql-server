@@ -29,7 +29,7 @@ type LogtoClient interface {
 type authClient struct {
 	baseURL     string
 	httpClient  *http.Client
-	appId       string
+	appID       string
 	appSecret   string
 	apiResource string
 	cache       repository.Repository
@@ -37,7 +37,7 @@ type authClient struct {
 }
 
 type LogtoClientParams struct {
-	URL, AppId, AppSecret, APIResource, Key string
+	URL, AppID, AppSecret, APIResource, Key string
 	TokenCache                              repository.Repository
 }
 
@@ -85,12 +85,12 @@ type APIUsersPostReq struct {
 }
 
 type APIUsersPostRes struct {
-	Id string `json:"id"`
+	ID string `json:"id"`
 }
 
 type APIUsersSearchRes struct {
 	Email    string `json:"primaryEmail"`
-	Id       string `json:"id"`
+	ID       string `json:"id"`
 	UserName string `json:"username"`
 }
 
@@ -115,8 +115,8 @@ type AdditionalUserInformation struct {
 }
 
 type RoleResp struct {
-	TenantId    string `json:"tenantId"`
-	Id          string `json:"id"`
+	TenantID    string `json:"tenantId"`
+	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Rtype       string `json:"type"`
@@ -145,7 +145,7 @@ func NewClient(params *LogtoClientParams) LogtoClient {
 	return &authClient{
 		baseURL:     params.URL,
 		httpClient:  &http.Client{},
-		appId:       params.AppId,
+		appID:       params.AppID,
 		appSecret:   params.AppSecret,
 		apiResource: params.APIResource,
 		cache:       params.TokenCache,
@@ -167,7 +167,7 @@ func (clnt *authClient) AccessToken() (*AccessTokenResp, error) {
 	if err != nil {
 		return acresp, fmt.Errorf("error in creating request %s ", err)
 	}
-	req.SetBasicAuth(clnt.appId, clnt.appSecret)
+	req.SetBasicAuth(clnt.appID, clnt.appSecret)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	res, err := clnt.reqToResponse(req)
 	if err != nil {
@@ -226,7 +226,7 @@ func (clnt *authClient) CheckUserWithUserName(
 	if index == -1 {
 		return false, userStruct, nil
 	}
-	return true, usrs[index].Id, nil
+	return true, usrs[index].ID, nil
 }
 
 func (clnt *authClient) UserWithEmail(email string) (*UserResp, error) {
@@ -323,7 +323,7 @@ func (clnt *authClient) CheckUser(email string) (bool, string, error) {
 	if index == -1 {
 		return false, userStruct, nil
 	}
-	return true, usrs[index].Id, nil
+	return true, usrs[index].ID, nil
 }
 
 func (clnt *authClient) AddCustomUserInformation(
@@ -355,7 +355,7 @@ func (clnt *authClient) AddCustomUserInformation(
 	return nil
 }
 
-func (clnt *authClient) User(userId string) (*UserResp, error) {
+func (clnt *authClient) User(userID string) (*UserResp, error) {
 	userStruct := &UserResp{}
 	token, err := clnt.retrieveToken()
 	if err != nil {
@@ -363,7 +363,7 @@ func (clnt *authClient) User(userId string) (*UserResp, error) {
 	}
 	ureq, err := http.NewRequest(
 		"GET",
-		fmt.Sprintf("%s/api/users/%s", clnt.baseURL, userId),
+		fmt.Sprintf("%s/api/users/%s", clnt.baseURL, userID),
 		nil,
 	)
 	if err != nil {
@@ -427,7 +427,7 @@ func (clnt *authClient) Roles(userStruct string) ([]*RoleResp, error) {
 	return rolesStruct, nil
 }
 
-func (clnt *authClient) Permissions(roleId string) ([]*PermissionResp, error) {
+func (clnt *authClient) Permissions(roleID string) ([]*PermissionResp, error) {
 	permissionStruct := make([]*PermissionResp, 0)
 	token, err := clnt.retrieveToken()
 	if err != nil {
@@ -435,7 +435,7 @@ func (clnt *authClient) Permissions(roleId string) ([]*PermissionResp, error) {
 	}
 	ureq, err := http.NewRequest(
 		"GET",
-		fmt.Sprintf("%s/api/roles/%s/scopes", clnt.baseURL, roleId),
+		fmt.Sprintf("%s/api/roles/%s/scopes", clnt.baseURL, roleID),
 		nil,
 	)
 	if err != nil {
@@ -490,7 +490,7 @@ func (clnt *authClient) CreateUser(
 	if err := json.NewDecoder(uresp.Body).Decode(usr); err != nil {
 		return userStruct, fmt.Errorf("error in decoding json response %s", err)
 	}
-	return usr.Id, nil
+	return usr.ID, nil
 }
 
 func (clnt *authClient) retrieveToken() (string, error) {

@@ -76,22 +76,22 @@ func normalizeCreateUserAttr(
 
 func (m *MutationResolver) CreateUserRoleRelationship(
 	ctx context.Context,
-	userId string,
-	roleId string,
+	userID string,
+	roleID string,
 ) (*pb.User, error) {
-	uid, err := strconv.ParseInt(userId, 10, 64)
+	uid, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf(
 			"error in parsing string %s to int %s",
-			userId,
+			userID,
 			err,
 		)
 	}
-	rid, err := strconv.ParseInt(roleId, 10, 64)
+	rid, err := strconv.ParseInt(roleID, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf(
 			"error in parsing string %s to int %s",
-			roleId,
+			roleID,
 			err,
 		)
 	}
@@ -272,7 +272,7 @@ func (qrs *QueryResolver) User(
 		qrs.Logger.Error(err)
 		return nil, err
 	}
-	userId, err := strconv.ParseInt(id, 10, 64)
+	userID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		errorutils.AddGQLError(
 			ctx,
@@ -281,11 +281,11 @@ func (qrs *QueryResolver) User(
 		qrs.Logger.Error(err)
 		return nil, err
 	}
-	qrs.Logger.Debugf("successfully found user with ID %d", userId)
+	qrs.Logger.Debugf("successfully found user with ID %d", userID)
 	return &pb.User{
 		Data: &pb.UserData{
 			Type: "user",
-			Id:   userId,
+			Id:   userID,
 			Attributes: &pb.UserAttributes{
 				FirstName:    userResp.Username,
 				LastName:     userResp.Name,
@@ -313,7 +313,7 @@ func (qrs *QueryResolver) UserByEmail(
 		qrs.Logger.Error(err)
 		return nil, err
 	}
-	userId, err := strconv.ParseInt(userResp.ID, 10, 64)
+	userID, err := strconv.ParseInt(userResp.ID, 10, 64)
 	if err != nil {
 		errorutils.AddGQLError(
 			ctx,
@@ -322,11 +322,11 @@ func (qrs *QueryResolver) UserByEmail(
 		qrs.Logger.Error(err)
 		return nil, err
 	}
-	qrs.Logger.Debugf("successfully found user with ID %d", userId)
+	qrs.Logger.Debugf("successfully found user with ID %d", userID)
 	return &pb.User{
 		Data: &pb.UserData{
 			Type: "user",
-			Id:   userId,
+			Id:   userID,
 			Attributes: &pb.UserAttributes{
 				FirstName:    userResp.Username,
 				LastName:     userResp.Name,
@@ -379,34 +379,30 @@ func (q *QueryResolver) ListUsers(
 		return nil, err
 	}
 	for _, n := range g.Data {
-		item := &pb.User{
-			Data: &pb.UserData{
-				Type: "user",
-				Id:   n.Id,
-				Attributes: &pb.UserAttributes{
-					FirstName:     n.Attributes.FirstName,
-					LastName:      n.Attributes.LastName,
-					Email:         n.Attributes.LastName,
-					Organization:  n.Attributes.Organization,
-					GroupName:     n.Attributes.GroupName,
-					FirstAddress:  n.Attributes.FirstAddress,
-					SecondAddress: n.Attributes.SecondAddress,
-					City:          n.Attributes.City,
-					State:         n.Attributes.State,
-					Zipcode:       n.Attributes.Zipcode,
-					Country:       n.Attributes.Country,
-					Phone:         n.Attributes.Phone,
-					IsActive:      n.Attributes.IsActive,
-					CreatedAt:     n.Attributes.CreatedAt,
-					UpdatedAt:     n.Attributes.UpdatedAt,
-				},
+		item := &pb.User{Data: &pb.UserData{
+			Type: "user",
+			Id:   n.Id,
+			Attributes: &pb.UserAttributes{
+				FirstName:     n.Attributes.FirstName,
+				LastName:      n.Attributes.LastName,
+				Email:         n.Attributes.LastName,
+				Organization:  n.Attributes.Organization,
+				GroupName:     n.Attributes.GroupName,
+				FirstAddress:  n.Attributes.FirstAddress,
+				SecondAddress: n.Attributes.SecondAddress,
+				City:          n.Attributes.City,
+				State:         n.Attributes.State,
+				Zipcode:       n.Attributes.Zipcode,
+				Country:       n.Attributes.Country,
+				Phone:         n.Attributes.Phone,
+				IsActive:      n.Attributes.IsActive,
+				CreatedAt:     n.Attributes.CreatedAt,
+				UpdatedAt:     n.Attributes.UpdatedAt,
 			},
+		},
 		}
 		users = append(users, item)
 	}
 	q.Logger.Debugf("successfully retrieved list of %d users", len(users))
-	return &models.UserList{
-		TotalCount: len(users),
-		Users:      users,
-	}, nil
+	return &models.UserList{TotalCount: len(users), Users: users}, nil
 }

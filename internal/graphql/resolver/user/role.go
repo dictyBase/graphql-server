@@ -58,8 +58,8 @@ func (rrs *RoleResolver) Permissions(
 	obj *pb.Role,
 ) ([]*pb.Permission, error) {
 	permissions := []*pb.Permission{}
-	roleId := strconv.FormatInt(obj.Data.Id, 10)
-	permResp, err := rrs.Client.Permissions(roleId)
+	roleID := strconv.FormatInt(obj.Data.Id, 10)
+	permResp, err := rrs.Client.Permissions(roleID)
 	if err != nil {
 		errorutils.AddGQLError(
 			ctx,
@@ -69,7 +69,7 @@ func (rrs *RoleResolver) Permissions(
 		return permissions, err
 	}
 	for _, perm := range permResp {
-		permId, err := strconv.ParseInt(perm.ID, 10, 64)
+		permID, err := strconv.ParseInt(perm.ID, 10, 64)
 		if err != nil {
 			errorutils.AddGQLError(
 				ctx,
@@ -84,7 +84,7 @@ func (rrs *RoleResolver) Permissions(
 		item := &pb.Permission{
 			Data: &pb.PermissionData{
 				Type: "permission",
-				Id:   permId,
+				Id:   permID,
 				Attributes: &pb.PermissionAttributes{
 					Permission:  perm.Name,
 					Description: perm.Description,
