@@ -5,12 +5,12 @@ import (
 	"os"
 
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
-	"github.com/dictyBase/go-genproto/dictybaseapis/auth"
 	"github.com/dictyBase/go-genproto/dictybaseapis/content"
 	"github.com/dictyBase/go-genproto/dictybaseapis/identity"
 	"github.com/dictyBase/go-genproto/dictybaseapis/order"
 	"github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
+	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	"github.com/dictyBase/graphql-server/internal/repository/redis"
 	"github.com/emirpasic/gods/maps/hashmap"
@@ -19,6 +19,12 @@ import (
 
 type MockRegistry struct {
 	ConnMap *hashmap.Map
+}
+
+func (mr *MockRegistry) AddAuthClient(
+	key string, auth *authentication.LogtoClient,
+) {
+	mr.ConnMap.Put(key, auth)
 }
 
 func (mr *MockRegistry) AddAPIEndpoint(key, endpoint string) {
@@ -51,7 +57,9 @@ func (mr *MockRegistry) GetRoleClient(key string) user.RoleServiceClient {
 	return MockedRoleClient()
 }
 
-func (mr *MockRegistry) GetPermissionClient(key string) user.PermissionServiceClient {
+func (mr *MockRegistry) GetPermissionClient(
+	key string,
+) user.PermissionServiceClient {
 	return MockedPermissionClient()
 }
 
@@ -63,19 +71,25 @@ func (mr *MockRegistry) GetOrderClient(key string) order.OrderServiceClient {
 	return MockedOrderClient()
 }
 
-func (mr *MockRegistry) GetContentClient(key string) content.ContentServiceClient {
+func (mr *MockRegistry) GetContentClient(
+	key string,
+) content.ContentServiceClient {
 	return MockedContentClient()
 }
 
-func (mr *MockRegistry) GetAnnotationClient(key string) annotation.TaggedAnnotationServiceClient {
+func (mr *MockRegistry) GetAnnotationClient(
+	key string,
+) annotation.TaggedAnnotationServiceClient {
 	return MockedAnnotationClient()
 }
 
-func (mr *MockRegistry) GetAuthClient(key string) auth.AuthServiceClient {
+func (mr *MockRegistry) GetAuthClient(key string) authentication.LogtoClient {
 	return MockedAuthClient()
 }
 
-func (mr *MockRegistry) GetIdentityClient(key string) identity.IdentityServiceClient {
+func (mr *MockRegistry) GetIdentityClient(
+	key string,
+) identity.IdentityServiceClient {
 	return MockedIdentityClient()
 }
 
@@ -86,7 +100,11 @@ func (mr MockRegistry) GetAPIEndpoint(key string) string {
 }
 
 func (mr MockRegistry) GetRedisRepository(key string) repository.Repository {
-	radd := fmt.Sprintf("%s:%s", os.Getenv("REDIS_SERVICE_HOST"), os.Getenv("REDIS_SERVICE_PORT"))
+	radd := fmt.Sprintf(
+		"%s:%s",
+		os.Getenv("REDIS_SERVICE_HOST"),
+		os.Getenv("REDIS_SERVICE_PORT"),
+	)
 	c, _ := redis.NewCache(radd)
 	return c
 }
