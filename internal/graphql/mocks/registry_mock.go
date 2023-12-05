@@ -22,7 +22,7 @@ type MockRegistry struct {
 }
 
 func (mr *MockRegistry) AddAuthClient(
-	key string, auth *authentication.LogtoClient,
+	key string, auth authentication.LogtoClient,
 ) {
 	mr.ConnMap.Put(key, auth)
 }
