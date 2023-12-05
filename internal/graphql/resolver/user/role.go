@@ -15,7 +15,7 @@ import (
 )
 
 type RoleResolver struct {
-	Client *authentication.LogtoClient
+	Client authentication.LogtoClient
 	Logger *logrus.Entry
 }
 
