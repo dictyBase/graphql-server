@@ -140,9 +140,7 @@ func (r *StrainResolver) Names(
 	obj *models.Strain,
 ) ([]string, error) {
 	names := make([]string, 0)
-	for _, v := range obj.Names {
-		names = append(names, v)
-	}
+	names = append(names, obj.Names...)
 	n, err := r.AnnotationClient.ListAnnotations(
 		ctx,
 		&annotation.ListParameters{
