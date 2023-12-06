@@ -3,13 +3,13 @@ package mocks
 import (
 	"github.com/dictyBase/go-genproto/dictybaseapis/order"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/stretchr/testify/mock"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var MockOrderAttributes = &order.OrderAttributes{
-	CreatedAt:        ptypes.TimestampNow(),
-	UpdatedAt:        ptypes.TimestampNow(),
+	CreatedAt:        timestamppb.Now(),
+	UpdatedAt:        timestamppb.Now(),
 	Courier:          "USPS",
 	CourierAccount:   "123456",
 	Comments:         "first order",
@@ -59,8 +59,8 @@ func mockUpdateOrder() *order.Order {
 			Type: "order",
 			Id:   "999",
 			Attributes: &order.OrderAttributes{
-				CreatedAt:        ptypes.TimestampNow(),
-				UpdatedAt:        ptypes.TimestampNow(),
+				CreatedAt:        timestamppb.Now(),
+				UpdatedAt:        timestamppb.Now(),
 				Courier:          "FedEx",
 				CourierAccount:   "444444",
 				Comments:         "Please send ASAP",
