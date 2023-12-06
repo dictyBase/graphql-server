@@ -62,7 +62,12 @@ func RunGraphQLServer(cltx *cli.Context) error {
 	router.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	router.Handle("/graphql", srv)
 	log.Debugf("connect to port 8080 for GraphQL playground")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	if err := http.ListenAndServe(":8080", router); err != nil {
+		return cli.NewExitError(
+			fmt.Sprintf("error in running server %s", err),
+			2,
+		)
+	}
 
 	return nil
 }
@@ -109,7 +114,7 @@ func addEndpoints(ctx *cli.Context, nreg registry.Registry) {
 		registry.AUTH,
 		authentication.NewClient(&authentication.LogtoClientParams{
 			URL:         ctx.String("auth-api-endpoint"),
-			AppId:       ctx.String("app-id"),
+			AppID:       ctx.String("app-id"),
 			AppSecret:   ctx.String("app-secret"),
 			APIResource: ctx.String("api-resource"),
 			Key:         "AUTHTOKEN",
@@ -133,12 +138,12 @@ func initRedis(ctx *cli.Context, nreg registry.Registry) error {
 }
 
 func getCORS(origins []string) *cors.Cors {
-	aorg := append(origins, "http://localhost:*")
-	aorg = append(aorg, "https://dictybase.dev")
-	aorg = append(aorg, "https://dictybase.dev/")
-	aorg = append(aorg, "https://dictybase.dev*")
+	origins = append(origins, "http://localhost:*")
+	origins = append(origins, "https://dictybase.dev")
+	origins = append(origins, "https://dictybase.dev/")
+	origins = append(origins, "https://dictybase.dev*")
 	return cors.New(cors.Options{
-		AllowedOrigins:   aorg,
+		AllowedOrigins:   origins,
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"*"},
