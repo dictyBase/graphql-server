@@ -6,8 +6,8 @@ import (
 	"regexp"
 
 	"github.com/dictyBase/aphgrpc"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	"github.com/dictyBase/go-genproto/dictybaseapis/api/jsonapi"
@@ -152,7 +152,7 @@ func (r *StrainResolver) Names(
 				obj.ID, registry.SynTag, registry.DictyAnnoOntology,
 			)})
 	if err != nil {
-		if grpc.Code(err) == codes.NotFound {
+		if status.Code(err) == codes.NotFound {
 			return names, nil
 		}
 		errorutils.AddGQLError(ctx, err)
@@ -182,7 +182,7 @@ func (r *StrainResolver) Phenotypes(
 			Limit: 30,
 		})
 	if err != nil {
-		if grpc.Code(err) == codes.NotFound {
+		if status.Code(err) == codes.NotFound {
 			return p, nil
 		}
 		errorutils.AddGQLError(ctx, err)
@@ -207,7 +207,7 @@ func (r *StrainResolver) GeneticModification(
 		},
 	)
 	if err != nil {
-		if grpc.Code(err) == codes.NotFound {
+		if status.Code(err) == codes.NotFound {
 			return &gm, nil
 		}
 		errorutils.AddGQLError(ctx, err)
@@ -232,7 +232,7 @@ func (r *StrainResolver) MutagenesisMethod(
 		},
 	)
 	if err != nil {
-		if grpc.Code(err) == codes.NotFound {
+		if status.Code(err) == codes.NotFound {
 			return &m, nil
 		}
 		errorutils.AddGQLError(ctx, err)
@@ -256,7 +256,7 @@ func (r *StrainResolver) SystematicName(
 		},
 	)
 	if err != nil {
-		if grpc.Code(err) == codes.NotFound {
+		if status.Code(err) == codes.NotFound {
 			return "", nil
 		}
 		errorutils.AddGQLError(ctx, err)
@@ -278,7 +278,7 @@ func (r *StrainResolver) Characteristics(
 		)},
 	)
 	if err != nil {
-		if grpc.Code(err) == codes.NotFound {
+		if status.Code(err) == codes.NotFound {
 			return pslice, nil
 		}
 		errorutils.AddGQLError(ctx, err)
@@ -304,7 +304,7 @@ func (r *StrainResolver) Genotypes(
 			Tag:      registry.GenoTag,
 		})
 	if err != nil {
-		if grpc.Code(err) == codes.NotFound {
+		if status.Code(err) == codes.NotFound {
 			return gntype, nil
 		}
 		errorutils.AddGQLError(ctx, err)
@@ -329,7 +329,7 @@ func (r *StrainResolver) InStock(
 		},
 	)
 	if err != nil {
-		if grpc.Code(err) == codes.NotFound {
+		if status.Code(err) == codes.NotFound {
 			return false, nil
 		}
 		errorutils.AddGQLError(ctx, err)
