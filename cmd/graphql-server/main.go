@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -115,23 +116,23 @@ func authFlags() []cli.Flag {
 			Required: true,
 		},
 		cli.StringFlag{
-			Name: "app-id",
-			Usage: "api identifier",
+			Name:     "app-id",
+			Usage:    "api identifier",
 			Required: true,
 		},
 		cli.StringFlag{
-			Name: "api-resource",
+			Name:  "api-resource",
 			Usage: "http url that represents the identity of the resource",
 			Value: "https://default.logto.app/api",
 		},
 		cli.StringFlag{
-			Name: "app-secret",
-			Usage: "secret to access the authentication api",
+			Name:     "app-secret",
+			Usage:    "secret to access the authentication api",
 			Required: true,
 		},
 		cli.StringFlag{
 			Name:     "jwks-uri",
-			Usage:    "url to retreive JWK public key set",
+			Usage:    "url to retrieve JWK public key set",
 			Required: true,
 		},
 		cli.StringFlag{
@@ -217,7 +218,10 @@ func nonGRPCFlags() []cli.Flag {
 			Name:   "organism-api, org",
 			EnvVar: "ORGANISM_API_ENDPOINT",
 			Usage:  "json endpoint for organisms (downloads page)",
-			Value:  "https://raw.githubusercontent.com/dictyBase/migration-data/master/downloads/organisms-with-citations.staging.json",
+			Value: fmt.Sprintf(
+				"https://raw.githubusercontent.com/dictyBase/migration-data/%s",
+				"master/downloads/organisms-with-citations.staging.json",
+			),
 		},
 	}
 }
