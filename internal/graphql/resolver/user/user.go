@@ -140,11 +140,11 @@ func (urs *UserResolver) Roles(
 		return roles, err
 	}
 	for _, rdata := range resp {
-		roleId, _ := strconv.ParseInt(rdata.Id, 10, 64)
+		roleID, _ := strconv.ParseInt(rdata.ID, 10, 64)
 		item := &pb.Role{
 			Data: &pb.RoleData{
 				Type: "role",
-				Id:   roleId,
+				Id:   roleID,
 				Attributes: &pb.RoleAttributes{
 					Role:        rdata.Name,
 					Description: rdata.Description,
