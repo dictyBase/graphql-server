@@ -22,7 +22,7 @@ type Loaders struct {
 
 func newLoaders(ctx context.Context, nr registry.Registry) *Loaders {
 	return &Loaders{
-		StrainByID: newStrainById(ctx, nr),
+		StrainByID: newStrainByID(ctx, nr),
 	}
 }
 
@@ -44,7 +44,7 @@ func NewRetriever() Retriever {
 	return &retriever{key: key}
 }
 
-func newStrainById(ctx context.Context, nr registry.Registry) *StrainLoader {
+func newStrainByID(_ context.Context, nr registry.Registry) *StrainLoader {
 	return NewStrainLoader(StrainLoaderConfig{
 		MaxBatch: 100,
 		Wait:     100 * time.Millisecond,
