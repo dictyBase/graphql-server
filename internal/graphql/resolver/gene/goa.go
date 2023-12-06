@@ -129,7 +129,10 @@ func getWith(with []with, repo repository.Repository) []*models.With {
 	return wm
 }
 
-func getExtensions(extensions []extension, repo repository.Repository) []*models.Extension {
+func getExtensions(
+	extensions []extension,
+	repo repository.Repository,
+) []*models.Extension {
 	ext := []*models.Extension{}
 	for _, v := range extensions {
 		for _, e := range v.ConnectedXRefs {
@@ -144,11 +147,17 @@ func getExtensions(extensions []extension, repo repository.Repository) []*models
 	return ext
 }
 
-func (g *GeneResolver) Goas(ctx context.Context, obj *models.Gene) ([]*models.GOAnnotation, error) {
+func (g *GeneResolver) Goas(
+	ctx context.Context,
+	obj *models.Gene,
+) ([]*models.GOAnnotation, error) {
 	goas := []*models.GOAnnotation{}
 	id := getValFromHash(geneUniprotHash, obj.ID, g.Redis)
 	if g.GoasURL == "" {
-		g.GoasURL = fmt.Sprintf("https://www.ebi.ac.uk/QuickGO/services/annotation/search?includeFields=goName&limit=100&geneProductId=%s", id)
+		g.GoasURL = fmt.Sprintf(
+			"https://www.ebi.ac.uk/QuickGO/services/annotation/search?includeFields=goName&limit=100&geneProductId=%s",
+			id,
+		)
 	}
 	gn, err := fetchGOAs(ctx, g.GoasURL)
 	if err != nil {
