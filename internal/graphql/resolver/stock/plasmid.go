@@ -13,8 +13,8 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type PlasmidResolver struct {
@@ -110,7 +110,7 @@ func (r *PlasmidResolver) InStock(
 		},
 	)
 	if err != nil {
-		if grpc.Code(err) == codes.NotFound {
+		if status.Code(err) == codes.NotFound {
 			return false, nil
 		}
 		errorutils.AddGQLError(ctx, err)
