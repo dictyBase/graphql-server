@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"google.golang.org/grpc/credentials/insecure"
+
 	"github.com/dictyBase/graphql-server/internal/app/middleware"
 	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/dataloader"
@@ -62,12 +64,13 @@ func RunGraphQLServer(cltx *cli.Context) error {
 	router.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	router.Handle("/graphql", srv)
 	log.Debugf("connect to port 8080 for GraphQL playground")
-	if err := http.ListenAndServe(":8080", router); err != nil {
-		return cli.NewExitError(
-			fmt.Sprintf("error in running server %s", err),
-			2,
-		)
+	hsrv := &http.Server{
+		Addr:         ":8080",
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		Handler:      router,
 	}
+	log.Fatal(hsrv.ListenAndServe())
 
 	return nil
 }
@@ -98,8 +101,10 @@ func connectToGrpcService(
 	conn, err := grpc.DialContext(
 		grpcCtx,
 		fmt.Sprintf("%s:%s", host, port),
-		grpc.WithInsecure(),
-		grpc.WithBlock(),
+		[]grpc.DialOption{
+			grpc.WithTransportCredentials(insecure.NewCredentials()),
+			grpc.WithBlock(),
+		}...,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("cannot connect to grpc microservice %s", err)
