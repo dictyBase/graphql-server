@@ -5,12 +5,12 @@ import (
 
 	"github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/stretchr/testify/mock"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var t = time.Date(2020, time.January, 01, 01, 0, 0, 0, time.UTC)
-var StockTimestamp, _ = ptypes.TimestampProto(t)
+var StockTimestamp = timestamppb.New(t)
 
 var MockPlasmidAttributes = &stock.PlasmidAttributes{
 	CreatedAt:       StockTimestamp,

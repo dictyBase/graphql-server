@@ -4,8 +4,8 @@ import (
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/dictyBase/graphql-server/internal/registry"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/stretchr/testify/mock"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func MockTagAnno(value, tag string) *annotation.TaggedAnnotation {
@@ -17,7 +17,7 @@ func MockTagAnno(value, tag string) *annotation.TaggedAnnotation {
 				Value:     value,
 				EntryId:   "DBS0236922",
 				CreatedBy: "dsc@dictycr.org",
-				CreatedAt: ptypes.TimestampNow(),
+				CreatedAt: timestamppb.Now(),
 				Tag:       tag,
 				Ontology:  registry.DictyAnnoOntology,
 				Version:   1,
@@ -36,7 +36,7 @@ func MockTagList(
 			Value:     value,
 			EntryId:   "DBS0236922",
 			CreatedBy: "dsc@dictycr.org",
-			CreatedAt: ptypes.TimestampNow(),
+			CreatedAt: timestamppb.Now(),
 			Tag:       tag,
 			Ontology:  onto,
 			Version:   1,
@@ -54,7 +54,7 @@ func MockTagGroupAnno(
 			Version:   1,
 			EntryId:   "DBS0235559",
 			CreatedBy: "art@vandelay.org",
-			CreatedAt: ptypes.TimestampNow(),
+			CreatedAt: timestamppb.Now(),
 			Ontology:  onto,
 			Tag:       tag,
 			Value:     value,
@@ -141,8 +141,8 @@ func MockPhenotypeAnno() *annotation.TaggedAnnotationGroupCollection {
 		Group: &annotation.TaggedAnnotationGroup{
 			Data:      gdata,
 			GroupId:   "4924132",
-			CreatedAt: ptypes.TimestampNow(),
-			UpdatedAt: ptypes.TimestampNow(),
+			CreatedAt: timestamppb.Now(),
+			UpdatedAt: timestamppb.Now(),
 		},
 	})
 	return &annotation.TaggedAnnotationGroupCollection{
@@ -161,7 +161,7 @@ func MockPhenoCollectionAnno(
 			Version:   1,
 			EntryId:   id,
 			CreatedBy: "art@vandelay.org",
-			CreatedAt: ptypes.TimestampNow(),
+			CreatedAt: timestamppb.Now(),
 			Ontology:  registry.PhenoOntology,
 			Tag:       tag,
 			Value:     registry.EmptyValue,
