@@ -34,7 +34,7 @@ func NewJWTAuth(url, audience, issuer string) (*JWTAuth, error) {
 }
 
 func (mdw *JWTAuth) validateToken(req *http.Request) (jwt.Token, error) {
-	if len(req.Header.Get("Authorization")) <= 0 {
+	if len(req.Header.Get("Authorization")) == 0 {
 		return nil, nil
 	}
 	token, err := jwt.ParseRequest(
