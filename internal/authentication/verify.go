@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/dictyBase/graphql-server/internal/app/middleware"
-	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
 var (
@@ -20,19 +19,8 @@ var (
 	userReadRole        = "user-user"
 )
 
-func HasToken(ctx context.Context) (jwt.Token, error) {
-	token := middleware.TokenFromContext(ctx)
-	if token == nil {
-		return nil, errors.New("no jwt token found")
-	}
-	return token, nil
-}
-
 func CheckReadUser(ctx context.Context) error {
-	token, err := HasToken(ctx)
-	if err != nil {
-		return err
-	}
+	token := middleware.TokenFromContext(ctx)
 	claims := token.PrivateClaims()
 	if _, ok := claims["roles"]; !ok {
 		return errors.New(
@@ -108,10 +96,7 @@ func checkTokenClaims(
 	roleSlot string,
 	scopeSlot string,
 ) (string, string, error) {
-	token, err := HasToken(ctx)
-	if err != nil {
-		return "", "", err
-	}
+	token := middleware.TokenFromContext(ctx)
 	claims := token.PrivateClaims()
 	for _, clm := range []string{roleSlot, scopeSlot} {
 		if _, ok := claims[clm]; !ok {
