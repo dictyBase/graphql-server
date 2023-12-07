@@ -74,6 +74,7 @@ func normalizeCreateUserAttr(
 	return newAttr
 }
 
+//nolint:dupl
 func (mrs *MutationResolver) CreateUserRoleRelationship(
 	ctx context.Context,
 	userID string,
