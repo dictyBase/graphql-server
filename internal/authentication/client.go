@@ -519,7 +519,10 @@ func (clnt *authClient) retrieveToken() (string, error) {
 			aresp.ExpiresIn,
 		)
 	}
-	clnt.cache.SetWithTTL(token, aresp.AccessToken, dur)
+	err = clnt.cache.SetWithTTL(token, aresp.AccessToken, dur)
+	if err != nil {
+		return token, fmt.Errorf("error in setting token %s", err)
+	}
 
 	return aresp.AccessToken, nil
 }
