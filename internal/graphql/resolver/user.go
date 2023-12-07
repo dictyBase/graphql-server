@@ -344,7 +344,7 @@ func (qrs *QueryResolver) UserByEmail(
 	}, nil
 }
 
-func (q *QueryResolver) ListUsers(
+func (qrs *QueryResolver) ListUsers(
 	ctx context.Context,
 	pagenum string,
 	pagesize string,
@@ -367,7 +367,7 @@ func (q *QueryResolver) ListUsers(
 			err,
 		)
 	}
-	g, err := q.GetUserClient(registry.USER).
+	g, err := qrs.GetUserClient(registry.USER).
 		ListUsers(ctx, &jsonapi.ListRequest{
 			Pagenum:  pn,
 			Pagesize: ps,
@@ -375,7 +375,7 @@ func (q *QueryResolver) ListUsers(
 		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
+		qrs.Logger.Error(err)
 		return nil, err
 	}
 	for _, n := range g.Data {
@@ -403,6 +403,6 @@ func (q *QueryResolver) ListUsers(
 		}
 		users = append(users, item)
 	}
-	q.Logger.Debugf("successfully retrieved list of %d users", len(users))
+	qrs.Logger.Debugf("successfully retrieved list of %d users", len(users))
 	return &models.UserList{TotalCount: len(users), Users: users}, nil
 }

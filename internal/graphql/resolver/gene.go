@@ -8,29 +8,29 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 )
 
-func (q *QueryResolver) Gene(
+func (qrs *QueryResolver) Gene(
 	ctx context.Context,
 	gene string,
 ) (*models.Gene, error) {
 	g := &models.Gene{}
-	redis := q.GetRedisRepository(cache.RedisKey)
+	redis := qrs.GetRedisRepository(cache.RedisKey)
 	gn, err := cache.GetGeneFromCache(ctx, redis, gene)
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
+		qrs.Logger.Error(err)
 		return g, err
 	}
 	return gn, nil
 }
 
-func (q *QueryResolver) AllOrthologs(
+func (qrs *QueryResolver) AllOrthologs(
 	ctx context.Context,
 	gene string,
 ) (*models.Gene, error) {
 	return &models.Gene{}, nil
 }
 
-func (q *QueryResolver) GeneralInformation(
+func (qrs *QueryResolver) GeneralInformation(
 	ctx context.Context,
 	gene string,
 ) (*models.Gene, error) {
@@ -38,7 +38,7 @@ func (q *QueryResolver) GeneralInformation(
 }
 
 // GetAssociatedSequnces is the resolver for the getAssociatedSequnces field.
-func (q *QueryResolver) GetAssociatedSequnces(
+func (qrs *QueryResolver) GetAssociatedSequnces(
 	ctx context.Context,
 	gene string,
 ) (*models.Gene, error) {
@@ -46,7 +46,7 @@ func (q *QueryResolver) GetAssociatedSequnces(
 }
 
 // GetLinks is the resolver for the getLinks field.
-func (q *QueryResolver) GetLinks(
+func (qrs *QueryResolver) GetLinks(
 	ctx context.Context,
 	gene string,
 ) (*models.Gene, error) {
@@ -54,7 +54,7 @@ func (q *QueryResolver) GetLinks(
 }
 
 // GetProteinInformation is the resolver for the getProteinInformation field.
-func (q *QueryResolver) GetProteinInformation(
+func (qrs *QueryResolver) GetProteinInformation(
 	ctx context.Context,
 	gene string,
 ) (*models.Gene, error) {
@@ -62,7 +62,7 @@ func (q *QueryResolver) GetProteinInformation(
 }
 
 // ListGeneProductInfo is the resolver for the listGeneProductInfo field.
-func (q *QueryResolver) ListGeneProductInfo(
+func (qrs *QueryResolver) ListGeneProductInfo(
 	ctx context.Context,
 	gene string,
 ) (*models.Gene, error) {
@@ -70,7 +70,7 @@ func (q *QueryResolver) ListGeneProductInfo(
 }
 
 // ListRecentGenes is the resolver for the listRecentGenes field.
-func (q *QueryResolver) ListRecentGenes(
+func (qrs *QueryResolver) ListRecentGenes(
 	ctx context.Context,
 	limit int,
 ) ([]*models.Gene, error) {

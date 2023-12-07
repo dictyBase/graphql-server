@@ -101,7 +101,7 @@ func (m *MutationResolver) DeletePermission(
 	}, nil
 }
 
-func (q *QueryResolver) Permission(
+func (qrs *QueryResolver) Permission(
 	ctx context.Context,
 	id string,
 ) (*pb.Permission, error) {
@@ -109,26 +109,26 @@ func (q *QueryResolver) Permission(
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
 	}
-	g, err := q.GetPermissionClient(registry.PERMISSION).
+	g, err := qrs.GetPermissionClient(registry.PERMISSION).
 		GetPermission(ctx, &jsonapi.GetRequestWithFields{Id: i})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
+		qrs.Logger.Error(err)
 		return nil, err
 	}
-	q.Logger.Debugf("successfully found permission with ID %s", id)
+	qrs.Logger.Debugf("successfully found permission with ID %s", id)
 	return g, nil
 }
 
-func (q *QueryResolver) ListPermissions(
+func (qrs *QueryResolver) ListPermissions(
 	ctx context.Context,
 ) ([]*pb.Permission, error) {
 	permissions := []*pb.Permission{}
-	l, err := q.GetPermissionClient(registry.PERMISSION).
+	l, err := qrs.GetPermissionClient(registry.PERMISSION).
 		ListPermissions(ctx, &jsonapi.SimpleListRequest{})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
+		qrs.Logger.Error(err)
 		return nil, err
 	}
 	for _, n := range l.Data {
@@ -147,7 +147,7 @@ func (q *QueryResolver) ListPermissions(
 		}
 		permissions = append(permissions, item)
 	}
-	q.Logger.Debugf(
+	qrs.Logger.Debugf(
 		"successfully provided list of %d permissions",
 		len(permissions),
 	)

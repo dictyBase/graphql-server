@@ -12,27 +12,27 @@ import (
 )
 
 // Publication is the resolver for getting an individual publication by ID.
-func (q *QueryResolver) Publication(
+func (qrs *QueryResolver) Publication(
 	ctx context.Context,
 	id string,
 ) (*models.Publication, error) {
-	redis := q.GetRedisRepository(cache.RedisKey)
+	redis := qrs.GetRedisRepository(cache.RedisKey)
 	pub, err := fetch.FetchPublicationFromEuroPMC(
 		ctx,
 		redis,
-		q.Registry.GetAPIEndpoint(registry.PUBLICATION),
+		qrs.Registry.GetAPIEndpoint(registry.PUBLICATION),
 		id,
 	)
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
+		qrs.Logger.Error(err)
 		return nil, fmt.Errorf("error in fetching publication %s", err)
 	}
 	return pub, nil
 }
 
 // AllPublications is the resolver for the allPublications field.
-func (q *QueryResolver) AllPublications(
+func (qrs *QueryResolver) AllPublications(
 	ctx context.Context,
 	gene string,
 	limit *int,
@@ -42,7 +42,7 @@ func (q *QueryResolver) AllPublications(
 }
 
 // ListRecentPublications is the resolver for the listRecentPublications field.
-func (q *QueryResolver) ListRecentPublications(
+func (qrs *QueryResolver) ListRecentPublications(
 	ctx context.Context,
 	limit int,
 ) ([]*models.Publication, error) {

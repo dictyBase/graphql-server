@@ -127,23 +127,23 @@ func normalizeUpdateOrderAttr(
 }
 
 // Order retrieves an individual order by ID.
-func (q *QueryResolver) Order(
+func (qrs *QueryResolver) Order(
 	ctx context.Context,
 	id string,
 ) (*pb.Order, error) {
-	g, err := q.GetOrderClient(registry.ORDER).
+	g, err := qrs.GetOrderClient(registry.ORDER).
 		GetOrder(ctx, &pb.OrderId{Id: id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
+		qrs.Logger.Error(err)
 		return nil, err
 	}
-	q.Logger.Debugf("successfully found order with id %s", id)
+	qrs.Logger.Debugf("successfully found order with id %s", id)
 	return g, nil
 }
 
 // ListOrders retrieves all orders in the database.
-func (q *QueryResolver) ListOrders(
+func (qrs *QueryResolver) ListOrders(
 	ctx context.Context,
 	cursor *int,
 	limit *int,
@@ -152,11 +152,11 @@ func (q *QueryResolver) ListOrders(
 	c := resolverutils.GetCursor(cursor)
 	l := resolverutils.GetLimit(limit)
 	f := resolverutils.GetFilter(filter)
-	list, err := q.GetOrderClient(registry.ORDER).
+	list, err := qrs.GetOrderClient(registry.ORDER).
 		ListOrders(ctx, &pb.ListParameters{Cursor: c, Limit: l, Filter: f})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
+		qrs.Logger.Error(err)
 		return nil, err
 	}
 	orders := []*pb.Order{}

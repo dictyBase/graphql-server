@@ -111,26 +111,26 @@ func (m *MutationResolver) DeleteRole(ctx context.Context, id string) (*models.D
 		Success: true,
 	}, nil
 }
-func (q *QueryResolver) Role(ctx context.Context, id string) (*pb.Role, error) {
+func (qrs *QueryResolver) Role(ctx context.Context, id string) (*pb.Role, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
 	}
-	g, err := q.GetRoleClient(registry.ROLE).GetRole(ctx, &jsonapi.GetRequest{Id: i})
+	g, err := qrs.GetRoleClient(registry.ROLE).GetRole(ctx, &jsonapi.GetRequest{Id: i})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
+		qrs.Logger.Error(err)
 		return nil, err
 	}
-	q.Logger.Debugf("successfully found role with ID %s", id)
+	qrs.Logger.Debugf("successfully found role with ID %s", id)
 	return g, nil
 }
-func (q *QueryResolver) ListRoles(ctx context.Context) ([]*pb.Role, error) {
+func (qrs *QueryResolver) ListRoles(ctx context.Context) ([]*pb.Role, error) {
 	roles := []*pb.Role{}
-	l, err := q.GetRoleClient(registry.ROLE).ListRoles(ctx, &jsonapi.SimpleListRequest{})
+	l, err := qrs.GetRoleClient(registry.ROLE).ListRoles(ctx, &jsonapi.SimpleListRequest{})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		q.Logger.Error(err)
+		qrs.Logger.Error(err)
 		return nil, err
 	}
 	for _, n := range l.Data {
@@ -148,6 +148,6 @@ func (q *QueryResolver) ListRoles(ctx context.Context) ([]*pb.Role, error) {
 		}
 		roles = append(roles, item)
 	}
-	q.Logger.Debugf("successfully provided list of %d roles", len(roles))
+	qrs.Logger.Debugf("successfully provided list of %d roles", len(roles))
 	return roles, nil
 }
