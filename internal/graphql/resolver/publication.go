@@ -46,5 +46,5 @@ func (qrs *QueryResolver) ListRecentPublications(
 	ctx context.Context,
 	limit int,
 ) ([]*models.Publication, error) {
-	return []*models.Publication{&models.Publication{}}, nil
+	return []*models.Publication{}, nil
 }
