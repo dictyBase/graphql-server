@@ -13,7 +13,7 @@ import (
 )
 
 // CreateOrder creates a new stock order.
-func (m *MutationResolver) CreateOrder(
+func (mrs *MutationResolver) CreateOrder(
 	ctx context.Context,
 	input *models.CreateOrderInput,
 ) (*pb.Order, error) {
@@ -30,7 +30,7 @@ func (m *MutationResolver) CreateOrder(
 	attr.PurchaseOrderNum = *input.PurchaseOrderNum
 	attr.Purchaser = input.Purchaser
 	attr.Status = statusConverter(input.Status)
-	o, err := m.GetOrderClient(registry.ORDER).CreateOrder(ctx, &pb.NewOrder{
+	o, err := mrs.GetOrderClient(registry.ORDER).CreateOrder(ctx, &pb.NewOrder{
 		Data: &pb.NewOrder_Data{
 			Type:       "order",
 			Attributes: attr,
@@ -38,10 +38,10 @@ func (m *MutationResolver) CreateOrder(
 	})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	m.Logger.Debugf("successfully created new order with ID %s", o.Data.Id)
+	mrs.Logger.Debugf("successfully created new order with ID %s", o.Data.Id)
 	return o, nil
 }
 
@@ -71,23 +71,23 @@ func convertPtrToStr(items []*string) []string {
 }
 
 // UpdateOrder updates an existing stock order.
-func (m *MutationResolver) UpdateOrder(
+func (mrs *MutationResolver) UpdateOrder(
 	ctx context.Context,
 	id string,
 	input *models.UpdateOrderInput,
 ) (*pb.Order, error) {
-	g, err := m.GetOrderClient(registry.ORDER).
+	g, err := mrs.GetOrderClient(registry.ORDER).
 		GetOrder(ctx, &pb.OrderId{Id: id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
 	attr := &pb.OrderUpdateAttributes{}
 	norm := normalizeUpdateOrderAttr(input)
 	err = mapstructure.Decode(norm, attr)
 	if err != nil {
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
 	if input.Status != nil {
@@ -95,7 +95,7 @@ func (m *MutationResolver) UpdateOrder(
 	} else {
 		attr.Status = g.Data.Attributes.Status
 	}
-	o, err := m.GetOrderClient(registry.ORDER).UpdateOrder(ctx, &pb.OrderUpdate{
+	o, err := mrs.GetOrderClient(registry.ORDER).UpdateOrder(ctx, &pb.OrderUpdate{
 		Data: &pb.OrderUpdate_Data{
 			Type:       "order",
 			Id:         id,
@@ -104,10 +104,10 @@ func (m *MutationResolver) UpdateOrder(
 	})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	m.Logger.Debugf("successfully updated order with ID %s", o.Data.Id)
+	mrs.Logger.Debugf("successfully updated order with ID %s", o.Data.Id)
 	return o, nil
 }
 

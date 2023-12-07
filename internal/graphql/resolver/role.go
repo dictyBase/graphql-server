@@ -15,8 +15,8 @@ import (
 	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
-func (m *MutationResolver) CreateRole(ctx context.Context, input *models.CreateRoleInput) (*pb.Role, error) {
-	n, err := m.GetRoleClient(registry.ROLE).CreateRole(ctx, &pb.CreateRoleRequest{
+func (mrs *MutationResolver) CreateRole(ctx context.Context, input *models.CreateRoleInput) (*pb.Role, error) {
+	n, err := mrs.GetRoleClient(registry.ROLE).CreateRole(ctx, &pb.CreateRoleRequest{
 		Data: &pb.CreateRoleRequest_Data{
 			Type: "role",
 			Attributes: &pb.RoleAttributes{
@@ -27,13 +27,13 @@ func (m *MutationResolver) CreateRole(ctx context.Context, input *models.CreateR
 	})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	m.Logger.Debugf("successfully created new role with ID %d", n.Data.Id)
+	mrs.Logger.Debugf("successfully created new role with ID %d", n.Data.Id)
 	return n, nil
 }
-func (m *MutationResolver) CreateRolePermissionRelationship(ctx context.Context, roleId string, permissionId string) (*pb.Role, error) {
+func (mrs *MutationResolver) CreateRolePermissionRelationship(ctx context.Context, roleId string, permissionId string) (*pb.Role, error) {
 	rid, err := strconv.ParseInt(roleId, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", roleId, err)
@@ -42,7 +42,7 @@ func (m *MutationResolver) CreateRolePermissionRelationship(ctx context.Context,
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", permissionId, err)
 	}
-	rr, err := m.GetRoleClient(registry.ROLE).CreatePermissionRelationship(ctx, &jsonapi.DataCollection{
+	rr, err := mrs.GetRoleClient(registry.ROLE).CreatePermissionRelationship(ctx, &jsonapi.DataCollection{
 		Id: rid,
 		Data: []*jsonapi.Data{
 			{
@@ -52,24 +52,24 @@ func (m *MutationResolver) CreateRolePermissionRelationship(ctx context.Context,
 		}})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	m.Logger.Debugf("successfully created role ID %d relationship permission with ID %d %s", rid, pid, rr)
-	g, err := m.GetRoleClient(registry.ROLE).GetRole(ctx, &jsonapi.GetRequest{Id: rid})
+	mrs.Logger.Debugf("successfully created role ID %d relationship permission with ID %d %s", rid, pid, rr)
+	g, err := mrs.GetRoleClient(registry.ROLE).GetRole(ctx, &jsonapi.GetRequest{Id: rid})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
 	return g, nil
 }
-func (m *MutationResolver) UpdateRole(ctx context.Context, id string, input *models.UpdateRoleInput) (*pb.Role, error) {
+func (mrs *MutationResolver) UpdateRole(ctx context.Context, id string, input *models.UpdateRoleInput) (*pb.Role, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
 	}
-	n, err := m.GetRoleClient(registry.ROLE).UpdateRole(ctx, &pb.UpdateRoleRequest{
+	n, err := mrs.GetRoleClient(registry.ROLE).UpdateRole(ctx, &pb.UpdateRoleRequest{
 		Id: i,
 		Data: &pb.UpdateRoleRequest_Data{
 			Id:   i,
@@ -83,30 +83,30 @@ func (m *MutationResolver) UpdateRole(ctx context.Context, id string, input *mod
 	})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	o, err := m.GetRoleClient(registry.ROLE).GetRole(ctx, &jsonapi.GetRequest{Id: n.Data.Id})
+	o, err := mrs.GetRoleClient(registry.ROLE).GetRole(ctx, &jsonapi.GetRequest{Id: n.Data.Id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	m.Logger.Debugf("successfully updated role with ID %d", o.Data.Id)
+	mrs.Logger.Debugf("successfully updated role with ID %d", o.Data.Id)
 	return o, nil
 }
-func (m *MutationResolver) DeleteRole(ctx context.Context, id string) (*models.DeleteRole, error) {
+func (mrs *MutationResolver) DeleteRole(ctx context.Context, id string) (*models.DeleteRole, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
 	}
-	if _, err := m.GetRoleClient(registry.ROLE).DeleteRole(ctx, &jsonapi.DeleteRequest{Id: i}); err != nil {
-		m.Logger.Error(err)
+	if _, err := mrs.GetRoleClient(registry.ROLE).DeleteRole(ctx, &jsonapi.DeleteRequest{Id: i}); err != nil {
+		mrs.Logger.Error(err)
 		return &models.DeleteRole{
 			Success: false,
 		}, err
 	}
-	m.Logger.Debugf("successfully deleted role with ID %s", id)
+	mrs.Logger.Debugf("successfully deleted role with ID %s", id)
 	return &models.DeleteRole{
 		Success: true,
 	}, nil
