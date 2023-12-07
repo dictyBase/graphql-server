@@ -185,43 +185,33 @@ func (clnt *authClient) CheckUserWithUserName(
 	username string,
 ) (bool, string, error) {
 	var userStruct string
-	token, err := clnt.retrieveToken()
-	if err != nil {
-		return false, userStruct, fmt.Errorf("error in getting token %s", err)
-	}
-	params := url.Values{}
-	params.Set("search.username", username)
-	params.Set("mode.name", "exact")
-	parsedURL, err := url.Parse(fmt.Sprintf("%s/api/users", clnt.baseURL))
+	usrs, err := clnt.checkUser("username", username)
 	if err != nil {
 		return false, userStruct, fmt.Errorf(
-			"error in parsing url for query %s",
-			err,
-		)
-	}
-	parsedURL.RawQuery = params.Encode()
-	ureq, err := http.NewRequest("GET", parsedURL.String(), nil)
-	if err != nil {
-		return false, userStruct, fmt.Errorf(
-			"error in making new request %s",
-			err,
-		)
-	}
-	commonHeader(ureq, token)
-	uresp, err := clnt.reqToResponse(ureq)
-	if err != nil {
-		return false, userStruct, err
-	}
-	defer uresp.Body.Close()
-	usrs := make([]*APIUsersSearchRes, 0)
-	if err := json.NewDecoder(uresp.Body).Decode(&usrs); err != nil {
-		return false, userStruct, fmt.Errorf(
-			"error in decoding json response %s",
+			"error in finding user name %s",
 			err,
 		)
 	}
 	index := slices.IndexFunc(usrs, func(usr *APIUsersSearchRes) bool {
 		return usr.UserName == username
+	})
+	if index == -1 {
+		return false, userStruct, nil
+	}
+	return true, usrs[index].ID, nil
+}
+
+func (clnt *authClient) CheckUser(email string) (bool, string, error) {
+	var userStruct string
+	usrs, err := clnt.checkUser("primaryEmail", email)
+	if err != nil {
+		return false, userStruct, fmt.Errorf(
+			"error in finding user email %s",
+			err,
+		)
+	}
+	index := slices.IndexFunc(usrs, func(usr *APIUsersSearchRes) bool {
+		return usr.Email == email
 	})
 	if index == -1 {
 		return false, userStruct, nil
@@ -278,52 +268,6 @@ func (clnt *authClient) UserWithEmail(email string) (*UserResp, error) {
 	}
 
 	return usrs[index], nil
-}
-
-func (clnt *authClient) CheckUser(email string) (bool, string, error) {
-	var userStruct string
-	token, err := clnt.retrieveToken()
-	if err != nil {
-		return false, userStruct, fmt.Errorf("error in getting token %s", err)
-	}
-	params := url.Values{}
-	params.Set("search.primaryEmail", email)
-	params.Set("mode.name", "exact")
-	parsedURL, err := url.Parse(fmt.Sprintf("%s/api/users", clnt.baseURL))
-	if err != nil {
-		return false, userStruct, fmt.Errorf(
-			"error in parsing url for query %s",
-			err,
-		)
-	}
-	parsedURL.RawQuery = params.Encode()
-	ureq, err := http.NewRequest("GET", parsedURL.String(), nil)
-	if err != nil {
-		return false, userStruct, fmt.Errorf(
-			"error in making new request %s",
-			err,
-		)
-	}
-	commonHeader(ureq, token)
-	uresp, err := clnt.reqToResponse(ureq)
-	if err != nil {
-		return false, userStruct, err
-	}
-	defer uresp.Body.Close()
-	usrs := make([]*APIUsersSearchRes, 0)
-	if err := json.NewDecoder(uresp.Body).Decode(&usrs); err != nil {
-		return false, userStruct, fmt.Errorf(
-			"error in decoding json response %s",
-			err,
-		)
-	}
-	index := slices.IndexFunc(usrs, func(usr *APIUsersSearchRes) bool {
-		return usr.Email == email
-	})
-	if index == -1 {
-		return false, userStruct, nil
-	}
-	return true, usrs[index].ID, nil
 }
 
 func (clnt *authClient) AddCustomUserInformation(
@@ -556,4 +500,47 @@ func (clnt *authClient) reqToResponse(
 		)
 	}
 	return uresp, nil
+}
+
+func (clnt *authClient) checkUser(
+	queryField string,
+	value string,
+) ([]*APIUsersSearchRes, error) {
+	usrs := make([]*APIUsersSearchRes, 0)
+	token, err := clnt.retrieveToken()
+	if err != nil {
+		return usrs, fmt.Errorf("error in getting token %s", err)
+	}
+	params := url.Values{}
+	params.Set(fmt.Sprintf("search.%s", queryField), value)
+	params.Set("mode.name", "exact")
+	parsedURL, err := url.Parse(fmt.Sprintf("%s/api/users", clnt.baseURL))
+	if err != nil {
+		return usrs, fmt.Errorf(
+			"error in parsing url for query %s",
+			err,
+		)
+	}
+	parsedURL.RawQuery = params.Encode()
+	ureq, err := http.NewRequest("GET", parsedURL.String(), nil)
+	if err != nil {
+		return usrs, fmt.Errorf(
+			"error in making new request %s",
+			err,
+		)
+	}
+	commonHeader(ureq, token)
+	uresp, err := clnt.reqToResponse(ureq)
+	if err != nil {
+		return usrs, err
+	}
+	defer uresp.Body.Close()
+	if err := json.NewDecoder(uresp.Body).Decode(&usrs); err != nil {
+		return usrs, fmt.Errorf(
+			"error in decoding json response %s",
+			err,
+		)
+	}
+
+	return usrs, nil
 }
