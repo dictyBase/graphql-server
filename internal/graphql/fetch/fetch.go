@@ -12,7 +12,7 @@ import (
 )
 
 func GetResp(ctx context.Context, url string) (*http.Response, error) {
-	res, err := http.Get(url)
+	res, err := http.Get(url) //nolint:gosec
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		return res, fmt.Errorf("error in http get request with %s", err)
