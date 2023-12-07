@@ -132,6 +132,7 @@ func normalizeCreatePlasmidAttr(
 	return newAttr
 }
 
+//nolint:dupl
 func (mrs *MutationResolver) UpdateStrain(
 	ctx context.Context,
 	id string,
@@ -182,6 +183,7 @@ func normalizeUpdateStrainAttr(
 	return newAttr
 }
 
+//nolint:dupl
 func (mrs *MutationResolver) UpdatePlasmid(
 	ctx context.Context,
 	id string,
@@ -344,6 +346,7 @@ func (qrs *QueryResolver) ListPlasmids(
 	}, nil
 }
 
+//nolint:dupl
 func (qrs *QueryResolver) ListStrainsWithAnnotation(
 	ctx context.Context,
 	cursor *int,
@@ -393,6 +396,7 @@ func (qrs *QueryResolver) ListStrainsWithAnnotation(
 	}, nil
 }
 
+//nolint:dupl
 func (qrs *QueryResolver) ListPlasmidsWithAnnotation(
 	ctx context.Context,
 	cursor *int,
@@ -453,7 +457,7 @@ func (qrs *QueryResolver) ListRecentPlasmids(
 	ctx context.Context,
 	limit int,
 ) ([]*models.Plasmid, error) {
-	return []*models.Plasmid{&models.Plasmid{}}, nil
+	return []*models.Plasmid{}, nil
 }
 
 // ListRecentStrains is the resolver for the listRecentStrains field.
@@ -461,7 +465,7 @@ func (qrs *QueryResolver) ListRecentStrains(
 	ctx context.Context,
 	limit int,
 ) ([]*models.Strain, error) {
-	return []*models.Strain{&models.Strain{}}, nil
+	return []*models.Strain{}, nil
 }
 
 func (qrs *QueryResolver) listStrainsWithoutFilter(
