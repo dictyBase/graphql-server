@@ -6,11 +6,18 @@ run:
     - ".*_test\\.go$"
   timeout: 5m
   allow-parallel-runners: true
+  # golangci-lint config
 linters-settings:
-    revive:
-      rules:
-        - name: var-naming
-          arguments: [["ID"]]
+  depguard:
+    rules:
+      main:
+        deny:
+          - pkg: io/ioutil
+            desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
+  revive:
+     rules:
+       - name: var-naming
+         arguments: [["ID"]]
 linters:
   # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
   disable-all: true
