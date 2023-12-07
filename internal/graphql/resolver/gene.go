@@ -74,5 +74,5 @@ func (qrs *QueryResolver) ListRecentGenes(
 	ctx context.Context,
 	limit int,
 ) ([]*models.Gene, error) {
-	return []*models.Gene{&models.Gene{}}, nil
+	return []*models.Gene{}, nil
 }
