@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	REDIS_KEY = "PUBLICATION_KEY"
+	RedisKey = "PUBLICATION_KEY"
 )
 
 var Status string = "published"
@@ -110,7 +110,7 @@ type EuroPMC struct {
 	Version string `json:"version"`
 }
 
-type PubJsonAPI struct {
+type PubJSONAPI struct {
 	Data  *PubData `json:"data"`
 	Links *Links   `json:"links"`
 }
@@ -197,7 +197,7 @@ func FetchPublicationFromEuroPMC(
 	pmodel := new(models.Publication)
 	rkey := fmt.Sprintf(
 		"%s/%s",
-		REDIS_KEY, id,
+		RedisKey, id,
 	)
 	ok, err := repo.Exists(rkey)
 	if err != nil {
@@ -219,11 +219,10 @@ func FetchPublicationFromEuroPMC(
 		}
 		return pmodel, nil
 	}
-	url := fmt.Sprintf(
+	res, err := http.Get(fmt.Sprintf(
 		"%s?format=json&resultType=core&query=ext_id:%s",
 		endpoint, id,
-	)
-	res, err := http.Get(url)
+	))
 	if err != nil {
 		return pmodel, fmt.Errorf("error in fetching data %s", err)
 	}
@@ -252,10 +251,11 @@ func FetchPublication(
 	endpoint, id string,
 ) (*models.Publication, error) {
 	res, err := GetResp(ctx, fmt.Sprintf("%s/%s", endpoint, id))
+	defer res.Body.Close() //nolint:staticcheck
 	if err != nil {
 		return nil, fmt.Errorf("error in getting response %s", err)
 	}
-	pub := &PubJsonAPI{}
+	pub := &PubJSONAPI{}
 	if err := json.NewDecoder(res.Body).Decode(pub); err != nil {
 		return nil, fmt.Errorf("error decoding json %s", err)
 	}
@@ -292,7 +292,7 @@ func FetchPublication(
 }
 
 func FetchDOI(ctx context.Context, doi string) (*models.Publication, error) {
-	res, err := getDOIResp(ctx, doi)
+	res, err := getDOIResp(doi)
 	if err != nil {
 		return nil, fmt.Errorf("error in getting response for doi %s", err)
 	}
@@ -337,7 +337,7 @@ func FetchDOI(ctx context.Context, doi string) (*models.Publication, error) {
 
 // getDOIResp makes HTTP request with necessary
 // headers for DOI and returns the response
-func getDOIResp(ctx context.Context, doi string) (*http.Response, error) {
+func getDOIResp(doi string) (*http.Response, error) {
 	url, err := url.Parse(doi)
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing doi url %s", err)
@@ -397,13 +397,4 @@ func verifyStringProperty(jstruct *gabs.Container, val string) string {
 		return ""
 	}
 	return str
-}
-
-// verifyArrayProperty checks if a property exists in the JSON and then returns
-// its first child as a string
-func verifyArrayProperty(jstruct *gabs.Container, val string) string {
-	if jstruct.Exists(val) {
-		return jstruct.Search(val).Children()[0].Data().(string)
-	}
-	return ""
 }
