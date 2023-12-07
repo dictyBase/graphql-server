@@ -38,6 +38,7 @@ func (mrs *MutationResolver) CreateRole(
 	return n, nil
 }
 
+//nolint:dupl
 func (mrs *MutationResolver) CreateRolePermissionRelationship(
 	ctx context.Context,
 	roleID string,
