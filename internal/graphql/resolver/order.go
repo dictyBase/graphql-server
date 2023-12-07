@@ -61,15 +61,6 @@ func statusConverter(e models.StatusEnum) pb.OrderStatus {
 	return status
 }
 
-// convertPtrToStr converts a slice of string pointers to a slice of strings
-func convertPtrToStr(items []*string) []string {
-	var sl []string
-	for _, n := range items {
-		sl = append(sl, *n)
-	}
-	return sl
-}
-
 // UpdateOrder updates an existing stock order.
 func (mrs *MutationResolver) UpdateOrder(
 	ctx context.Context,
@@ -95,13 +86,14 @@ func (mrs *MutationResolver) UpdateOrder(
 	} else {
 		attr.Status = g.Data.Attributes.Status
 	}
-	o, err := mrs.GetOrderClient(registry.ORDER).UpdateOrder(ctx, &pb.OrderUpdate{
-		Data: &pb.OrderUpdate_Data{
-			Type:       "order",
-			Id:         id,
-			Attributes: attr,
-		},
-	})
+	o, err := mrs.GetOrderClient(registry.ORDER).
+		UpdateOrder(ctx, &pb.OrderUpdate{
+			Data: &pb.OrderUpdate_Data{
+				Type:       "order",
+				Id:         id,
+				Attributes: attr,
+			},
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
