@@ -169,70 +169,71 @@ func (mrs *MutationResolver) UpdateUser(
 	return o, nil
 }
 
+//nolint:funlen
 func getUpdateUserAttributes(
 	input *models.UpdateUserInput,
-	f *pb.User,
+	usr *pb.User,
 ) *pb.UserAttributes {
 	attr := &pb.UserAttributes{}
 	if input.FirstName != nil {
 		attr.FirstName = *input.FirstName
 	} else {
-		attr.FirstName = f.Data.Attributes.FirstName
+		attr.FirstName = usr.Data.Attributes.FirstName
 	}
 	if input.LastName != nil {
 		attr.LastName = *input.LastName
 	} else {
-		attr.LastName = f.Data.Attributes.LastName
+		attr.LastName = usr.Data.Attributes.LastName
 	}
 	if input.Organization != nil {
 		attr.Organization = *input.Organization
 	} else {
-		attr.Organization = f.Data.Attributes.Organization
+		attr.Organization = usr.Data.Attributes.Organization
 	}
 	if input.GroupName != nil {
 		attr.GroupName = *input.GroupName
 	} else {
-		attr.GroupName = f.Data.Attributes.GroupName
+		attr.GroupName = usr.Data.Attributes.GroupName
 	}
 	if input.FirstAddress != nil {
 		attr.FirstAddress = *input.FirstAddress
 	} else {
-		attr.FirstAddress = f.Data.Attributes.FirstAddress
+		attr.FirstAddress = usr.Data.Attributes.FirstAddress
 	}
 	if input.SecondAddress != nil {
 		attr.SecondAddress = *input.SecondAddress
 	} else {
-		attr.SecondAddress = f.Data.Attributes.SecondAddress
+		attr.SecondAddress = usr.Data.Attributes.SecondAddress
 	}
 	if input.City != nil {
 		attr.City = *input.City
 	} else {
-		attr.City = f.Data.Attributes.City
+		attr.City = usr.Data.Attributes.City
 	}
 	if input.State != nil {
 		attr.State = *input.State
 	} else {
-		attr.State = f.Data.Attributes.State
+		attr.State = usr.Data.Attributes.State
 	}
 	if input.Zipcode != nil {
 		attr.Zipcode = *input.Zipcode
 	} else {
-		attr.Zipcode = f.Data.Attributes.Zipcode
+		attr.Zipcode = usr.Data.Attributes.Zipcode
 	}
 	if input.Country != nil {
 		attr.Country = *input.Country
 	} else {
-		attr.Country = f.Data.Attributes.Country
+		attr.Country = usr.Data.Attributes.Country
 	}
 	if input.Phone != nil {
 		attr.Phone = *input.Phone
 	} else {
-		attr.Phone = f.Data.Attributes.Phone
+		attr.Phone = usr.Data.Attributes.Phone
 	}
 	if input.IsActive != nil {
 		attr.IsActive = *input.IsActive
 	} else {
-		attr.IsActive = f.Data.Attributes.IsActive
+		attr.IsActive = usr.Data.Attributes.IsActive
 	}
 	return attr
 }
