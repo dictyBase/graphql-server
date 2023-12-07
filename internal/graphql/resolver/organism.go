@@ -45,10 +45,10 @@ func fetchOrganisms(ctx context.Context, url string) (*organisms, error) {
 	return o, nil
 }
 
-func (q *QueryResolver) Organism(ctx context.Context, taxonID string) (*models.Organism, error) {
+func (qrs *QueryResolver) Organism(ctx context.Context, taxonID string) (*models.Organism, error) {
 	o := &models.Organism{}
 	c := []*models.Citation{}
-	url := q.GetAPIEndpoint("organism")
+	url := qrs.GetAPIEndpoint("organism")
 	d, err := fetchOrganisms(ctx, url)
 	if err != nil {
 		return o, err
@@ -71,9 +71,9 @@ func (q *QueryResolver) Organism(ctx context.Context, taxonID string) (*models.O
 	return o, nil
 }
 
-func (q *QueryResolver) ListOrganisms(ctx context.Context) ([]*models.Organism, error) {
+func (qrs *QueryResolver) ListOrganisms(ctx context.Context) ([]*models.Organism, error) {
 	orgs := []*models.Organism{}
-	url := q.GetAPIEndpoint("organism")
+	url := qrs.GetAPIEndpoint("organism")
 	d, err := fetchOrganisms(ctx, url)
 	if err != nil {
 		return orgs, err

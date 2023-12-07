@@ -17,7 +17,7 @@ func (m *MutationResolver) Logout(ctx context.Context) (*models.Logout, error) {
 	return &models.Logout{}, nil
 }
 
-func (q *QueryResolver) GetRefreshToken(
+func (qrs *QueryResolver) GetRefreshToken(
 	ctx context.Context,
 	token string,
 ) (*pb.Auth, error) {
