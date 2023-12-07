@@ -18,7 +18,7 @@ import (
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/user"
 )
 
-func (m *MutationResolver) CreateUser(
+func (mrs *MutationResolver) CreateUser(
 	ctx context.Context,
 	input *models.CreateUserInput,
 ) (*pb.User, error) {
@@ -26,10 +26,10 @@ func (m *MutationResolver) CreateUser(
 	a := normalizeCreateUserAttr(input)
 	err := mapstructure.Decode(a, attr)
 	if err != nil {
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	n, err := m.GetUserClient(registry.USER).
+	n, err := mrs.GetUserClient(registry.USER).
 		CreateUser(ctx, &pb.CreateUserRequest{
 			Data: &pb.CreateUserRequest_Data{
 				Type: "user",
@@ -52,10 +52,10 @@ func (m *MutationResolver) CreateUser(
 		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	m.Logger.Debugf("successfully created new user with ID %d", n.Data.Id)
+	mrs.Logger.Debugf("successfully created new user with ID %d", n.Data.Id)
 	return n, nil
 }
 
@@ -74,7 +74,7 @@ func normalizeCreateUserAttr(
 	return newAttr
 }
 
-func (m *MutationResolver) CreateUserRoleRelationship(
+func (mrs *MutationResolver) CreateUserRoleRelationship(
 	ctx context.Context,
 	userID string,
 	roleID string,
@@ -95,7 +95,7 @@ func (m *MutationResolver) CreateUserRoleRelationship(
 			err,
 		)
 	}
-	rr, err := m.GetUserClient(registry.USER).
+	rr, err := mrs.GetUserClient(registry.USER).
 		CreateRoleRelationship(ctx, &jsonapi.DataCollection{
 			Id: uid,
 			Data: []*jsonapi.Data{
@@ -106,26 +106,26 @@ func (m *MutationResolver) CreateUserRoleRelationship(
 			}})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	m.Logger.Debugf(
+	mrs.Logger.Debugf(
 		"successfully created user ID %d relationship role with ID %d %s",
 		uid,
 		rid,
 		rr,
 	)
-	g, err := m.GetUserClient(registry.USER).
+	g, err := mrs.GetUserClient(registry.USER).
 		GetUser(ctx, &jsonapi.GetRequest{Id: uid})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
 	return g, nil
 }
 
-func (m *MutationResolver) UpdateUser(
+func (mrs *MutationResolver) UpdateUser(
 	ctx context.Context,
 	id string,
 	input *models.UpdateUserInput,
@@ -134,17 +134,17 @@ func (m *MutationResolver) UpdateUser(
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
 	}
-	f, err := m.GetUserClient(registry.USER).
+	f, err := mrs.GetUserClient(registry.USER).
 		GetUser(ctx, &jsonapi.GetRequest{Id: i})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
 	attr := getUpdateUserAttributes(input, f)
 	attr.Email = f.Data.Attributes.Email
 	attr.UpdatedAt = aphgrpc.TimestampProto(time.Now())
-	n, err := m.GetUserClient(registry.USER).
+	n, err := mrs.GetUserClient(registry.USER).
 		UpdateUser(ctx, &pb.UpdateUserRequest{
 			Id: i,
 			Data: &pb.UpdateUserRequest_Data{
@@ -155,17 +155,17 @@ func (m *MutationResolver) UpdateUser(
 		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	o, err := m.GetUserClient(registry.USER).
+	o, err := mrs.GetUserClient(registry.USER).
 		GetUser(ctx, &jsonapi.GetRequest{Id: n.Data.Id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	m.Logger.Debugf("successfully updated user with ID %d", n.Data.Id)
+	mrs.Logger.Debugf("successfully updated user with ID %d", n.Data.Id)
 	return o, nil
 }
 
@@ -237,7 +237,7 @@ func getUpdateUserAttributes(
 	return attr
 }
 
-func (m *MutationResolver) DeleteUser(
+func (mrs *MutationResolver) DeleteUser(
 	ctx context.Context,
 	id string,
 ) (*models.DeleteUser, error) {
@@ -245,13 +245,13 @@ func (m *MutationResolver) DeleteUser(
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
 	}
-	if _, err := m.GetUserClient(registry.USER).DeleteUser(ctx, &jsonapi.DeleteRequest{Id: i}); err != nil {
-		m.Logger.Error(err)
+	if _, err := mrs.GetUserClient(registry.USER).DeleteUser(ctx, &jsonapi.DeleteRequest{Id: i}); err != nil {
+		mrs.Logger.Error(err)
 		return &models.DeleteUser{
 			Success: false,
 		}, err
 	}
-	m.Logger.Debugf("successfully deleted user with ID %s", id)
+	mrs.Logger.Debugf("successfully deleted user with ID %s", id)
 	return &models.DeleteUser{
 		Success: true,
 	}, nil

@@ -15,11 +15,11 @@ import (
 	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
-func (m *MutationResolver) CreatePermission(
+func (mrs *MutationResolver) CreatePermission(
 	ctx context.Context,
 	input *models.CreatePermissionInput,
 ) (*pb.Permission, error) {
-	n, err := m.GetPermissionClient(registry.PERMISSION).
+	n, err := mrs.GetPermissionClient(registry.PERMISSION).
 		CreatePermission(ctx, &pb.CreatePermissionRequest{
 			Data: &pb.CreatePermissionRequest_Data{
 				Type: "permission",
@@ -32,14 +32,14 @@ func (m *MutationResolver) CreatePermission(
 		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	m.Logger.Debugf("successfully created new permission with ID %d", n.Data.Id)
+	mrs.Logger.Debugf("successfully created new permission with ID %d", n.Data.Id)
 	return n, nil
 }
 
-func (m *MutationResolver) UpdatePermission(
+func (mrs *MutationResolver) UpdatePermission(
 	ctx context.Context,
 	id string,
 	input *models.UpdatePermissionInput,
@@ -48,7 +48,7 @@ func (m *MutationResolver) UpdatePermission(
 	if err != nil {
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
 	}
-	n, err := m.GetPermissionClient(registry.PERMISSION).
+	n, err := mrs.GetPermissionClient(registry.PERMISSION).
 		UpdatePermission(ctx, &pb.UpdatePermissionRequest{
 			Id: i,
 			Data: &pb.UpdatePermissionRequest_Data{
@@ -64,21 +64,21 @@ func (m *MutationResolver) UpdatePermission(
 		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	o, err := m.GetPermissionClient(registry.PERMISSION).
+	o, err := mrs.GetPermissionClient(registry.PERMISSION).
 		GetPermission(ctx, &jsonapi.GetRequestWithFields{Id: n.Data.Id})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return nil, err
 	}
-	m.Logger.Debugf("successfully updated permission with ID %d", o.Data.Id)
+	mrs.Logger.Debugf("successfully updated permission with ID %d", o.Data.Id)
 	return o, nil
 }
 
-func (m *MutationResolver) DeletePermission(
+func (mrs *MutationResolver) DeletePermission(
 	ctx context.Context,
 	id string,
 ) (*models.DeletePermission, error) {
@@ -87,15 +87,15 @@ func (m *MutationResolver) DeletePermission(
 		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
 	}
 
-	_, err = m.GetPermissionClient(registry.PERMISSION).
+	_, err = mrs.GetPermissionClient(registry.PERMISSION).
 		DeletePermission(ctx, &jsonapi.DeleteRequest{Id: i})
 	if err != nil {
-		m.Logger.Error(err)
+		mrs.Logger.Error(err)
 		return &models.DeletePermission{
 			Success: false,
 		}, err
 	}
-	m.Logger.Debugf("successfully deleted permission with ID %s", id)
+	mrs.Logger.Debugf("successfully deleted permission with ID %s", id)
 	return &models.DeletePermission{
 		Success: true,
 	}, nil

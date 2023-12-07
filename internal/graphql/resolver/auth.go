@@ -7,13 +7,13 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 )
 
-func (m *MutationResolver) Login(
+func (mrs *MutationResolver) Login(
 	ctx context.Context,
 	input *models.LoginInput,
 ) (*pb.Auth, error) {
 	return &pb.Auth{}, nil
 }
-func (m *MutationResolver) Logout(ctx context.Context) (*models.Logout, error) {
+func (mrs *MutationResolver) Logout(ctx context.Context) (*models.Logout, error) {
 	return &models.Logout{}, nil
 }
 
