@@ -1,6 +1,7 @@
 package mocks
 
 import (
+	"context"
 	"time"
 
 	"github.com/dictyBase/go-genproto/dictybaseapis/stock"
@@ -204,13 +205,13 @@ func mockUpdateStrain() *stock.Strain {
 func MockedStockClient() *clients.StockServiceClient {
 	mockedStockClient := new(clients.StockServiceClient)
 	mockedStockClient.On("GetPlasmid",
-		mock.AnythingOfType("*context.emptyCtx"),
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
 		mock.AnythingOfType("*stock.StockId"),
 	).Return(mockPlasmidWithParams("kenny@bania.com"), nil).On("GetStrain",
-		mock.AnythingOfType("*context.emptyCtx"),
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
 		&stock.StockId{Id: "DBS987654"},
 	).Return(mockStrainWithParams("kenny@bania.com", "DBS987654"), nil).On("GetStrain",
-		mock.AnythingOfType("*context.emptyCtx"),
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
 		&stock.StockId{Id: "DBS123456"},
 	).Return(MockStrain(), nil).
 		On("GetStrain",
@@ -219,41 +220,41 @@ func MockedStockClient() *clients.StockServiceClient {
 		).
 		Return(MockStrain(), nil).
 		On("GetStrain",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			&stock.StockId{Id: "DBS000002"},
 		).
 		Return(MockStrain(), nil).
 		On("ListStrains",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.StockParameters"),
 		).Return(mockStrainCollection(), nil).
 		On("ListPlasmids",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.StockParameters"),
 		).
 		Return(mockPlasmidCollection(), nil).
 		On("CreateStrain",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.NewStrain"),
 		).
 		Return(mockStrainWithParams("kenny@bania.com", "DBS987654"), nil).
 		On("CreatePlasmid",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.NewPlasmid"),
 		).
 		Return(mockPlasmidWithParams("kenny@bania.com"), nil).
 		On("UpdatePlasmid",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.PlasmidUpdate"),
 		).
 		Return(mockUpdatePlasmid(), nil).
 		On("UpdateStrain",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.StrainUpdate"),
 		).
 		Return(mockUpdateStrain(), nil).
 		On("ListStrainsByIds",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.StockIdList"),
 		).
 		Return(mockStrainList(), nil)

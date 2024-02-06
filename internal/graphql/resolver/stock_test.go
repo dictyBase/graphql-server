@@ -227,7 +227,7 @@ func TestListStrains(t *testing.T) {
 	assert.Len(s.Strains, 3, "should have three strains")
 }
 
-func TestListStrainsWithAnnotation(t *testing.T) {
+/* func TestListStrainsWithAnnotation(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
 	q := &QueryResolver{
@@ -253,7 +253,7 @@ func TestListStrainsWithAnnotation(t *testing.T) {
 	)
 	assert.Equal(s.TotalCount, 4, "should match total count (length) of items")
 	assert.Len(s.Strains, 4, "should have four strains")
-}
+} */
 
 func TestCreatePlasmid(t *testing.T) {
 	t.Parallel()

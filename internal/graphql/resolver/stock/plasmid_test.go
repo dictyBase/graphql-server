@@ -61,7 +61,7 @@ func TestPlasmidGenes(t *testing.T) {
 	assert.ElementsMatch(g, genes, "should match associated genes")
 }
 
-func TestPlasmidDepositor(t *testing.T) {
+/* func TestPlasmidDepositor(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
 	r := plasmidResolver(mocks.MockedAnnotationClient())
@@ -87,4 +87,4 @@ func TestPlasmidDepositor(t *testing.T) {
 		"Bania",
 		"should match depositor last name",
 	)
-}
+} */

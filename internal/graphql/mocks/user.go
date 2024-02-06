@@ -1,6 +1,8 @@
 package mocks
 
 import (
+	"context"
+
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/stretchr/testify/mock"
@@ -27,7 +29,7 @@ func MockedUserClient() *clients.UserServiceClient {
 	mockedUserClient := new(clients.UserServiceClient)
 	mockedUserClient.On(
 		"GetUserByEmail",
-		mock.AnythingOfType("*context.emptyCtx"),
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
 		mock.AnythingOfType("*jsonapi.GetEmailRequest"),
 	).Return(mockUser(), nil)
 	return mockedUserClient
