@@ -29,15 +29,9 @@ import (
 // RunGraphQLServer starts the GraphQL backend
 func RunGraphQLServer(cltx *cli.Context) error {
 	nreg := registry.NewRegistry()
-	err := establishGrpcConnnections(cltx, nreg)
-	if err != nil {
+	if err := setupServices(cltx, nreg); err != nil {
 		return cli.NewExitError(err.Error(), 2)
 	}
-	err = initRedis(cltx, nreg)
-	if err != nil {
-		return cli.NewExitError(err.Error(), 2)
-	}
-	addEndpoints(cltx, nreg)
 	log := getLogger(cltx)
 	router := chi.NewRouter()
 
@@ -71,6 +65,18 @@ func RunGraphQLServer(cltx *cli.Context) error {
 		Handler:      router,
 	}
 	log.Fatal(hsrv.ListenAndServe())
+
+	return nil
+}
+
+func setupServices(cltx *cli.Context, nreg registry.Registry) error {
+	if err := establishGrpcConnnections(cltx, nreg); err != nil {
+		return err
+	}
+	if err := initRedis(cltx, nreg); err != nil {
+		return err
+	}
+	addEndpoints(cltx, nreg)
 
 	return nil
 }
