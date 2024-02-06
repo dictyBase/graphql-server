@@ -33,11 +33,11 @@ func RunGraphQLServer(cltx *cli.Context) error {
 	if err != nil {
 		return cli.NewExitError(err.Error(), 2)
 	}
-	addEndpoints(cltx, nreg)
 	err = initRedis(cltx, nreg)
 	if err != nil {
 		return cli.NewExitError(err.Error(), 2)
 	}
+	addEndpoints(cltx, nreg)
 	log := getLogger(cltx)
 	router := chi.NewRouter()
 
