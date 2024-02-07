@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -71,9 +72,9 @@ type UserResp struct {
 	} `json:"customData"`
 	Identities struct {
 	} `json:"identities,omitempty"`
-	CreatedAt     time.Time `json:"createdAt"`
-	ApplicationID any       `json:"applicationId,omitempty"`
-	IsSuspended   bool      `json:"isSuspended,omitempty"`
+	CreatedAt     CustomTime `json:"createdAt"`
+	ApplicationID any        `json:"applicationId,omitempty"`
+	IsSuspended   bool       `json:"isSuspended,omitempty"`
 }
 
 type APIUsersPostReq struct {
@@ -137,6 +138,21 @@ type PermissionResp struct {
 		IsDefault      bool   `json:"isDefault"`
 		AccessTokenTTL int    `json:"accessTokenTtl"`
 	} `json:"resource"`
+}
+
+type CustomTime struct {
+	time.Time
+}
+
+func (ct *CustomTime) UnmarshalJSON(input []byte) error {
+	sinput := strings.Trim(string(input), `"`)
+	num, err := strconv.ParseInt(sinput, 10, 64)
+	if err != nil {
+		return fmt.Errorf("error converting string to int64:%s", err)
+	}
+	tstamp := time.UnixMilli(num)
+	ct.Time = tstamp
+	return nil
 }
 
 // NewClient creates a new instance of the Client struct.
