@@ -28,7 +28,6 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           file: ./profile.cov
-          token: ${{ secrets.CODECOV_TOKEN }}
   call-docker-build:
     needs: test
     uses: dictyBase/workflows/.github/workflows/docker-build-push.yaml@develop
