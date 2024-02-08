@@ -3,7 +3,9 @@ package content
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dictyBase/aphgrpc"
@@ -13,6 +15,8 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/sirupsen/logrus"
 )
+
+var numRgx = regexp.MustCompile("[0-9]+")
 
 type ContentResolver struct {
 	Client     pb.ContentServiceClient
@@ -47,21 +51,27 @@ func (rcs *ContentResolver) userByEmail(
 ) (*user.User, error) {
 	userResp, err := rcs.UserClient.UserWithEmail(email)
 	if err != nil {
-		errorutils.AddGQLError(
-			ctx,
-			fmt.Errorf("unable to retreieve user %s", err),
-		)
-		rcs.Logger.Error(err)
-		return nil, err
+		userErr := fmt.Errorf("unable to retreieve user %s", err)
+		errorutils.AddGQLError(ctx, userErr)
+		rcs.Logger.Error(userErr)
+		return nil, userErr
 	}
-	userID, err := strconv.ParseInt(userResp.ID, 10, 64)
-	if err != nil {
-		errorutils.AddGQLError(
-			ctx,
-			fmt.Errorf("unable to convert user id to integer %s", err),
+	matches := numRgx.FindAllString(userResp.ID, -1)
+	if len(matches) == 0 {
+		nonumErr := fmt.Errorf(
+			"cannot convert user id to number %s",
+			userResp.ID,
 		)
-		rcs.Logger.Error(err)
-		return nil, err
+		errorutils.AddGQLError(ctx, nonumErr)
+		rcs.Logger.Error(nonumErr)
+		return nil, nonumErr
+	}
+	userID, err := strconv.ParseInt(strings.Join(matches, ""), 10, 64)
+	if err != nil {
+		parseErr := fmt.Errorf("unable to convert user id to integer %s", err)
+		errorutils.AddGQLError(ctx, parseErr)
+		rcs.Logger.Error(parseErr)
+		return nil, parseErr
 	}
 	rcs.Logger.Debugf("successfully found user with id %s", email)
 	return &user.User{
