@@ -64,6 +64,11 @@ func RunGraphQLServer(cltx *cli.Context) error {
 		WriteTimeout: 10 * time.Second,
 		Handler:      router,
 	}
+	log.Infof(
+		"going to start graphql server with jwt-audience %s and jwt-issuer %s",
+		cltx.String("jwt-audience"),
+		cltx.String("jwt-issuer"),
+	)
 	log.Fatal(hsrv.ListenAndServe())
 
 	return nil
