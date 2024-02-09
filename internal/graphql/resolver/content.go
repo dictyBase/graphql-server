@@ -2,21 +2,24 @@ package resolver
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
 
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/content"
-	"github.com/dictyBase/graphql-server/internal/app/middleware"
 	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
-var noncharReg = regexp.MustCompile("[^a-z0-9]+")
+var (
+	contentCreatorScope = "write:content"
+	contentEditorScope  = "edit:content"
+	contentDeleteScope  = "delete:content"
+	noncharReg          = regexp.MustCompile("[^a-z0-9]+")
+)
 
 func Slugify(name string) string {
 	return strings.Trim(
@@ -25,30 +28,11 @@ func Slugify(name string) string {
 	)
 }
 
-func (mrs *MutationResolver) CheckCreateContent(ctx context.Context) error {
-	scopeSlot := "scope"
-	token := middleware.TokenFromContext(ctx)
-	claims := token.PrivateClaims()
-	if _, ok := claims[scopeSlot]; !ok {
-		return fmt.Errorf(
-			"query without claim %s not allowed",
-			scopeSlot,
-		)
-	}
-	scopes := fmt.Sprintf("%v", claims[scopeSlot])
-	mrs.Logger.Infof("got scopes %s", scopes)
-	if !strings.Contains(scopes, "edit:content") {
-		return errors.New("query without proper scope is not allowed")
-	}
-
-	return nil
-}
-
 func (mrs *MutationResolver) CreateContent(
 	ctx context.Context,
 	input *models.CreateContentInput,
 ) (*pb.Content, error) {
-	if err := mrs.CheckCreateContent(ctx); err != nil {
+	if err := authentication.ValidateContent(ctx, "scope", contentCreatorScope); err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
 		return nil, err
@@ -84,7 +68,7 @@ func (mrs *MutationResolver) UpdateContent(
 	ctx context.Context,
 	input *models.UpdateContentInput,
 ) (*pb.Content, error) {
-	if err := authentication.CheckUpdateContent(ctx); err != nil {
+	if err := authentication.ValidateContent(ctx, "scope", contentEditorScope); err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
 		return nil, err
@@ -129,7 +113,7 @@ func (mrs *MutationResolver) DeleteContent(
 	ctx context.Context,
 	id string,
 ) (*models.DeleteContent, error) {
-	if err := authentication.CheckDeleteContent(ctx); err != nil {
+	if err := authentication.ValidateContent(ctx, "scope", contentDeleteScope); err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
 		return nil, err
