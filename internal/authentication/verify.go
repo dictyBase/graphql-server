@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	contentCreatorRole  = []string{"content-writer", "content-admin"}
-	contentEditorRole   = []string{"content-editor", "content-admin"}
-	contentDeleteRole   = []string{"content-admin", "content-remover"}
+	// contentCreatorRole  = []string{"content-writer", "content-admin"}
+	// contentEditorRole   = []string{"content-editor", "content-admin"}
+	// contentDeleteRole   = []string{"content-admin", "content-remover"}
 	contentCreatorScope = "write:content"
 	contentEditorScope  = "edit:content"
 	contentDeleteScope  = "delete:content"
@@ -35,16 +35,10 @@ func CheckReadUser(ctx context.Context) error {
 }
 
 func CheckCreateContent(ctx context.Context) error {
-	roles, scopes, err := checkTokenClaims(ctx, "roles", "scopes")
+	scopes, err := checkTokenClaims(ctx, "scopes")
 	if err != nil {
 		return err
 	}
-
-	err = checkRole(roles, contentCreatorRole)
-	if err != nil {
-		return err
-	}
-
 	err = checkScope(scopes, contentCreatorScope)
 	if err != nil {
 		return err
@@ -54,16 +48,10 @@ func CheckCreateContent(ctx context.Context) error {
 }
 
 func CheckDeleteContent(ctx context.Context) error {
-	roles, scopes, err := checkTokenClaims(ctx, "roles", "scopes")
+	scopes, err := checkTokenClaims(ctx, "scopes")
 	if err != nil {
 		return err
 	}
-
-	err = checkRole(roles, contentDeleteRole)
-	if err != nil {
-		return err
-	}
-
 	err = checkScope(scopes, contentDeleteScope)
 	if err != nil {
 		return err
@@ -73,16 +61,10 @@ func CheckDeleteContent(ctx context.Context) error {
 }
 
 func CheckUpdateContent(ctx context.Context) error {
-	roles, scopes, err := checkTokenClaims(ctx, "roles", "scopes")
+	scopes, err := checkTokenClaims(ctx, "scopes")
 	if err != nil {
 		return err
 	}
-
-	err = checkRole(roles, contentEditorRole)
-	if err != nil {
-		return err
-	}
-
 	err = checkScope(scopes, contentEditorScope)
 	if err != nil {
 		return err
@@ -93,23 +75,21 @@ func CheckUpdateContent(ctx context.Context) error {
 
 func checkTokenClaims(
 	ctx context.Context,
-	roleSlot string,
 	scopeSlot string,
-) (string, string, error) {
+) (string, error) {
 	token := middleware.TokenFromContext(ctx)
 	claims := token.PrivateClaims()
-	for _, clm := range []string{roleSlot, scopeSlot} {
-		if _, ok := claims[clm]; !ok {
-			return "", "", fmt.Errorf("query without claim %s not allowed", clm)
-		}
+	if _, ok := claims[scopeSlot]; !ok {
+		return "", fmt.Errorf(
+			"query without claim %s not allowed",
+			scopeSlot,
+		)
 	}
-	roles := fmt.Sprintf("%v", claims[roleSlot])
 	scopes := fmt.Sprintf("%v", claims[scopeSlot])
-
-	return roles, scopes, nil
+	return scopes, nil
 }
 
-func checkRole(roles string, expectedRoles []string) error {
+/* func checkRole(roles string, expectedRoles []string) error {
 	rolesOk := false
 	for _, rls := range expectedRoles {
 		if strings.Contains(roles, rls) {
@@ -121,7 +101,7 @@ func checkRole(roles string, expectedRoles []string) error {
 		return errors.New("query without proper role is not allowed")
 	}
 	return nil
-}
+} */
 
 func checkScope(scopes string, expectedScope string) error {
 	if !strings.Contains(scopes, expectedScope) {
