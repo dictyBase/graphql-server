@@ -2,21 +2,43 @@ package resolver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/content"
+	"github.com/dictyBase/graphql-server/internal/app/middleware"
 	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
+func (mrs *MutationResolver) CheckCreateContent(ctx context.Context) error {
+	scopeSlot := "scope"
+	token := middleware.TokenFromContext(ctx)
+	claims := token.PrivateClaims()
+	if _, ok := claims[scopeSlot]; !ok {
+		return fmt.Errorf(
+			"query without claim %s not allowed",
+			scopeSlot,
+		)
+	}
+	scopes := fmt.Sprintf("%v", claims[scopeSlot])
+	mrs.Logger.Infof("got scopes %s", scopes)
+	if !strings.Contains(scopes, "edit:content") {
+		return errors.New("query without proper scope is not allowed")
+	}
+
+	return nil
+}
+
 func (mrs *MutationResolver) CreateContent(
 	ctx context.Context,
 	input *models.CreateContentInput,
 ) (*pb.Content, error) {
-	if err := authentication.CheckCreateContent(ctx); err != nil {
+	if err := mrs.CheckCreateContent(ctx); err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
 		return nil, err
