@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -14,6 +15,15 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
 )
+
+var noncharReg = regexp.MustCompile("[^a-z0-9]+")
+
+func Slugify(name string) string {
+	return strings.Trim(
+		noncharReg.ReplaceAllString(strings.ToLower(name), "-"),
+		"-",
+	)
+}
 
 func (mrs *MutationResolver) CheckCreateContent(ctx context.Context) error {
 	scopeSlot := "scope"
@@ -52,6 +62,9 @@ func (mrs *MutationResolver) CreateContent(
 					CreatedBy: input.CreatedBy,
 					Content:   input.Content,
 					Namespace: input.Namespace,
+					Slug: Slugify(
+						fmt.Sprintf("%s %s", input.Name, input.Namespace),
+					),
 				},
 			},
 		})
