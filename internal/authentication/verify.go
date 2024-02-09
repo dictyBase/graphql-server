@@ -35,7 +35,7 @@ func CheckReadUser(ctx context.Context) error {
 }
 
 func CheckCreateContent(ctx context.Context) error {
-	scopes, err := checkTokenClaims(ctx, "scopes")
+	scopes, err := checkTokenClaims(ctx, "scope")
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,7 @@ func checkTokenClaims(
 	}
 	if _, ok := claims[scopeSlot]; !ok {
 		return "", fmt.Errorf(
-			"query without claim %s not allowed => given claims %s",
+			"query without claim %s not allowed :: given claims %s",
 			scopeSlot, keys,
 		)
 	}
