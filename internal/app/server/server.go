@@ -43,7 +43,7 @@ func RunGraphQLServer(cltx *cli.Context) error {
 	authMdw, err := middleware.NewJWTAuth(
 		cltx.String("jwks-uri"),
 		cltx.String("jwt-audience"),
-		cltx.String("issuer"),
+		cltx.String("jwt-issuer"),
 	)
 	if err != nil {
 		return cli.NewExitError(
