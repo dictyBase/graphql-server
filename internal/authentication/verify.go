@@ -79,10 +79,14 @@ func checkTokenClaims(
 ) (string, error) {
 	token := middleware.TokenFromContext(ctx)
 	claims := token.PrivateClaims()
+	keys := make([]string, 0)
+	for k := range claims {
+		keys = append(keys, k)
+	}
 	if _, ok := claims[scopeSlot]; !ok {
 		return "", fmt.Errorf(
-			"query without claim %s not allowed",
-			scopeSlot,
+			"query without claim %s not allowed => given claims %s",
+			scopeSlot, keys,
 		)
 	}
 	scopes := fmt.Sprintf("%v", claims[scopeSlot])
