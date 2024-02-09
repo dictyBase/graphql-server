@@ -63,7 +63,7 @@ func (mrs *MutationResolver) CreateContent(
 					Content:   input.Content,
 					Namespace: input.Namespace,
 					Slug: Slugify(
-						fmt.Sprintf("%s %s", input.Name, input.Namespace),
+						fmt.Sprintf("%s %s", input.Namespace, input.Name),
 					),
 				},
 			},
