@@ -20,7 +20,7 @@ require (
 	github.com/vektah/gqlparser v1.3.1
 	github.com/vektah/gqlparser/v2 v2.5.11
 	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678
-	google.golang.org/grpc v1.61.0
+	google.golang.org/grpc v1.61.1
 	google.golang.org/protobuf v1.32.0
 )
 
