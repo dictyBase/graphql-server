@@ -4272,13 +4272,6 @@ func (ec *executionContext) marshalOGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphq
 	return ret
 }
 
-func (ec *executionContext) marshalOGene2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGene(ctx context.Context, sel ast.SelectionSet, v *models.Gene) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Gene(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalONameWithLink2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐNameWithLink(ctx context.Context, sel ast.SelectionSet, v *models.NameWithLink) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null

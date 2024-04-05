@@ -2960,114 +2960,128 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("created_by"))
-			it.CreatedBy, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.CreatedBy = data
 		case "updated_by":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updated_by"))
-			it.UpdatedBy, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.UpdatedBy = data
 		case "summary":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
-			it.Summary, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Summary = data
 		case "editable_summary":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("editable_summary"))
-			it.EditableSummary, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.EditableSummary = data
 		case "depositor":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("depositor"))
-			it.Depositor, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Depositor = data
 		case "genes":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genes"))
-			it.Genes, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Genes = data
 		case "dbxrefs":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dbxrefs"))
-			it.Dbxrefs, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Dbxrefs = data
 		case "publications":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publications"))
-			it.Publications, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Publications = data
 		case "name":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Name = data
 		case "image_map":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image_map"))
-			it.ImageMap, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.ImageMap = data
 		case "sequence":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sequence"))
-			it.Sequence, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Sequence = data
 		case "in_stock":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in_stock"))
-			it.InStock, err = ec.unmarshalNBoolean2bool(ctx, v)
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.InStock = data
 		case "keywords":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keywords"))
-			it.Keywords, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Keywords = data
 		case "genbank_accession":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genbank_accession"))
-			it.GenbankAccession, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.GenbankAccession = data
 		}
 	}
 
@@ -3092,162 +3106,182 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("created_by"))
-			it.CreatedBy, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.CreatedBy = data
 		case "updated_by":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updated_by"))
-			it.UpdatedBy, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.UpdatedBy = data
 		case "summary":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
-			it.Summary, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Summary = data
 		case "editable_summary":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("editable_summary"))
-			it.EditableSummary, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.EditableSummary = data
 		case "depositor":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("depositor"))
-			it.Depositor, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Depositor = data
 		case "genes":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genes"))
-			it.Genes, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Genes = data
 		case "dbxrefs":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dbxrefs"))
-			it.Dbxrefs, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Dbxrefs = data
 		case "publications":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publications"))
-			it.Publications, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Publications = data
 		case "systematic_name":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("systematic_name"))
-			it.SystematicName, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.SystematicName = data
 		case "label":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("label"))
-			it.Label, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Label = data
 		case "species":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("species"))
-			it.Species, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Species = data
 		case "plasmid":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("plasmid"))
-			it.Plasmid, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Plasmid = data
 		case "parent":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parent"))
-			it.Parent, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Parent = data
 		case "names":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("names"))
-			it.Names, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Names = data
 		case "in_stock":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in_stock"))
-			it.InStock, err = ec.unmarshalNBoolean2bool(ctx, v)
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.InStock = data
 		case "phenotypes":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phenotypes"))
-			it.Phenotypes, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Phenotypes = data
 		case "genetic_modification":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genetic_modification"))
-			it.GeneticModification, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.GeneticModification = data
 		case "mutagenesis_method":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mutagenesis_method"))
-			it.MutagenesisMethod, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.MutagenesisMethod = data
 		case "characteristics":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("characteristics"))
-			it.Characteristics, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Characteristics = data
 		case "genotypes":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genotypes"))
-			it.Genotypes, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Genotypes = data
 		}
 	}
 
@@ -3272,42 +3306,47 @@ func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("label"))
-			it.Label, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Label = data
 		case "summary":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
-			it.Summary, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Summary = data
 		case "id":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.ID = data
 		case "in_stock":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in_stock"))
-			it.InStock, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.InStock = data
 		case "strain_type":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("strain_type"))
-			it.StrainType, err = ec.unmarshalNStrainType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainType(ctx, v)
+			data, err := ec.unmarshalNStrainType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainType(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.StrainType = data
 		}
 	}
 
@@ -3332,106 +3371,119 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updated_by"))
-			it.UpdatedBy, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.UpdatedBy = data
 		case "summary":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
-			it.Summary, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Summary = data
 		case "editable_summary":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("editable_summary"))
-			it.EditableSummary, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.EditableSummary = data
 		case "depositor":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("depositor"))
-			it.Depositor, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Depositor = data
 		case "genes":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genes"))
-			it.Genes, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Genes = data
 		case "dbxrefs":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dbxrefs"))
-			it.Dbxrefs, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Dbxrefs = data
 		case "publications":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publications"))
-			it.Publications, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Publications = data
 		case "name":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Name = data
 		case "image_map":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image_map"))
-			it.ImageMap, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.ImageMap = data
 		case "sequence":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sequence"))
-			it.Sequence, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Sequence = data
 		case "in_stock":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in_stock"))
-			it.InStock, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.InStock = data
 		case "keywords":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keywords"))
-			it.Keywords, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Keywords = data
 		case "genbank_accession":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genbank_accession"))
-			it.GenbankAccession, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.GenbankAccession = data
 		}
 	}
 
@@ -3456,154 +3508,173 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updated_by"))
-			it.UpdatedBy, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.UpdatedBy = data
 		case "summary":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
-			it.Summary, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Summary = data
 		case "editable_summary":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("editable_summary"))
-			it.EditableSummary, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.EditableSummary = data
 		case "depositor":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("depositor"))
-			it.Depositor, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Depositor = data
 		case "genes":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genes"))
-			it.Genes, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Genes = data
 		case "dbxrefs":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dbxrefs"))
-			it.Dbxrefs, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Dbxrefs = data
 		case "publications":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publications"))
-			it.Publications, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Publications = data
 		case "systematic_name":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("systematic_name"))
-			it.SystematicName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.SystematicName = data
 		case "label":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("label"))
-			it.Label, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Label = data
 		case "species":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("species"))
-			it.Species, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Species = data
 		case "plasmid":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("plasmid"))
-			it.Plasmid, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Plasmid = data
 		case "parent":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parent"))
-			it.Parent, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Parent = data
 		case "names":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("names"))
-			it.Names, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Names = data
 		case "in_stock":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in_stock"))
-			it.InStock, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.InStock = data
 		case "phenotypes":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phenotypes"))
-			it.Phenotypes, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Phenotypes = data
 		case "genetic_modification":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genetic_modification"))
-			it.GeneticModification, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.GeneticModification = data
 		case "mutagenesis_method":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mutagenesis_method"))
-			it.MutagenesisMethod, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.MutagenesisMethod = data
 		case "characteristics":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("characteristics"))
-			it.Characteristics, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Characteristics = data
 		case "genotypes":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genotypes"))
-			it.Genotypes, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Genotypes = data
 		}
 	}
 

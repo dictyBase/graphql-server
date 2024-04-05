@@ -965,82 +965,92 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("courier"))
-			it.Courier, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Courier = data
 		case "courier_account":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("courier_account"))
-			it.CourierAccount, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.CourierAccount = data
 		case "comments":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comments"))
-			it.Comments, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Comments = data
 		case "payment":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("payment"))
-			it.Payment, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Payment = data
 		case "purchase_order_num":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("purchase_order_num"))
-			it.PurchaseOrderNum, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.PurchaseOrderNum = data
 		case "status":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			it.Status, err = ec.unmarshalNStatusEnum2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum(ctx, v)
+			data, err := ec.unmarshalNStatusEnum2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Status = data
 		case "consumer":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("consumer"))
-			it.Consumer, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Consumer = data
 		case "payer":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("payer"))
-			it.Payer, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Payer = data
 		case "purchaser":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("purchaser"))
-			it.Purchaser, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Purchaser = data
 		case "items":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("items"))
-			it.Items, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalNString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Items = data
 		}
 	}
 
@@ -1065,58 +1075,65 @@ func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("courier"))
-			it.Courier, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Courier = data
 		case "courier_account":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("courier_account"))
-			it.CourierAccount, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.CourierAccount = data
 		case "comments":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comments"))
-			it.Comments, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Comments = data
 		case "payment":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("payment"))
-			it.Payment, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Payment = data
 		case "purchase_order_num":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("purchase_order_num"))
-			it.PurchaseOrderNum, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.PurchaseOrderNum = data
 		case "status":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			it.Status, err = ec.unmarshalOStatusEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum(ctx, v)
+			data, err := ec.unmarshalOStatusEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Status = data
 		case "items":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("items"))
-			it.Items, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Items = data
 		}
 	}
 
