@@ -547,50 +547,56 @@ func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("client_id"))
-			it.ClientID, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.ClientID = data
 		case "state":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("state"))
-			it.State, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.State = data
 		case "code":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("code"))
-			it.Code, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Code = data
 		case "scopes":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopes"))
-			it.Scopes, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Scopes = data
 		case "provider":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("provider"))
-			it.Provider, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.Provider = data
 		case "redirect_url":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("redirect_url"))
-			it.RedirectURL, err = ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
+			it.RedirectURL = data
 		}
 	}
 
