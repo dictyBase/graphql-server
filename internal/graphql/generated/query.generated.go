@@ -6,11 +6,9 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/dictyBase/go-genproto/dictybaseapis/auth"
 	"github.com/dictyBase/go-genproto/dictybaseapis/content"
 	"github.com/dictyBase/go-genproto/dictybaseapis/order"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
@@ -21,21 +19,9 @@ import (
 // region    ************************** generated!.gotpl **************************
 
 type QueryResolver interface {
-	GetRefreshToken(ctx context.Context, token string) (*auth.Auth, error)
+	GeneOntologyAnnotation(ctx context.Context, gene string) ([]*models.GOAnnotation, error)
 	Content(ctx context.Context, id string) (*content.Content, error)
 	ContentBySlug(ctx context.Context, slug string) (*content.Content, error)
-	Organism(ctx context.Context, taxonID string) (*models.Organism, error)
-	ListOrganisms(ctx context.Context) ([]*models.Organism, error)
-	Gene(ctx context.Context, gene string) (*models.Gene, error)
-	AllStrains(ctx context.Context, gene string) (*models.Gene, error)
-	AllPublications(ctx context.Context, gene string, limit *int, sortBy *string) (*models.NumberOfPublicationsWithGene, error)
-	AllOrthologs(ctx context.Context, gene string) (*models.Gene, error)
-	ListRecentGenes(ctx context.Context, limit int) ([]*models.Gene, error)
-	GeneralInformation(ctx context.Context, gene string) (*models.Gene, error)
-	GetAssociatedSequnces(ctx context.Context, gene string) (*models.Gene, error)
-	GetLinks(ctx context.Context, gene string) (*models.Gene, error)
-	GetProteinInformation(ctx context.Context, gene string) (*models.Gene, error)
-	ListGeneProductInfo(ctx context.Context, gene string) (*models.Gene, error)
 	Order(ctx context.Context, id string) (*order.Order, error)
 	ListOrders(ctx context.Context, cursor *int, limit *int, filter *string) (*models.OrderListWithCursor, error)
 	Publication(ctx context.Context, id string) (*models.Publication, error)
