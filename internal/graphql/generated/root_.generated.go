@@ -39,7 +39,6 @@ type ResolverRoot interface {
 	Organism() OrganismResolver
 	Permission() PermissionResolver
 	Plasmid() PlasmidResolver
-	Publication() PublicationResolver
 	Query() QueryResolver
 	Role() RoleResolver
 	Strain() StrainResolver
@@ -175,6 +174,10 @@ type ComplexityRoot struct {
 		UserID     func(childComplexity int) int
 	}
 
+	ImageFile struct {
+		URL func(childComplexity int) int
+	}
+
 	Links struct {
 		Colleagues   func(childComplexity int) int
 		Expression   func(childComplexity int) int
@@ -209,6 +212,7 @@ type ComplexityRoot struct {
 		UpdateRole                       func(childComplexity int, id string, input *models.UpdateRoleInput) int
 		UpdateStrain                     func(childComplexity int, id string, input *models.UpdateStrainInput) int
 		UpdateUser                       func(childComplexity int, id string, input *models.UpdateUserInput) int
+		UploadFile                       func(childComplexity int, file graphql.Upload) int
 	}
 
 	NameWithLink struct {
@@ -367,24 +371,13 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AllOrthologs               func(childComplexity int, gene string) int
-		AllPublications            func(childComplexity int, gene string, limit *int, sortBy *string) int
-		AllStrains                 func(childComplexity int, gene string) int
 		Content                    func(childComplexity int, id string) int
 		ContentBySlug              func(childComplexity int, slug string) int
-		Gene                       func(childComplexity int, gene string) int
-		GeneralInformation         func(childComplexity int, gene string) int
-		GetAssociatedSequnces      func(childComplexity int, gene string) int
-		GetLinks                   func(childComplexity int, gene string) int
-		GetProteinInformation      func(childComplexity int, gene string) int
-		GetRefreshToken            func(childComplexity int, token string) int
-		ListGeneProductInfo        func(childComplexity int, gene string) int
+		GeneOntologyAnnotation     func(childComplexity int, gene string) int
 		ListOrders                 func(childComplexity int, cursor *int, limit *int, filter *string) int
-		ListOrganisms              func(childComplexity int) int
 		ListPermissions            func(childComplexity int) int
 		ListPlasmids               func(childComplexity int, cursor *int, limit *int, filter *string) int
 		ListPlasmidsWithAnnotation func(childComplexity int, cursor *int, limit *int, typeArg string, annotation string) int
-		ListRecentGenes            func(childComplexity int, limit int) int
 		ListRecentPlasmids         func(childComplexity int, limit int) int
 		ListRecentPublications     func(childComplexity int, limit int) int
 		ListRecentStrains          func(childComplexity int, limit int) int
@@ -393,7 +386,6 @@ type ComplexityRoot struct {
 		ListStrainsWithAnnotation  func(childComplexity int, cursor *int, limit *int, typeArg string, annotation string) int
 		ListUsers                  func(childComplexity int, pagenum string, pagesize string, filter string) int
 		Order                      func(childComplexity int, id string) int
-		Organism                   func(childComplexity int, taxonID string) int
 		Permission                 func(childComplexity int, id string) int
 		Plasmid                    func(childComplexity int, id string) int
 		Publication                func(childComplexity int, id string) int
@@ -992,6 +984,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Identity.UserID(childComplexity), true
 
+	case "ImageFile.url":
+		if e.complexity.ImageFile.URL == nil {
+			break
+		}
+
+		return e.complexity.ImageFile.URL(childComplexity), true
+
 	case "Links.colleagues":
 		if e.complexity.Links.Colleagues == nil {
 			break
@@ -1290,6 +1289,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(*models.UpdateUserInput)), true
+
+	case "Mutation.uploadFile":
+		if e.complexity.Mutation.UploadFile == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_uploadFile_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UploadFile(childComplexity, args["file"].(graphql.Upload)), true
 
 	case "NameWithLink.link":
 		if e.complexity.NameWithLink.Link == nil {
@@ -2061,42 +2072,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PublicationWithGene.Volume(childComplexity), true
 
-	case "Query.allOrthologs":
-		if e.complexity.Query.AllOrthologs == nil {
-			break
-		}
-
-		args, err := ec.field_Query_allOrthologs_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.AllOrthologs(childComplexity, args["gene"].(string)), true
-
-	case "Query.allPublications":
-		if e.complexity.Query.AllPublications == nil {
-			break
-		}
-
-		args, err := ec.field_Query_allPublications_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.AllPublications(childComplexity, args["gene"].(string), args["limit"].(*int), args["sort_by"].(*string)), true
-
-	case "Query.allStrains":
-		if e.complexity.Query.AllStrains == nil {
-			break
-		}
-
-		args, err := ec.field_Query_allStrains_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.AllStrains(childComplexity, args["gene"].(string)), true
-
 	case "Query.content":
 		if e.complexity.Query.Content == nil {
 			break
@@ -2121,89 +2096,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ContentBySlug(childComplexity, args["slug"].(string)), true
 
-	case "Query.gene":
-		if e.complexity.Query.Gene == nil {
+	case "Query.geneOntologyAnnotation":
+		if e.complexity.Query.GeneOntologyAnnotation == nil {
 			break
 		}
 
-		args, err := ec.field_Query_gene_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_geneOntologyAnnotation_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.Gene(childComplexity, args["gene"].(string)), true
-
-	case "Query.generalInformation":
-		if e.complexity.Query.GeneralInformation == nil {
-			break
-		}
-
-		args, err := ec.field_Query_generalInformation_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GeneralInformation(childComplexity, args["gene"].(string)), true
-
-	case "Query.getAssociatedSequnces":
-		if e.complexity.Query.GetAssociatedSequnces == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getAssociatedSequnces_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetAssociatedSequnces(childComplexity, args["gene"].(string)), true
-
-	case "Query.getLinks":
-		if e.complexity.Query.GetLinks == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getLinks_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetLinks(childComplexity, args["gene"].(string)), true
-
-	case "Query.getProteinInformation":
-		if e.complexity.Query.GetProteinInformation == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getProteinInformation_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetProteinInformation(childComplexity, args["gene"].(string)), true
-
-	case "Query.getRefreshToken":
-		if e.complexity.Query.GetRefreshToken == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getRefreshToken_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetRefreshToken(childComplexity, args["token"].(string)), true
-
-	case "Query.listGeneProductInfo":
-		if e.complexity.Query.ListGeneProductInfo == nil {
-			break
-		}
-
-		args, err := ec.field_Query_listGeneProductInfo_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.ListGeneProductInfo(childComplexity, args["gene"].(string)), true
+		return e.complexity.Query.GeneOntologyAnnotation(childComplexity, args["gene"].(string)), true
 
 	case "Query.listOrders":
 		if e.complexity.Query.ListOrders == nil {
@@ -2216,13 +2119,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ListOrders(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string)), true
-
-	case "Query.listOrganisms":
-		if e.complexity.Query.ListOrganisms == nil {
-			break
-		}
-
-		return e.complexity.Query.ListOrganisms(childComplexity), true
 
 	case "Query.listPermissions":
 		if e.complexity.Query.ListPermissions == nil {
@@ -2254,18 +2150,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ListPlasmidsWithAnnotation(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["type"].(string), args["annotation"].(string)), true
-
-	case "Query.listRecentGenes":
-		if e.complexity.Query.ListRecentGenes == nil {
-			break
-		}
-
-		args, err := ec.field_Query_listRecentGenes_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.ListRecentGenes(childComplexity, args["limit"].(int)), true
 
 	case "Query.listRecentPlasmids":
 		if e.complexity.Query.ListRecentPlasmids == nil {
@@ -2357,18 +2241,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Order(childComplexity, args["id"].(string)), true
-
-	case "Query.organism":
-		if e.complexity.Query.Organism == nil {
-			break
-		}
-
-		args, err := ec.field_Query_organism_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Organism(childComplexity, args["taxon_id"].(string)), true
 
 	case "Query.permission":
 		if e.complexity.Query.Permission == nil {
@@ -2875,6 +2747,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateRoleInput,
 		ec.unmarshalInputCreateStrainInput,
 		ec.unmarshalInputCreateUserInput,
+		ec.unmarshalInputFileToUpload,
 		ec.unmarshalInputLoginInput,
 		ec.unmarshalInputStrainListFilter,
 		ec.unmarshalInputUpdateContentInput,
@@ -3158,6 +3031,7 @@ type NameWithLink {
   createPermission(input: CreatePermissionInput): Permission
   updatePermission(id: ID!, input: UpdatePermissionInput): Permission
   deletePermission(id: ID!): DeletePermission
+  uploadFile(file: Upload! ): ImageFile!
 }
 `, BuiltIn: false},
 	{Name: "../../../api/src/schema/order.graphql", Input: `type Order {
@@ -3335,38 +3209,11 @@ type Author {
 # }
 `, BuiltIn: false},
 	{Name: "../../../api/src/schema/query.graphql", Input: `type Query {
-  # Auth queries
-  getRefreshToken(token: String!): Auth
+  # Gene queries
+  geneOntologyAnnotation(gene: String!): [GOAnnotation!]
   # Content queries
   content(id: ID!): Content
   contentBySlug(slug: String!): Content
-  # Download page queries
-  organism(taxon_id: String!): Organism
-  listOrganisms: [Organism!]
-  # Gene queries
-  gene(gene: String!): Gene
-  allStrains(gene: String!): Gene
-  # Lists out all publications with other genes mentioned in the publication
-  allPublications(
-    gene: String!
-    limit: Int
-    sort_by: String
-  ): NumberOfPublicationsWithGene!
-  # Lists out all the Orthologs
-  allOrthologs(gene: String!): Gene
-  # List gene query that is by default is sorted by gene
-  # date in descendent order
-  listRecentGenes(limit: Int!): [Gene!]
-  # List general information given gene
-  generalInformation(gene: String!): Gene
-  # List associated sequences given gene
-  getAssociatedSequnces(gene: String!): Gene
-  # List links given gene
-  getLinks(gene: String!): Gene
-  # List Protein Information given gene
-  getProteinInformation(gene: String!): Gene
-  # List all product info associated to the gene
-  listGeneProductInfo(gene: String!): Gene
   # Order queries
   order(id: ID!): Order
   listOrders(cursor: Int, limit: Int, filter: String): OrderListWithCursor
@@ -3602,6 +3449,20 @@ input StrainListFilter {
   id: ID
   in_stock: Boolean
   strain_type: StrainType!
+}
+`, BuiltIn: false},
+	{Name: "../../../api/src/schema/upload.graphql", Input: `"The ` + "`" + `Upload` + "`" + ` scalar type represents a multipart file upload."
+scalar Upload
+
+"The ` + "`" + `ImageFile` + "`" + ` type, represents the response of uploading an image file."
+type ImageFile {
+    url: String!
+}
+
+"The ` + "`" + `UploadFile` + "`" + ` type, represents the request for uploading a image file with a certain payload."
+input FileToUpload {
+    id: Int!
+    file: Upload!
 }
 `, BuiltIn: false},
 	{Name: "../../../api/src/schema/user.graphql", Input: `type Permission {
