@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/dictyBase/go-genproto/dictybaseapis/order"
 	"github.com/dictyBase/go-genproto/dictybaseapis/publication"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
@@ -22,8 +23,8 @@ type Stock interface {
 }
 
 type AssociatedSequences struct {
-	GenbankGenomicFragment *NameWithLink   `json:"genbank_genomic_fragment"`
-	GenbankMrna            *NameWithLink   `json:"genbank_mrna"`
+	GenbankGenomicFragment *NameWithLink   `json:"genbank_genomic_fragment,omitempty"`
+	GenbankMrna            *NameWithLink   `json:"genbank_mrna,omitempty"`
 	Ests                   []*NameWithLink `json:"ests"`
 	MoreLink               string          `json:"more_link"`
 }
@@ -45,9 +46,9 @@ type CreateContentInput struct {
 type CreateOrderInput struct {
 	Courier          string     `json:"courier"`
 	CourierAccount   string     `json:"courier_account"`
-	Comments         *string    `json:"comments"`
+	Comments         *string    `json:"comments,omitempty"`
 	Payment          string     `json:"payment"`
-	PurchaseOrderNum *string    `json:"purchase_order_num"`
+	PurchaseOrderNum *string    `json:"purchase_order_num,omitempty"`
 	Status           StatusEnum `json:"status"`
 	Consumer         string     `json:"consumer"`
 	Payer            string     `json:"payer"`
@@ -64,18 +65,18 @@ type CreatePermissionInput struct {
 type CreatePlasmidInput struct {
 	CreatedBy        string   `json:"created_by"`
 	UpdatedBy        string   `json:"updated_by"`
-	Summary          *string  `json:"summary"`
-	EditableSummary  *string  `json:"editable_summary"`
-	Depositor        *string  `json:"depositor"`
-	Genes            []string `json:"genes"`
-	Dbxrefs          []string `json:"dbxrefs"`
-	Publications     []string `json:"publications"`
+	Summary          *string  `json:"summary,omitempty"`
+	EditableSummary  *string  `json:"editable_summary,omitempty"`
+	Depositor        *string  `json:"depositor,omitempty"`
+	Genes            []string `json:"genes,omitempty"`
+	Dbxrefs          []string `json:"dbxrefs,omitempty"`
+	Publications     []string `json:"publications,omitempty"`
 	Name             string   `json:"name"`
-	ImageMap         *string  `json:"image_map"`
-	Sequence         *string  `json:"sequence"`
+	ImageMap         *string  `json:"image_map,omitempty"`
+	Sequence         *string  `json:"sequence,omitempty"`
 	InStock          bool     `json:"in_stock"`
-	Keywords         []string `json:"keywords"`
-	GenbankAccession *string  `json:"genbank_accession"`
+	Keywords         []string `json:"keywords,omitempty"`
+	GenbankAccession *string  `json:"genbank_accession,omitempty"`
 }
 
 type CreateRoleInput struct {
@@ -86,39 +87,39 @@ type CreateRoleInput struct {
 type CreateStrainInput struct {
 	CreatedBy           string   `json:"created_by"`
 	UpdatedBy           string   `json:"updated_by"`
-	Summary             *string  `json:"summary"`
-	EditableSummary     *string  `json:"editable_summary"`
-	Depositor           *string  `json:"depositor"`
-	Genes               []string `json:"genes"`
-	Dbxrefs             []string `json:"dbxrefs"`
-	Publications        []string `json:"publications"`
+	Summary             *string  `json:"summary,omitempty"`
+	EditableSummary     *string  `json:"editable_summary,omitempty"`
+	Depositor           *string  `json:"depositor,omitempty"`
+	Genes               []string `json:"genes,omitempty"`
+	Dbxrefs             []string `json:"dbxrefs,omitempty"`
+	Publications        []string `json:"publications,omitempty"`
 	SystematicName      string   `json:"systematic_name"`
 	Label               string   `json:"label"`
 	Species             string   `json:"species"`
-	Plasmid             *string  `json:"plasmid"`
-	Parent              *string  `json:"parent"`
-	Names               []string `json:"names"`
+	Plasmid             *string  `json:"plasmid,omitempty"`
+	Parent              *string  `json:"parent,omitempty"`
+	Names               []string `json:"names,omitempty"`
 	InStock             bool     `json:"in_stock"`
-	Phenotypes          []string `json:"phenotypes"`
-	GeneticModification *string  `json:"genetic_modification"`
-	MutagenesisMethod   *string  `json:"mutagenesis_method"`
-	Characteristics     []string `json:"characteristics"`
-	Genotypes           []string `json:"genotypes"`
+	Phenotypes          []string `json:"phenotypes,omitempty"`
+	GeneticModification *string  `json:"genetic_modification,omitempty"`
+	MutagenesisMethod   *string  `json:"mutagenesis_method,omitempty"`
+	Characteristics     []string `json:"characteristics,omitempty"`
+	Genotypes           []string `json:"genotypes,omitempty"`
 }
 
 type CreateUserInput struct {
 	FirstName     string  `json:"first_name"`
 	LastName      string  `json:"last_name"`
 	Email         string  `json:"email"`
-	Organization  *string `json:"organization"`
-	GroupName     *string `json:"group_name"`
-	FirstAddress  *string `json:"first_address"`
-	SecondAddress *string `json:"second_address"`
-	City          *string `json:"city"`
-	State         *string `json:"state"`
-	Zipcode       *string `json:"zipcode"`
-	Country       *string `json:"country"`
-	Phone         *string `json:"phone"`
+	Organization  *string `json:"organization,omitempty"`
+	GroupName     *string `json:"group_name,omitempty"`
+	FirstAddress  *string `json:"first_address,omitempty"`
+	SecondAddress *string `json:"second_address,omitempty"`
+	City          *string `json:"city,omitempty"`
+	State         *string `json:"state,omitempty"`
+	Zipcode       *string `json:"zipcode,omitempty"`
+	Country       *string `json:"country,omitempty"`
+	Phone         *string `json:"phone,omitempty"`
 	IsActive      bool    `json:"is_active"`
 }
 
@@ -159,6 +160,12 @@ type Extension struct {
 	Name     string `json:"name"`
 }
 
+// The `UploadFile` type, represents the request for uploading a image file with a certain payload.
+type FileToUpload struct {
+	ID   int            `json:"id"`
+	File graphql.Upload `json:"file"`
+}
+
 type GOAnnotation struct {
 	ID           string       `json:"id"`
 	Type         string       `json:"type"`
@@ -167,29 +174,29 @@ type GOAnnotation struct {
 	GoTerm       string       `json:"go_term"`
 	Qualifier    string       `json:"qualifier"`
 	Publication  string       `json:"publication"`
-	With         []*With      `json:"with"`
-	Extensions   []*Extension `json:"extensions"`
+	With         []*With      `json:"with,omitempty"`
+	Extensions   []*Extension `json:"extensions,omitempty"`
 	AssignedBy   string       `json:"assigned_by"`
 }
 
 type Gene struct {
 	ID                  string                `json:"id"`
 	Name                string                `json:"name"`
-	Goas                []*GOAnnotation       `json:"goas"`
-	Strains             []*Strain             `json:"strains"`
-	Orthologs           []*Orthologs          `json:"orthologs"`
-	ProductInfo         []*ProductInformation `json:"product_info"`
+	Goas                []*GOAnnotation       `json:"goas,omitempty"`
+	Strains             []*Strain             `json:"strains,omitempty"`
+	Orthologs           []*Orthologs          `json:"orthologs,omitempty"`
+	ProductInfo         []*ProductInformation `json:"product_info,omitempty"`
 	GeneralInfo         *GeneralInfo          `json:"general_info"`
 	AssociatedSequences *AssociatedSequences  `json:"associated_sequences"`
 	Links               *Links                `json:"links"`
-	ProteinInformation  *ProteinInformation   `json:"protein_information"`
+	ProteinInformation  *ProteinInformation   `json:"protein_information,omitempty"`
 }
 
 type GeneralInfo struct {
 	NameDescription []string `json:"name_description"`
-	AltGeneName     []string `json:"alt_gene_name"`
+	AltGeneName     []string `json:"alt_gene_name,omitempty"`
 	GeneProduct     string   `json:"gene_product"`
-	AltProteinNames []string `json:"alt_protein_names"`
+	AltProteinNames []string `json:"alt_protein_names,omitempty"`
 	Description     string   `json:"description"`
 }
 
@@ -206,6 +213,11 @@ type Identity struct {
 	UserID     string    `json:"user_id"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+// The `ImageFile` type, represents the response of uploading an image file.
+type ImageFile struct {
+	URL string `json:"url"`
 }
 
 type Links struct {
@@ -241,7 +253,7 @@ type OrderListWithCursor struct {
 	Orders         []*order.Order `json:"orders"`
 	NextCursor     int            `json:"nextCursor"`
 	PreviousCursor int            `json:"previousCursor"`
-	Limit          *int           `json:"limit"`
+	Limit          *int           `json:"limit,omitempty"`
 	TotalCount     int            `json:"totalCount"`
 }
 
@@ -262,17 +274,17 @@ type Orthologs struct {
 
 type Phenotype struct {
 	Phenotype   string       `json:"phenotype"`
-	Note        *string      `json:"note"`
-	Assay       *string      `json:"assay"`
-	Environment *string      `json:"environment"`
-	Publication *Publication `json:"publication"`
+	Note        *string      `json:"note,omitempty"`
+	Assay       *string      `json:"assay,omitempty"`
+	Environment *string      `json:"environment,omitempty"`
+	Publication *Publication `json:"publication,omitempty"`
 }
 
 type PlasmidListWithCursor struct {
 	Plasmids       []*Plasmid `json:"plasmids"`
 	NextCursor     int        `json:"nextCursor"`
 	PreviousCursor int        `json:"previousCursor"`
-	Limit          *int       `json:"limit"`
+	Limit          *int       `json:"limit,omitempty"`
 	TotalCount     int        `json:"totalCount"`
 }
 
@@ -302,31 +314,50 @@ type ProteinInformation struct {
 	ProteinSequence string              `json:"protein_sequence"`
 }
 
+type Publication struct {
+	ID       string                `json:"id"`
+	Doi      *string               `json:"doi,omitempty"`
+	Title    string                `json:"title"`
+	Abstract string                `json:"abstract"`
+	Journal  string                `json:"journal"`
+	PubDate  *time.Time            `json:"pub_date,omitempty"`
+	Volume   *string               `json:"volume,omitempty"`
+	Pages    *string               `json:"pages,omitempty"`
+	Issn     *string               `json:"issn,omitempty"`
+	PubType  string                `json:"pub_type"`
+	Source   string                `json:"source"`
+	Issue    *string               `json:"issue,omitempty"`
+	Status   *string               `json:"status,omitempty"`
+	Authors  []*publication.Author `json:"authors"`
+}
+
+func (Publication) IsBasePublication() {}
+
 type PublicationWithGene struct {
 	RelatedGenes []*Gene               `json:"related_genes"`
 	ID           string                `json:"id"`
-	Doi          *string               `json:"doi"`
+	Doi          *string               `json:"doi,omitempty"`
 	Title        string                `json:"title"`
 	Abstract     string                `json:"abstract"`
 	Journal      string                `json:"journal"`
-	PubDate      *time.Time            `json:"pub_date"`
-	Volume       *string               `json:"volume"`
-	Pages        *string               `json:"pages"`
-	Issn         *string               `json:"issn"`
+	PubDate      *time.Time            `json:"pub_date,omitempty"`
+	Volume       *string               `json:"volume,omitempty"`
+	Pages        *string               `json:"pages,omitempty"`
+	Issn         *string               `json:"issn,omitempty"`
 	PubType      string                `json:"pub_type"`
 	Source       string                `json:"source"`
-	Issue        *string               `json:"issue"`
-	Status       *string               `json:"status"`
+	Issue        *string               `json:"issue,omitempty"`
+	Status       *string               `json:"status,omitempty"`
 	Authors      []*publication.Author `json:"authors"`
 }
 
 func (PublicationWithGene) IsBasePublication() {}
 
 type StrainListFilter struct {
-	Label      *string    `json:"label"`
-	Summary    *string    `json:"summary"`
-	ID         *string    `json:"id"`
-	InStock    *bool      `json:"in_stock"`
+	Label      *string    `json:"label,omitempty"`
+	Summary    *string    `json:"summary,omitempty"`
+	ID         *string    `json:"id,omitempty"`
+	InStock    *bool      `json:"in_stock,omitempty"`
 	StrainType StrainType `json:"strain_type"`
 }
 
@@ -334,7 +365,7 @@ type StrainListWithCursor struct {
 	Strains        []*Strain `json:"strains"`
 	NextCursor     int       `json:"nextCursor"`
 	PreviousCursor int       `json:"previousCursor"`
-	Limit          *int      `json:"limit"`
+	Limit          *int      `json:"limit,omitempty"`
 	TotalCount     int       `json:"totalCount"`
 }
 
@@ -345,13 +376,13 @@ type UpdateContentInput struct {
 }
 
 type UpdateOrderInput struct {
-	Courier          *string     `json:"courier"`
-	CourierAccount   *string     `json:"courier_account"`
-	Comments         *string     `json:"comments"`
-	Payment          *string     `json:"payment"`
-	PurchaseOrderNum *string     `json:"purchase_order_num"`
-	Status           *StatusEnum `json:"status"`
-	Items            []string    `json:"items"`
+	Courier          *string     `json:"courier,omitempty"`
+	CourierAccount   *string     `json:"courier_account,omitempty"`
+	Comments         *string     `json:"comments,omitempty"`
+	Payment          *string     `json:"payment,omitempty"`
+	PurchaseOrderNum *string     `json:"purchase_order_num,omitempty"`
+	Status           *StatusEnum `json:"status,omitempty"`
+	Items            []string    `json:"items,omitempty"`
 }
 
 type UpdatePermissionInput struct {
@@ -362,18 +393,18 @@ type UpdatePermissionInput struct {
 
 type UpdatePlasmidInput struct {
 	UpdatedBy        string   `json:"updated_by"`
-	Summary          *string  `json:"summary"`
-	EditableSummary  *string  `json:"editable_summary"`
-	Depositor        *string  `json:"depositor"`
-	Genes            []string `json:"genes"`
-	Dbxrefs          []string `json:"dbxrefs"`
-	Publications     []string `json:"publications"`
-	Name             *string  `json:"name"`
-	ImageMap         *string  `json:"image_map"`
-	Sequence         *string  `json:"sequence"`
-	InStock          *bool    `json:"in_stock"`
-	Keywords         []string `json:"keywords"`
-	GenbankAccession *string  `json:"genbank_accession"`
+	Summary          *string  `json:"summary,omitempty"`
+	EditableSummary  *string  `json:"editable_summary,omitempty"`
+	Depositor        *string  `json:"depositor,omitempty"`
+	Genes            []string `json:"genes,omitempty"`
+	Dbxrefs          []string `json:"dbxrefs,omitempty"`
+	Publications     []string `json:"publications,omitempty"`
+	Name             *string  `json:"name,omitempty"`
+	ImageMap         *string  `json:"image_map,omitempty"`
+	Sequence         *string  `json:"sequence,omitempty"`
+	InStock          *bool    `json:"in_stock,omitempty"`
+	Keywords         []string `json:"keywords,omitempty"`
+	GenbankAccession *string  `json:"genbank_accession,omitempty"`
 }
 
 type UpdateRoleInput struct {
@@ -383,45 +414,45 @@ type UpdateRoleInput struct {
 
 type UpdateStrainInput struct {
 	UpdatedBy           string   `json:"updated_by"`
-	Summary             *string  `json:"summary"`
-	EditableSummary     *string  `json:"editable_summary"`
-	Depositor           *string  `json:"depositor"`
-	Genes               []string `json:"genes"`
-	Dbxrefs             []string `json:"dbxrefs"`
-	Publications        []string `json:"publications"`
-	SystematicName      *string  `json:"systematic_name"`
-	Label               *string  `json:"label"`
-	Species             *string  `json:"species"`
-	Plasmid             *string  `json:"plasmid"`
-	Parent              *string  `json:"parent"`
-	Names               []string `json:"names"`
-	InStock             *bool    `json:"in_stock"`
-	Phenotypes          []string `json:"phenotypes"`
-	GeneticModification *string  `json:"genetic_modification"`
-	MutagenesisMethod   *string  `json:"mutagenesis_method"`
-	Characteristics     []string `json:"characteristics"`
-	Genotypes           []string `json:"genotypes"`
+	Summary             *string  `json:"summary,omitempty"`
+	EditableSummary     *string  `json:"editable_summary,omitempty"`
+	Depositor           *string  `json:"depositor,omitempty"`
+	Genes               []string `json:"genes,omitempty"`
+	Dbxrefs             []string `json:"dbxrefs,omitempty"`
+	Publications        []string `json:"publications,omitempty"`
+	SystematicName      *string  `json:"systematic_name,omitempty"`
+	Label               *string  `json:"label,omitempty"`
+	Species             *string  `json:"species,omitempty"`
+	Plasmid             *string  `json:"plasmid,omitempty"`
+	Parent              *string  `json:"parent,omitempty"`
+	Names               []string `json:"names,omitempty"`
+	InStock             *bool    `json:"in_stock,omitempty"`
+	Phenotypes          []string `json:"phenotypes,omitempty"`
+	GeneticModification *string  `json:"genetic_modification,omitempty"`
+	MutagenesisMethod   *string  `json:"mutagenesis_method,omitempty"`
+	Characteristics     []string `json:"characteristics,omitempty"`
+	Genotypes           []string `json:"genotypes,omitempty"`
 }
 
 type UpdateUserInput struct {
-	FirstName     *string `json:"first_name"`
-	LastName      *string `json:"last_name"`
-	Organization  *string `json:"organization"`
-	GroupName     *string `json:"group_name"`
-	FirstAddress  *string `json:"first_address"`
-	SecondAddress *string `json:"second_address"`
-	City          *string `json:"city"`
-	State         *string `json:"state"`
-	Zipcode       *string `json:"zipcode"`
-	Country       *string `json:"country"`
-	Phone         *string `json:"phone"`
-	IsActive      *bool   `json:"is_active"`
+	FirstName     *string `json:"first_name,omitempty"`
+	LastName      *string `json:"last_name,omitempty"`
+	Organization  *string `json:"organization,omitempty"`
+	GroupName     *string `json:"group_name,omitempty"`
+	FirstAddress  *string `json:"first_address,omitempty"`
+	SecondAddress *string `json:"second_address,omitempty"`
+	City          *string `json:"city,omitempty"`
+	State         *string `json:"state,omitempty"`
+	Zipcode       *string `json:"zipcode,omitempty"`
+	Country       *string `json:"country,omitempty"`
+	Phone         *string `json:"phone,omitempty"`
+	IsActive      *bool   `json:"is_active,omitempty"`
 }
 
 type UserList struct {
 	Users      []*user.User `json:"users"`
-	PageNum    *string      `json:"pageNum"`
-	PageSize   *string      `json:"pageSize"`
+	PageNum    *string      `json:"pageNum,omitempty"`
+	PageSize   *string      `json:"pageSize,omitempty"`
 	TotalCount int          `json:"totalCount"`
 }
 
