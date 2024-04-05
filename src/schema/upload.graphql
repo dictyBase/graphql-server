@@ -1,0 +1,13 @@
+"The `Upload` scalar type represents a multipart file upload."
+scalar Upload
+
+"The `ImageFile` type, represents the response of uploading an image file."
+type ImageFile {
+    url: String!
+}
+
+"The `UploadFile` type, represents the request for uploading a image file with a certain payload."
+input FileToUpload {
+    id: Int!
+    file: Upload!
+}
