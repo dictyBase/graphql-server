@@ -22,9 +22,6 @@ import (
 type AuthorResolver interface {
 	Rank(ctx context.Context, obj *publication.Author) (*string, error)
 }
-type PublicationResolver interface {
-	Authors(ctx context.Context, obj *models.Publication) ([]*publication.Author, error)
-}
 
 // endregion ************************** generated!.gotpl **************************
 
@@ -890,7 +887,7 @@ func (ec *executionContext) _Publication_authors(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Publication().Authors(rctx, obj)
+		return obj.Authors, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -911,8 +908,8 @@ func (ec *executionContext) fieldContext_Publication_authors(ctx context.Context
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "last_name":
@@ -1739,7 +1736,7 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Publication_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "doi":
 
@@ -1750,21 +1747,21 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Publication_title(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "abstract":
 
 			out.Values[i] = ec._Publication_abstract(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "journal":
 
 			out.Values[i] = ec._Publication_journal(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "pub_date":
 
@@ -1787,14 +1784,14 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Publication_pub_type(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "source":
 
 			out.Values[i] = ec._Publication_source(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "issue":
 
@@ -1805,25 +1802,12 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Publication_status(ctx, field, obj)
 
 		case "authors":
-			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Publication_authors(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
+			out.Values[i] = ec._Publication_authors(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
 			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1996,20 +1980,6 @@ func (ec *executionContext) marshalNAuthor2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑge
 		return graphql.Null
 	}
 	return ec._Author(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNNumberOfPublicationsWithGene2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐNumberOfPublicationsWithGene(ctx context.Context, sel ast.SelectionSet, v models.NumberOfPublicationsWithGene) graphql.Marshaler {
-	return ec._NumberOfPublicationsWithGene(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNNumberOfPublicationsWithGene2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐNumberOfPublicationsWithGene(ctx context.Context, sel ast.SelectionSet, v *models.NumberOfPublicationsWithGene) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._NumberOfPublicationsWithGene(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPublication2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublication(ctx context.Context, sel ast.SelectionSet, v *models.Publication) graphql.Marshaler {
