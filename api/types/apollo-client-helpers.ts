@@ -141,6 +141,10 @@ export type IdentityFieldPolicy = {
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	user_id?: FieldPolicy<any> | FieldReadFunction<any>
 };
+export type ImageFileKeySpecifier = ('url' | ImageFileKeySpecifier)[];
+export type ImageFileFieldPolicy = {
+	url?: FieldPolicy<any> | FieldReadFunction<any>
+};
 export type LinksKeySpecifier = ('colleagues' | 'expression' | 'ext_resources' | LinksKeySpecifier)[];
 export type LinksFieldPolicy = {
 	colleagues?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -151,7 +155,7 @@ export type LogoutKeySpecifier = ('success' | LogoutKeySpecifier)[];
 export type LogoutFieldPolicy = {
 	success?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type MutationKeySpecifier = ('createContent' | 'createOrder' | 'createPermission' | 'createPlasmid' | 'createRole' | 'createRolePermissionRelationship' | 'createStrain' | 'createUser' | 'createUserRoleRelationship' | 'deleteContent' | 'deletePermission' | 'deleteRole' | 'deleteStock' | 'deleteUser' | 'login' | 'logout' | 'updateContent' | 'updateOrder' | 'updatePermission' | 'updatePlasmid' | 'updateRole' | 'updateStrain' | 'updateUser' | MutationKeySpecifier)[];
+export type MutationKeySpecifier = ('createContent' | 'createOrder' | 'createPermission' | 'createPlasmid' | 'createRole' | 'createRolePermissionRelationship' | 'createStrain' | 'createUser' | 'createUserRoleRelationship' | 'deleteContent' | 'deletePermission' | 'deleteRole' | 'deleteStock' | 'deleteUser' | 'login' | 'logout' | 'updateContent' | 'updateOrder' | 'updatePermission' | 'updatePlasmid' | 'updateRole' | 'updateStrain' | 'updateUser' | 'uploadFile' | MutationKeySpecifier)[];
 export type MutationFieldPolicy = {
 	createContent?: FieldPolicy<any> | FieldReadFunction<any>,
 	createOrder?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -175,7 +179,8 @@ export type MutationFieldPolicy = {
 	updatePlasmid?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateRole?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateStrain?: FieldPolicy<any> | FieldReadFunction<any>,
-	updateUser?: FieldPolicy<any> | FieldReadFunction<any>
+	updateUser?: FieldPolicy<any> | FieldReadFunction<any>,
+	uploadFile?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type NameWithLinkKeySpecifier = ('link' | 'name' | NameWithLinkKeySpecifier)[];
 export type NameWithLinkFieldPolicy = {
@@ -332,26 +337,15 @@ export type PublicationWithGeneFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	volume?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('allOrthologs' | 'allPublications' | 'allStrains' | 'content' | 'contentBySlug' | 'gene' | 'generalInformation' | 'getAssociatedSequnces' | 'getLinks' | 'getProteinInformation' | 'getRefreshToken' | 'listGeneProductInfo' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listRecentGenes' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStrains' | 'listStrainsWithAnnotation' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneOntologyAnnotation' | 'listOrders' | 'listPermissions' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStrains' | 'listStrainsWithAnnotation' | 'listUsers' | 'order' | 'permission' | 'plasmid' | 'publication' | 'role' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
-	allOrthologs?: FieldPolicy<any> | FieldReadFunction<any>,
-	allPublications?: FieldPolicy<any> | FieldReadFunction<any>,
-	allStrains?: FieldPolicy<any> | FieldReadFunction<any>,
 	content?: FieldPolicy<any> | FieldReadFunction<any>,
 	contentBySlug?: FieldPolicy<any> | FieldReadFunction<any>,
-	gene?: FieldPolicy<any> | FieldReadFunction<any>,
-	generalInformation?: FieldPolicy<any> | FieldReadFunction<any>,
-	getAssociatedSequnces?: FieldPolicy<any> | FieldReadFunction<any>,
-	getLinks?: FieldPolicy<any> | FieldReadFunction<any>,
-	getProteinInformation?: FieldPolicy<any> | FieldReadFunction<any>,
-	getRefreshToken?: FieldPolicy<any> | FieldReadFunction<any>,
-	listGeneProductInfo?: FieldPolicy<any> | FieldReadFunction<any>,
+	geneOntologyAnnotation?: FieldPolicy<any> | FieldReadFunction<any>,
 	listOrders?: FieldPolicy<any> | FieldReadFunction<any>,
-	listOrganisms?: FieldPolicy<any> | FieldReadFunction<any>,
 	listPermissions?: FieldPolicy<any> | FieldReadFunction<any>,
 	listPlasmids?: FieldPolicy<any> | FieldReadFunction<any>,
 	listPlasmidsWithAnnotation?: FieldPolicy<any> | FieldReadFunction<any>,
-	listRecentGenes?: FieldPolicy<any> | FieldReadFunction<any>,
 	listRecentPlasmids?: FieldPolicy<any> | FieldReadFunction<any>,
 	listRecentPublications?: FieldPolicy<any> | FieldReadFunction<any>,
 	listRecentStrains?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -360,7 +354,6 @@ export type QueryFieldPolicy = {
 	listStrainsWithAnnotation?: FieldPolicy<any> | FieldReadFunction<any>,
 	listUsers?: FieldPolicy<any> | FieldReadFunction<any>,
 	order?: FieldPolicy<any> | FieldReadFunction<any>,
-	organism?: FieldPolicy<any> | FieldReadFunction<any>,
 	permission?: FieldPolicy<any> | FieldReadFunction<any>,
 	plasmid?: FieldPolicy<any> | FieldReadFunction<any>,
 	publication?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -536,6 +529,10 @@ export type StrictTypedTypePolicies = {
 	Identity?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | IdentityKeySpecifier | (() => undefined | IdentityKeySpecifier),
 		fields?: IdentityFieldPolicy,
+	},
+	ImageFile?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | ImageFileKeySpecifier | (() => undefined | ImageFileKeySpecifier),
+		fields?: ImageFileFieldPolicy,
 	},
 	Links?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | LinksKeySpecifier | (() => undefined | LinksKeySpecifier),

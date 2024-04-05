@@ -27,4 +27,5 @@ type Mutation {
   createPermission(input: CreatePermissionInput): Permission
   updatePermission(id: ID!, input: UpdatePermissionInput): Permission
   deletePermission(id: ID!): DeletePermission
+  uploadFile(file: Upload! ): ImageFile!
 }
