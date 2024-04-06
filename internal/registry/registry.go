@@ -10,6 +10,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	"github.com/emirpasic/gods/maps/hashmap"
+	minio "github.com/minio/minio-go/v7"
 	"google.golang.org/grpc"
 )
 
@@ -116,6 +117,19 @@ func (coll *collection) AddAPIConnection(key string, conn *grpc.ClientConn) {
 // AddRepository adds a new repository client to the hashmap
 func (coll *collection) AddRepository(key string, st repository.Repository) {
 	coll.connMap.Put(key, st)
+}
+
+func (coll *collection) AddS3Client(key string, s3c *minio.Client) {
+	coll.connMap.Put(key, s3c)
+}
+
+func (coll *collection) GetS3Client(key string) *minio.Client {
+	val, ok := coll.connMap.Get(key)
+	if !ok {
+		panic("could not get minio client")
+	}
+	client, _ := val.(*minio.Client)
+	return client
 }
 
 func (coll *collection) GetAuthClient(key string) authentication.LogtoClient {
