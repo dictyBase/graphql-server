@@ -39,6 +39,8 @@ const (
 	GenoTag                 = "genotype"
 	SynTag                  = "synonym"
 	EmptyValue              = "novalue"
+	S3Bucket                = "s3bucket"
+	S3BucketPath            = "s3bucket_path"
 )
 
 const (
@@ -82,6 +84,8 @@ type Registry interface {
 	GetAnnotationClient(key string) annotation.TaggedAnnotationServiceClient
 	GetIdentityClient(key string) identity.IdentityServiceClient
 	GetRedisRepository(key string) repository.Repository
+	AddRecord(string, string)
+	GetRecord(string) string
 }
 
 // NewRegistry constructs a hashmap for our grpc clients
@@ -100,6 +104,19 @@ func (coll *collection) ServiceMap() map[string]string {
 		"user":       USER,
 		"content":    CONTENT,
 	}
+}
+
+func (coll *collection) AddRecord(key, value string) {
+	coll.connMap.Put(key, value)
+}
+
+func (coll *collection) GetRecord(key string) string {
+	val, ok := coll.connMap.Get(key)
+	if !ok {
+		panic("could not get the value using the given key")
+	}
+	output, _ := val.(string)
+	return output
 }
 
 func (coll *collection) AddAuthClient(
