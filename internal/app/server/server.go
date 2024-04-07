@@ -164,6 +164,8 @@ func setupS3Client(ctx *cli.Context, nreg registry.Registry) error {
 		return fmt.Errorf("error in creating minio client %s", err)
 	}
 	nreg.AddS3Client(registry.S3CLIENT, client)
+	nreg.AddRecord(registry.S3Bucket,ctx.String("s3-bucket"))
+	nreg.AddRecord(registry.S3BucketPath,ctx.String("s3-bucket-path"))
 	return nil
 }
 
