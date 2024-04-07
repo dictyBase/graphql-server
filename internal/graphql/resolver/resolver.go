@@ -36,9 +36,9 @@ type QueryResolver struct {
 func NewResolver(
 	nr registry.Registry,
 	dl dataloader.Retriever,
-	l *logrus.Entry,
+	logger *logrus.Entry,
 ) *Resolver {
-	return &Resolver{Registry: nr, Dataloaders: dl, Logger: l}
+	return &Resolver{Registry: nr, Dataloaders: dl, Logger: logger}
 }
 
 func (rrs *Resolver) Mutation() generated.MutationResolver {
@@ -72,11 +72,7 @@ func (rrs *Resolver) Permission() generated.PermissionResolver {
 		Logger: rrs.Logger,
 	}
 }
-func (rrs *Resolver) Publication() generated.PublicationResolver {
-	return &publication.PublicationResolver{
-		Logger: rrs.Logger,
-	}
-}
+
 func (rrs *Resolver) Author() generated.AuthorResolver {
 	return &publication.AuthorResolver{
 		Logger: rrs.Logger,
