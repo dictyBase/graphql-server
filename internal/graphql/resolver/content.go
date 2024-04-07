@@ -75,11 +75,13 @@ func (mrs *MutationResolver) UpdateContent(
 	}
 	cid, err := strconv.ParseInt(input.ID, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf(
+		perr := fmt.Errorf(
 			"error in parsing string %s to int %s",
 			input.ID,
 			err,
 		)
+		errorutils.AddGQLError(ctx, perr)
+		return nil, perr
 	}
 	cnt, err := mrs.GetContentClient(registry.CONTENT).
 		UpdateContent(ctx, &pb.UpdateContentRequest{
