@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/dictyBase/graphql-server/internal/app/middleware"
@@ -81,6 +83,9 @@ func setupServices(cltx *cli.Context, nreg registry.Registry) error {
 	if err := initRedis(cltx, nreg); err != nil {
 		return err
 	}
+	if err := setupS3Client(cltx, nreg); err != nil {
+		return err
+	}
 	addEndpoints(cltx, nreg)
 
 	return nil
@@ -137,6 +142,28 @@ func addEndpoints(ctx *cli.Context, nreg registry.Registry) {
 			TokenCache:  nreg.GetRedisRepository(registry.REDISREPO),
 		}),
 	)
+}
+
+func setupS3Client(ctx *cli.Context, nreg registry.Registry) error {
+	client, err := minio.New(
+		fmt.Sprintf(
+			"%s:%s",
+			ctx.String("s3-server"),
+			ctx.String("s3-server-port"),
+		),
+		&minio.Options{
+			Creds: credentials.NewStaticV4(
+				ctx.String("access-key"),
+				ctx.String("secret-key"),
+				"",
+			),
+			Secure: false,
+		})
+	if err != nil {
+		return fmt.Errorf("error in creating minio client %s", err)
+	}
+	nreg.AddS3Client(registry.S3CLIENT, client)
+	return nil
 }
 
 func initRedis(ctx *cli.Context, nreg registry.Registry) error {
