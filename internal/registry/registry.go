@@ -54,6 +54,7 @@ const (
 	IDENTITY    = "identity"
 	ORGANISM    = "organism"
 	REDISREPO   = "redis"
+	S3CLIENT    = "s3client"
 )
 
 type collection struct {
@@ -66,6 +67,8 @@ type Registry interface {
 	AddAPIConnection(key string, conn *grpc.ClientConn)
 	AddRepository(key string, st repository.Repository)
 	AddAuthClient(key string, auth authentication.LogtoClient)
+	AddS3Client(key string, client *minio.Client)
+	GetS3Client(key string) *minio.Client
 	GetAuthClient(key string) authentication.LogtoClient
 	GetAPIConnection(key string) (conn *grpc.ClientConn)
 	GetAPIEndpoint(key string) string
