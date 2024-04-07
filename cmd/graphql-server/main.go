@@ -229,6 +229,12 @@ func nonGRPCFlags() []cli.Flag {
 				"master/downloads/organisms-with-citations.staging.json",
 			),
 		},
+		cli.StringFlag{
+			Name:   "s3-storage-api",
+			EnvVar: "S3_STORAGE_ENDPOINT",
+			Usage:  "s3 endpoint for uploading files",
+			Required: true,
+		},
 	}
 }
 
