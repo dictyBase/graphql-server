@@ -92,7 +92,7 @@ func (ec *executionContext) field_Query_content_args(ctx context.Context, rawArg
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listGeneProductInfo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_geneOntologyAnnotation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -212,21 +212,6 @@ func (ec *executionContext) field_Query_listPlasmids_args(ctx context.Context, r
 		}
 	}
 	args["filter"] = arg2
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_listRecentGenes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["limit"] = arg0
 	return args, nil
 }
 
@@ -398,21 +383,6 @@ func (ec *executionContext) field_Query_order_args(ctx context.Context, rawArgs 
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_organism_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["taxon_id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taxon_id"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["taxon_id"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_permission_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -526,8 +496,8 @@ func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs m
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Query_getRefreshToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getRefreshToken(ctx, field)
+func (ec *executionContext) _Query_geneOntologyAnnotation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_geneOntologyAnnotation(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -540,7 +510,7 @@ func (ec *executionContext) _Query_getRefreshToken(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetRefreshToken(rctx, fc.Args["token"].(string))
+		return ec.resolvers.Query().GeneOntologyAnnotation(rctx, fc.Args["gene"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -549,12 +519,12 @@ func (ec *executionContext) _Query_getRefreshToken(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*auth.Auth)
+	res := resTmp.([]*models.GOAnnotation)
 	fc.Result = res
-	return ec.marshalOAuth2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋauthᚐAuth(ctx, field.Selections, res)
+	return ec.marshalOGOAnnotation2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGOAnnotationᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getRefreshToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_geneOntologyAnnotation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -562,14 +532,28 @@ func (ec *executionContext) fieldContext_Query_getRefreshToken(ctx context.Conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "token":
-				return ec.fieldContext_Auth_token(ctx, field)
-			case "user":
-				return ec.fieldContext_Auth_user(ctx, field)
-			case "identity":
-				return ec.fieldContext_Auth_identity(ctx, field)
+			case "id":
+				return ec.fieldContext_GOAnnotation_id(ctx, field)
+			case "type":
+				return ec.fieldContext_GOAnnotation_type(ctx, field)
+			case "date":
+				return ec.fieldContext_GOAnnotation_date(ctx, field)
+			case "evidence_code":
+				return ec.fieldContext_GOAnnotation_evidence_code(ctx, field)
+			case "go_term":
+				return ec.fieldContext_GOAnnotation_go_term(ctx, field)
+			case "qualifier":
+				return ec.fieldContext_GOAnnotation_qualifier(ctx, field)
+			case "publication":
+				return ec.fieldContext_GOAnnotation_publication(ctx, field)
+			case "with":
+				return ec.fieldContext_GOAnnotation_with(ctx, field)
+			case "extensions":
+				return ec.fieldContext_GOAnnotation_extensions(ctx, field)
+			case "assigned_by":
+				return ec.fieldContext_GOAnnotation_assigned_by(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Auth", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type GOAnnotation", field.Name)
 		},
 	}
 	defer func() {
@@ -579,7 +563,7 @@ func (ec *executionContext) fieldContext_Query_getRefreshToken(ctx context.Conte
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getRefreshToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_geneOntologyAnnotation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
