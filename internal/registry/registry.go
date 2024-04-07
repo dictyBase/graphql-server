@@ -55,6 +55,7 @@ const (
 	ORGANISM    = "organism"
 	REDISREPO   = "redis"
 	S3CLIENT    = "s3client"
+	S3STORAGE   = "s3storage"
 )
 
 type collection struct {
