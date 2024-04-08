@@ -15,10 +15,7 @@ import (
 )
 
 var (
-	contentCreatorScope = "write:content"
-	contentEditorScope  = "edit:content"
-	contentDeleteScope  = "delete:content"
-	noncharReg          = regexp.MustCompile("[^a-z0-9]+")
+	noncharReg = regexp.MustCompile("[^a-z0-9]+")
 )
 
 func Slugify(name string) string {
@@ -32,7 +29,7 @@ func (mrs *MutationResolver) CreateContent(
 	ctx context.Context,
 	input *models.CreateContentInput,
 ) (*pb.Content, error) {
-	if err := authentication.ValidateContent(ctx, "scope", contentCreatorScope); err != nil {
+	if err := authentication.ValidateContent(ctx, "scope", authentication.ContentCreatorScope); err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
 		return nil, err
@@ -68,7 +65,7 @@ func (mrs *MutationResolver) UpdateContent(
 	ctx context.Context,
 	input *models.UpdateContentInput,
 ) (*pb.Content, error) {
-	if err := authentication.ValidateContent(ctx, "scope", contentEditorScope); err != nil {
+	if err := authentication.ValidateContent(ctx, "scope", authentication.ContentEditorScope); err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
 		return nil, err
@@ -115,7 +112,7 @@ func (mrs *MutationResolver) DeleteContent(
 	ctx context.Context,
 	id string,
 ) (*models.DeleteContent, error) {
-	if err := authentication.ValidateContent(ctx, "scope", contentDeleteScope); err != nil {
+	if err := authentication.ValidateContent(ctx, "scope", authentication.ContentDeleteScope); err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
 		return nil, err
