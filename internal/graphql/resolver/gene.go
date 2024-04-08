@@ -8,6 +8,13 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 )
 
+func (qrs *QueryResolver) GeneOntologyAnnotation(
+	ctx context.Context,
+	gene string,
+) ([]*models.GOAnnotation, error) {
+	return []*models.GOAnnotation{}, nil
+}
+
 func (qrs *QueryResolver) Gene(
 	ctx context.Context,
 	gene string,
