@@ -230,9 +230,9 @@ func nonGRPCFlags() []cli.Flag {
 			),
 		},
 		cli.StringFlag{
-			Name:   "s3-storage-api",
-			EnvVar: "S3_STORAGE_ENDPOINT",
-			Usage:  "s3 endpoint for uploading files",
+			Name:     "s3-storage-api",
+			EnvVar:   "S3_STORAGE_ENDPOINT",
+			Usage:    "s3 endpoint for uploading files",
 			Required: true,
 		},
 	}
