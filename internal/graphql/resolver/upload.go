@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/dictyBase/graphql-server/internal/authentication"
+
 	"github.com/minio/minio-go/v7"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -18,6 +20,11 @@ func (mrs *MutationResolver) UploadFile(
 	ctx context.Context,
 	file graphql.Upload,
 ) (*models.ImageFile, error) {
+	if err := authentication.ValidateContent(ctx, "scope", authentication.ContentCreatorScope); err != nil {
+		errorutils.AddGQLError(ctx, err)
+		mrs.Logger.Error(err)
+		return nil, err
+	}
 	rndId, err := uuid.NewRandom()
 	if err != nil {
 		iderr := fmt.Errorf("error in generating random uuid %s", err)
