@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -111,16 +110,9 @@ func connectToGrpcService(
 ) (*grpc.ClientConn, error) {
 	host := ctx.String(fmt.Sprintf("%s-grpc-host", key))
 	port := ctx.String(fmt.Sprintf("%s-grpc-port", key))
-
-	grpcCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-	conn, err := grpc.DialContext(
-		grpcCtx,
+	conn, err := grpc.NewClient(
 		fmt.Sprintf("%s:%s", host, port),
-		[]grpc.DialOption{
-			grpc.WithTransportCredentials(insecure.NewCredentials()),
-			grpc.WithBlock(),
-		}...,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("cannot connect to grpc microservice %s", err)
@@ -164,8 +156,8 @@ func setupS3Client(ctx *cli.Context, nreg registry.Registry) error {
 		return fmt.Errorf("error in creating minio client %s", err)
 	}
 	nreg.AddS3Client(registry.S3CLIENT, client)
-	nreg.AddRecord(registry.S3Bucket,ctx.String("s3-bucket"))
-	nreg.AddRecord(registry.S3BucketPath,ctx.String("s3-bucket-path"))
+	nreg.AddRecord(registry.S3Bucket, ctx.String("s3-bucket"))
+	nreg.AddRecord(registry.S3BucketPath, ctx.String("s3-bucket-path"))
 	return nil
 }
 
