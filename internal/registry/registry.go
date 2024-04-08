@@ -90,8 +90,7 @@ type Registry interface {
 
 // NewRegistry constructs a hashmap for our grpc clients
 func NewRegistry() Registry {
-	m := hashmap.New()
-	return &collection{connMap: m}
+	return &collection{connMap: hashmap.New()}
 }
 
 func (coll *collection) ServiceMap() map[string]string {
