@@ -25,7 +25,7 @@ func (mrs *MutationResolver) UploadFile(
 		mrs.Logger.Error(err)
 		return nil, err
 	}
-	rndId, err := uuid.NewRandom()
+	rndID, err := uuid.NewRandom()
 	if err != nil {
 		iderr := fmt.Errorf("error in generating random uuid %s", err)
 		errorutils.AddGQLError(ctx, iderr)
@@ -36,7 +36,7 @@ func (mrs *MutationResolver) UploadFile(
 		"%s/%s/%s",
 		mrs.Registry.GetRecord(registry.S3BucketPath),
 		time.Now().Format(time.DateOnly),
-		rndId.String(),
+		rndID.String(),
 	)
 	uploadInfo, err := mrs.Registry.GetS3Client(registry.S3CLIENT).PutObject(
 		ctx, bucket, fileInBucket, file.File, file.Size, minio.PutObjectOptions{},
