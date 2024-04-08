@@ -14,6 +14,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/repository"
 	"github.com/dictyBase/graphql-server/internal/repository/redis"
 	"github.com/emirpasic/gods/maps/hashmap"
+	minio "github.com/minio/minio-go/v7"
 	"google.golang.org/grpc"
 )
 
@@ -29,6 +30,10 @@ func (mr *MockRegistry) AddAuthClient(
 
 func (mr *MockRegistry) AddAPIEndpoint(key, endpoint string) {
 	mr.ConnMap.Put(key, endpoint)
+}
+
+func (mr *MockRegistry) GetS3Client(key string) *minio.Client {
+	return &minio.Client{}
 }
 
 func (mr *MockRegistry) AddAPIConnection(key string, conn *grpc.ClientConn) {
@@ -93,10 +98,27 @@ func (mr *MockRegistry) GetIdentityClient(
 	return MockedIdentityClient()
 }
 
+func (mr *MockRegistry) AddRecord(key, value string) {
+	mr.ConnMap.Put(key, value)
+}
+
+func (mr *MockRegistry) GetRecord(key string) string {
+	val, ok := mr.ConnMap.Get(key)
+	if !ok {
+		panic("could not get the value using the given key")
+	}
+	output, _ := val.(string)
+	return output
+}
+
 func (mr MockRegistry) GetAPIEndpoint(key string) string {
 	v, _ := mr.ConnMap.Get(key)
 	endpoint, _ := v.(string)
 	return endpoint
+}
+
+func (mr *MockRegistry) AddS3Client(key string, s3c *minio.Client) {
+	mr.ConnMap.Put(key, s3c)
 }
 
 func (mr MockRegistry) GetRedisRepository(key string) repository.Repository {
