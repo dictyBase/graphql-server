@@ -1,9 +1,10 @@
-run:
-  skip-dirs:
+issues:
+  exclude-dirs:
     - internal/graphql/generated
     - internal/graphql/genresolver
-  skip-files:
-    - ".*_test\\.go$"
+  exclude-files:
+    - _test\.go
+run:
   timeout: 5m
   allow-parallel-runners: true
   # golangci-lint config
