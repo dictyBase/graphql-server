@@ -45,52 +45,10 @@ func getServerFlags() []cli.Flag {
 	f = append(f, dscFlags()...)
 	f = append(f, nonGRPCFlags()...)
 	f = append(f, allowedOriginFlags()...)
-	f = append(f, userFlags()...)
 	f = append(f, authFlags()...)
 	f = append(f, contentFlags()...)
 
 	return append(f, storageFlags()...)
-}
-
-func userFlags() []cli.Flag {
-	return []cli.Flag{
-		cli.StringFlag{
-			Name:     "user-grpc-host",
-			EnvVar:   "USER_API_SERVICE_HOST",
-			Usage:    "user grpc host",
-			Required: true,
-		},
-		cli.StringFlag{
-			Name:     "user-grpc-port",
-			EnvVar:   "USER_API_SERVICE_PORT",
-			Usage:    "user grpc port",
-			Required: true,
-		},
-		cli.StringFlag{
-			Name:     "role-grpc-host",
-			EnvVar:   "ROLE_API_SERVICE_HOST",
-			Usage:    "role grpc host",
-			Required: true,
-		},
-		cli.StringFlag{
-			Name:     "role-grpc-port",
-			EnvVar:   "ROLE_API_SERVICE_PORT",
-			Usage:    "role grpc port",
-			Required: true,
-		},
-		cli.StringFlag{
-			Name:     "permission-grpc-host",
-			EnvVar:   "PERMISSION_API_SERVICE_HOST",
-			Usage:    "permission grpc host",
-			Required: true,
-		},
-		cli.StringFlag{
-			Name:     "permission-grpc-port",
-			EnvVar:   "PERMISSION_API_SERVICE_PORT",
-			Usage:    "permission grpc port",
-			Required: true,
-		},
-	}
 }
 
 func redisFlags() []cli.Flag {
