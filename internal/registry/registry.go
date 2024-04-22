@@ -98,9 +98,6 @@ func (coll *collection) ServiceMap() map[string]string {
 		"stock":      STOCK,
 		"order":      ORDER,
 		"annotation": ANNOTATION,
-		"role":       ROLE,
-		"permission": PERMISSION,
-		"user":       USER,
 		"content":    CONTENT,
 	}
 }
