@@ -97,15 +97,8 @@ func (mrs *MutationResolver) UpdateContent(
 		mrs.Logger.Error(err)
 		return nil, err
 	}
-	ucnt, err := mrs.GetContentClient(registry.CONTENT).
-		GetContent(ctx, &pb.ContentIdRequest{Id: cnt.Data.Id})
-	if err != nil {
-		errorutils.AddGQLError(ctx, err)
-		mrs.Logger.Error(err)
-		return nil, err
-	}
-	mrs.Logger.Debugf("successfully updated content with ID %d", ucnt.Data.Id)
-	return ucnt, nil
+	mrs.Logger.Debugf("successfully updated content with ID %d", cnt.Data.Id)
+	return cnt, nil
 }
 
 func (mrs *MutationResolver) DeleteContent(
