@@ -110,7 +110,7 @@ func (rcs *ContentResolver) UpdatedBy(
 	ctx context.Context,
 	obj *pb.Content,
 ) (*user.User, error) {
-	user, err := rcs.userByEmail(ctx, obj.Data.Attributes.CreatedBy)
+	user, err := rcs.userByEmail(ctx, obj.Data.Attributes.UpdatedBy)
 	if err != nil {
 		return user, fmt.Errorf("error in getting updated by user %s", err)
 	}
