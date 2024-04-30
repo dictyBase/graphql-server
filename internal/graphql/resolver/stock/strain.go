@@ -4,15 +4,17 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"strconv"
+	"strings"
 
 	"github.com/dictyBase/aphgrpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
-	"github.com/dictyBase/go-genproto/dictybaseapis/api/jsonapi"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
+	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
@@ -25,58 +27,58 @@ var doiRgxp = regexp.MustCompile(`^(doi:)?10.\d{4,9}/[-._;()/:A-Z0-9]+$`)
 
 type StrainResolver struct {
 	Client           pb.StockServiceClient
-	UserClient       user.UserServiceClient
+	UserClient       authentication.LogtoClient
 	AnnotationClient annotation.TaggedAnnotationServiceClient
 	Registry         registry.Registry
 	Logger           *logrus.Entry
 }
 
-func (r *StrainResolver) CreatedBy(
+func (srs *StrainResolver) CreatedBy(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*user.User, error) {
-	u, err := getUserByEmail(ctx, r.UserClient, obj.CreatedBy)
+	u, err := srs.userByEmail(ctx, obj.CreatedBy)
 	if err != nil {
-		r.Logger.Error(err)
+		srs.Logger.Error(err)
 		return newUser(), err
 	}
 	return u, nil
 }
 
-func (r *StrainResolver) UpdatedBy(
+func (srs *StrainResolver) UpdatedBy(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*user.User, error) {
-	u, err := getUserByEmail(ctx, r.UserClient, obj.UpdatedBy)
+	u, err := srs.userByEmail(ctx, obj.UpdatedBy)
 	if err != nil {
-		r.Logger.Error(err)
+		srs.Logger.Error(err)
 		return newUser(), err
 	}
 	return u, nil
 }
 
-func (r *StrainResolver) Depositor(
+func (srs *StrainResolver) Depositor(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*user.User, error) {
-	d, err := getUserByEmail(ctx, r.UserClient, obj.Depositor)
+	d, err := srs.userByEmail(ctx, obj.Depositor)
 	if err != nil {
-		r.Logger.Error(err)
+		srs.Logger.Error(err)
 		return newUser(), nil
 	}
 	return d, nil
 }
 
-func (r *StrainResolver) Genes(
+func (srs *StrainResolver) Genes(
 	ctx context.Context,
 	obj *models.Strain,
 ) ([]*models.Gene, error) {
 	gntype := []*models.Gene{}
-	redis := r.Registry.GetRedisRepository(cache.RedisKey)
+	redis := srs.Registry.GetRedisRepository(cache.RedisKey)
 	for _, gne := range obj.Genes {
 		gene, err := cache.GetGeneFromCache(ctx, redis, gne)
 		if err != nil {
-			r.Logger.Error(err)
+			srs.Logger.Error(err)
 			continue
 		}
 		gntype = append(gntype, gene)
@@ -84,11 +86,11 @@ func (r *StrainResolver) Genes(
 	return gntype, nil
 }
 
-func (r *StrainResolver) Publications(
+func (srs *StrainResolver) Publications(
 	ctx context.Context,
 	obj *models.Strain,
 ) ([]*models.Publication, error) {
-	redis := r.Registry.GetRedisRepository(cache.RedisKey)
+	redis := srs.Registry.GetRedisRepository(cache.RedisKey)
 	pubs := make([]*models.Publication, 0)
 	for _, id := range obj.Publications {
 		// GWDI IDs come back as 10.1101/582072 or doi:10.1101/582072
@@ -96,7 +98,7 @@ func (r *StrainResolver) Publications(
 			p, err := fetch.FetchDOI(ctx, fmt.Sprintf("https://doi.org/%s", id))
 			if err != nil {
 				errorutils.AddGQLError(ctx, err)
-				r.Logger.Error(err)
+				srs.Logger.Error(err)
 				return pubs, err
 			}
 			pubs = append(pubs, p)
@@ -104,12 +106,12 @@ func (r *StrainResolver) Publications(
 			p, err := fetch.FetchPublicationFromEuroPMC(
 				ctx,
 				redis,
-				r.Registry.GetAPIEndpoint(registry.PUBLICATION),
+				srs.Registry.GetAPIEndpoint(registry.PUBLICATION),
 				id,
 			)
 			if err != nil {
 				errorutils.AddGQLError(ctx, err)
-				r.Logger.Error(err)
+				srs.Logger.Error(err)
 				return pubs, err
 			}
 			pubs = append(pubs, p)
@@ -118,7 +120,7 @@ func (r *StrainResolver) Publications(
 	return pubs, nil
 }
 
-func (r *StrainResolver) Parent(
+func (srs *StrainResolver) Parent(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*models.Strain, error) {
@@ -126,22 +128,22 @@ func (r *StrainResolver) Parent(
 	if parent == nil {
 		return &models.Strain{}, nil
 	}
-	n, err := r.Client.GetStrain(ctx, &pb.StockId{Id: *parent})
+	n, err := srs.Client.GetStrain(ctx, &pb.StockId{Id: *parent})
 	if err != nil {
-		r.Logger.Debugf("could not find parent strain with ID %s", *parent)
+		srs.Logger.Debugf("could not find parent strain with ID %s", *parent)
 		return nil, nil
 	}
-	r.Logger.Debugf("successfully found parent strain with ID %s", *parent)
+	srs.Logger.Debugf("successfully found parent strain with ID %s", *parent)
 	return ConvertToStrainModel(*parent, n.Data.Attributes), nil
 }
 
-func (r *StrainResolver) Names(
+func (srs *StrainResolver) Names(
 	ctx context.Context,
 	obj *models.Strain,
 ) ([]string, error) {
 	names := make([]string, 0)
 	names = append(names, obj.Names...)
-	n, err := r.AnnotationClient.ListAnnotations(
+	n, err := srs.AnnotationClient.ListAnnotations(
 		ctx,
 		&annotation.ListParameters{
 			Limit: 20,
@@ -154,7 +156,7 @@ func (r *StrainResolver) Names(
 			return names, nil
 		}
 		errorutils.AddGQLError(ctx, err)
-		r.Logger.Error(err)
+		srs.Logger.Error(err)
 		return names, err
 	}
 	for _, syn := range n.Data {
@@ -163,13 +165,13 @@ func (r *StrainResolver) Names(
 	return names, nil
 }
 
-func (r *StrainResolver) Phenotypes(
+func (srs *StrainResolver) Phenotypes(
 	ctx context.Context,
 	obj *models.Strain,
 ) ([]*models.Phenotype, error) {
 	p := []*models.Phenotype{}
 	strainID := obj.ID
-	gc, err := r.AnnotationClient.ListAnnotationGroups(
+	gc, err := srs.AnnotationClient.ListAnnotationGroups(
 		ctx,
 		&annotation.ListGroupParameters{
 			Filter: fmt.Sprintf(
@@ -184,19 +186,19 @@ func (r *StrainResolver) Phenotypes(
 			return p, nil
 		}
 		errorutils.AddGQLError(ctx, err)
-		r.Logger.Error(err)
+		srs.Logger.Error(err)
 		return p, err
 	}
-	p = getPhenotypes(ctx, r, gc.Data)
+	p = getPhenotypes(ctx, srs, gc.Data)
 	return p, nil
 }
 
-func (r *StrainResolver) GeneticModification(
+func (srs *StrainResolver) GeneticModification(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*string, error) {
 	var gm string
-	gc, err := r.AnnotationClient.GetEntryAnnotation(
+	gc, err := srs.AnnotationClient.GetEntryAnnotation(
 		ctx,
 		&annotation.EntryAnnotationRequest{
 			Tag:      registry.MuttypeTag,
@@ -209,19 +211,19 @@ func (r *StrainResolver) GeneticModification(
 			return &gm, nil
 		}
 		errorutils.AddGQLError(ctx, err)
-		r.Logger.Error(err)
+		srs.Logger.Error(err)
 		return &gm, err
 	}
 	gm = gc.Data.Attributes.Value
 	return &gm, nil
 }
 
-func (r *StrainResolver) MutagenesisMethod(
+func (srs *StrainResolver) MutagenesisMethod(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*string, error) {
 	var m string
-	gc, err := r.AnnotationClient.GetEntryAnnotation(
+	gc, err := srs.AnnotationClient.GetEntryAnnotation(
 		ctx,
 		&annotation.EntryAnnotationRequest{
 			Tag:      registry.MutmethodTag,
@@ -234,18 +236,18 @@ func (r *StrainResolver) MutagenesisMethod(
 			return &m, nil
 		}
 		errorutils.AddGQLError(ctx, err)
-		r.Logger.Error(err)
+		srs.Logger.Error(err)
 		return &m, err
 	}
 	m = gc.Data.Attributes.Value
 	return &m, nil
 }
 
-func (r *StrainResolver) SystematicName(
+func (srs *StrainResolver) SystematicName(
 	ctx context.Context,
 	obj *models.Strain,
 ) (string, error) {
-	sn, err := r.AnnotationClient.GetEntryAnnotation(
+	sn, err := srs.AnnotationClient.GetEntryAnnotation(
 		ctx,
 		&annotation.EntryAnnotationRequest{
 			Tag:      registry.SysnameTag,
@@ -258,18 +260,18 @@ func (r *StrainResolver) SystematicName(
 			return "", nil
 		}
 		errorutils.AddGQLError(ctx, err)
-		r.Logger.Error(err)
+		srs.Logger.Error(err)
 		return "", err
 	}
 	return sn.Data.Attributes.Value, nil
 }
 
-func (r *StrainResolver) Characteristics(
+func (srs *StrainResolver) Characteristics(
 	ctx context.Context,
 	obj *models.Strain,
 ) ([]string, error) {
 	pslice := make([]string, 0)
-	cg, err := r.AnnotationClient.ListAnnotations(
+	cg, err := srs.AnnotationClient.ListAnnotations(
 		ctx, &annotation.ListParameters{Filter: fmt.Sprintf(
 			"entry_id===%s;ontology===%s",
 			obj.ID, registry.StrainCharOnto,
@@ -280,7 +282,7 @@ func (r *StrainResolver) Characteristics(
 			return pslice, nil
 		}
 		errorutils.AddGQLError(ctx, err)
-		r.Logger.Error(err)
+		srs.Logger.Error(err)
 		return pslice, err
 	}
 	for _, item := range cg.Data {
@@ -289,12 +291,12 @@ func (r *StrainResolver) Characteristics(
 	return pslice, nil
 }
 
-func (r *StrainResolver) Genotypes(
+func (srs *StrainResolver) Genotypes(
 	ctx context.Context,
 	obj *models.Strain,
 ) ([]string, error) {
 	gntype := make([]string, 0)
-	gl, err := r.AnnotationClient.GetEntryAnnotation(
+	gl, err := srs.AnnotationClient.GetEntryAnnotation(
 		ctx,
 		&annotation.EntryAnnotationRequest{
 			EntryId:  obj.ID,
@@ -306,19 +308,19 @@ func (r *StrainResolver) Genotypes(
 			return gntype, nil
 		}
 		errorutils.AddGQLError(ctx, err)
-		r.Logger.Error(err)
+		srs.Logger.Error(err)
 		return gntype, err
 	}
 	gntype = append(gntype, gl.Data.Attributes.Value)
 	return gntype, nil
 }
 
-func (r *StrainResolver) InStock(
+func (srs *StrainResolver) InStock(
 	ctx context.Context,
 	obj *models.Strain,
 ) (bool, error) {
 	id := obj.ID
-	_, err := r.AnnotationClient.GetEntryAnnotation(
+	_, err := srs.AnnotationClient.GetEntryAnnotation(
 		ctx,
 		&annotation.EntryAnnotationRequest{
 			Tag:      registry.StrainInvTag,
@@ -331,7 +333,7 @@ func (r *StrainResolver) InStock(
 			return false, nil
 		}
 		errorutils.AddGQLError(ctx, err)
-		r.Logger.Errorf("error getting %s from inventory: %v", id, err)
+		srs.Logger.Errorf("error getting %s from inventory: %v", id, err)
 		return false, err
 	}
 	return true, nil
@@ -415,29 +417,6 @@ func sliceConverter[T any](aslice []T) []*T {
 	return pslice
 }
 
-func getUserByEmail(
-	ctx context.Context,
-	uc user.UserServiceClient,
-	email string,
-) (*user.User, error) {
-	u := &user.User{}
-	if email == "" {
-		return u, fmt.Errorf("got an empty email address %s", email)
-	}
-	gntype, err := uc.GetUserByEmail(
-		ctx,
-		&jsonapi.GetEmailRequest{Email: email},
-	)
-	if err != nil {
-		errorutils.AddGQLError(
-			ctx,
-			fmt.Errorf("could not find user with email %s", email),
-		)
-		return u, err
-	}
-	return gntype, nil
-}
-
 func newUser() *user.User {
 	return &user.User{
 		Data: &user.UserData{
@@ -458,4 +437,54 @@ func newUser() *user.User {
 			},
 		},
 	}
+}
+
+func (srs *StrainResolver) userByEmail(
+	ctx context.Context,
+	email string,
+) (*user.User, error) {
+	userResp, err := srs.UserClient.UserWithEmail(email)
+	if err != nil {
+		userErr := fmt.Errorf("unable to retreieve user %s", err)
+		errorutils.AddGQLError(ctx, userErr)
+		srs.Logger.Error(userErr)
+		return nil, userErr
+	}
+	matches := numRgx.FindAllString(userResp.ID, -1)
+	if len(matches) == 0 {
+		nonumErr := fmt.Errorf(
+			"cannot convert user id to number %s",
+			userResp.ID,
+		)
+		errorutils.AddGQLError(ctx, nonumErr)
+		srs.Logger.Error(nonumErr)
+		return nil, nonumErr
+	}
+	userID, err := strconv.ParseInt(strings.Join(matches, ""), 10, 64)
+	if err != nil {
+		parseErr := fmt.Errorf("unable to convert user id to integer %s", err)
+		errorutils.AddGQLError(ctx, parseErr)
+		srs.Logger.Error(parseErr)
+		return nil, parseErr
+	}
+	srs.Logger.Debugf("successfully found user with id %s", email)
+	return &user.User{
+		Data: &user.UserData{
+			Type: "user",
+			Id:   userID,
+			Attributes: &user.UserAttributes{
+				FirstName:    userResp.Username,
+				LastName:     userResp.Name,
+				Email:        userResp.PrimaryEmail,
+				Organization: userResp.CustomData.Institution,
+				FirstAddress: userResp.CustomData.Address,
+				City:         userResp.CustomData.City,
+				State:        userResp.CustomData.State,
+				Zipcode:      userResp.CustomData.Zipcode,
+				Country:      userResp.CustomData.Country,
+				Phone:        userResp.PrimaryPhone,
+				IsActive:     true,
+			},
+		},
+	}, nil
 }
