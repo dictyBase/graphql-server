@@ -2,11 +2,16 @@ package stock
 
 import (
 	"context"
+	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
 
 	"github.com/dictyBase/aphgrpc"
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
+	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
@@ -17,60 +22,62 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+var numRgx = regexp.MustCompile("[0-9]+")
+
 type PlasmidResolver struct {
 	Client           pb.StockServiceClient
-	UserClient       user.UserServiceClient
+	UserClient       authentication.LogtoClient
 	AnnotationClient annotation.TaggedAnnotationServiceClient
 	Registry         registry.Registry
 	Logger           *logrus.Entry
 }
 
-func (r *PlasmidResolver) CreatedBy(
+func (prs *PlasmidResolver) CreatedBy(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (*user.User, error) {
-	u, err := getUserByEmail(ctx, r.UserClient, obj.CreatedBy)
+	u, err := prs.userByEmail(ctx, obj.CreatedBy)
 	if err != nil {
-		r.Logger.Error(err)
+		prs.Logger.Error(err)
 		return newUser(), err
 	}
 	return u, nil
 }
 
-func (r *PlasmidResolver) UpdatedBy(
+func (prs *PlasmidResolver) UpdatedBy(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (*user.User, error) {
-	u, err := getUserByEmail(ctx, r.UserClient, obj.UpdatedBy)
+	u, err := prs.userByEmail(ctx, obj.UpdatedBy)
 	if err != nil {
-		r.Logger.Error(err)
+		prs.Logger.Error(err)
 		return newUser(), err
 	}
 	return u, nil
 }
 
-func (r *PlasmidResolver) Depositor(
+func (prs *PlasmidResolver) Depositor(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (*user.User, error) {
-	u, err := getUserByEmail(ctx, r.UserClient, obj.Depositor)
+	u, err := prs.userByEmail(ctx, obj.Depositor)
 	if err != nil {
-		r.Logger.Error(err)
+		prs.Logger.Error(err)
 		return newUser(), nil
 	}
 	return u, nil
 }
 
-func (r *PlasmidResolver) Genes(
+func (prs *PlasmidResolver) Genes(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) ([]*models.Gene, error) {
 	g := []*models.Gene{}
-	redis := r.Registry.GetRedisRepository(cache.RedisKey)
+	redis := prs.Registry.GetRedisRepository(cache.RedisKey)
 	for _, v := range obj.Genes {
 		gene, err := cache.GetGeneFromCache(ctx, redis, v)
 		if err != nil {
-			r.Logger.Error(err)
+			prs.Logger.Error(err)
 			continue
 		}
 		g = append(g, gene)
@@ -78,17 +85,17 @@ func (r *PlasmidResolver) Genes(
 	return g, nil
 }
 
-func (r *PlasmidResolver) Publications(
+func (prs *PlasmidResolver) Publications(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) ([]*models.Publication, error) {
 	pubs := make([]*models.Publication, 0)
 	for _, id := range obj.Publications {
-		endpoint := r.Registry.GetAPIEndpoint(registry.PUBLICATION)
+		endpoint := prs.Registry.GetAPIEndpoint(registry.PUBLICATION)
 		p, err := fetch.FetchPublication(ctx, endpoint, id)
 		if err != nil {
 			errorutils.AddGQLError(ctx, err)
-			r.Logger.Error(err)
+			prs.Logger.Error(err)
 			return pubs, err
 		}
 		pubs = append(pubs, p)
@@ -96,12 +103,12 @@ func (r *PlasmidResolver) Publications(
 	return pubs, nil
 }
 
-func (r *PlasmidResolver) InStock(
+func (prs *PlasmidResolver) InStock(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (bool, error) {
 	id := obj.ID
-	_, err := r.AnnotationClient.GetEntryAnnotation(
+	_, err := prs.AnnotationClient.GetEntryAnnotation(
 		ctx,
 		&annotation.EntryAnnotationRequest{
 			Tag:      registry.PlasmidInvTag,
@@ -114,7 +121,7 @@ func (r *PlasmidResolver) InStock(
 			return false, nil
 		}
 		errorutils.AddGQLError(ctx, err)
-		r.Logger.Errorf("error getting %s from inventory: %v", id, err)
+		prs.Logger.Errorf("error getting %s from inventory: %v", id, err)
 		return false, err
 	}
 	return true, nil
@@ -123,14 +130,14 @@ func (r *PlasmidResolver) InStock(
 /*
 * Note: none of the below have been implemented yet.
  */
-func (r *PlasmidResolver) Keywords(
+func (prs *PlasmidResolver) Keywords(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) ([]string, error) {
 	return []string{""}, nil
 }
 
-func (r *PlasmidResolver) GenbankAccession(
+func (prs *PlasmidResolver) GenbankAccession(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (*string, error) {
@@ -160,4 +167,54 @@ func ConvertToPlasmidModel(
 			Publications: attr.Publications,
 		},
 	}
+}
+
+func (prs *PlasmidResolver) userByEmail(
+	ctx context.Context,
+	email string,
+) (*user.User, error) {
+	userResp, err := prs.UserClient.UserWithEmail(email)
+	if err != nil {
+		userErr := fmt.Errorf("unable to retreieve user %s", err)
+		errorutils.AddGQLError(ctx, userErr)
+		prs.Logger.Error(userErr)
+		return nil, userErr
+	}
+	matches := numRgx.FindAllString(userResp.ID, -1)
+	if len(matches) == 0 {
+		nonumErr := fmt.Errorf(
+			"cannot convert user id to number %s",
+			userResp.ID,
+		)
+		errorutils.AddGQLError(ctx, nonumErr)
+		prs.Logger.Error(nonumErr)
+		return nil, nonumErr
+	}
+	userID, err := strconv.ParseInt(strings.Join(matches, ""), 10, 64)
+	if err != nil {
+		parseErr := fmt.Errorf("unable to convert user id to integer %s", err)
+		errorutils.AddGQLError(ctx, parseErr)
+		prs.Logger.Error(parseErr)
+		return nil, parseErr
+	}
+	prs.Logger.Debugf("successfully found user with id %s", email)
+	return &user.User{
+		Data: &user.UserData{
+			Type: "user",
+			Id:   userID,
+			Attributes: &user.UserAttributes{
+				FirstName:    userResp.Username,
+				LastName:     userResp.Name,
+				Email:        userResp.PrimaryEmail,
+				Organization: userResp.CustomData.Institution,
+				FirstAddress: userResp.CustomData.Address,
+				City:         userResp.CustomData.City,
+				State:        userResp.CustomData.State,
+				Zipcode:      userResp.CustomData.Zipcode,
+				Country:      userResp.CustomData.Country,
+				Phone:        userResp.PrimaryPhone,
+				IsActive:     true,
+			},
+		},
+	}, nil
 }
