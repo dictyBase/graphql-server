@@ -81,7 +81,7 @@ func (rrs *Resolver) Author() generated.AuthorResolver {
 func (rrs *Resolver) Strain() generated.StrainResolver {
 	return &stock.StrainResolver{
 		Client:           rrs.GetStockClient(registry.STOCK),
-		UserClient:       rrs.GetUserClient(registry.USER),
+		UserClient:       rrs.GetAuthClient(registry.AUTH),
 		AnnotationClient: rrs.GetAnnotationClient(registry.ANNOTATION),
 		Registry:         rrs.Registry,
 		Logger:           rrs.Logger,
@@ -90,7 +90,7 @@ func (rrs *Resolver) Strain() generated.StrainResolver {
 func (rrs *Resolver) Plasmid() generated.PlasmidResolver {
 	return &stock.PlasmidResolver{
 		Client:           rrs.GetStockClient(registry.STOCK),
-		UserClient:       rrs.GetUserClient(registry.USER),
+		UserClient:       rrs.GetAuthClient(registry.AUTH),
 		AnnotationClient: rrs.GetAnnotationClient(registry.ANNOTATION),
 		Registry:         rrs.Registry,
 		Logger:           rrs.Logger,
@@ -101,7 +101,7 @@ func (rrs *Resolver) Order() generated.OrderResolver {
 	return &order.OrderResolver{
 		Client:      rrs.GetOrderClient(registry.ORDER),
 		StockClient: rrs.GetStockClient(registry.STOCK),
-		UserClient:  rrs.GetUserClient(registry.USER),
+		UserClient:  rrs.GetAuthClient(registry.AUTH),
 		Logger:      rrs.Logger,
 	}
 }
