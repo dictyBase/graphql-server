@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"regexp"
-	"strconv"
-	"strings"
 
 	"github.com/dictyBase/aphgrpc"
 	"google.golang.org/grpc/codes"
@@ -37,10 +35,10 @@ func (srs *StrainResolver) CreatedBy(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*user.User, error) {
-	u, err := srs.userByEmail(ctx, obj.CreatedBy)
+	u, err := userByEmail(ctx, obj.CreatedBy, srs.UserClient, srs.Logger)
 	if err != nil {
 		srs.Logger.Error(err)
-		return newUser(), err
+		return nil, err
 	}
 	return u, nil
 }
@@ -49,10 +47,10 @@ func (srs *StrainResolver) UpdatedBy(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*user.User, error) {
-	u, err := srs.userByEmail(ctx, obj.UpdatedBy)
+	u, err := userByEmail(ctx, obj.UpdatedBy, srs.UserClient, srs.Logger)
 	if err != nil {
 		srs.Logger.Error(err)
-		return newUser(), err
+		return nil, err
 	}
 	return u, nil
 }
@@ -61,10 +59,10 @@ func (srs *StrainResolver) Depositor(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*user.User, error) {
-	d, err := srs.userByEmail(ctx, obj.Depositor)
+	d, err := userByEmail(ctx, obj.Depositor, srs.UserClient, srs.Logger)
 	if err != nil {
 		srs.Logger.Error(err)
-		return newUser(), nil
+		return nil, err
 	}
 	return d, nil
 }
@@ -415,76 +413,4 @@ func sliceConverter[T any](aslice []T) []*T {
 	}
 
 	return pslice
-}
-
-func newUser() *user.User {
-	return &user.User{
-		Data: &user.UserData{
-			Attributes: &user.UserAttributes{
-				FirstName:     "",
-				LastName:      "",
-				Email:         "",
-				Organization:  "",
-				GroupName:     "",
-				FirstAddress:  "",
-				SecondAddress: "",
-				City:          "",
-				State:         "",
-				Zipcode:       "",
-				Country:       "",
-				Phone:         "",
-				IsActive:      false,
-			},
-		},
-	}
-}
-
-func (srs *StrainResolver) userByEmail(
-	ctx context.Context,
-	email string,
-) (*user.User, error) {
-	userResp, err := srs.UserClient.UserWithEmail(email)
-	if err != nil {
-		userErr := fmt.Errorf("unable to retreieve user %s", err)
-		errorutils.AddGQLError(ctx, userErr)
-		srs.Logger.Error(userErr)
-		return nil, userErr
-	}
-	matches := numRgx.FindAllString(userResp.ID, -1)
-	if len(matches) == 0 {
-		nonumErr := fmt.Errorf(
-			"cannot convert user id to number %s",
-			userResp.ID,
-		)
-		errorutils.AddGQLError(ctx, nonumErr)
-		srs.Logger.Error(nonumErr)
-		return nil, nonumErr
-	}
-	userID, err := strconv.ParseInt(strings.Join(matches, ""), 10, 64)
-	if err != nil {
-		parseErr := fmt.Errorf("unable to convert user id to integer %s", err)
-		errorutils.AddGQLError(ctx, parseErr)
-		srs.Logger.Error(parseErr)
-		return nil, parseErr
-	}
-	srs.Logger.Debugf("successfully found user with id %s", email)
-	return &user.User{
-		Data: &user.UserData{
-			Type: "user",
-			Id:   userID,
-			Attributes: &user.UserAttributes{
-				FirstName:    userResp.Username,
-				LastName:     userResp.Name,
-				Email:        userResp.PrimaryEmail,
-				Organization: userResp.CustomData.Institution,
-				FirstAddress: userResp.CustomData.Address,
-				City:         userResp.CustomData.City,
-				State:        userResp.CustomData.State,
-				Zipcode:      userResp.CustomData.Zipcode,
-				Country:      userResp.CustomData.Country,
-				Phone:        userResp.PrimaryPhone,
-				IsActive:     true,
-			},
-		},
-	}, nil
 }
