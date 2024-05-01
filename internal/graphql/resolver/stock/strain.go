@@ -220,8 +220,8 @@ func (srs *StrainResolver) MutagenesisMethod(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*string, error) {
-	var m string
-	gc, err := srs.AnnotationClient.GetEntryAnnotation(
+	var method string
+	geneticChange, err := srs.AnnotationClient.GetEntryAnnotation(
 		ctx,
 		&annotation.EntryAnnotationRequest{
 			Tag:      registry.MutmethodTag,
@@ -231,14 +231,14 @@ func (srs *StrainResolver) MutagenesisMethod(
 	)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
-			return &m, nil
+			return &method, nil
 		}
 		errorutils.AddGQLError(ctx, err)
 		srs.Logger.Error(err)
-		return &m, err
+		return &method, err
 	}
-	m = gc.Data.Attributes.Value
-	return &m, nil
+	method = geneticChange.Data.Attributes.Value
+	return &method, nil
 }
 
 func (srs *StrainResolver) SystematicName(
