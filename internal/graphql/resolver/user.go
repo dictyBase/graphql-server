@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/dictyBase/graphql-server/internal/authentication"
+
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
