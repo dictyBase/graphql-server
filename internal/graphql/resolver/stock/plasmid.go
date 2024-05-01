@@ -36,10 +36,10 @@ func (prs *PlasmidResolver) CreatedBy(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (*user.User, error) {
-	u, err := prs.userByEmail(ctx, obj.CreatedBy)
+	u, err := userByEmail(ctx, obj.CreatedBy, prs.UserClient, prs.Logger)
 	if err != nil {
 		prs.Logger.Error(err)
-		return newUser(), err
+		return nil, err
 	}
 	return u, nil
 }
@@ -48,10 +48,10 @@ func (prs *PlasmidResolver) UpdatedBy(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (*user.User, error) {
-	u, err := prs.userByEmail(ctx, obj.UpdatedBy)
+	u, err := userByEmail(ctx, obj.UpdatedBy, prs.UserClient, prs.Logger)
 	if err != nil {
 		prs.Logger.Error(err)
-		return newUser(), err
+		return nil, err
 	}
 	return u, nil
 }
@@ -60,10 +60,10 @@ func (prs *PlasmidResolver) Depositor(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (*user.User, error) {
-	u, err := prs.userByEmail(ctx, obj.Depositor)
+	u, err := userByEmail(ctx, obj.Depositor, prs.UserClient, prs.Logger)
 	if err != nil {
 		prs.Logger.Error(err)
-		return newUser(), nil
+		return nil, err
 	}
 	return u, nil
 }
@@ -169,15 +169,17 @@ func ConvertToPlasmidModel(
 	}
 }
 
-func (prs *PlasmidResolver) userByEmail(
+func userByEmail(
 	ctx context.Context,
 	email string,
+	client authentication.LogtoClient,
+	logger *logrus.Entry,
 ) (*user.User, error) {
-	userResp, err := prs.UserClient.UserWithEmail(email)
+	userResp, err := client.UserWithEmail(email)
 	if err != nil {
 		userErr := fmt.Errorf("unable to retreieve user %s", err)
 		errorutils.AddGQLError(ctx, userErr)
-		prs.Logger.Error(userErr)
+		logger.Error(userErr)
 		return nil, userErr
 	}
 	matches := numRgx.FindAllString(userResp.ID, -1)
@@ -187,17 +189,17 @@ func (prs *PlasmidResolver) userByEmail(
 			userResp.ID,
 		)
 		errorutils.AddGQLError(ctx, nonumErr)
-		prs.Logger.Error(nonumErr)
+		logger.Error(nonumErr)
 		return nil, nonumErr
 	}
 	userID, err := strconv.ParseInt(strings.Join(matches, ""), 10, 64)
 	if err != nil {
 		parseErr := fmt.Errorf("unable to convert user id to integer %s", err)
 		errorutils.AddGQLError(ctx, parseErr)
-		prs.Logger.Error(parseErr)
+		logger.Error(parseErr)
 		return nil, parseErr
 	}
-	prs.Logger.Debugf("successfully found user with id %s", email)
+	logger.Debugf("successfully found user with id %s", email)
 	return &user.User{
 		Data: &user.UserData{
 			Type: "user",
