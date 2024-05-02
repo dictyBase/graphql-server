@@ -220,3 +220,19 @@ func userByEmail(
 		},
 	}, nil
 }
+
+func fakeUser() *user.User {
+	return &user.User{
+		Data: &user.UserData{
+			Type: "user",
+			Id:   2375,
+			Attributes: &user.UserAttributes{
+				FirstName:    "Dicty",
+				LastName:     "Stock Center",
+				Email:        "dictystocks@northwestern.edu",
+				Organization: "Northwestern University",
+				IsActive:     true,
+			},
+		},
+	}
+}
