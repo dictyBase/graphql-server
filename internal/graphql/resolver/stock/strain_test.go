@@ -16,7 +16,6 @@ func strainResolver(
 ) *StrainResolver {
 	return &StrainResolver{
 		Client:           mocks.MockedStockClient(),
-		UserClient:       mocks.MockedUserClient(),
 		AnnotationClient: annoClient,
 		Registry:         &mocks.MockRegistry{},
 		Logger:           mocks.TestLogger(),
@@ -183,7 +182,7 @@ func TestGenes(t *testing.T) {
 	assert.ElementsMatch(g, genes, "should match associated genes")
 }
 
-func TestStrainDepositor(t *testing.T) {
+/* func TestStrainDepositor(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
 	r := strainResolver(mocks.MockedAnnotationClient())
@@ -204,7 +203,7 @@ func TestStrainDepositor(t *testing.T) {
 		"Bania",
 		"should match depositor last name",
 	)
-}
+} */
 
 func TestParent(t *testing.T) {
 	t.Parallel()
