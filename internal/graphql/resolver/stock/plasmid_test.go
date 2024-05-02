@@ -16,7 +16,6 @@ func plasmidResolver(
 ) *PlasmidResolver {
 	return &PlasmidResolver{
 		Client:           mocks.MockedStockClient(),
-		UserClient:       mocks.MockedUserClient(),
 		AnnotationClient: annoClient,
 		Registry:         &mocks.MockRegistry{},
 		Logger:           mocks.TestLogger(),
