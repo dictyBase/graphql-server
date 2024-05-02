@@ -60,6 +60,9 @@ func (prs *PlasmidResolver) Depositor(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (*user.User, error) {
+	if len(obj.Depositor) == 0 {
+		return fakeUser(), nil
+	}
 	u, err := userByEmail(ctx, obj.Depositor, prs.UserClient, prs.Logger)
 	if err != nil {
 		prs.Logger.Error(err)
