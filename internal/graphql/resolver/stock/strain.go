@@ -59,6 +59,9 @@ func (srs *StrainResolver) Depositor(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*user.User, error) {
+	if len(obj.Depositor) == 0 {
+		return fakeUser(), nil
+	}
 	d, err := userByEmail(ctx, obj.Depositor, srs.UserClient, srs.Logger)
 	if err != nil {
 		srs.Logger.Error(err)
