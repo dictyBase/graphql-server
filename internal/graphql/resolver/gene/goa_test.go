@@ -17,7 +17,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var redisAddr = fmt.Sprintf("%s:%s", os.Getenv("REDIS_SERVICE_HOST"), os.Getenv("REDIS_SERVICE_PORT"))
+var redisAddr = fmt.Sprintf(
+	"%s:%s",
+	os.Getenv("REDIS_SERVICE_HOST"),
+	os.Getenv("REDIS_SERVICE_PORT"),
+)
 
 const (
 	mockGeneID      = "DDB_G123456"
@@ -92,7 +96,7 @@ func TestFetchGOAs(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(goasHandler))
 	defer ts.Close()
 	assert := assert.New(t)
-	g, err := fetchGOAs(context.Background(), ts.URL)
+	g, err := fetchGOAs(ts.URL)
 	assert.NoError(err, "should not have error when getting http response")
 	assert.Equal(g.NumberOfHits, 21, "should match number of hits")
 	assert.Equal(len(g.Results), 21, "should match number of results in slice")
