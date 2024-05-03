@@ -8,6 +8,10 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
+	"github.com/vektah/gqlparser/v2/gqlerror"
+
 	"github.com/Jeffail/gabs/v2"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/publication"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
@@ -212,47 +216,27 @@ func FetchPublicationFromEuroPMC(
 
 func FetchPublication(
 	ctx context.Context,
+	repo repository.Repository,
 	endpoint, id string,
 ) (*models.Publication, error) {
-	res, err := GetResp(ctx, fmt.Sprintf("%s/%s", endpoint, id))
-	defer res.Body.Close() //nolint:staticcheck
+	ok, pubeuro, err := FetchPublicationFromCache(repo, id)
 	if err != nil {
-		return nil, fmt.Errorf("error in getting response %s", err)
+		return nil, fmt.Errorf(
+			"error in fetching publication from cache %s",
+			err,
+		)
 	}
-	pub := &PubJSONAPI{}
-	if err := json.NewDecoder(res.Body).Decode(pub); err != nil {
-		return nil, fmt.Errorf("error decoding json %s", err)
+	if ok {
+		return pubeuro, nil
 	}
-	// convert pub_date to expected time.Time format
-	pd, err := time.Parse("2006-01-02", pub.Data.Attributes.PublishedDate)
+	pubeuro, err = FetchPublicationFromEuroPMC(ctx, endpoint, id)
 	if err != nil {
-		return nil, fmt.Errorf("could not parse published date %s", err)
+		return nil, fmt.Errorf("error in fetching publication %s", err)
 	}
-	mpub := &models.Publication{
-		ID:       id,
-		Title:    pub.Data.Attributes.Title,
-		Abstract: pub.Data.Attributes.Abstract,
-		Journal:  pub.Data.Attributes.Journal,
-		Source:   pub.Data.Attributes.Source,
-		PubType:  pub.Data.Attributes.PubType,
-		Doi:      &pub.Data.Attributes.Doi,
-		Issue:    &pub.Data.Attributes.Issue,
-		Status:   &pub.Data.Attributes.Status,
-		Volume:   &pub.Data.Attributes.Volume,
-		Pages:    &pub.Data.Attributes.Page,
-		Issn:     &pub.Data.Attributes.Issn,
-		PubDate:  &pd,
+	if err := StorePublicationInCache(id, repo, pubeuro); err != nil {
+		return nil, fmt.Errorf("error in storing publication in cache %s", err)
 	}
-
-	for i, a := range pub.Data.Attributes.Authors {
-		mpub.Authors = append(mpub.Authors, &pb.Author{
-			FirstName: a.FirstName,
-			LastName:  a.LastName,
-			Rank:      int64(i),
-			Initials:  a.Initials,
-		})
-	}
-	return mpub, nil
+	return pubeuro, nil
 }
 
 func FetchDOI(ctx context.Context, doi string) (*models.Publication, error) {
@@ -409,4 +393,29 @@ func StorePublicationInCache(
 
 func makeRedisKey(id string) string {
 	return fmt.Sprintf("%s/%s", RedisKey, id)
+}
+
+func GetResp(ctx context.Context, url string) (*http.Response, error) {
+	res, err := http.Get(url) //nolint:gosec
+	if err != nil {
+		errorutils.AddGQLError(ctx, err)
+		return res, fmt.Errorf("error in http get request with %s", err)
+	}
+	if res.StatusCode == 404 {
+		graphql.AddError(ctx, &gqlerror.Error{
+			Message: "404 error fetching data",
+			Extensions: map[string]interface{}{
+				"code":      "NotFound",
+				"timestamp": time.Now(),
+			},
+		})
+		return res, fmt.Errorf("404 error fetching data %s", err)
+	}
+	if res.StatusCode != 200 {
+		return res, fmt.Errorf(
+			"error fetching data with status code %d",
+			res.StatusCode,
+		)
+	}
+	return res, nil
 }
