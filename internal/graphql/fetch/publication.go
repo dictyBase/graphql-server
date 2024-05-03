@@ -191,7 +191,6 @@ func EuroPMC2Pub(pmc *EuroPMC, id string) (*models.Publication, error) {
 
 func FetchPublicationFromEuroPMC(
 	ctx context.Context,
-	repo repository.Repository,
 	endpoint, id string,
 ) (*models.Publication, error) {
 	pmodel := new(models.Publication)
@@ -210,20 +209,6 @@ func FetchPublicationFromEuroPMC(
 	}
 	return EuroPMC2Pub(epmc, id)
 }
-
-/* npmodel, err := EuroPMC2Pub(epmc)
-	if err != nil {
-		return npmodel, err
-	}
-	cnt, err := json.Marshal(npmodel)
-	if err != nil {
-		return npmodel, fmt.Errorf("error in converting json to byte %s", err)
-	}
-	if err := repo.Set(rkey, string(cnt)); err != nil {
-		return npmodel, fmt.Errorf("error in setting key in redis %s", err)
-	}
-	return npmodel, nil
-} */
 
 func FetchPublication(
 	ctx context.Context,
@@ -408,4 +393,23 @@ func FetchPublicationFromCache(
 		return ok, pmodel, fmt.Errorf("error in decoding json %s", err)
 	}
 	return ok, pmodel, nil
+}
+
+func StorePublicationInCache(
+	id string,
+	repo repository.Repository,
+	pub *models.Publication,
+) error {
+	cnt, err := json.Marshal(pub)
+	if err != nil {
+		return fmt.Errorf("error in converting json to byte %s", err)
+	}
+	rkey := fmt.Sprintf(
+		"%s/%s",
+		RedisKey, id,
+	)
+	if err := repo.Set(rkey, string(cnt)); err != nil {
+		return fmt.Errorf("error in setting key in redis %s", err)
+	}
+	return nil
 }
