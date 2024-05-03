@@ -194,7 +194,7 @@ func FetchPublicationFromEuroPMC(
 	endpoint, id string,
 ) (*models.Publication, error) {
 	pmodel := new(models.Publication)
-	res, err := http.Get(fmt.Sprintf(
+	res, err := GetResp(fmt.Sprintf(
 		"%s?format=json&resultType=core&query=ext_id:%s",
 		endpoint, id,
 	))
@@ -391,7 +391,7 @@ func makeRedisKey(id string) string {
 	return fmt.Sprintf("%s/%s", RedisKey, id)
 }
 
-func GetResp(ctx context.Context, url string) (*http.Response, error) {
+func GetResp(url string) (*http.Response, error) {
 	res, err := http.Get(url) //nolint:gosec
 	if err != nil {
 		return res, fmt.Errorf("error in http get request with %s", err)
