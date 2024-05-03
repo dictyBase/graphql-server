@@ -80,9 +80,9 @@ type pageInfo struct {
 	Total          int `json:"total"`
 }
 
-func fetchGOAs(ctx context.Context, url string) (*quickGo, error) {
+func fetchGOAs(url string) (*quickGo, error) {
 	goa := new(quickGo)
-	res, err := fetch.GetResp(ctx, url)
+	res, err := fetch.GetResp(url)
 	if err != nil {
 		return goa, err
 	}
@@ -159,7 +159,7 @@ func (g *GeneResolver) Goas(
 			id,
 		)
 	}
-	gn, err := fetchGOAs(ctx, g.GoasURL)
+	gn, err := fetchGOAs(g.GoasURL)
 	if err != nil {
 		return goas, err
 	}

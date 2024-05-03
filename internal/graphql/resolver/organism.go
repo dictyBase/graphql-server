@@ -34,7 +34,7 @@ type citation struct {
 
 func fetchOrganisms(ctx context.Context, url string) (*organisms, error) {
 	o := new(organisms)
-	res, err := fetch.GetResp(ctx, url)
+	res, err := fetch.GetResp(url)
 	if err != nil {
 		return o, err
 	}
@@ -45,7 +45,10 @@ func fetchOrganisms(ctx context.Context, url string) (*organisms, error) {
 	return o, nil
 }
 
-func (qrs *QueryResolver) Organism(ctx context.Context, taxonID string) (*models.Organism, error) {
+func (qrs *QueryResolver) Organism(
+	ctx context.Context,
+	taxonID string,
+) (*models.Organism, error) {
 	o := &models.Organism{}
 	c := []*models.Citation{}
 	url := qrs.GetAPIEndpoint("organism")
@@ -71,7 +74,9 @@ func (qrs *QueryResolver) Organism(ctx context.Context, taxonID string) (*models
 	return o, nil
 }
 
-func (qrs *QueryResolver) ListOrganisms(ctx context.Context) ([]*models.Organism, error) {
+func (qrs *QueryResolver) ListOrganisms(
+	ctx context.Context,
+) ([]*models.Organism, error) {
 	orgs := []*models.Organism{}
 	url := qrs.GetAPIEndpoint("organism")
 	d, err := fetchOrganisms(ctx, url)
