@@ -195,30 +195,6 @@ func FetchPublicationFromEuroPMC(
 	endpoint, id string,
 ) (*models.Publication, error) {
 	pmodel := new(models.Publication)
-	rkey := fmt.Sprintf(
-		"%s/%s",
-		RedisKey, id,
-	)
-	ok, err := repo.Exists(rkey)
-	if err != nil {
-		return pmodel, fmt.Errorf(
-			"error in checking for key %s",
-			err,
-		)
-	}
-	if ok {
-		pubr, err := repo.Get(rkey)
-		if err != nil {
-			return pmodel, fmt.Errorf(
-				"error in getting existing key %s",
-				err,
-			)
-		}
-		if err := json.Unmarshal([]byte(pubr), pmodel); err != nil {
-			return pmodel, fmt.Errorf("error in decoding json %s", err)
-		}
-		return pmodel, nil
-	}
 	res, err := http.Get(fmt.Sprintf(
 		"%s?format=json&resultType=core&query=ext_id:%s",
 		endpoint, id,
@@ -397,4 +373,36 @@ func verifyStringProperty(jstruct *gabs.Container, val string) string {
 		return ""
 	}
 	return str
+}
+
+func FetchPublicationFromCache(
+	repo repository.Repository,
+	id string,
+) (bool, *models.Publication, error) {
+	pmodel := &models.Publication{}
+	rkey := fmt.Sprintf(
+		"%s/%s",
+		RedisKey, id,
+	)
+	ok, err := repo.Exists(rkey)
+	if err != nil {
+		return ok, pmodel, fmt.Errorf(
+			"error in checking for key %s",
+			err,
+		)
+	}
+	if !ok {
+		return ok, pmodel, nil
+	}
+	pubr, err := repo.Get(rkey)
+	if err != nil {
+		return ok, pmodel, fmt.Errorf(
+			"error in getting existing key %s",
+			err,
+		)
+	}
+	if err := json.Unmarshal([]byte(pubr), pmodel); err != nil {
+		return ok, pmodel, fmt.Errorf("error in decoding json %s", err)
+	}
+	return ok, pmodel, nil
 }
