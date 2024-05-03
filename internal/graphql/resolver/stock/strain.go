@@ -104,7 +104,7 @@ func (srs *StrainResolver) Publications(
 			}
 			pubs = append(pubs, p)
 		} else {
-			p, err := fetch.FetchPublicationFromEuroPMC(
+			p, err := fetch.FetchPublication(
 				ctx,
 				redis,
 				srs.Registry.GetAPIEndpoint(registry.PUBLICATION),
@@ -113,7 +113,7 @@ func (srs *StrainResolver) Publications(
 			if err != nil {
 				errorutils.AddGQLError(ctx, err)
 				srs.Logger.Error(err)
-				return pubs, err
+				return pubs, fmt.Errorf("error in fetching publication %s for strain %s", id, err)
 			}
 			pubs = append(pubs, p)
 		}
@@ -359,7 +359,7 @@ func getPhenotypes(
 				m.Assay = &gntype.Attributes.Tag
 			case registry.DictyAnnoOntology:
 				if gntype.Attributes.Tag == registry.LiteratureTag {
-					pub, err := fetch.FetchPublicationFromEuroPMC(
+					pub, err := fetch.FetchPublication(
 						ctx,
 						redis,
 						r.Registry.GetAPIEndpoint(registry.PUBLICATION),
