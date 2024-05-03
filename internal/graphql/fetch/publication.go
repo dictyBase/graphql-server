@@ -208,7 +208,10 @@ func FetchPublicationFromEuroPMC(
 	if err != nil {
 		return pmodel, fmt.Errorf("error in decoding data %s", err)
 	}
-	npmodel, err := EuroPMC2Pub(epmc)
+	return EuroPMC2Pub(epmc)
+}
+
+/* npmodel, err := EuroPMC2Pub(epmc)
 	if err != nil {
 		return npmodel, err
 	}
@@ -220,7 +223,7 @@ func FetchPublicationFromEuroPMC(
 		return npmodel, fmt.Errorf("error in setting key in redis %s", err)
 	}
 	return npmodel, nil
-}
+} */
 
 func FetchPublication(
 	ctx context.Context,
