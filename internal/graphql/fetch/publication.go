@@ -368,10 +368,7 @@ func FetchPublicationFromCache(
 	id string,
 ) (bool, *models.Publication, error) {
 	pmodel := &models.Publication{}
-	rkey := fmt.Sprintf(
-		"%s/%s",
-		RedisKey, id,
-	)
+	rkey := makeRedisKey(id)
 	ok, err := repo.Exists(rkey)
 	if err != nil {
 		return ok, pmodel, fmt.Errorf(
@@ -404,12 +401,12 @@ func StorePublicationInCache(
 	if err != nil {
 		return fmt.Errorf("error in converting json to byte %s", err)
 	}
-	rkey := fmt.Sprintf(
-		"%s/%s",
-		RedisKey, id,
-	)
-	if err := repo.Set(rkey, string(cnt)); err != nil {
+	if err := repo.Set(makeRedisKey(id), string(cnt)); err != nil {
 		return fmt.Errorf("error in setting key in redis %s", err)
 	}
 	return nil
+}
+
+func makeRedisKey(id string) string {
+	return fmt.Sprintf("%s/%s", RedisKey, id)
 }
