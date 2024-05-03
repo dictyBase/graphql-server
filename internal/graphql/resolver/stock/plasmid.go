@@ -94,14 +94,20 @@ func (prs *PlasmidResolver) Publications(
 ) ([]*models.Publication, error) {
 	pubs := make([]*models.Publication, 0)
 	for _, id := range obj.Publications {
-		endpoint := prs.Registry.GetAPIEndpoint(registry.PUBLICATION)
-		p, err := fetch.FetchPublication(ctx, endpoint, id)
+		pub, err := fetch.FetchPublication(
+			ctx, prs.Registry.GetRedisRepository(cache.RedisKey),
+			prs.Registry.GetAPIEndpoint(registry.PUBLICATION), id,
+		)
 		if err != nil {
 			errorutils.AddGQLError(ctx, err)
 			prs.Logger.Error(err)
-			return pubs, err
+			return pubs, fmt.Errorf(
+				"error in fetching publication %s for plasmid %s",
+				id,
+				err,
+			)
 		}
-		pubs = append(pubs, p)
+		pubs = append(pubs, pub)
 	}
 	return pubs, nil
 }
