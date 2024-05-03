@@ -151,9 +151,9 @@ type Author struct {
 	Initials  string `json:"initials"`
 }
 
-func EuroPMC2Pub(pmc *EuroPMC) (*models.Publication, error) {
-	if len(pmc.ResultList.Result) < 1 {
-		return &models.Publication{}, nil
+func EuroPMC2Pub(pmc *EuroPMC, id string) (*models.Publication, error) {
+	if len(pmc.ResultList.Result) == 0 {
+		return nil, fmt.Errorf("no publication found with id %s", id)
 	}
 	result := pmc.ResultList.Result[0]
 	pub := &models.Publication{
@@ -208,7 +208,7 @@ func FetchPublicationFromEuroPMC(
 	if err != nil {
 		return pmodel, fmt.Errorf("error in decoding data %s", err)
 	}
-	return EuroPMC2Pub(epmc)
+	return EuroPMC2Pub(epmc, id)
 }
 
 /* npmodel, err := EuroPMC2Pub(epmc)
