@@ -6,3 +6,4 @@ node_modules
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+internal/graphql/.DS_Store
