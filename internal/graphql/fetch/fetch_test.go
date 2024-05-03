@@ -1,7 +1,6 @@
 package fetch
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -45,7 +44,7 @@ func TestGetResp(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(goasHandler))
 	defer ts.Close()
 	assert := assert.New(t)
-	resp, err := GetResp(context.Background(), ts.URL)
+	resp, err := GetResp(ts.URL)
 	assert.NoError(err, "should not have error when getting http response")
 	assert.Equal(resp.StatusCode, 200, "should have ok status code")
 }
