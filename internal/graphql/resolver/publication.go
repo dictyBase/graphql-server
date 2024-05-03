@@ -16,35 +16,19 @@ func (qrs *QueryResolver) Publication(
 	ctx context.Context,
 	id string,
 ) (*models.Publication, error) {
-	repo := qrs.GetRedisRepository(cache.RedisKey)
-	ok, pubeuro, err := fetch.FetchPublicationFromCache(repo, id)
-	if err != nil {
-		errorutils.AddGQLError(ctx, err)
-		qrs.Logger.Error(err)
-		return nil, fmt.Errorf(
-			"error in fetching publication from cache %s",
-			err,
-		)
-	}
-	if ok {
-		return pubeuro, nil
-	}
-	pubeuro, err = fetch.FetchPublicationFromEuroPMC(
-		ctx,
-		qrs.Registry.GetAPIEndpoint(registry.PUBLICATION),
-		id,
+	pub, err := fetch.FetchPublication(
+		ctx, qrs.GetRedisRepository(cache.RedisKey),
+		qrs.Registry.GetAPIEndpoint(registry.PUBLICATION), id,
 	)
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		qrs.Logger.Error(err)
-		return nil, fmt.Errorf("error in fetching publication %s", err)
+		return nil, fmt.Errorf(
+			"error in fetching publication %s",
+			err,
+		)
 	}
-	if err := fetch.StorePublicationInCache(id, repo, pubeuro); err != nil {
-		errorutils.AddGQLError(ctx, err)
-		qrs.Logger.Error(err)
-		return nil, fmt.Errorf("error in storing publication in cache %s", err)
-	}
-	return pubeuro, nil
+	return pub, nil
 }
 
 // AllPublications is the resolver for the allPublications field.
