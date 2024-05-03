@@ -35,9 +35,9 @@ type downloadsItem struct {
 	URL   string `json:"url"`
 }
 
-func fetchDownloads(ctx context.Context, url string) (*downloads, error) {
+func fetchDownloads(url string) (*downloads, error) {
 	d := new(downloads)
-	res, err := fetch.GetResp(ctx, url)
+	res, err := fetch.GetResp(url)
 	if err != nil {
 		return d, err
 	}
@@ -59,7 +59,7 @@ func (r *OrganismResolver) Downloads(
 			obj.TaxonID,
 		)
 	}
-	res, err := fetchDownloads(ctx, r.DownloadsURL)
+	res, err := fetchDownloads(r.DownloadsURL)
 	if err != nil {
 		return ds, err
 	}
