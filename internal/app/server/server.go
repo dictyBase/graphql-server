@@ -176,10 +176,17 @@ func initRedis(ctx *cli.Context, nreg registry.Registry) error {
 }
 
 func getCORS(origins []string) *cors.Cors {
-	origins = append(origins, "http://localhost:*")
-	origins = append(origins, "https://dictybase.dev")
-	origins = append(origins, "https://dictybase.dev/")
-	origins = append(origins, "https://dictybase.dev*")
+	origins = append(
+		origins,
+		[]string{
+			"https://staging.dictycr.org",
+			"https://staging.dictycr.org/",
+			"https://staging.dictycr.org*",
+			"https://dictybase.dev",
+			"https://dictybase.dev/",
+			"https://dictybase.dev*",
+			"http://localhost:*",
+		}...)
 	return cors.New(cors.Options{
 		AllowedOrigins:   origins,
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
