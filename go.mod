@@ -20,7 +20,7 @@ require (
 	github.com/urfave/cli v1.22.15
 	github.com/vektah/dataloaden v0.3.0
 	github.com/vektah/gqlparser v1.3.1
-	github.com/vektah/gqlparser/v2 v2.5.11
+	github.com/vektah/gqlparser/v2 v2.5.12
 	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678
 	google.golang.org/grpc v1.63.2
 	google.golang.org/protobuf v1.34.1
