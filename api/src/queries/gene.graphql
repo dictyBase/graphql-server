@@ -1,22 +1,85 @@
+query GeneSummary($gene: String!) {
+  geneGeneralInformation(gene: $gene) {
+    id
+    name_description
+    gene_product
+    synonyms
+    description
+  }  
+  geneOntologyAnnotation(gene: $gene) {
+    id
+    type
+    date
+    go_term
+    evidence_code
+    with {
+      id
+      db
+      name
+    }
+    extensions {
+      id
+      db
+      relation
+      name
+    }
+  }
+  listPublicationsWithGene(gene: $gene) {
+    id
+    title
+    journal
+    pages
+    issue
+    authors {
+      last_name
+    }
+  }
+}
+
 query GeneOntologyAnnotation($gene: String!) {
   geneOntologyAnnotation(gene: $gene) {
+    id
+    type
+    date
+    go_term
+    evidence_code
+    qualifier
+    publication
+    assigned_by
+    with {
       id
-      type
-      date
-      evidence_code
-      qualifier
-      publication
-      assigned_by
-      with {
+      db
+      name
+    }
+    extensions {
+      id
+      db
+      relation
+      name
+    }
+  }
+}
+
+query ListStrainsWithGene($gene: String!) {
+  listStrainsWithGene(gene: $gene) {
+    id
+    label
+    characteristics
+    in_stock
+    phenotypes {
+      phenotype
+      publication {
         id
-        db
-        name
+        title
+        journal
+        pages
+        volume
+        pub_date
+        authors {
+          last_name
+          rank
+        }
       }
-      extensions {
-        id
-        db
-        relation
-        name
-     }
+    }
   }
 }

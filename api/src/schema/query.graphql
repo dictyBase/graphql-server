@@ -1,9 +1,14 @@
 type Query {
   # Gene queries
   geneOntologyAnnotation(gene: String!): [GOAnnotation!]
+  geneGeneralInformation(gene: String!): GeneGeneralInfo
   # Content queries
   content(id: ID!): Content
   contentBySlug(slug: String!): Content
+  listContentByNamespace(namespace: String!): [Content!]!
+  # Download page queries
+  organism(taxon_id: String!): Organism
+  listOrganisms: [Organism!]
   # Order queries
   order(id: ID!): Order
   listOrders(cursor: Int, limit: Int, filter: String): OrderListWithCursor
@@ -12,10 +17,16 @@ type Query {
   # List publication query that is by default is sorted by publication
   # date in descendent order
   listRecentPublications(limit: Int!): [Publication!]
+  listPublicationsWithGene(gene: String!): [PublicationWithGene!]!
   # Stock queries
   plasmid(id: ID!): Plasmid
   strain(id: ID!): Strain
-  listStrains(cursor: Int, limit: Int, filter: StrainListFilter): StrainListWithCursor
+  listStrainsWithGene(gene: String!): [Strain!]
+  listStrains(
+    cursor: Int
+    limit: Int
+    filter: StrainListFilter
+  ): StrainListWithCursor
   listPlasmids(cursor: Int, limit: Int, filter: String): PlasmidListWithCursor
   listStrainsWithAnnotation(
     cursor: Int

@@ -2,7 +2,7 @@ import { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   schema: "./src/schema/*.graphql",
-  documents: ["./src/queries/*.graphql"],
+  documents: ["./src/queries/*.graphql", "./src/mutations/*.graphql"],
   ignoreNoDocuments: true, // for better experience with the watcher
   generates: {
     "./types/index.ts": {
@@ -10,10 +10,15 @@ const config: CodegenConfig = {
         "typescript",
         "typescript-operations",
         "typescript-react-apollo",
-        "typed-document-node",
-        "typescript-msw",
       ],
       config: { withHooks: true },
+    },
+    "./types/mocks.ts" : {
+      plugins: [
+        "typescript",
+        "typescript-operations",
+        "typescript-msw",
+      ],
     },
     "./types/fragment.ts": {
       plugins: ["fragment-matcher"],

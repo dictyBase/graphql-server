@@ -97,10 +97,7 @@ Details [here](https://the-guild.dev/graphql/codegen/plugins/typescript/typescri
 - Repeat the cycle until the work is done. When finished, merge to `develop`.
 
 ## Release
-If you are ready to cut a new release, merge(rebase) `develop` into `master`.
-This will trigger a GitHub Action that uses `semantic-release` to create a new
-tag/release automatically.See
-https://github.com/semantic-release/commit-analyzer#rules-matching or
-[`.releaserc.json`](https://github.com/dictyBase/dicty-graphql-schema/blob/develop/.releaserc.json)
-to learn more about how semantic versioning treats commits with different tags
-and scopes.
+- If you are ready to cut a new release, merge(rebase) `develop` into `main`.
+- Install [nsv](https://github.com/purpleclay/nsv).
+- Run `nsv next` to determine the version.
+- Then run `gh release create` to create a new release using the version no as a tag.
