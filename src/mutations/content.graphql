@@ -18,3 +18,9 @@ mutation UpdateContent($input: UpdateContentInput!) {
     content
   }
 }
+
+mutation DeleteContent($id: ID!) {
+  deleteContent(id: $id) {
+    success
+  }
+}

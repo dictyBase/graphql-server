@@ -1,7 +1,5 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-import { graphql, type GraphQLResponseResolver, type RequestHandlerOptions } from 'msw'
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -20,14 +18,6 @@ export type Scalars = {
   Timestamp: { input: any; output: any; }
   /** The `Upload` scalar type represents a multipart file upload. */
   Upload: { input: any; output: any; }
-};
-
-export type AssociatedSequences = {
-  __typename?: 'AssociatedSequences';
-  ests: Array<NameWithLink>;
-  genbank_genomic_fragment?: Maybe<NameWithLink>;
-  genbank_mrna?: Maybe<NameWithLink>;
-  more_link: Scalars['String']['output'];
 };
 
 export type Auth = {
@@ -237,32 +227,17 @@ export type GoAnnotation = {
 
 export type Gene = {
   __typename?: 'Gene';
-  associated_sequences: AssociatedSequences;
-  general_info: GeneralInfo;
-  goas?: Maybe<Array<GoAnnotation>>;
   id: Scalars['String']['output'];
-  links: Links;
   name: Scalars['String']['output'];
-  orthologs?: Maybe<Array<Orthologs>>;
-  product_info?: Maybe<Array<ProductInformation>>;
-  protein_information?: Maybe<ProteinInformation>;
-  strains?: Maybe<Array<Strain>>;
 };
 
-export type GeneralInfo = {
-  __typename?: 'GeneralInfo';
-  alt_gene_name?: Maybe<Array<Scalars['String']['output']>>;
-  alt_protein_names?: Maybe<Array<Scalars['String']['output']>>;
-  description: Scalars['String']['output'];
-  gene_product: Scalars['String']['output'];
-  name_description: Array<Scalars['String']['output']>;
-};
-
-export type GenomicCoordinates = {
-  __typename?: 'GenomicCoordinates';
-  chrom_coords: Scalars['String']['output'];
-  exon: Scalars['String']['output'];
-  local_coords: Scalars['String']['output'];
+export type GeneGeneralInfo = {
+  __typename?: 'GeneGeneralInfo';
+  description?: Maybe<Scalars['String']['output']>;
+  gene_product?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  name_description: Array<Maybe<Scalars['String']['output']>>;
+  synonyms: Array<Maybe<Scalars['String']['output']>>;
 };
 
 export type Identity = {
@@ -279,13 +254,6 @@ export type Identity = {
 export type ImageFile = {
   __typename?: 'ImageFile';
   url: Scalars['String']['output'];
-};
-
-export type Links = {
-  __typename?: 'Links';
-  colleagues: NameWithLink;
-  expression: Array<NameWithLink>;
-  ext_resources: Array<NameWithLink>;
 };
 
 export type LoginInput = {
@@ -453,12 +421,6 @@ export type MutationUploadFileArgs = {
   file: Scalars['Upload']['input'];
 };
 
-export type NameWithLink = {
-  __typename?: 'NameWithLink';
-  link: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-};
-
 export type NumberOfPublicationsWithGene = {
   __typename?: 'NumberOfPublicationsWithGene';
   num_pubs: Scalars['Int']['output'];
@@ -497,15 +459,6 @@ export type Organism = {
   downloads: Array<Download>;
   scientific_name: Scalars['String']['output'];
   taxon_id: Scalars['String']['output'];
-};
-
-export type Orthologs = {
-  __typename?: 'Orthologs';
-  gene_product: Scalars['String']['output'];
-  id: NameWithLink;
-  source: Array<Scalars['String']['output']>;
-  species: Scalars['String']['output'];
-  uniprotkb: NameWithLink;
 };
 
 export type Permission = {
@@ -557,35 +510,6 @@ export type PlasmidListWithCursor = {
   totalCount: Scalars['Int']['output'];
 };
 
-export type ProductInformation = {
-  __typename?: 'ProductInformation';
-  genomic_coords: Array<GenomicCoordinates>;
-  more_protein_data: Scalars['String']['output'];
-  protein_coding_gene: NameWithLink;
-  protein_length: Scalars['String']['output'];
-  protein_molecular_weight: Scalars['String']['output'];
-};
-
-export type ProteinGeneralInfo = {
-  __typename?: 'ProteinGeneralInfo';
-  aa_composition: NameWithLink;
-  description: Scalars['String']['output'];
-  dictybase_id: Scalars['String']['output'];
-  gene_product: Scalars['String']['output'];
-  molecular_weight: Scalars['String']['output'];
-  note: Scalars['String']['output'];
-  protein_existence: Scalars['String']['output'];
-  protein_length: Scalars['String']['output'];
-  subcellular_location: Scalars['String']['output'];
-};
-
-export type ProteinInformation = {
-  __typename?: 'ProteinInformation';
-  external_links: Array<NameWithLink>;
-  general_info: ProteinGeneralInfo;
-  protein_sequence: Scalars['String']['output'];
-};
-
 export type Publication = BasePublication & {
   __typename?: 'Publication';
   abstract: Scalars['String']['output'];
@@ -627,19 +551,25 @@ export type Query = {
   __typename?: 'Query';
   content?: Maybe<Content>;
   contentBySlug?: Maybe<Content>;
+  geneGeneralInformation?: Maybe<GeneGeneralInfo>;
   geneOntologyAnnotation?: Maybe<Array<GoAnnotation>>;
+  listContentByNamespace: Array<Content>;
   listOrders?: Maybe<OrderListWithCursor>;
+  listOrganisms?: Maybe<Array<Organism>>;
   listPermissions?: Maybe<Array<Permission>>;
   listPlasmids?: Maybe<PlasmidListWithCursor>;
   listPlasmidsWithAnnotation?: Maybe<PlasmidListWithCursor>;
+  listPublicationsWithGene: Array<PublicationWithGene>;
   listRecentPlasmids?: Maybe<Array<Plasmid>>;
   listRecentPublications?: Maybe<Array<Publication>>;
   listRecentStrains?: Maybe<Array<Strain>>;
   listRoles?: Maybe<Array<Role>>;
   listStrains?: Maybe<StrainListWithCursor>;
   listStrainsWithAnnotation?: Maybe<StrainListWithCursor>;
+  listStrainsWithGene?: Maybe<Array<Strain>>;
   listUsers?: Maybe<UserList>;
   order?: Maybe<Order>;
+  organism?: Maybe<Organism>;
   permission?: Maybe<Permission>;
   plasmid?: Maybe<Plasmid>;
   publication?: Maybe<Publication>;
@@ -660,8 +590,18 @@ export type QueryContentBySlugArgs = {
 };
 
 
+export type QueryGeneGeneralInformationArgs = {
+  gene: Scalars['String']['input'];
+};
+
+
 export type QueryGeneOntologyAnnotationArgs = {
   gene: Scalars['String']['input'];
+};
+
+
+export type QueryListContentByNamespaceArgs = {
+  namespace: Scalars['String']['input'];
 };
 
 
@@ -684,6 +624,11 @@ export type QueryListPlasmidsWithAnnotationArgs = {
   cursor?: InputMaybe<Scalars['Int']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   type: Scalars['String']['input'];
+};
+
+
+export type QueryListPublicationsWithGeneArgs = {
+  gene: Scalars['String']['input'];
 };
 
 
@@ -717,6 +662,11 @@ export type QueryListStrainsWithAnnotationArgs = {
 };
 
 
+export type QueryListStrainsWithGeneArgs = {
+  gene: Scalars['String']['input'];
+};
+
+
 export type QueryListUsersArgs = {
   filter: Scalars['String']['input'];
   pagenum: Scalars['String']['input'];
@@ -726,6 +676,11 @@ export type QueryListUsersArgs = {
 
 export type QueryOrderArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryOrganismArgs = {
+  taxon_id: Scalars['String']['input'];
 };
 
 
@@ -962,6 +917,75 @@ export type With = {
   name: Scalars['String']['output'];
 };
 
+export type LoginMutationVariables = Exact<{
+  input: LoginInput;
+}>;
+
+
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'Auth', token: string, user: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string, roles?: Array<{ __typename?: 'Role', role: string, permissions?: Array<{ __typename?: 'Permission', permission: string, resource?: string | null }> | null }> | null }, identity: { __typename?: 'Identity', provider: string } } | null };
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout?: { __typename?: 'Logout', success: boolean } | null };
+
+export type CreateContentMutationVariables = Exact<{
+  input: CreateContentInput;
+}>;
+
+
+export type CreateContentMutation = { __typename?: 'Mutation', createContent?: { __typename?: 'Content', name: string, content: string, namespace: string, created_by: { __typename?: 'User', id: string } } | null };
+
+export type UpdateContentMutationVariables = Exact<{
+  input: UpdateContentInput;
+}>;
+
+
+export type UpdateContentMutation = { __typename?: 'Mutation', updateContent?: { __typename?: 'Content', id: string, content: string, updated_by: { __typename?: 'User', id: string } } | null };
+
+export type DeleteContentMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteContentMutation = { __typename?: 'Mutation', deleteContent?: { __typename?: 'DeleteContent', success: boolean } | null };
+
+export type CreateOrderMutationVariables = Exact<{
+  input: CreateOrderInput;
+}>;
+
+
+export type CreateOrderMutation = { __typename?: 'Mutation', createOrder?: { __typename?: 'Order', id: string } | null };
+
+export type UploadFileMutationVariables = Exact<{
+  file: Scalars['Upload']['input'];
+}>;
+
+
+export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: { __typename?: 'ImageFile', url: string } };
+
+export type CreateUserMutationVariables = Exact<{
+  input: CreateUserInput;
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', createUser?: { __typename?: 'User', id: string } | null };
+
+export type UpdateUserMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: UpdateUserInput;
+}>;
+
+
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typename?: 'User', id: string } | null };
+
+export type ListContentByNamespaceQueryVariables = Exact<{
+  namespace: Scalars['String']['input'];
+}>;
+
+
+export type ListContentByNamespaceQuery = { __typename?: 'Query', listContentByNamespace: Array<{ __typename?: 'Content', id: string, content: string, name: string, slug: string, created_at: any, updated_at: any, created_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string }, updated_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string } }> };
+
 export type ContentBySlugQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
@@ -976,12 +1000,31 @@ export type ContentQueryVariables = Exact<{
 
 export type ContentQuery = { __typename?: 'Query', content?: { __typename?: 'Content', id: string, content: string, name: string, slug: string, namespace: string, created_at: any, updated_at: any, created_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string }, updated_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string } } | null };
 
+export type ListOrganismsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ListOrganismsQuery = { __typename?: 'Query', listOrganisms?: Array<{ __typename?: 'Organism', taxon_id: string, scientific_name: string, citations: Array<{ __typename?: 'Citation', title: string, authors: string, pubmed_id: string, journal: string }>, downloads: Array<{ __typename?: 'Download', title: string, items: Array<{ __typename?: 'DownloadItem', title: string, url: string }> }> }> | null };
+
+export type GeneSummaryQueryVariables = Exact<{
+  gene: Scalars['String']['input'];
+}>;
+
+
+export type GeneSummaryQuery = { __typename?: 'Query', geneGeneralInformation?: { __typename?: 'GeneGeneralInfo', id: string, name_description: Array<string | null>, gene_product?: string | null, synonyms: Array<string | null>, description?: string | null } | null, geneOntologyAnnotation?: Array<{ __typename?: 'GOAnnotation', id: string, type: string, date: string, go_term: string, evidence_code: string, with?: Array<{ __typename?: 'With', id: string, db: string, name: string }> | null, extensions?: Array<{ __typename?: 'Extension', id: string, db: string, relation: string, name: string }> | null }> | null, listPublicationsWithGene: Array<{ __typename?: 'PublicationWithGene', id: string, title: string, journal: string, pages?: string | null, issue?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> }> };
+
 export type GeneOntologyAnnotationQueryVariables = Exact<{
   gene: Scalars['String']['input'];
 }>;
 
 
-export type GeneOntologyAnnotationQuery = { __typename?: 'Query', geneOntologyAnnotation?: Array<{ __typename?: 'GOAnnotation', id: string, type: string, date: string, evidence_code: string, qualifier: string, publication: string, assigned_by: string, with?: Array<{ __typename?: 'With', id: string, db: string, name: string }> | null, extensions?: Array<{ __typename?: 'Extension', id: string, db: string, relation: string, name: string }> | null }> | null };
+export type GeneOntologyAnnotationQuery = { __typename?: 'Query', geneOntologyAnnotation?: Array<{ __typename?: 'GOAnnotation', id: string, type: string, date: string, go_term: string, evidence_code: string, qualifier: string, publication: string, assigned_by: string, with?: Array<{ __typename?: 'With', id: string, db: string, name: string }> | null, extensions?: Array<{ __typename?: 'Extension', id: string, db: string, relation: string, name: string }> | null }> | null };
+
+export type ListStrainsWithGeneQueryVariables = Exact<{
+  gene: Scalars['String']['input'];
+}>;
+
+
+export type ListStrainsWithGeneQuery = { __typename?: 'Query', listStrainsWithGene?: Array<{ __typename?: 'Strain', id: string, label: string, characteristics?: Array<string> | null, in_stock: boolean, phenotypes?: Array<{ __typename?: 'Phenotype', phenotype: string, publication?: { __typename?: 'Publication', id: string, title: string, journal: string, pages?: string | null, volume?: string | null, pub_date?: any | null, authors: Array<{ __typename?: 'Author', last_name: string, rank?: string | null }> } | null }> | null }> | null };
 
 export type PublicationQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -996,6 +1039,13 @@ export type ListRecentPublicationsQueryVariables = Exact<{
 
 
 export type ListRecentPublicationsQuery = { __typename?: 'Query', listRecentPublications?: Array<{ __typename?: 'Publication', id: string, doi?: string | null, title: string, abstract: string, journal: string, pub_date?: any | null, pages?: string | null, issue?: string | null, volume?: string | null, authors: Array<{ __typename?: 'Author', initials?: string | null, last_name: string }> }> | null };
+
+export type ListPublicationsWithGeneQueryVariables = Exact<{
+  gene: Scalars['String']['input'];
+}>;
+
+
+export type ListPublicationsWithGeneQuery = { __typename?: 'Query', listPublicationsWithGene: Array<{ __typename?: 'PublicationWithGene', id: string, doi?: string | null, title: string, journal: string, pub_date?: any | null, volume?: string | null, pages?: string | null, pub_type: string, source: string, issue?: string | null, related_genes: Array<{ __typename?: 'Gene', id: string, name: string }>, authors: Array<{ __typename?: 'Author', last_name: string, rank?: string | null }> }> };
 
 export type StrainListQueryVariables = Exact<{
   cursor: Scalars['Int']['input'];
@@ -1082,6 +1132,380 @@ export type UserByEmailQueryVariables = Exact<{
 export type UserByEmailQuery = { __typename?: 'Query', userByEmail?: { __typename?: 'User', id: string } | null };
 
 
+export const LoginDocument = gql`
+    mutation Login($input: LoginInput!) {
+  login(input: $input) {
+    token
+    user {
+      id
+      email
+      first_name
+      last_name
+      roles {
+        role
+        permissions {
+          permission
+          resource
+        }
+      }
+    }
+    identity {
+      provider
+    }
+  }
+}
+    `;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
+
+/**
+ * __useLoginMutation__
+ *
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
+      }
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout {
+    success
+  }
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const CreateContentDocument = gql`
+    mutation CreateContent($input: CreateContentInput!) {
+  createContent(input: $input) {
+    name
+    created_by {
+      id
+    }
+    content
+    namespace
+  }
+}
+    `;
+export type CreateContentMutationFn = Apollo.MutationFunction<CreateContentMutation, CreateContentMutationVariables>;
+
+/**
+ * __useCreateContentMutation__
+ *
+ * To run a mutation, you first call `useCreateContentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateContentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createContentMutation, { data, loading, error }] = useCreateContentMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateContentMutation(baseOptions?: Apollo.MutationHookOptions<CreateContentMutation, CreateContentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateContentMutation, CreateContentMutationVariables>(CreateContentDocument, options);
+      }
+export type CreateContentMutationHookResult = ReturnType<typeof useCreateContentMutation>;
+export type CreateContentMutationResult = Apollo.MutationResult<CreateContentMutation>;
+export type CreateContentMutationOptions = Apollo.BaseMutationOptions<CreateContentMutation, CreateContentMutationVariables>;
+export const UpdateContentDocument = gql`
+    mutation UpdateContent($input: UpdateContentInput!) {
+  updateContent(input: $input) {
+    id
+    updated_by {
+      id
+    }
+    content
+  }
+}
+    `;
+export type UpdateContentMutationFn = Apollo.MutationFunction<UpdateContentMutation, UpdateContentMutationVariables>;
+
+/**
+ * __useUpdateContentMutation__
+ *
+ * To run a mutation, you first call `useUpdateContentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateContentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateContentMutation, { data, loading, error }] = useUpdateContentMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateContentMutation(baseOptions?: Apollo.MutationHookOptions<UpdateContentMutation, UpdateContentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateContentMutation, UpdateContentMutationVariables>(UpdateContentDocument, options);
+      }
+export type UpdateContentMutationHookResult = ReturnType<typeof useUpdateContentMutation>;
+export type UpdateContentMutationResult = Apollo.MutationResult<UpdateContentMutation>;
+export type UpdateContentMutationOptions = Apollo.BaseMutationOptions<UpdateContentMutation, UpdateContentMutationVariables>;
+export const DeleteContentDocument = gql`
+    mutation DeleteContent($id: ID!) {
+  deleteContent(id: $id) {
+    success
+  }
+}
+    `;
+export type DeleteContentMutationFn = Apollo.MutationFunction<DeleteContentMutation, DeleteContentMutationVariables>;
+
+/**
+ * __useDeleteContentMutation__
+ *
+ * To run a mutation, you first call `useDeleteContentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteContentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteContentMutation, { data, loading, error }] = useDeleteContentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteContentMutation(baseOptions?: Apollo.MutationHookOptions<DeleteContentMutation, DeleteContentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteContentMutation, DeleteContentMutationVariables>(DeleteContentDocument, options);
+      }
+export type DeleteContentMutationHookResult = ReturnType<typeof useDeleteContentMutation>;
+export type DeleteContentMutationResult = Apollo.MutationResult<DeleteContentMutation>;
+export type DeleteContentMutationOptions = Apollo.BaseMutationOptions<DeleteContentMutation, DeleteContentMutationVariables>;
+export const CreateOrderDocument = gql`
+    mutation CreateOrder($input: CreateOrderInput!) {
+  createOrder(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateOrderMutationFn = Apollo.MutationFunction<CreateOrderMutation, CreateOrderMutationVariables>;
+
+/**
+ * __useCreateOrderMutation__
+ *
+ * To run a mutation, you first call `useCreateOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrderMutation, { data, loading, error }] = useCreateOrderMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateOrderMutation(baseOptions?: Apollo.MutationHookOptions<CreateOrderMutation, CreateOrderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOrderMutation, CreateOrderMutationVariables>(CreateOrderDocument, options);
+      }
+export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
+export type CreateOrderMutationResult = Apollo.MutationResult<CreateOrderMutation>;
+export type CreateOrderMutationOptions = Apollo.BaseMutationOptions<CreateOrderMutation, CreateOrderMutationVariables>;
+export const UploadFileDocument = gql`
+    mutation UploadFile($file: Upload!) {
+  uploadFile(file: $file) {
+    url
+  }
+}
+    `;
+export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, UploadFileMutationVariables>;
+
+/**
+ * __useUploadFileMutation__
+ *
+ * To run a mutation, you first call `useUploadFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadFileMutation, { data, loading, error }] = useUploadFileMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useUploadFileMutation(baseOptions?: Apollo.MutationHookOptions<UploadFileMutation, UploadFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(UploadFileDocument, options);
+      }
+export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>;
+export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>;
+export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
+export const CreateUserDocument = gql`
+    mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateUserMutationFn = Apollo.MutationFunction<CreateUserMutation, CreateUserMutationVariables>;
+
+/**
+ * __useCreateUserMutation__
+ *
+ * To run a mutation, you first call `useCreateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<CreateUserMutation, CreateUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument, options);
+      }
+export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
+export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
+export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
+export const UpdateUserDocument = gql`
+    mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {
+  updateUser(id: $id, input: $input) {
+    id
+  }
+}
+    `;
+export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, UpdateUserMutationVariables>;
+
+/**
+ * __useUpdateUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
+      }
+export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
+export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
+export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
+export const ListContentByNamespaceDocument = gql`
+    query ListContentByNamespace($namespace: String!) {
+  listContentByNamespace(namespace: $namespace) {
+    id
+    content
+    name
+    slug
+    created_at
+    updated_at
+    created_by {
+      id
+      email
+      first_name
+      last_name
+    }
+    updated_by {
+      id
+      email
+      first_name
+      last_name
+    }
+  }
+}
+    `;
+
+/**
+ * __useListContentByNamespaceQuery__
+ *
+ * To run a query within a React component, call `useListContentByNamespaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListContentByNamespaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListContentByNamespaceQuery({
+ *   variables: {
+ *      namespace: // value for 'namespace'
+ *   },
+ * });
+ */
+export function useListContentByNamespaceQuery(baseOptions: Apollo.QueryHookOptions<ListContentByNamespaceQuery, ListContentByNamespaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListContentByNamespaceQuery, ListContentByNamespaceQueryVariables>(ListContentByNamespaceDocument, options);
+      }
+export function useListContentByNamespaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListContentByNamespaceQuery, ListContentByNamespaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListContentByNamespaceQuery, ListContentByNamespaceQueryVariables>(ListContentByNamespaceDocument, options);
+        }
+export type ListContentByNamespaceQueryHookResult = ReturnType<typeof useListContentByNamespaceQuery>;
+export type ListContentByNamespaceLazyQueryHookResult = ReturnType<typeof useListContentByNamespaceLazyQuery>;
+export type ListContentByNamespaceQueryResult = Apollo.QueryResult<ListContentByNamespaceQuery, ListContentByNamespaceQueryVariables>;
 export const ContentBySlugDocument = gql`
     query ContentBySlug($slug: String!) {
   contentBySlug(slug: $slug) {
@@ -1123,7 +1547,7 @@ export const ContentBySlugDocument = gql`
  *   },
  * });
  */
-export function useContentBySlugQuery(baseOptions: Apollo.QueryHookOptions<ContentBySlugQuery, ContentBySlugQueryVariables> & ({ variables: ContentBySlugQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useContentBySlugQuery(baseOptions: Apollo.QueryHookOptions<ContentBySlugQuery, ContentBySlugQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ContentBySlugQuery, ContentBySlugQueryVariables>(ContentBySlugDocument, options);
       }
@@ -1131,13 +1555,8 @@ export function useContentBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ContentBySlugQuery, ContentBySlugQueryVariables>(ContentBySlugDocument, options);
         }
-export function useContentBySlugSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ContentBySlugQuery, ContentBySlugQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ContentBySlugQuery, ContentBySlugQueryVariables>(ContentBySlugDocument, options);
-        }
 export type ContentBySlugQueryHookResult = ReturnType<typeof useContentBySlugQuery>;
 export type ContentBySlugLazyQueryHookResult = ReturnType<typeof useContentBySlugLazyQuery>;
-export type ContentBySlugSuspenseQueryHookResult = ReturnType<typeof useContentBySlugSuspenseQuery>;
 export type ContentBySlugQueryResult = Apollo.QueryResult<ContentBySlugQuery, ContentBySlugQueryVariables>;
 export const ContentDocument = gql`
     query Content($id: ID!) {
@@ -1181,7 +1600,7 @@ export const ContentDocument = gql`
  *   },
  * });
  */
-export function useContentQuery(baseOptions: Apollo.QueryHookOptions<ContentQuery, ContentQueryVariables> & ({ variables: ContentQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useContentQuery(baseOptions: Apollo.QueryHookOptions<ContentQuery, ContentQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ContentQuery, ContentQueryVariables>(ContentDocument, options);
       }
@@ -1189,20 +1608,131 @@ export function useContentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Co
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ContentQuery, ContentQueryVariables>(ContentDocument, options);
         }
-export function useContentSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ContentQuery, ContentQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ContentQuery, ContentQueryVariables>(ContentDocument, options);
-        }
 export type ContentQueryHookResult = ReturnType<typeof useContentQuery>;
 export type ContentLazyQueryHookResult = ReturnType<typeof useContentLazyQuery>;
-export type ContentSuspenseQueryHookResult = ReturnType<typeof useContentSuspenseQuery>;
 export type ContentQueryResult = Apollo.QueryResult<ContentQuery, ContentQueryVariables>;
+export const ListOrganismsDocument = gql`
+    query ListOrganisms {
+  listOrganisms {
+    taxon_id
+    scientific_name
+    citations {
+      title
+      authors
+      pubmed_id
+      journal
+    }
+    downloads {
+      title
+      items {
+        title
+        url
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useListOrganismsQuery__
+ *
+ * To run a query within a React component, call `useListOrganismsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListOrganismsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListOrganismsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useListOrganismsQuery(baseOptions?: Apollo.QueryHookOptions<ListOrganismsQuery, ListOrganismsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListOrganismsQuery, ListOrganismsQueryVariables>(ListOrganismsDocument, options);
+      }
+export function useListOrganismsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListOrganismsQuery, ListOrganismsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListOrganismsQuery, ListOrganismsQueryVariables>(ListOrganismsDocument, options);
+        }
+export type ListOrganismsQueryHookResult = ReturnType<typeof useListOrganismsQuery>;
+export type ListOrganismsLazyQueryHookResult = ReturnType<typeof useListOrganismsLazyQuery>;
+export type ListOrganismsQueryResult = Apollo.QueryResult<ListOrganismsQuery, ListOrganismsQueryVariables>;
+export const GeneSummaryDocument = gql`
+    query GeneSummary($gene: String!) {
+  geneGeneralInformation(gene: $gene) {
+    id
+    name_description
+    gene_product
+    synonyms
+    description
+  }
+  geneOntologyAnnotation(gene: $gene) {
+    id
+    type
+    date
+    go_term
+    evidence_code
+    with {
+      id
+      db
+      name
+    }
+    extensions {
+      id
+      db
+      relation
+      name
+    }
+  }
+  listPublicationsWithGene(gene: $gene) {
+    id
+    title
+    journal
+    pages
+    issue
+    authors {
+      last_name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGeneSummaryQuery__
+ *
+ * To run a query within a React component, call `useGeneSummaryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGeneSummaryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGeneSummaryQuery({
+ *   variables: {
+ *      gene: // value for 'gene'
+ *   },
+ * });
+ */
+export function useGeneSummaryQuery(baseOptions: Apollo.QueryHookOptions<GeneSummaryQuery, GeneSummaryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GeneSummaryQuery, GeneSummaryQueryVariables>(GeneSummaryDocument, options);
+      }
+export function useGeneSummaryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GeneSummaryQuery, GeneSummaryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GeneSummaryQuery, GeneSummaryQueryVariables>(GeneSummaryDocument, options);
+        }
+export type GeneSummaryQueryHookResult = ReturnType<typeof useGeneSummaryQuery>;
+export type GeneSummaryLazyQueryHookResult = ReturnType<typeof useGeneSummaryLazyQuery>;
+export type GeneSummaryQueryResult = Apollo.QueryResult<GeneSummaryQuery, GeneSummaryQueryVariables>;
 export const GeneOntologyAnnotationDocument = gql`
     query GeneOntologyAnnotation($gene: String!) {
   geneOntologyAnnotation(gene: $gene) {
     id
     type
     date
+    go_term
     evidence_code
     qualifier
     publication
@@ -1238,7 +1768,7 @@ export const GeneOntologyAnnotationDocument = gql`
  *   },
  * });
  */
-export function useGeneOntologyAnnotationQuery(baseOptions: Apollo.QueryHookOptions<GeneOntologyAnnotationQuery, GeneOntologyAnnotationQueryVariables> & ({ variables: GeneOntologyAnnotationQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useGeneOntologyAnnotationQuery(baseOptions: Apollo.QueryHookOptions<GeneOntologyAnnotationQuery, GeneOntologyAnnotationQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GeneOntologyAnnotationQuery, GeneOntologyAnnotationQueryVariables>(GeneOntologyAnnotationDocument, options);
       }
@@ -1246,14 +1776,62 @@ export function useGeneOntologyAnnotationLazyQuery(baseOptions?: Apollo.LazyQuer
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GeneOntologyAnnotationQuery, GeneOntologyAnnotationQueryVariables>(GeneOntologyAnnotationDocument, options);
         }
-export function useGeneOntologyAnnotationSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GeneOntologyAnnotationQuery, GeneOntologyAnnotationQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GeneOntologyAnnotationQuery, GeneOntologyAnnotationQueryVariables>(GeneOntologyAnnotationDocument, options);
-        }
 export type GeneOntologyAnnotationQueryHookResult = ReturnType<typeof useGeneOntologyAnnotationQuery>;
 export type GeneOntologyAnnotationLazyQueryHookResult = ReturnType<typeof useGeneOntologyAnnotationLazyQuery>;
-export type GeneOntologyAnnotationSuspenseQueryHookResult = ReturnType<typeof useGeneOntologyAnnotationSuspenseQuery>;
 export type GeneOntologyAnnotationQueryResult = Apollo.QueryResult<GeneOntologyAnnotationQuery, GeneOntologyAnnotationQueryVariables>;
+export const ListStrainsWithGeneDocument = gql`
+    query ListStrainsWithGene($gene: String!) {
+  listStrainsWithGene(gene: $gene) {
+    id
+    label
+    characteristics
+    in_stock
+    phenotypes {
+      phenotype
+      publication {
+        id
+        title
+        journal
+        pages
+        volume
+        pub_date
+        authors {
+          last_name
+          rank
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useListStrainsWithGeneQuery__
+ *
+ * To run a query within a React component, call `useListStrainsWithGeneQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListStrainsWithGeneQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListStrainsWithGeneQuery({
+ *   variables: {
+ *      gene: // value for 'gene'
+ *   },
+ * });
+ */
+export function useListStrainsWithGeneQuery(baseOptions: Apollo.QueryHookOptions<ListStrainsWithGeneQuery, ListStrainsWithGeneQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListStrainsWithGeneQuery, ListStrainsWithGeneQueryVariables>(ListStrainsWithGeneDocument, options);
+      }
+export function useListStrainsWithGeneLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListStrainsWithGeneQuery, ListStrainsWithGeneQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListStrainsWithGeneQuery, ListStrainsWithGeneQueryVariables>(ListStrainsWithGeneDocument, options);
+        }
+export type ListStrainsWithGeneQueryHookResult = ReturnType<typeof useListStrainsWithGeneQuery>;
+export type ListStrainsWithGeneLazyQueryHookResult = ReturnType<typeof useListStrainsWithGeneLazyQuery>;
+export type ListStrainsWithGeneQueryResult = Apollo.QueryResult<ListStrainsWithGeneQuery, ListStrainsWithGeneQueryVariables>;
 export const PublicationDocument = gql`
     query Publication($id: ID!) {
   publication(id: $id) {
@@ -1290,7 +1868,7 @@ export const PublicationDocument = gql`
  *   },
  * });
  */
-export function usePublicationQuery(baseOptions: Apollo.QueryHookOptions<PublicationQuery, PublicationQueryVariables> & ({ variables: PublicationQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function usePublicationQuery(baseOptions: Apollo.QueryHookOptions<PublicationQuery, PublicationQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<PublicationQuery, PublicationQueryVariables>(PublicationDocument, options);
       }
@@ -1298,13 +1876,8 @@ export function usePublicationLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<PublicationQuery, PublicationQueryVariables>(PublicationDocument, options);
         }
-export function usePublicationSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<PublicationQuery, PublicationQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<PublicationQuery, PublicationQueryVariables>(PublicationDocument, options);
-        }
 export type PublicationQueryHookResult = ReturnType<typeof usePublicationQuery>;
 export type PublicationLazyQueryHookResult = ReturnType<typeof usePublicationLazyQuery>;
-export type PublicationSuspenseQueryHookResult = ReturnType<typeof usePublicationSuspenseQuery>;
 export type PublicationQueryResult = Apollo.QueryResult<PublicationQuery, PublicationQueryVariables>;
 export const ListRecentPublicationsDocument = gql`
     query ListRecentPublications($limit: Int! = 4) {
@@ -1350,14 +1923,61 @@ export function useListRecentPublicationsLazyQuery(baseOptions?: Apollo.LazyQuer
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ListRecentPublicationsQuery, ListRecentPublicationsQueryVariables>(ListRecentPublicationsDocument, options);
         }
-export function useListRecentPublicationsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListRecentPublicationsQuery, ListRecentPublicationsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ListRecentPublicationsQuery, ListRecentPublicationsQueryVariables>(ListRecentPublicationsDocument, options);
-        }
 export type ListRecentPublicationsQueryHookResult = ReturnType<typeof useListRecentPublicationsQuery>;
 export type ListRecentPublicationsLazyQueryHookResult = ReturnType<typeof useListRecentPublicationsLazyQuery>;
-export type ListRecentPublicationsSuspenseQueryHookResult = ReturnType<typeof useListRecentPublicationsSuspenseQuery>;
 export type ListRecentPublicationsQueryResult = Apollo.QueryResult<ListRecentPublicationsQuery, ListRecentPublicationsQueryVariables>;
+export const ListPublicationsWithGeneDocument = gql`
+    query ListPublicationsWithGene($gene: String!) {
+  listPublicationsWithGene(gene: $gene) {
+    related_genes {
+      id
+      name
+    }
+    id
+    doi
+    title
+    journal
+    pub_date
+    volume
+    pages
+    pub_type
+    source
+    issue
+    authors {
+      last_name
+      rank
+    }
+  }
+}
+    `;
+
+/**
+ * __useListPublicationsWithGeneQuery__
+ *
+ * To run a query within a React component, call `useListPublicationsWithGeneQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListPublicationsWithGeneQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListPublicationsWithGeneQuery({
+ *   variables: {
+ *      gene: // value for 'gene'
+ *   },
+ * });
+ */
+export function useListPublicationsWithGeneQuery(baseOptions: Apollo.QueryHookOptions<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>(ListPublicationsWithGeneDocument, options);
+      }
+export function useListPublicationsWithGeneLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>(ListPublicationsWithGeneDocument, options);
+        }
+export type ListPublicationsWithGeneQueryHookResult = ReturnType<typeof useListPublicationsWithGeneQuery>;
+export type ListPublicationsWithGeneLazyQueryHookResult = ReturnType<typeof useListPublicationsWithGeneLazyQuery>;
+export type ListPublicationsWithGeneQueryResult = Apollo.QueryResult<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>;
 export const StrainListDocument = gql`
     query StrainList($cursor: Int!, $limit: Int!, $filter: StrainListFilter) {
   listStrains(cursor: $cursor, limit: $limit, filter: $filter) {
@@ -1391,7 +2011,7 @@ export const StrainListDocument = gql`
  *   },
  * });
  */
-export function useStrainListQuery(baseOptions: Apollo.QueryHookOptions<StrainListQuery, StrainListQueryVariables> & ({ variables: StrainListQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useStrainListQuery(baseOptions: Apollo.QueryHookOptions<StrainListQuery, StrainListQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<StrainListQuery, StrainListQueryVariables>(StrainListDocument, options);
       }
@@ -1399,13 +2019,8 @@ export function useStrainListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<StrainListQuery, StrainListQueryVariables>(StrainListDocument, options);
         }
-export function useStrainListSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<StrainListQuery, StrainListQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<StrainListQuery, StrainListQueryVariables>(StrainListDocument, options);
-        }
 export type StrainListQueryHookResult = ReturnType<typeof useStrainListQuery>;
 export type StrainListLazyQueryHookResult = ReturnType<typeof useStrainListLazyQuery>;
-export type StrainListSuspenseQueryHookResult = ReturnType<typeof useStrainListSuspenseQuery>;
 export type StrainListQueryResult = Apollo.QueryResult<StrainListQuery, StrainListQueryVariables>;
 export const ListStrainsWithPhenotypeDocument = gql`
     query ListStrainsWithPhenotype($cursor: Int!, $limit: Int!, $type: String!, $annotation: String!) {
@@ -1458,7 +2073,7 @@ export const ListStrainsWithPhenotypeDocument = gql`
  *   },
  * });
  */
-export function useListStrainsWithPhenotypeQuery(baseOptions: Apollo.QueryHookOptions<ListStrainsWithPhenotypeQuery, ListStrainsWithPhenotypeQueryVariables> & ({ variables: ListStrainsWithPhenotypeQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useListStrainsWithPhenotypeQuery(baseOptions: Apollo.QueryHookOptions<ListStrainsWithPhenotypeQuery, ListStrainsWithPhenotypeQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ListStrainsWithPhenotypeQuery, ListStrainsWithPhenotypeQueryVariables>(ListStrainsWithPhenotypeDocument, options);
       }
@@ -1466,13 +2081,8 @@ export function useListStrainsWithPhenotypeLazyQuery(baseOptions?: Apollo.LazyQu
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ListStrainsWithPhenotypeQuery, ListStrainsWithPhenotypeQueryVariables>(ListStrainsWithPhenotypeDocument, options);
         }
-export function useListStrainsWithPhenotypeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListStrainsWithPhenotypeQuery, ListStrainsWithPhenotypeQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ListStrainsWithPhenotypeQuery, ListStrainsWithPhenotypeQueryVariables>(ListStrainsWithPhenotypeDocument, options);
-        }
 export type ListStrainsWithPhenotypeQueryHookResult = ReturnType<typeof useListStrainsWithPhenotypeQuery>;
 export type ListStrainsWithPhenotypeLazyQueryHookResult = ReturnType<typeof useListStrainsWithPhenotypeLazyQuery>;
-export type ListStrainsWithPhenotypeSuspenseQueryHookResult = ReturnType<typeof useListStrainsWithPhenotypeSuspenseQuery>;
 export type ListStrainsWithPhenotypeQueryResult = Apollo.QueryResult<ListStrainsWithPhenotypeQuery, ListStrainsWithPhenotypeQueryVariables>;
 export const ListBacterialStrainsDocument = gql`
     query ListBacterialStrains {
@@ -1532,13 +2142,8 @@ export function useListBacterialStrainsLazyQuery(baseOptions?: Apollo.LazyQueryH
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ListBacterialStrainsQuery, ListBacterialStrainsQueryVariables>(ListBacterialStrainsDocument, options);
         }
-export function useListBacterialStrainsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListBacterialStrainsQuery, ListBacterialStrainsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ListBacterialStrainsQuery, ListBacterialStrainsQueryVariables>(ListBacterialStrainsDocument, options);
-        }
 export type ListBacterialStrainsQueryHookResult = ReturnType<typeof useListBacterialStrainsQuery>;
 export type ListBacterialStrainsLazyQueryHookResult = ReturnType<typeof useListBacterialStrainsLazyQuery>;
-export type ListBacterialStrainsSuspenseQueryHookResult = ReturnType<typeof useListBacterialStrainsSuspenseQuery>;
 export type ListBacterialStrainsQueryResult = Apollo.QueryResult<ListBacterialStrainsQuery, ListBacterialStrainsQueryVariables>;
 export const ListStrainsInventoryDocument = gql`
     query ListStrainsInventory($cursor: Int!, $limit: Int!) {
@@ -1577,7 +2182,7 @@ export const ListStrainsInventoryDocument = gql`
  *   },
  * });
  */
-export function useListStrainsInventoryQuery(baseOptions: Apollo.QueryHookOptions<ListStrainsInventoryQuery, ListStrainsInventoryQueryVariables> & ({ variables: ListStrainsInventoryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useListStrainsInventoryQuery(baseOptions: Apollo.QueryHookOptions<ListStrainsInventoryQuery, ListStrainsInventoryQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ListStrainsInventoryQuery, ListStrainsInventoryQueryVariables>(ListStrainsInventoryDocument, options);
       }
@@ -1585,13 +2190,8 @@ export function useListStrainsInventoryLazyQuery(baseOptions?: Apollo.LazyQueryH
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ListStrainsInventoryQuery, ListStrainsInventoryQueryVariables>(ListStrainsInventoryDocument, options);
         }
-export function useListStrainsInventorySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListStrainsInventoryQuery, ListStrainsInventoryQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ListStrainsInventoryQuery, ListStrainsInventoryQueryVariables>(ListStrainsInventoryDocument, options);
-        }
 export type ListStrainsInventoryQueryHookResult = ReturnType<typeof useListStrainsInventoryQuery>;
 export type ListStrainsInventoryLazyQueryHookResult = ReturnType<typeof useListStrainsInventoryLazyQuery>;
-export type ListStrainsInventorySuspenseQueryHookResult = ReturnType<typeof useListStrainsInventorySuspenseQuery>;
 export type ListStrainsInventoryQueryResult = Apollo.QueryResult<ListStrainsInventoryQuery, ListStrainsInventoryQueryVariables>;
 export const ListPlasmidsInventoryDocument = gql`
     query ListPlasmidsInventory($cursor: Int!, $limit: Int!) {
@@ -1630,7 +2230,7 @@ export const ListPlasmidsInventoryDocument = gql`
  *   },
  * });
  */
-export function useListPlasmidsInventoryQuery(baseOptions: Apollo.QueryHookOptions<ListPlasmidsInventoryQuery, ListPlasmidsInventoryQueryVariables> & ({ variables: ListPlasmidsInventoryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useListPlasmidsInventoryQuery(baseOptions: Apollo.QueryHookOptions<ListPlasmidsInventoryQuery, ListPlasmidsInventoryQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ListPlasmidsInventoryQuery, ListPlasmidsInventoryQueryVariables>(ListPlasmidsInventoryDocument, options);
       }
@@ -1638,13 +2238,8 @@ export function useListPlasmidsInventoryLazyQuery(baseOptions?: Apollo.LazyQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ListPlasmidsInventoryQuery, ListPlasmidsInventoryQueryVariables>(ListPlasmidsInventoryDocument, options);
         }
-export function useListPlasmidsInventorySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListPlasmidsInventoryQuery, ListPlasmidsInventoryQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ListPlasmidsInventoryQuery, ListPlasmidsInventoryQueryVariables>(ListPlasmidsInventoryDocument, options);
-        }
 export type ListPlasmidsInventoryQueryHookResult = ReturnType<typeof useListPlasmidsInventoryQuery>;
 export type ListPlasmidsInventoryLazyQueryHookResult = ReturnType<typeof useListPlasmidsInventoryLazyQuery>;
-export type ListPlasmidsInventorySuspenseQueryHookResult = ReturnType<typeof useListPlasmidsInventorySuspenseQuery>;
 export type ListPlasmidsInventoryQueryResult = Apollo.QueryResult<ListPlasmidsInventoryQuery, ListPlasmidsInventoryQueryVariables>;
 export const PlasmidListFilterDocument = gql`
     query PlasmidListFilter($cursor: Int!, $limit: Int!, $filter: String!) {
@@ -1679,7 +2274,7 @@ export const PlasmidListFilterDocument = gql`
  *   },
  * });
  */
-export function usePlasmidListFilterQuery(baseOptions: Apollo.QueryHookOptions<PlasmidListFilterQuery, PlasmidListFilterQueryVariables> & ({ variables: PlasmidListFilterQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function usePlasmidListFilterQuery(baseOptions: Apollo.QueryHookOptions<PlasmidListFilterQuery, PlasmidListFilterQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<PlasmidListFilterQuery, PlasmidListFilterQueryVariables>(PlasmidListFilterDocument, options);
       }
@@ -1687,13 +2282,8 @@ export function usePlasmidListFilterLazyQuery(baseOptions?: Apollo.LazyQueryHook
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<PlasmidListFilterQuery, PlasmidListFilterQueryVariables>(PlasmidListFilterDocument, options);
         }
-export function usePlasmidListFilterSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<PlasmidListFilterQuery, PlasmidListFilterQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<PlasmidListFilterQuery, PlasmidListFilterQueryVariables>(PlasmidListFilterDocument, options);
-        }
 export type PlasmidListFilterQueryHookResult = ReturnType<typeof usePlasmidListFilterQuery>;
 export type PlasmidListFilterLazyQueryHookResult = ReturnType<typeof usePlasmidListFilterLazyQuery>;
-export type PlasmidListFilterSuspenseQueryHookResult = ReturnType<typeof usePlasmidListFilterSuspenseQuery>;
 export type PlasmidListFilterQueryResult = Apollo.QueryResult<PlasmidListFilterQuery, PlasmidListFilterQueryVariables>;
 export const PlasmidDocument = gql`
     query Plasmid($id: ID!) {
@@ -1746,7 +2336,7 @@ export const PlasmidDocument = gql`
  *   },
  * });
  */
-export function usePlasmidQuery(baseOptions: Apollo.QueryHookOptions<PlasmidQuery, PlasmidQueryVariables> & ({ variables: PlasmidQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function usePlasmidQuery(baseOptions: Apollo.QueryHookOptions<PlasmidQuery, PlasmidQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<PlasmidQuery, PlasmidQueryVariables>(PlasmidDocument, options);
       }
@@ -1754,13 +2344,8 @@ export function usePlasmidLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Pl
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<PlasmidQuery, PlasmidQueryVariables>(PlasmidDocument, options);
         }
-export function usePlasmidSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<PlasmidQuery, PlasmidQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<PlasmidQuery, PlasmidQueryVariables>(PlasmidDocument, options);
-        }
 export type PlasmidQueryHookResult = ReturnType<typeof usePlasmidQuery>;
 export type PlasmidLazyQueryHookResult = ReturnType<typeof usePlasmidLazyQuery>;
-export type PlasmidSuspenseQueryHookResult = ReturnType<typeof usePlasmidSuspenseQuery>;
 export type PlasmidQueryResult = Apollo.QueryResult<PlasmidQuery, PlasmidQueryVariables>;
 export const StrainDocument = gql`
     query Strain($id: ID!) {
@@ -1838,7 +2423,7 @@ export const StrainDocument = gql`
  *   },
  * });
  */
-export function useStrainQuery(baseOptions: Apollo.QueryHookOptions<StrainQuery, StrainQueryVariables> & ({ variables: StrainQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useStrainQuery(baseOptions: Apollo.QueryHookOptions<StrainQuery, StrainQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<StrainQuery, StrainQueryVariables>(StrainDocument, options);
       }
@@ -1846,13 +2431,8 @@ export function useStrainLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Str
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<StrainQuery, StrainQueryVariables>(StrainDocument, options);
         }
-export function useStrainSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<StrainQuery, StrainQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<StrainQuery, StrainQueryVariables>(StrainDocument, options);
-        }
 export type StrainQueryHookResult = ReturnType<typeof useStrainQuery>;
 export type StrainLazyQueryHookResult = ReturnType<typeof useStrainLazyQuery>;
-export type StrainSuspenseQueryHookResult = ReturnType<typeof useStrainSuspenseQuery>;
 export type StrainQueryResult = Apollo.QueryResult<StrainQuery, StrainQueryVariables>;
 export const ListRecentPlasmidsDocument = gql`
     query ListRecentPlasmids($limit: Int! = 4) {
@@ -1888,13 +2468,8 @@ export function useListRecentPlasmidsLazyQuery(baseOptions?: Apollo.LazyQueryHoo
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ListRecentPlasmidsQuery, ListRecentPlasmidsQueryVariables>(ListRecentPlasmidsDocument, options);
         }
-export function useListRecentPlasmidsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListRecentPlasmidsQuery, ListRecentPlasmidsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ListRecentPlasmidsQuery, ListRecentPlasmidsQueryVariables>(ListRecentPlasmidsDocument, options);
-        }
 export type ListRecentPlasmidsQueryHookResult = ReturnType<typeof useListRecentPlasmidsQuery>;
 export type ListRecentPlasmidsLazyQueryHookResult = ReturnType<typeof useListRecentPlasmidsLazyQuery>;
-export type ListRecentPlasmidsSuspenseQueryHookResult = ReturnType<typeof useListRecentPlasmidsSuspenseQuery>;
 export type ListRecentPlasmidsQueryResult = Apollo.QueryResult<ListRecentPlasmidsQuery, ListRecentPlasmidsQueryVariables>;
 export const ListRecentStrainsDocument = gql`
     query ListRecentStrains($limit: Int! = 4) {
@@ -1930,13 +2505,8 @@ export function useListRecentStrainsLazyQuery(baseOptions?: Apollo.LazyQueryHook
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ListRecentStrainsQuery, ListRecentStrainsQueryVariables>(ListRecentStrainsDocument, options);
         }
-export function useListRecentStrainsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListRecentStrainsQuery, ListRecentStrainsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ListRecentStrainsQuery, ListRecentStrainsQueryVariables>(ListRecentStrainsDocument, options);
-        }
 export type ListRecentStrainsQueryHookResult = ReturnType<typeof useListRecentStrainsQuery>;
 export type ListRecentStrainsLazyQueryHookResult = ReturnType<typeof useListRecentStrainsLazyQuery>;
-export type ListRecentStrainsSuspenseQueryHookResult = ReturnType<typeof useListRecentStrainsSuspenseQuery>;
 export type ListRecentStrainsQueryResult = Apollo.QueryResult<ListRecentStrainsQuery, ListRecentStrainsQueryVariables>;
 export const UserByEmailDocument = gql`
     query UserByEmail($email: String!) {
@@ -1962,7 +2532,7 @@ export const UserByEmailDocument = gql`
  *   },
  * });
  */
-export function useUserByEmailQuery(baseOptions: Apollo.QueryHookOptions<UserByEmailQuery, UserByEmailQueryVariables> & ({ variables: UserByEmailQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useUserByEmailQuery(baseOptions: Apollo.QueryHookOptions<UserByEmailQuery, UserByEmailQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<UserByEmailQuery, UserByEmailQueryVariables>(UserByEmailDocument, options);
       }
@@ -1970,379 +2540,6 @@ export function useUserByEmailLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<UserByEmailQuery, UserByEmailQueryVariables>(UserByEmailDocument, options);
         }
-export function useUserByEmailSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<UserByEmailQuery, UserByEmailQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<UserByEmailQuery, UserByEmailQueryVariables>(UserByEmailDocument, options);
-        }
 export type UserByEmailQueryHookResult = ReturnType<typeof useUserByEmailQuery>;
 export type UserByEmailLazyQueryHookResult = ReturnType<typeof useUserByEmailLazyQuery>;
-export type UserByEmailSuspenseQueryHookResult = ReturnType<typeof useUserByEmailSuspenseQuery>;
 export type UserByEmailQueryResult = Apollo.QueryResult<UserByEmailQuery, UserByEmailQueryVariables>;
-
-export const ContentBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ContentBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contentBySlug"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}}]}}]}}]} as unknown as DocumentNode<ContentBySlugQuery, ContentBySlugQueryVariables>;
-export const ContentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Content"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}}]}}]}}]} as unknown as DocumentNode<ContentQuery, ContentQueryVariables>;
-export const GeneOntologyAnnotationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GeneOntologyAnnotation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gene"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"geneOntologyAnnotation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gene"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gene"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"evidence_code"}},{"kind":"Field","name":{"kind":"Name","value":"qualifier"}},{"kind":"Field","name":{"kind":"Name","value":"publication"}},{"kind":"Field","name":{"kind":"Name","value":"assigned_by"}},{"kind":"Field","name":{"kind":"Name","value":"with"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"db"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"extensions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"db"}},{"kind":"Field","name":{"kind":"Name","value":"relation"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<GeneOntologyAnnotationQuery, GeneOntologyAnnotationQueryVariables>;
-export const PublicationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Publication"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"publication"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"doi"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"abstract"}},{"kind":"Field","name":{"kind":"Name","value":"journal"}},{"kind":"Field","name":{"kind":"Name","value":"pub_date"}},{"kind":"Field","name":{"kind":"Name","value":"pages"}},{"kind":"Field","name":{"kind":"Name","value":"issue"}},{"kind":"Field","name":{"kind":"Name","value":"volume"}},{"kind":"Field","name":{"kind":"Name","value":"authors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"initials"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}}]}}]}}]} as unknown as DocumentNode<PublicationQuery, PublicationQueryVariables>;
-export const ListRecentPublicationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListRecentPublications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},"defaultValue":{"kind":"IntValue","value":"4"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listRecentPublications"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"doi"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"abstract"}},{"kind":"Field","name":{"kind":"Name","value":"journal"}},{"kind":"Field","name":{"kind":"Name","value":"pub_date"}},{"kind":"Field","name":{"kind":"Name","value":"pages"}},{"kind":"Field","name":{"kind":"Name","value":"issue"}},{"kind":"Field","name":{"kind":"Name","value":"volume"}},{"kind":"Field","name":{"kind":"Name","value":"authors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"initials"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}}]}}]}}]} as unknown as DocumentNode<ListRecentPublicationsQuery, ListRecentPublicationsQueryVariables>;
-export const StrainListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"StrainList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"StrainListFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listStrains"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"cursor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nextCursor"}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"strains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"summary"}},{"kind":"Field","name":{"kind":"Name","value":"in_stock"}}]}}]}}]}}]} as unknown as DocumentNode<StrainListQuery, StrainListQueryVariables>;
-export const ListStrainsWithPhenotypeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListStrainsWithPhenotype"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"annotation"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listStrainsWithAnnotation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"cursor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}},{"kind":"Argument","name":{"kind":"Name","value":"annotation"},"value":{"kind":"Variable","name":{"kind":"Name","value":"annotation"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"nextCursor"}},{"kind":"Field","name":{"kind":"Name","value":"strains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"genes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"publications"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pub_date"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"journal"}},{"kind":"Field","name":{"kind":"Name","value":"volume"}},{"kind":"Field","name":{"kind":"Name","value":"pages"}},{"kind":"Field","name":{"kind":"Name","value":"authors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<ListStrainsWithPhenotypeQuery, ListStrainsWithPhenotypeQueryVariables>;
-export const ListBacterialStrainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListBacterialStrains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"bacterialFoodSource"},"name":{"kind":"Name","value":"listStrainsWithAnnotation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"cursor"},"value":{"kind":"IntValue","value":"0"}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"StringValue","value":"characteristic","block":false}},{"kind":"Argument","name":{"kind":"Name","value":"annotation"},"value":{"kind":"StringValue","value":"bacterial food source","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"nextCursor"}},{"kind":"Field","name":{"kind":"Name","value":"strains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"summary"}},{"kind":"Field","name":{"kind":"Name","value":"in_stock"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"symbioticFarmerBacterium"},"name":{"kind":"Name","value":"listStrainsWithAnnotation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"cursor"},"value":{"kind":"IntValue","value":"0"}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"StringValue","value":"characteristic","block":false}},{"kind":"Argument","name":{"kind":"Name","value":"annotation"},"value":{"kind":"StringValue","value":"symbiotic farmer bacterium","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"nextCursor"}},{"kind":"Field","name":{"kind":"Name","value":"strains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"summary"}},{"kind":"Field","name":{"kind":"Name","value":"in_stock"}}]}}]}}]}}]} as unknown as DocumentNode<ListBacterialStrainsQuery, ListBacterialStrainsQueryVariables>;
-export const ListStrainsInventoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListStrainsInventory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listStrainsWithAnnotation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"cursor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"StringValue","value":"strain_inventory","block":false}},{"kind":"Argument","name":{"kind":"Name","value":"annotation"},"value":{"kind":"StringValue","value":"strain_inventory","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"nextCursor"}},{"kind":"Field","name":{"kind":"Name","value":"strains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"summary"}},{"kind":"Field","name":{"kind":"Name","value":"in_stock"}}]}}]}}]}}]} as unknown as DocumentNode<ListStrainsInventoryQuery, ListStrainsInventoryQueryVariables>;
-export const ListPlasmidsInventoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListPlasmidsInventory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listPlasmidsWithAnnotation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"cursor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"StringValue","value":"plasmid_inventory","block":false}},{"kind":"Argument","name":{"kind":"Name","value":"annotation"},"value":{"kind":"StringValue","value":"plasmid inventory","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"nextCursor"}},{"kind":"Field","name":{"kind":"Name","value":"plasmids"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"summary"}},{"kind":"Field","name":{"kind":"Name","value":"in_stock"}}]}}]}}]}}]} as unknown as DocumentNode<ListPlasmidsInventoryQuery, ListPlasmidsInventoryQueryVariables>;
-export const PlasmidListFilterDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PlasmidListFilter"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listPlasmids"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"cursor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nextCursor"}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"plasmids"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"summary"}},{"kind":"Field","name":{"kind":"Name","value":"in_stock"}}]}}]}}]}}]} as unknown as DocumentNode<PlasmidListFilterQuery, PlasmidListFilterQueryVariables>;
-export const PlasmidDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Plasmid"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"plasmid"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"summary"}},{"kind":"Field","name":{"kind":"Name","value":"depositor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"publications"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pub_date"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"journal"}},{"kind":"Field","name":{"kind":"Name","value":"volume"}},{"kind":"Field","name":{"kind":"Name","value":"pages"}},{"kind":"Field","name":{"kind":"Name","value":"doi"}},{"kind":"Field","name":{"kind":"Name","value":"authors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"dbxrefs"}},{"kind":"Field","name":{"kind":"Name","value":"genes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"image_map"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"keywords"}},{"kind":"Field","name":{"kind":"Name","value":"genbank_accession"}},{"kind":"Field","name":{"kind":"Name","value":"in_stock"}}]}}]}}]} as unknown as DocumentNode<PlasmidQuery, PlasmidQueryVariables>;
-export const StrainDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Strain"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"strain"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"summary"}},{"kind":"Field","name":{"kind":"Name","value":"species"}},{"kind":"Field","name":{"kind":"Name","value":"parent"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"Field","name":{"kind":"Name","value":"depositor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"plasmid"}},{"kind":"Field","name":{"kind":"Name","value":"dbxrefs"}},{"kind":"Field","name":{"kind":"Name","value":"publications"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pub_date"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"journal"}},{"kind":"Field","name":{"kind":"Name","value":"volume"}},{"kind":"Field","name":{"kind":"Name","value":"pages"}},{"kind":"Field","name":{"kind":"Name","value":"doi"}},{"kind":"Field","name":{"kind":"Name","value":"authors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"genes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"in_stock"}},{"kind":"Field","name":{"kind":"Name","value":"systematic_name"}},{"kind":"Field","name":{"kind":"Name","value":"genotypes"}},{"kind":"Field","name":{"kind":"Name","value":"mutagenesis_method"}},{"kind":"Field","name":{"kind":"Name","value":"genetic_modification"}},{"kind":"Field","name":{"kind":"Name","value":"names"}},{"kind":"Field","name":{"kind":"Name","value":"characteristics"}},{"kind":"Field","name":{"kind":"Name","value":"phenotypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"phenotype"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"assay"}},{"kind":"Field","name":{"kind":"Name","value":"environment"}},{"kind":"Field","name":{"kind":"Name","value":"publication"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pub_date"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"journal"}},{"kind":"Field","name":{"kind":"Name","value":"volume"}},{"kind":"Field","name":{"kind":"Name","value":"pages"}},{"kind":"Field","name":{"kind":"Name","value":"authors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"last_name"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<StrainQuery, StrainQueryVariables>;
-export const ListRecentPlasmidsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListRecentPlasmids"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},"defaultValue":{"kind":"IntValue","value":"4"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listRecentPlasmids"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<ListRecentPlasmidsQuery, ListRecentPlasmidsQueryVariables>;
-export const ListRecentStrainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListRecentStrains"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},"defaultValue":{"kind":"IntValue","value":"4"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listRecentStrains"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"systematic_name"}}]}}]}}]} as unknown as DocumentNode<ListRecentStrainsQuery, ListRecentStrainsQueryVariables>;
-export const UserByEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UserByEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userByEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UserByEmailQuery, UserByEmailQueryVariables>;
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockContentBySlugQuery(
- *   ({ query, variables }) => {
- *     const { slug } = variables;
- *     return HttpResponse.json({
- *       data: { contentBySlug }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockContentBySlugQuery = (resolver: GraphQLResponseResolver<ContentBySlugQuery, ContentBySlugQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<ContentBySlugQuery, ContentBySlugQueryVariables>(
-    'ContentBySlug',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockContentQuery(
- *   ({ query, variables }) => {
- *     const { id } = variables;
- *     return HttpResponse.json({
- *       data: { content }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockContentQuery = (resolver: GraphQLResponseResolver<ContentQuery, ContentQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<ContentQuery, ContentQueryVariables>(
-    'Content',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockGeneOntologyAnnotationQuery(
- *   ({ query, variables }) => {
- *     const { gene } = variables;
- *     return HttpResponse.json({
- *       data: { geneOntologyAnnotation }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockGeneOntologyAnnotationQuery = (resolver: GraphQLResponseResolver<GeneOntologyAnnotationQuery, GeneOntologyAnnotationQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<GeneOntologyAnnotationQuery, GeneOntologyAnnotationQueryVariables>(
-    'GeneOntologyAnnotation',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockPublicationQuery(
- *   ({ query, variables }) => {
- *     const { id } = variables;
- *     return HttpResponse.json({
- *       data: { publication }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockPublicationQuery = (resolver: GraphQLResponseResolver<PublicationQuery, PublicationQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<PublicationQuery, PublicationQueryVariables>(
-    'Publication',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockListRecentPublicationsQuery(
- *   ({ query, variables }) => {
- *     const { limit } = variables;
- *     return HttpResponse.json({
- *       data: { listRecentPublications }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockListRecentPublicationsQuery = (resolver: GraphQLResponseResolver<ListRecentPublicationsQuery, ListRecentPublicationsQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<ListRecentPublicationsQuery, ListRecentPublicationsQueryVariables>(
-    'ListRecentPublications',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockStrainListQuery(
- *   ({ query, variables }) => {
- *     const { cursor, limit, filter } = variables;
- *     return HttpResponse.json({
- *       data: { listStrains }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockStrainListQuery = (resolver: GraphQLResponseResolver<StrainListQuery, StrainListQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<StrainListQuery, StrainListQueryVariables>(
-    'StrainList',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockListStrainsWithPhenotypeQuery(
- *   ({ query, variables }) => {
- *     const { cursor, limit, type, annotation } = variables;
- *     return HttpResponse.json({
- *       data: { listStrainsWithAnnotation }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockListStrainsWithPhenotypeQuery = (resolver: GraphQLResponseResolver<ListStrainsWithPhenotypeQuery, ListStrainsWithPhenotypeQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<ListStrainsWithPhenotypeQuery, ListStrainsWithPhenotypeQueryVariables>(
-    'ListStrainsWithPhenotype',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockListBacterialStrainsQuery(
- *   ({ query, variables }) => {
- *     return HttpResponse.json({
- *       data: { listStrainsWithAnnotation, listStrainsWithAnnotation }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockListBacterialStrainsQuery = (resolver: GraphQLResponseResolver<ListBacterialStrainsQuery, ListBacterialStrainsQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<ListBacterialStrainsQuery, ListBacterialStrainsQueryVariables>(
-    'ListBacterialStrains',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockListStrainsInventoryQuery(
- *   ({ query, variables }) => {
- *     const { cursor, limit } = variables;
- *     return HttpResponse.json({
- *       data: { listStrainsWithAnnotation }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockListStrainsInventoryQuery = (resolver: GraphQLResponseResolver<ListStrainsInventoryQuery, ListStrainsInventoryQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<ListStrainsInventoryQuery, ListStrainsInventoryQueryVariables>(
-    'ListStrainsInventory',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockListPlasmidsInventoryQuery(
- *   ({ query, variables }) => {
- *     const { cursor, limit } = variables;
- *     return HttpResponse.json({
- *       data: { listPlasmidsWithAnnotation }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockListPlasmidsInventoryQuery = (resolver: GraphQLResponseResolver<ListPlasmidsInventoryQuery, ListPlasmidsInventoryQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<ListPlasmidsInventoryQuery, ListPlasmidsInventoryQueryVariables>(
-    'ListPlasmidsInventory',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockPlasmidListFilterQuery(
- *   ({ query, variables }) => {
- *     const { cursor, limit, filter } = variables;
- *     return HttpResponse.json({
- *       data: { listPlasmids }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockPlasmidListFilterQuery = (resolver: GraphQLResponseResolver<PlasmidListFilterQuery, PlasmidListFilterQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<PlasmidListFilterQuery, PlasmidListFilterQueryVariables>(
-    'PlasmidListFilter',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockPlasmidQuery(
- *   ({ query, variables }) => {
- *     const { id } = variables;
- *     return HttpResponse.json({
- *       data: { plasmid }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockPlasmidQuery = (resolver: GraphQLResponseResolver<PlasmidQuery, PlasmidQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<PlasmidQuery, PlasmidQueryVariables>(
-    'Plasmid',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockStrainQuery(
- *   ({ query, variables }) => {
- *     const { id } = variables;
- *     return HttpResponse.json({
- *       data: { strain }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockStrainQuery = (resolver: GraphQLResponseResolver<StrainQuery, StrainQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<StrainQuery, StrainQueryVariables>(
-    'Strain',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockListRecentPlasmidsQuery(
- *   ({ query, variables }) => {
- *     const { limit } = variables;
- *     return HttpResponse.json({
- *       data: { listRecentPlasmids }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockListRecentPlasmidsQuery = (resolver: GraphQLResponseResolver<ListRecentPlasmidsQuery, ListRecentPlasmidsQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<ListRecentPlasmidsQuery, ListRecentPlasmidsQueryVariables>(
-    'ListRecentPlasmids',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockListRecentStrainsQuery(
- *   ({ query, variables }) => {
- *     const { limit } = variables;
- *     return HttpResponse.json({
- *       data: { listRecentStrains }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockListRecentStrainsQuery = (resolver: GraphQLResponseResolver<ListRecentStrainsQuery, ListRecentStrainsQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<ListRecentStrainsQuery, ListRecentStrainsQueryVariables>(
-    'ListRecentStrains',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
- * mockUserByEmailQuery(
- *   ({ query, variables }) => {
- *     const { email } = variables;
- *     return HttpResponse.json({
- *       data: { userByEmail }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockUserByEmailQuery = (resolver: GraphQLResponseResolver<UserByEmailQuery, UserByEmailQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<UserByEmailQuery, UserByEmailQueryVariables>(
-    'UserByEmail',
-    resolver,
-    options
-  )

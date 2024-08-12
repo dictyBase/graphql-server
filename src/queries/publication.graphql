@@ -33,3 +33,26 @@ query ListRecentPublications($limit: Int! = 4) {
     }
   }
 }
+
+query ListPublicationsWithGene($gene: String!) {
+  listPublicationsWithGene(gene: $gene) {
+    related_genes {
+      id
+      name
+    }
+    id
+    doi
+    title
+    journal
+    pub_date
+    volume
+    pages
+    pub_type
+    source
+    issue
+    authors {
+      last_name
+      rank
+    }
+  }
+}

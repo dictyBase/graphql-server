@@ -1,11 +1,4 @@
 import { FieldPolicy, FieldReadFunction, TypePolicies, TypePolicy } from '@apollo/client/cache';
-export type AssociatedSequencesKeySpecifier = ('ests' | 'genbank_genomic_fragment' | 'genbank_mrna' | 'more_link' | AssociatedSequencesKeySpecifier)[];
-export type AssociatedSequencesFieldPolicy = {
-	ests?: FieldPolicy<any> | FieldReadFunction<any>,
-	genbank_genomic_fragment?: FieldPolicy<any> | FieldReadFunction<any>,
-	genbank_mrna?: FieldPolicy<any> | FieldReadFunction<any>,
-	more_link?: FieldPolicy<any> | FieldReadFunction<any>
-};
 export type AuthKeySpecifier = ('identity' | 'token' | 'user' | AuthKeySpecifier)[];
 export type AuthFieldPolicy = {
 	identity?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -105,32 +98,18 @@ export type GOAnnotationFieldPolicy = {
 	type?: FieldPolicy<any> | FieldReadFunction<any>,
 	with?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type GeneKeySpecifier = ('associated_sequences' | 'general_info' | 'goas' | 'id' | 'links' | 'name' | 'orthologs' | 'product_info' | 'protein_information' | 'strains' | GeneKeySpecifier)[];
+export type GeneKeySpecifier = ('id' | 'name' | GeneKeySpecifier)[];
 export type GeneFieldPolicy = {
-	associated_sequences?: FieldPolicy<any> | FieldReadFunction<any>,
-	general_info?: FieldPolicy<any> | FieldReadFunction<any>,
-	goas?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	links?: FieldPolicy<any> | FieldReadFunction<any>,
-	name?: FieldPolicy<any> | FieldReadFunction<any>,
-	orthologs?: FieldPolicy<any> | FieldReadFunction<any>,
-	product_info?: FieldPolicy<any> | FieldReadFunction<any>,
-	protein_information?: FieldPolicy<any> | FieldReadFunction<any>,
-	strains?: FieldPolicy<any> | FieldReadFunction<any>
+	name?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type GeneralInfoKeySpecifier = ('alt_gene_name' | 'alt_protein_names' | 'description' | 'gene_product' | 'name_description' | GeneralInfoKeySpecifier)[];
-export type GeneralInfoFieldPolicy = {
-	alt_gene_name?: FieldPolicy<any> | FieldReadFunction<any>,
-	alt_protein_names?: FieldPolicy<any> | FieldReadFunction<any>,
+export type GeneGeneralInfoKeySpecifier = ('description' | 'gene_product' | 'id' | 'name_description' | 'synonyms' | GeneGeneralInfoKeySpecifier)[];
+export type GeneGeneralInfoFieldPolicy = {
 	description?: FieldPolicy<any> | FieldReadFunction<any>,
 	gene_product?: FieldPolicy<any> | FieldReadFunction<any>,
-	name_description?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type GenomicCoordinatesKeySpecifier = ('chrom_coords' | 'exon' | 'local_coords' | GenomicCoordinatesKeySpecifier)[];
-export type GenomicCoordinatesFieldPolicy = {
-	chrom_coords?: FieldPolicy<any> | FieldReadFunction<any>,
-	exon?: FieldPolicy<any> | FieldReadFunction<any>,
-	local_coords?: FieldPolicy<any> | FieldReadFunction<any>
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	name_description?: FieldPolicy<any> | FieldReadFunction<any>,
+	synonyms?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type IdentityKeySpecifier = ('created_at' | 'id' | 'identifier' | 'provider' | 'updated_at' | 'user_id' | IdentityKeySpecifier)[];
 export type IdentityFieldPolicy = {
@@ -144,12 +123,6 @@ export type IdentityFieldPolicy = {
 export type ImageFileKeySpecifier = ('url' | ImageFileKeySpecifier)[];
 export type ImageFileFieldPolicy = {
 	url?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type LinksKeySpecifier = ('colleagues' | 'expression' | 'ext_resources' | LinksKeySpecifier)[];
-export type LinksFieldPolicy = {
-	colleagues?: FieldPolicy<any> | FieldReadFunction<any>,
-	expression?: FieldPolicy<any> | FieldReadFunction<any>,
-	ext_resources?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type LogoutKeySpecifier = ('success' | LogoutKeySpecifier)[];
 export type LogoutFieldPolicy = {
@@ -181,11 +154,6 @@ export type MutationFieldPolicy = {
 	updateStrain?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateUser?: FieldPolicy<any> | FieldReadFunction<any>,
 	uploadFile?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type NameWithLinkKeySpecifier = ('link' | 'name' | NameWithLinkKeySpecifier)[];
-export type NameWithLinkFieldPolicy = {
-	link?: FieldPolicy<any> | FieldReadFunction<any>,
-	name?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type NumberOfPublicationsWithGeneKeySpecifier = ('num_pubs' | 'publications' | NumberOfPublicationsWithGeneKeySpecifier)[];
 export type NumberOfPublicationsWithGeneFieldPolicy = {
@@ -222,14 +190,6 @@ export type OrganismFieldPolicy = {
 	downloads?: FieldPolicy<any> | FieldReadFunction<any>,
 	scientific_name?: FieldPolicy<any> | FieldReadFunction<any>,
 	taxon_id?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type OrthologsKeySpecifier = ('gene_product' | 'id' | 'source' | 'species' | 'uniprotkb' | OrthologsKeySpecifier)[];
-export type OrthologsFieldPolicy = {
-	gene_product?: FieldPolicy<any> | FieldReadFunction<any>,
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	source?: FieldPolicy<any> | FieldReadFunction<any>,
-	species?: FieldPolicy<any> | FieldReadFunction<any>,
-	uniprotkb?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type PermissionKeySpecifier = ('created_at' | 'description' | 'id' | 'permission' | 'resource' | 'updated_at' | PermissionKeySpecifier)[];
 export type PermissionFieldPolicy = {
@@ -276,32 +236,6 @@ export type PlasmidListWithCursorFieldPolicy = {
 	previousCursor?: FieldPolicy<any> | FieldReadFunction<any>,
 	totalCount?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type ProductInformationKeySpecifier = ('genomic_coords' | 'more_protein_data' | 'protein_coding_gene' | 'protein_length' | 'protein_molecular_weight' | ProductInformationKeySpecifier)[];
-export type ProductInformationFieldPolicy = {
-	genomic_coords?: FieldPolicy<any> | FieldReadFunction<any>,
-	more_protein_data?: FieldPolicy<any> | FieldReadFunction<any>,
-	protein_coding_gene?: FieldPolicy<any> | FieldReadFunction<any>,
-	protein_length?: FieldPolicy<any> | FieldReadFunction<any>,
-	protein_molecular_weight?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type ProteinGeneralInfoKeySpecifier = ('aa_composition' | 'description' | 'dictybase_id' | 'gene_product' | 'molecular_weight' | 'note' | 'protein_existence' | 'protein_length' | 'subcellular_location' | ProteinGeneralInfoKeySpecifier)[];
-export type ProteinGeneralInfoFieldPolicy = {
-	aa_composition?: FieldPolicy<any> | FieldReadFunction<any>,
-	description?: FieldPolicy<any> | FieldReadFunction<any>,
-	dictybase_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	gene_product?: FieldPolicy<any> | FieldReadFunction<any>,
-	molecular_weight?: FieldPolicy<any> | FieldReadFunction<any>,
-	note?: FieldPolicy<any> | FieldReadFunction<any>,
-	protein_existence?: FieldPolicy<any> | FieldReadFunction<any>,
-	protein_length?: FieldPolicy<any> | FieldReadFunction<any>,
-	subcellular_location?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type ProteinInformationKeySpecifier = ('external_links' | 'general_info' | 'protein_sequence' | ProteinInformationKeySpecifier)[];
-export type ProteinInformationFieldPolicy = {
-	external_links?: FieldPolicy<any> | FieldReadFunction<any>,
-	general_info?: FieldPolicy<any> | FieldReadFunction<any>,
-	protein_sequence?: FieldPolicy<any> | FieldReadFunction<any>
-};
 export type PublicationKeySpecifier = ('abstract' | 'authors' | 'doi' | 'id' | 'issn' | 'issue' | 'journal' | 'pages' | 'pub_date' | 'pub_type' | 'source' | 'status' | 'title' | 'volume' | PublicationKeySpecifier)[];
 export type PublicationFieldPolicy = {
 	abstract?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -337,23 +271,29 @@ export type PublicationWithGeneFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	volume?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneOntologyAnnotation' | 'listOrders' | 'listPermissions' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStrains' | 'listStrainsWithAnnotation' | 'listUsers' | 'order' | 'permission' | 'plasmid' | 'publication' | 'role' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	content?: FieldPolicy<any> | FieldReadFunction<any>,
 	contentBySlug?: FieldPolicy<any> | FieldReadFunction<any>,
+	geneGeneralInformation?: FieldPolicy<any> | FieldReadFunction<any>,
 	geneOntologyAnnotation?: FieldPolicy<any> | FieldReadFunction<any>,
+	listContentByNamespace?: FieldPolicy<any> | FieldReadFunction<any>,
 	listOrders?: FieldPolicy<any> | FieldReadFunction<any>,
+	listOrganisms?: FieldPolicy<any> | FieldReadFunction<any>,
 	listPermissions?: FieldPolicy<any> | FieldReadFunction<any>,
 	listPlasmids?: FieldPolicy<any> | FieldReadFunction<any>,
 	listPlasmidsWithAnnotation?: FieldPolicy<any> | FieldReadFunction<any>,
+	listPublicationsWithGene?: FieldPolicy<any> | FieldReadFunction<any>,
 	listRecentPlasmids?: FieldPolicy<any> | FieldReadFunction<any>,
 	listRecentPublications?: FieldPolicy<any> | FieldReadFunction<any>,
 	listRecentStrains?: FieldPolicy<any> | FieldReadFunction<any>,
 	listRoles?: FieldPolicy<any> | FieldReadFunction<any>,
 	listStrains?: FieldPolicy<any> | FieldReadFunction<any>,
 	listStrainsWithAnnotation?: FieldPolicy<any> | FieldReadFunction<any>,
+	listStrainsWithGene?: FieldPolicy<any> | FieldReadFunction<any>,
 	listUsers?: FieldPolicy<any> | FieldReadFunction<any>,
 	order?: FieldPolicy<any> | FieldReadFunction<any>,
+	organism?: FieldPolicy<any> | FieldReadFunction<any>,
 	permission?: FieldPolicy<any> | FieldReadFunction<any>,
 	plasmid?: FieldPolicy<any> | FieldReadFunction<any>,
 	publication?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -454,10 +394,6 @@ export type WithFieldPolicy = {
 	name?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type StrictTypedTypePolicies = {
-	AssociatedSequences?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | AssociatedSequencesKeySpecifier | (() => undefined | AssociatedSequencesKeySpecifier),
-		fields?: AssociatedSequencesFieldPolicy,
-	},
 	Auth?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | AuthKeySpecifier | (() => undefined | AuthKeySpecifier),
 		fields?: AuthFieldPolicy,
@@ -518,13 +454,9 @@ export type StrictTypedTypePolicies = {
 		keyFields?: false | GeneKeySpecifier | (() => undefined | GeneKeySpecifier),
 		fields?: GeneFieldPolicy,
 	},
-	GeneralInfo?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | GeneralInfoKeySpecifier | (() => undefined | GeneralInfoKeySpecifier),
-		fields?: GeneralInfoFieldPolicy,
-	},
-	GenomicCoordinates?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | GenomicCoordinatesKeySpecifier | (() => undefined | GenomicCoordinatesKeySpecifier),
-		fields?: GenomicCoordinatesFieldPolicy,
+	GeneGeneralInfo?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | GeneGeneralInfoKeySpecifier | (() => undefined | GeneGeneralInfoKeySpecifier),
+		fields?: GeneGeneralInfoFieldPolicy,
 	},
 	Identity?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | IdentityKeySpecifier | (() => undefined | IdentityKeySpecifier),
@@ -534,10 +466,6 @@ export type StrictTypedTypePolicies = {
 		keyFields?: false | ImageFileKeySpecifier | (() => undefined | ImageFileKeySpecifier),
 		fields?: ImageFileFieldPolicy,
 	},
-	Links?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | LinksKeySpecifier | (() => undefined | LinksKeySpecifier),
-		fields?: LinksFieldPolicy,
-	},
 	Logout?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | LogoutKeySpecifier | (() => undefined | LogoutKeySpecifier),
 		fields?: LogoutFieldPolicy,
@@ -545,10 +473,6 @@ export type StrictTypedTypePolicies = {
 	Mutation?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | MutationKeySpecifier | (() => undefined | MutationKeySpecifier),
 		fields?: MutationFieldPolicy,
-	},
-	NameWithLink?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | NameWithLinkKeySpecifier | (() => undefined | NameWithLinkKeySpecifier),
-		fields?: NameWithLinkFieldPolicy,
 	},
 	NumberOfPublicationsWithGene?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | NumberOfPublicationsWithGeneKeySpecifier | (() => undefined | NumberOfPublicationsWithGeneKeySpecifier),
@@ -566,10 +490,6 @@ export type StrictTypedTypePolicies = {
 		keyFields?: false | OrganismKeySpecifier | (() => undefined | OrganismKeySpecifier),
 		fields?: OrganismFieldPolicy,
 	},
-	Orthologs?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | OrthologsKeySpecifier | (() => undefined | OrthologsKeySpecifier),
-		fields?: OrthologsFieldPolicy,
-	},
 	Permission?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | PermissionKeySpecifier | (() => undefined | PermissionKeySpecifier),
 		fields?: PermissionFieldPolicy,
@@ -585,18 +505,6 @@ export type StrictTypedTypePolicies = {
 	PlasmidListWithCursor?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | PlasmidListWithCursorKeySpecifier | (() => undefined | PlasmidListWithCursorKeySpecifier),
 		fields?: PlasmidListWithCursorFieldPolicy,
-	},
-	ProductInformation?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | ProductInformationKeySpecifier | (() => undefined | ProductInformationKeySpecifier),
-		fields?: ProductInformationFieldPolicy,
-	},
-	ProteinGeneralInfo?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | ProteinGeneralInfoKeySpecifier | (() => undefined | ProteinGeneralInfoKeySpecifier),
-		fields?: ProteinGeneralInfoFieldPolicy,
-	},
-	ProteinInformation?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | ProteinInformationKeySpecifier | (() => undefined | ProteinInformationKeySpecifier),
-		fields?: ProteinInformationFieldPolicy,
 	},
 	Publication?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | PublicationKeySpecifier | (() => undefined | PublicationKeySpecifier),

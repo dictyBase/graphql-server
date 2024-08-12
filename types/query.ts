@@ -1,5 +1,117 @@
 import gql from 'graphql-tag';
 
+export const Login = gql`
+    mutation Login($input: LoginInput!) {
+  login(input: $input) {
+    token
+    user {
+      id
+      email
+      first_name
+      last_name
+      roles {
+        role
+        permissions {
+          permission
+          resource
+        }
+      }
+    }
+    identity {
+      provider
+    }
+  }
+}
+    `;
+export const Logout = gql`
+    mutation Logout {
+  logout {
+    success
+  }
+}
+    `;
+export const CreateContent = gql`
+    mutation CreateContent($input: CreateContentInput!) {
+  createContent(input: $input) {
+    name
+    created_by {
+      id
+    }
+    content
+    namespace
+  }
+}
+    `;
+export const UpdateContent = gql`
+    mutation UpdateContent($input: UpdateContentInput!) {
+  updateContent(input: $input) {
+    id
+    updated_by {
+      id
+    }
+    content
+  }
+}
+    `;
+export const DeleteContent = gql`
+    mutation DeleteContent($id: ID!) {
+  deleteContent(id: $id) {
+    success
+  }
+}
+    `;
+export const CreateOrder = gql`
+    mutation CreateOrder($input: CreateOrderInput!) {
+  createOrder(input: $input) {
+    id
+  }
+}
+    `;
+export const UploadFile = gql`
+    mutation UploadFile($file: Upload!) {
+  uploadFile(file: $file) {
+    url
+  }
+}
+    `;
+export const CreateUser = gql`
+    mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    id
+  }
+}
+    `;
+export const UpdateUser = gql`
+    mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {
+  updateUser(id: $id, input: $input) {
+    id
+  }
+}
+    `;
+export const ListContentByNamespace = gql`
+    query ListContentByNamespace($namespace: String!) {
+  listContentByNamespace(namespace: $namespace) {
+    id
+    content
+    name
+    slug
+    created_at
+    updated_at
+    created_by {
+      id
+      email
+      first_name
+      last_name
+    }
+    updated_by {
+      id
+      email
+      first_name
+      last_name
+    }
+  }
+}
+    `;
 export const ContentBySlug = gql`
     query ContentBySlug($slug: String!) {
   contentBySlug(slug: $slug) {
@@ -49,12 +161,73 @@ export const Content = gql`
   }
 }
     `;
+export const ListOrganisms = gql`
+    query ListOrganisms {
+  listOrganisms {
+    taxon_id
+    scientific_name
+    citations {
+      title
+      authors
+      pubmed_id
+      journal
+    }
+    downloads {
+      title
+      items {
+        title
+        url
+      }
+    }
+  }
+}
+    `;
+export const GeneSummary = gql`
+    query GeneSummary($gene: String!) {
+  geneGeneralInformation(gene: $gene) {
+    id
+    name_description
+    gene_product
+    synonyms
+    description
+  }
+  geneOntologyAnnotation(gene: $gene) {
+    id
+    type
+    date
+    go_term
+    evidence_code
+    with {
+      id
+      db
+      name
+    }
+    extensions {
+      id
+      db
+      relation
+      name
+    }
+  }
+  listPublicationsWithGene(gene: $gene) {
+    id
+    title
+    journal
+    pages
+    issue
+    authors {
+      last_name
+    }
+  }
+}
+    `;
 export const GeneOntologyAnnotation = gql`
     query GeneOntologyAnnotation($gene: String!) {
   geneOntologyAnnotation(gene: $gene) {
     id
     type
     date
+    go_term
     evidence_code
     qualifier
     publication
@@ -69,6 +242,31 @@ export const GeneOntologyAnnotation = gql`
       db
       relation
       name
+    }
+  }
+}
+    `;
+export const ListStrainsWithGene = gql`
+    query ListStrainsWithGene($gene: String!) {
+  listStrainsWithGene(gene: $gene) {
+    id
+    label
+    characteristics
+    in_stock
+    phenotypes {
+      phenotype
+      publication {
+        id
+        title
+        journal
+        pages
+        volume
+        pub_date
+        authors {
+          last_name
+          rank
+        }
+      }
     }
   }
 }
@@ -107,6 +305,30 @@ export const ListRecentPublications = gql`
     authors {
       initials
       last_name
+    }
+  }
+}
+    `;
+export const ListPublicationsWithGene = gql`
+    query ListPublicationsWithGene($gene: String!) {
+  listPublicationsWithGene(gene: $gene) {
+    related_genes {
+      id
+      name
+    }
+    id
+    doi
+    title
+    journal
+    pub_date
+    volume
+    pages
+    pub_type
+    source
+    issue
+    authors {
+      last_name
+      rank
     }
   }
 }
