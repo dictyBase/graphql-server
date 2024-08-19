@@ -970,22 +970,6 @@ func (ec *executionContext) fieldContext_PublicationWithGene_related_genes(ctx c
 				return ec.fieldContext_Gene_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Gene_name(ctx, field)
-			case "goas":
-				return ec.fieldContext_Gene_goas(ctx, field)
-			case "strains":
-				return ec.fieldContext_Gene_strains(ctx, field)
-			case "orthologs":
-				return ec.fieldContext_Gene_orthologs(ctx, field)
-			case "product_info":
-				return ec.fieldContext_Gene_product_info(ctx, field)
-			case "general_info":
-				return ec.fieldContext_Gene_general_info(ctx, field)
-			case "associated_sequences":
-				return ec.fieldContext_Gene_associated_sequences(ctx, field)
-			case "links":
-				return ec.fieldContext_Gene_links(ctx, field)
-			case "protein_information":
-				return ec.fieldContext_Gene_protein_information(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Gene", field.Name)
 		},
