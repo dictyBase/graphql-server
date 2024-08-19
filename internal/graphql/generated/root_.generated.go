@@ -33,7 +33,6 @@ type ResolverRoot interface {
 	Auth() AuthResolver
 	Author() AuthorResolver
 	Content() ContentResolver
-	Gene() GeneResolver
 	Mutation() MutationResolver
 	Order() OrderResolver
 	Organism() OrganismResolver
@@ -49,13 +48,6 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	AssociatedSequences struct {
-		Ests                   func(childComplexity int) int
-		GenbankGenomicFragment func(childComplexity int) int
-		GenbankMrna            func(childComplexity int) int
-		MoreLink               func(childComplexity int) int
-	}
-
 	Auth struct {
 		Identity func(childComplexity int) int
 		Token    func(childComplexity int) int
@@ -139,30 +131,16 @@ type ComplexityRoot struct {
 	}
 
 	Gene struct {
-		AssociatedSequences func(childComplexity int) int
-		GeneralInfo         func(childComplexity int) int
-		Goas                func(childComplexity int) int
-		ID                  func(childComplexity int) int
-		Links               func(childComplexity int) int
-		Name                func(childComplexity int) int
-		Orthologs           func(childComplexity int) int
-		ProductInfo         func(childComplexity int) int
-		ProteinInformation  func(childComplexity int) int
-		Strains             func(childComplexity int) int
+		ID   func(childComplexity int) int
+		Name func(childComplexity int) int
 	}
 
-	GeneralInfo struct {
-		AltGeneName     func(childComplexity int) int
-		AltProteinNames func(childComplexity int) int
+	GeneGeneralInfo struct {
 		Description     func(childComplexity int) int
 		GeneProduct     func(childComplexity int) int
+		ID              func(childComplexity int) int
 		NameDescription func(childComplexity int) int
-	}
-
-	GenomicCoordinates struct {
-		ChromCoords func(childComplexity int) int
-		Exon        func(childComplexity int) int
-		LocalCoords func(childComplexity int) int
+		Synonyms        func(childComplexity int) int
 	}
 
 	Identity struct {
@@ -176,12 +154,6 @@ type ComplexityRoot struct {
 
 	ImageFile struct {
 		URL func(childComplexity int) int
-	}
-
-	Links struct {
-		Colleagues   func(childComplexity int) int
-		Expression   func(childComplexity int) int
-		ExtResources func(childComplexity int) int
 	}
 
 	Logout struct {
@@ -213,11 +185,6 @@ type ComplexityRoot struct {
 		UpdateStrain                     func(childComplexity int, id string, input *models.UpdateStrainInput) int
 		UpdateUser                       func(childComplexity int, id string, input *models.UpdateUserInput) int
 		UploadFile                       func(childComplexity int, file graphql.Upload) int
-	}
-
-	NameWithLink struct {
-		Link func(childComplexity int) int
-		Name func(childComplexity int) int
 	}
 
 	NumberOfPublicationsWithGene struct {
@@ -254,14 +221,6 @@ type ComplexityRoot struct {
 		Downloads      func(childComplexity int) int
 		ScientificName func(childComplexity int) int
 		TaxonID        func(childComplexity int) int
-	}
-
-	Orthologs struct {
-		GeneProduct func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Source      func(childComplexity int) int
-		Species     func(childComplexity int) int
-		Uniprotkb   func(childComplexity int) int
 	}
 
 	Permission struct {
@@ -309,32 +268,6 @@ type ComplexityRoot struct {
 		TotalCount     func(childComplexity int) int
 	}
 
-	ProductInformation struct {
-		GenomicCoords          func(childComplexity int) int
-		MoreProteinData        func(childComplexity int) int
-		ProteinCodingGene      func(childComplexity int) int
-		ProteinLength          func(childComplexity int) int
-		ProteinMolecularWeight func(childComplexity int) int
-	}
-
-	ProteinGeneralInfo struct {
-		AaComposition       func(childComplexity int) int
-		Description         func(childComplexity int) int
-		DictybaseID         func(childComplexity int) int
-		GeneProduct         func(childComplexity int) int
-		MolecularWeight     func(childComplexity int) int
-		Note                func(childComplexity int) int
-		ProteinExistence    func(childComplexity int) int
-		ProteinLength       func(childComplexity int) int
-		SubcellularLocation func(childComplexity int) int
-	}
-
-	ProteinInformation struct {
-		ExternalLinks   func(childComplexity int) int
-		GeneralInfo     func(childComplexity int) int
-		ProteinSequence func(childComplexity int) int
-	}
-
 	Publication struct {
 		Abstract func(childComplexity int) int
 		Authors  func(childComplexity int) int
@@ -373,19 +306,25 @@ type ComplexityRoot struct {
 	Query struct {
 		Content                    func(childComplexity int, id string) int
 		ContentBySlug              func(childComplexity int, slug string) int
+		GeneGeneralInformation     func(childComplexity int, gene string) int
 		GeneOntologyAnnotation     func(childComplexity int, gene string) int
+		ListContentByNamespace     func(childComplexity int, namespace string) int
 		ListOrders                 func(childComplexity int, cursor *int, limit *int, filter *string) int
+		ListOrganisms              func(childComplexity int) int
 		ListPermissions            func(childComplexity int) int
 		ListPlasmids               func(childComplexity int, cursor *int, limit *int, filter *string) int
 		ListPlasmidsWithAnnotation func(childComplexity int, cursor *int, limit *int, typeArg string, annotation string) int
+		ListPublicationsWithGene   func(childComplexity int, gene string) int
 		ListRecentPlasmids         func(childComplexity int, limit int) int
 		ListRecentPublications     func(childComplexity int, limit int) int
 		ListRecentStrains          func(childComplexity int, limit int) int
 		ListRoles                  func(childComplexity int) int
 		ListStrains                func(childComplexity int, cursor *int, limit *int, filter *models.StrainListFilter) int
 		ListStrainsWithAnnotation  func(childComplexity int, cursor *int, limit *int, typeArg string, annotation string) int
+		ListStrainsWithGene        func(childComplexity int, gene string) int
 		ListUsers                  func(childComplexity int, pagenum string, pagesize string, filter string) int
 		Order                      func(childComplexity int, id string) int
+		Organism                   func(childComplexity int, taxonID string) int
 		Permission                 func(childComplexity int, id string) int
 		Plasmid                    func(childComplexity int, id string) int
 		Publication                func(childComplexity int, id string) int
@@ -486,34 +425,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
-
-	case "AssociatedSequences.ests":
-		if e.complexity.AssociatedSequences.Ests == nil {
-			break
-		}
-
-		return e.complexity.AssociatedSequences.Ests(childComplexity), true
-
-	case "AssociatedSequences.genbank_genomic_fragment":
-		if e.complexity.AssociatedSequences.GenbankGenomicFragment == nil {
-			break
-		}
-
-		return e.complexity.AssociatedSequences.GenbankGenomicFragment(childComplexity), true
-
-	case "AssociatedSequences.genbank_mrna":
-		if e.complexity.AssociatedSequences.GenbankMrna == nil {
-			break
-		}
-
-		return e.complexity.AssociatedSequences.GenbankMrna(childComplexity), true
-
-	case "AssociatedSequences.more_link":
-		if e.complexity.AssociatedSequences.MoreLink == nil {
-			break
-		}
-
-		return e.complexity.AssociatedSequences.MoreLink(childComplexity), true
 
 	case "Auth.identity":
 		if e.complexity.Auth.Identity == nil {
@@ -816,40 +727,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.GOAnnotation.With(childComplexity), true
 
-	case "Gene.associated_sequences":
-		if e.complexity.Gene.AssociatedSequences == nil {
-			break
-		}
-
-		return e.complexity.Gene.AssociatedSequences(childComplexity), true
-
-	case "Gene.general_info":
-		if e.complexity.Gene.GeneralInfo == nil {
-			break
-		}
-
-		return e.complexity.Gene.GeneralInfo(childComplexity), true
-
-	case "Gene.goas":
-		if e.complexity.Gene.Goas == nil {
-			break
-		}
-
-		return e.complexity.Gene.Goas(childComplexity), true
-
 	case "Gene.id":
 		if e.complexity.Gene.ID == nil {
 			break
 		}
 
 		return e.complexity.Gene.ID(childComplexity), true
-
-	case "Gene.links":
-		if e.complexity.Gene.Links == nil {
-			break
-		}
-
-		return e.complexity.Gene.Links(childComplexity), true
 
 	case "Gene.name":
 		if e.complexity.Gene.Name == nil {
@@ -858,89 +741,40 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Gene.Name(childComplexity), true
 
-	case "Gene.orthologs":
-		if e.complexity.Gene.Orthologs == nil {
+	case "GeneGeneralInfo.description":
+		if e.complexity.GeneGeneralInfo.Description == nil {
 			break
 		}
 
-		return e.complexity.Gene.Orthologs(childComplexity), true
+		return e.complexity.GeneGeneralInfo.Description(childComplexity), true
 
-	case "Gene.product_info":
-		if e.complexity.Gene.ProductInfo == nil {
+	case "GeneGeneralInfo.gene_product":
+		if e.complexity.GeneGeneralInfo.GeneProduct == nil {
 			break
 		}
 
-		return e.complexity.Gene.ProductInfo(childComplexity), true
+		return e.complexity.GeneGeneralInfo.GeneProduct(childComplexity), true
 
-	case "Gene.protein_information":
-		if e.complexity.Gene.ProteinInformation == nil {
+	case "GeneGeneralInfo.id":
+		if e.complexity.GeneGeneralInfo.ID == nil {
 			break
 		}
 
-		return e.complexity.Gene.ProteinInformation(childComplexity), true
+		return e.complexity.GeneGeneralInfo.ID(childComplexity), true
 
-	case "Gene.strains":
-		if e.complexity.Gene.Strains == nil {
+	case "GeneGeneralInfo.name_description":
+		if e.complexity.GeneGeneralInfo.NameDescription == nil {
 			break
 		}
 
-		return e.complexity.Gene.Strains(childComplexity), true
+		return e.complexity.GeneGeneralInfo.NameDescription(childComplexity), true
 
-	case "GeneralInfo.alt_gene_name":
-		if e.complexity.GeneralInfo.AltGeneName == nil {
+	case "GeneGeneralInfo.synonyms":
+		if e.complexity.GeneGeneralInfo.Synonyms == nil {
 			break
 		}
 
-		return e.complexity.GeneralInfo.AltGeneName(childComplexity), true
-
-	case "GeneralInfo.alt_protein_names":
-		if e.complexity.GeneralInfo.AltProteinNames == nil {
-			break
-		}
-
-		return e.complexity.GeneralInfo.AltProteinNames(childComplexity), true
-
-	case "GeneralInfo.description":
-		if e.complexity.GeneralInfo.Description == nil {
-			break
-		}
-
-		return e.complexity.GeneralInfo.Description(childComplexity), true
-
-	case "GeneralInfo.gene_product":
-		if e.complexity.GeneralInfo.GeneProduct == nil {
-			break
-		}
-
-		return e.complexity.GeneralInfo.GeneProduct(childComplexity), true
-
-	case "GeneralInfo.name_description":
-		if e.complexity.GeneralInfo.NameDescription == nil {
-			break
-		}
-
-		return e.complexity.GeneralInfo.NameDescription(childComplexity), true
-
-	case "GenomicCoordinates.chrom_coords":
-		if e.complexity.GenomicCoordinates.ChromCoords == nil {
-			break
-		}
-
-		return e.complexity.GenomicCoordinates.ChromCoords(childComplexity), true
-
-	case "GenomicCoordinates.exon":
-		if e.complexity.GenomicCoordinates.Exon == nil {
-			break
-		}
-
-		return e.complexity.GenomicCoordinates.Exon(childComplexity), true
-
-	case "GenomicCoordinates.local_coords":
-		if e.complexity.GenomicCoordinates.LocalCoords == nil {
-			break
-		}
-
-		return e.complexity.GenomicCoordinates.LocalCoords(childComplexity), true
+		return e.complexity.GeneGeneralInfo.Synonyms(childComplexity), true
 
 	case "Identity.created_at":
 		if e.complexity.Identity.CreatedAt == nil {
@@ -990,27 +824,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ImageFile.URL(childComplexity), true
-
-	case "Links.colleagues":
-		if e.complexity.Links.Colleagues == nil {
-			break
-		}
-
-		return e.complexity.Links.Colleagues(childComplexity), true
-
-	case "Links.expression":
-		if e.complexity.Links.Expression == nil {
-			break
-		}
-
-		return e.complexity.Links.Expression(childComplexity), true
-
-	case "Links.ext_resources":
-		if e.complexity.Links.ExtResources == nil {
-			break
-		}
-
-		return e.complexity.Links.ExtResources(childComplexity), true
 
 	case "Logout.success":
 		if e.complexity.Logout.Success == nil {
@@ -1302,20 +1115,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UploadFile(childComplexity, args["file"].(graphql.Upload)), true
 
-	case "NameWithLink.link":
-		if e.complexity.NameWithLink.Link == nil {
-			break
-		}
-
-		return e.complexity.NameWithLink.Link(childComplexity), true
-
-	case "NameWithLink.name":
-		if e.complexity.NameWithLink.Name == nil {
-			break
-		}
-
-		return e.complexity.NameWithLink.Name(childComplexity), true
-
 	case "NumberOfPublicationsWithGene.num_pubs":
 		if e.complexity.NumberOfPublicationsWithGene.NumPubs == nil {
 			break
@@ -1483,41 +1282,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Organism.TaxonID(childComplexity), true
-
-	case "Orthologs.gene_product":
-		if e.complexity.Orthologs.GeneProduct == nil {
-			break
-		}
-
-		return e.complexity.Orthologs.GeneProduct(childComplexity), true
-
-	case "Orthologs.id":
-		if e.complexity.Orthologs.ID == nil {
-			break
-		}
-
-		return e.complexity.Orthologs.ID(childComplexity), true
-
-	case "Orthologs.source":
-		if e.complexity.Orthologs.Source == nil {
-			break
-		}
-
-		return e.complexity.Orthologs.Source(childComplexity), true
-
-	case "Orthologs.species":
-		if e.complexity.Orthologs.Species == nil {
-			break
-		}
-
-		return e.complexity.Orthologs.Species(childComplexity), true
-
-	case "Orthologs.uniprotkb":
-		if e.complexity.Orthologs.Uniprotkb == nil {
-			break
-		}
-
-		return e.complexity.Orthologs.Uniprotkb(childComplexity), true
 
 	case "Permission.created_at":
 		if e.complexity.Permission.CreatedAt == nil {
@@ -1750,125 +1514,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PlasmidListWithCursor.TotalCount(childComplexity), true
 
-	case "ProductInformation.genomic_coords":
-		if e.complexity.ProductInformation.GenomicCoords == nil {
-			break
-		}
-
-		return e.complexity.ProductInformation.GenomicCoords(childComplexity), true
-
-	case "ProductInformation.more_protein_data":
-		if e.complexity.ProductInformation.MoreProteinData == nil {
-			break
-		}
-
-		return e.complexity.ProductInformation.MoreProteinData(childComplexity), true
-
-	case "ProductInformation.protein_coding_gene":
-		if e.complexity.ProductInformation.ProteinCodingGene == nil {
-			break
-		}
-
-		return e.complexity.ProductInformation.ProteinCodingGene(childComplexity), true
-
-	case "ProductInformation.protein_length":
-		if e.complexity.ProductInformation.ProteinLength == nil {
-			break
-		}
-
-		return e.complexity.ProductInformation.ProteinLength(childComplexity), true
-
-	case "ProductInformation.protein_molecular_weight":
-		if e.complexity.ProductInformation.ProteinMolecularWeight == nil {
-			break
-		}
-
-		return e.complexity.ProductInformation.ProteinMolecularWeight(childComplexity), true
-
-	case "ProteinGeneralInfo.aa_composition":
-		if e.complexity.ProteinGeneralInfo.AaComposition == nil {
-			break
-		}
-
-		return e.complexity.ProteinGeneralInfo.AaComposition(childComplexity), true
-
-	case "ProteinGeneralInfo.description":
-		if e.complexity.ProteinGeneralInfo.Description == nil {
-			break
-		}
-
-		return e.complexity.ProteinGeneralInfo.Description(childComplexity), true
-
-	case "ProteinGeneralInfo.dictybase_id":
-		if e.complexity.ProteinGeneralInfo.DictybaseID == nil {
-			break
-		}
-
-		return e.complexity.ProteinGeneralInfo.DictybaseID(childComplexity), true
-
-	case "ProteinGeneralInfo.gene_product":
-		if e.complexity.ProteinGeneralInfo.GeneProduct == nil {
-			break
-		}
-
-		return e.complexity.ProteinGeneralInfo.GeneProduct(childComplexity), true
-
-	case "ProteinGeneralInfo.molecular_weight":
-		if e.complexity.ProteinGeneralInfo.MolecularWeight == nil {
-			break
-		}
-
-		return e.complexity.ProteinGeneralInfo.MolecularWeight(childComplexity), true
-
-	case "ProteinGeneralInfo.note":
-		if e.complexity.ProteinGeneralInfo.Note == nil {
-			break
-		}
-
-		return e.complexity.ProteinGeneralInfo.Note(childComplexity), true
-
-	case "ProteinGeneralInfo.protein_existence":
-		if e.complexity.ProteinGeneralInfo.ProteinExistence == nil {
-			break
-		}
-
-		return e.complexity.ProteinGeneralInfo.ProteinExistence(childComplexity), true
-
-	case "ProteinGeneralInfo.protein_length":
-		if e.complexity.ProteinGeneralInfo.ProteinLength == nil {
-			break
-		}
-
-		return e.complexity.ProteinGeneralInfo.ProteinLength(childComplexity), true
-
-	case "ProteinGeneralInfo.subcellular_location":
-		if e.complexity.ProteinGeneralInfo.SubcellularLocation == nil {
-			break
-		}
-
-		return e.complexity.ProteinGeneralInfo.SubcellularLocation(childComplexity), true
-
-	case "ProteinInformation.external_links":
-		if e.complexity.ProteinInformation.ExternalLinks == nil {
-			break
-		}
-
-		return e.complexity.ProteinInformation.ExternalLinks(childComplexity), true
-
-	case "ProteinInformation.general_info":
-		if e.complexity.ProteinInformation.GeneralInfo == nil {
-			break
-		}
-
-		return e.complexity.ProteinInformation.GeneralInfo(childComplexity), true
-
-	case "ProteinInformation.protein_sequence":
-		if e.complexity.ProteinInformation.ProteinSequence == nil {
-			break
-		}
-
-		return e.complexity.ProteinInformation.ProteinSequence(childComplexity), true
-
 	case "Publication.abstract":
 		if e.complexity.Publication.Abstract == nil {
 			break
@@ -2096,6 +1741,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ContentBySlug(childComplexity, args["slug"].(string)), true
 
+	case "Query.geneGeneralInformation":
+		if e.complexity.Query.GeneGeneralInformation == nil {
+			break
+		}
+
+		args, err := ec.field_Query_geneGeneralInformation_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GeneGeneralInformation(childComplexity, args["gene"].(string)), true
+
 	case "Query.geneOntologyAnnotation":
 		if e.complexity.Query.GeneOntologyAnnotation == nil {
 			break
@@ -2108,6 +1765,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GeneOntologyAnnotation(childComplexity, args["gene"].(string)), true
 
+	case "Query.listContentByNamespace":
+		if e.complexity.Query.ListContentByNamespace == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listContentByNamespace_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListContentByNamespace(childComplexity, args["namespace"].(string)), true
+
 	case "Query.listOrders":
 		if e.complexity.Query.ListOrders == nil {
 			break
@@ -2119,6 +1788,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ListOrders(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string)), true
+
+	case "Query.listOrganisms":
+		if e.complexity.Query.ListOrganisms == nil {
+			break
+		}
+
+		return e.complexity.Query.ListOrganisms(childComplexity), true
 
 	case "Query.listPermissions":
 		if e.complexity.Query.ListPermissions == nil {
@@ -2150,6 +1826,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ListPlasmidsWithAnnotation(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["type"].(string), args["annotation"].(string)), true
+
+	case "Query.listPublicationsWithGene":
+		if e.complexity.Query.ListPublicationsWithGene == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listPublicationsWithGene_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListPublicationsWithGene(childComplexity, args["gene"].(string)), true
 
 	case "Query.listRecentPlasmids":
 		if e.complexity.Query.ListRecentPlasmids == nil {
@@ -2218,6 +1906,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ListStrainsWithAnnotation(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["type"].(string), args["annotation"].(string)), true
 
+	case "Query.listStrainsWithGene":
+		if e.complexity.Query.ListStrainsWithGene == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listStrainsWithGene_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListStrainsWithGene(childComplexity, args["gene"].(string)), true
+
 	case "Query.listUsers":
 		if e.complexity.Query.ListUsers == nil {
 			break
@@ -2241,6 +1941,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Order(childComplexity, args["id"].(string)), true
+
+	case "Query.organism":
+		if e.complexity.Query.Organism == nil {
+			break
+		}
+
+		args, err := ec.field_Query_organism_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Organism(childComplexity, args["taxon_id"].(string)), true
 
 	case "Query.permission":
 		if e.complexity.Query.Permission == nil {
@@ -2900,32 +2612,6 @@ type DownloadItem {
 	{Name: "../../../api/src/schema/gene.graphql", Input: `type Gene {
   id: String!
   name: String!
-  goas: [GOAnnotation!]
-  strains: [Strain!]
-  orthologs: [Orthologs!]
-  product_info: [ProductInformation!]
-  general_info: GeneralInfo!
-  associated_sequences: AssociatedSequences!
-  links: Links!
-  protein_information: ProteinInformation
-}
-
-type ProteinInformation {
-  general_info: ProteinGeneralInfo!
-  external_links: [NameWithLink!]!
-  protein_sequence: String!
-}
-
-type ProteinGeneralInfo {
-  gene_product: String!
-  dictybase_id: String!
-  description: String!
-  protein_length: String!
-  molecular_weight: String!
-  aa_composition: NameWithLink!
-  subcellular_location: String!
-  protein_existence: String!
-  note: String!
 }
 
 type GOAnnotation {
@@ -2941,20 +2627,6 @@ type GOAnnotation {
   assigned_by: String!
 }
 
-type ProductInformation {
-  protein_coding_gene: NameWithLink!
-  protein_length: String!
-  protein_molecular_weight: String!
-  more_protein_data: String!
-  genomic_coords: [GenomicCoordinates!]!
-}
-
-type GenomicCoordinates {
-  exon: String!
-  local_coords: String!
-  chrom_coords: String!
-}
-
 type With {
   id: String!
   db: String!
@@ -2968,38 +2640,12 @@ type Extension {
   name: String!
 }
 
-type Orthologs {
-  id: NameWithLink!
-  species: String!
-  uniprotkb: NameWithLink!
-  gene_product: String!
-  source: [String!]!
-}
-
-type GeneralInfo {
-  name_description: [String!]!
-  alt_gene_name: [String!]
-  gene_product: String!
-  alt_protein_names: [String!]
-  description: String!
-}
-
-type AssociatedSequences {
-  genbank_genomic_fragment: NameWithLink
-  genbank_mrna: NameWithLink
-  ests: [NameWithLink!]!
-  more_link: String!
-}
-
-type Links {
-  expression: [NameWithLink!]!
-  colleagues: NameWithLink!
-  ext_resources: [NameWithLink!]!
-}
-
-type NameWithLink {
-  name: String!
-  link: String!
+type GeneGeneralInfo {
+  id: String!
+  name_description: [String]!
+  gene_product: String
+  synonyms: [String]!
+  description: String
 }
 `, BuiltIn: false},
 	{Name: "../../../api/src/schema/mutation.graphql", Input: `type Mutation {
@@ -3211,9 +2857,14 @@ type Author {
 	{Name: "../../../api/src/schema/query.graphql", Input: `type Query {
   # Gene queries
   geneOntologyAnnotation(gene: String!): [GOAnnotation!]
+  geneGeneralInformation(gene: String!): GeneGeneralInfo
   # Content queries
   content(id: ID!): Content
   contentBySlug(slug: String!): Content
+  listContentByNamespace(namespace: String!): [Content!]!
+  # Download page queries
+  organism(taxon_id: String!): Organism
+  listOrganisms: [Organism!]
   # Order queries
   order(id: ID!): Order
   listOrders(cursor: Int, limit: Int, filter: String): OrderListWithCursor
@@ -3222,10 +2873,16 @@ type Author {
   # List publication query that is by default is sorted by publication
   # date in descendent order
   listRecentPublications(limit: Int!): [Publication!]
+  listPublicationsWithGene(gene: String!): [PublicationWithGene!]!
   # Stock queries
   plasmid(id: ID!): Plasmid
   strain(id: ID!): Strain
-  listStrains(cursor: Int, limit: Int, filter: StrainListFilter): StrainListWithCursor
+  listStrainsWithGene(gene: String!): [Strain!]
+  listStrains(
+    cursor: Int
+    limit: Int
+    filter: StrainListFilter
+  ): StrainListWithCursor
   listPlasmids(cursor: Int, limit: Int, filter: String): PlasmidListWithCursor
   listStrainsWithAnnotation(
     cursor: Int
