@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -20,14 +21,20 @@ import (
 
 type QueryResolver interface {
 	GeneOntologyAnnotation(ctx context.Context, gene string) ([]*models.GOAnnotation, error)
+	GeneGeneralInformation(ctx context.Context, gene string) (*models.GeneGeneralInfo, error)
 	Content(ctx context.Context, id string) (*content.Content, error)
 	ContentBySlug(ctx context.Context, slug string) (*content.Content, error)
+	ListContentByNamespace(ctx context.Context, namespace string) ([]*content.Content, error)
+	Organism(ctx context.Context, taxonID string) (*models.Organism, error)
+	ListOrganisms(ctx context.Context) ([]*models.Organism, error)
 	Order(ctx context.Context, id string) (*order.Order, error)
 	ListOrders(ctx context.Context, cursor *int, limit *int, filter *string) (*models.OrderListWithCursor, error)
 	Publication(ctx context.Context, id string) (*models.Publication, error)
 	ListRecentPublications(ctx context.Context, limit int) ([]*models.Publication, error)
+	ListPublicationsWithGene(ctx context.Context, gene string) ([]*models.PublicationWithGene, error)
 	Plasmid(ctx context.Context, id string) (*models.Plasmid, error)
 	Strain(ctx context.Context, id string) (*models.Strain, error)
+	ListStrainsWithGene(ctx context.Context, gene string) ([]*models.Strain, error)
 	ListStrains(ctx context.Context, cursor *int, limit *int, filter *models.StrainListFilter) (*models.StrainListWithCursor, error)
 	ListPlasmids(ctx context.Context, cursor *int, limit *int, filter *string) (*models.PlasmidListWithCursor, error)
 	ListStrainsWithAnnotation(ctx context.Context, cursor *int, limit *int, typeArg string, annotation string) (*models.StrainListWithCursor, error)
@@ -92,6 +99,21 @@ func (ec *executionContext) field_Query_content_args(ctx context.Context, rawArg
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_geneGeneralInformation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["gene"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gene"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gene"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_geneOntologyAnnotation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -104,6 +126,21 @@ func (ec *executionContext) field_Query_geneOntologyAnnotation_args(ctx context.
 		}
 	}
 	args["gene"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_listContentByNamespace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["namespace"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["namespace"] = arg0
 	return args, nil
 }
 
@@ -215,6 +252,21 @@ func (ec *executionContext) field_Query_listPlasmids_args(ctx context.Context, r
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_listPublicationsWithGene_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["gene"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gene"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gene"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_listRecentPlasmids_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -302,6 +354,21 @@ func (ec *executionContext) field_Query_listStrainsWithAnnotation_args(ctx conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_listStrainsWithGene_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["gene"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gene"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gene"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_listStrains_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -380,6 +447,21 @@ func (ec *executionContext) field_Query_order_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_organism_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["taxon_id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taxon_id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["taxon_id"] = arg0
 	return args, nil
 }
 
@@ -570,6 +652,70 @@ func (ec *executionContext) fieldContext_Query_geneOntologyAnnotation(ctx contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_geneGeneralInformation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_geneGeneralInformation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GeneGeneralInformation(rctx, fc.Args["gene"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.GeneGeneralInfo)
+	fc.Result = res
+	return ec.marshalOGeneGeneralInfo2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneGeneralInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_geneGeneralInformation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GeneGeneralInfo_id(ctx, field)
+			case "name_description":
+				return ec.fieldContext_GeneGeneralInfo_name_description(ctx, field)
+			case "gene_product":
+				return ec.fieldContext_GeneGeneralInfo_gene_product(ctx, field)
+			case "synonyms":
+				return ec.fieldContext_GeneGeneralInfo_synonyms(ctx, field)
+			case "description":
+				return ec.fieldContext_GeneGeneralInfo_description(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GeneGeneralInfo", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_geneGeneralInformation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_content(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_content(ctx, field)
 	if err != nil {
@@ -710,6 +856,194 @@ func (ec *executionContext) fieldContext_Query_contentBySlug(ctx context.Context
 	if fc.Args, err = ec.field_Query_contentBySlug_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_listContentByNamespace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_listContentByNamespace(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ListContentByNamespace(rctx, fc.Args["namespace"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*content.Content)
+	fc.Result = res
+	return ec.marshalNContent2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContentᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_listContentByNamespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Content_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Content_name(ctx, field)
+			case "slug":
+				return ec.fieldContext_Content_slug(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Content_created_by(ctx, field)
+			case "updated_by":
+				return ec.fieldContext_Content_updated_by(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Content_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Content_updated_at(ctx, field)
+			case "content":
+				return ec.fieldContext_Content_content(ctx, field)
+			case "namespace":
+				return ec.fieldContext_Content_namespace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Content", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_listContentByNamespace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_organism(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_organism(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Organism(rctx, fc.Args["taxon_id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.Organism)
+	fc.Result = res
+	return ec.marshalOOrganism2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐOrganism(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_organism(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "taxon_id":
+				return ec.fieldContext_Organism_taxon_id(ctx, field)
+			case "scientific_name":
+				return ec.fieldContext_Organism_scientific_name(ctx, field)
+			case "citations":
+				return ec.fieldContext_Organism_citations(ctx, field)
+			case "downloads":
+				return ec.fieldContext_Organism_downloads(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Organism", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_organism_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_listOrganisms(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_listOrganisms(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ListOrganisms(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Organism)
+	fc.Result = res
+	return ec.marshalOOrganism2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐOrganismᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_listOrganisms(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "taxon_id":
+				return ec.fieldContext_Organism_taxon_id(ctx, field)
+			case "scientific_name":
+				return ec.fieldContext_Organism_scientific_name(ctx, field)
+			case "citations":
+				return ec.fieldContext_Organism_citations(ctx, field)
+			case "downloads":
+				return ec.fieldContext_Organism_downloads(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Organism", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -1022,6 +1356,93 @@ func (ec *executionContext) fieldContext_Query_listRecentPublications(ctx contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_listPublicationsWithGene(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_listPublicationsWithGene(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ListPublicationsWithGene(rctx, fc.Args["gene"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.PublicationWithGene)
+	fc.Result = res
+	return ec.marshalNPublicationWithGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationWithGeneᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_listPublicationsWithGene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "related_genes":
+				return ec.fieldContext_PublicationWithGene_related_genes(ctx, field)
+			case "id":
+				return ec.fieldContext_PublicationWithGene_id(ctx, field)
+			case "doi":
+				return ec.fieldContext_PublicationWithGene_doi(ctx, field)
+			case "title":
+				return ec.fieldContext_PublicationWithGene_title(ctx, field)
+			case "abstract":
+				return ec.fieldContext_PublicationWithGene_abstract(ctx, field)
+			case "journal":
+				return ec.fieldContext_PublicationWithGene_journal(ctx, field)
+			case "pub_date":
+				return ec.fieldContext_PublicationWithGene_pub_date(ctx, field)
+			case "volume":
+				return ec.fieldContext_PublicationWithGene_volume(ctx, field)
+			case "pages":
+				return ec.fieldContext_PublicationWithGene_pages(ctx, field)
+			case "issn":
+				return ec.fieldContext_PublicationWithGene_issn(ctx, field)
+			case "pub_type":
+				return ec.fieldContext_PublicationWithGene_pub_type(ctx, field)
+			case "source":
+				return ec.fieldContext_PublicationWithGene_source(ctx, field)
+			case "issue":
+				return ec.fieldContext_PublicationWithGene_issue(ctx, field)
+			case "status":
+				return ec.fieldContext_PublicationWithGene_status(ctx, field)
+			case "authors":
+				return ec.fieldContext_PublicationWithGene_authors(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PublicationWithGene", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_listPublicationsWithGene_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_plasmid(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_plasmid(ctx, field)
 	if err != nil {
@@ -1204,6 +1625,106 @@ func (ec *executionContext) fieldContext_Query_strain(ctx context.Context, field
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_strain_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_listStrainsWithGene(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_listStrainsWithGene(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ListStrainsWithGene(rctx, fc.Args["gene"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Strain)
+	fc.Result = res
+	return ec.marshalOStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_listStrainsWithGene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Strain_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Strain_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Strain_updated_at(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Strain_created_by(ctx, field)
+			case "updated_by":
+				return ec.fieldContext_Strain_updated_by(ctx, field)
+			case "summary":
+				return ec.fieldContext_Strain_summary(ctx, field)
+			case "editable_summary":
+				return ec.fieldContext_Strain_editable_summary(ctx, field)
+			case "depositor":
+				return ec.fieldContext_Strain_depositor(ctx, field)
+			case "genes":
+				return ec.fieldContext_Strain_genes(ctx, field)
+			case "dbxrefs":
+				return ec.fieldContext_Strain_dbxrefs(ctx, field)
+			case "publications":
+				return ec.fieldContext_Strain_publications(ctx, field)
+			case "systematic_name":
+				return ec.fieldContext_Strain_systematic_name(ctx, field)
+			case "label":
+				return ec.fieldContext_Strain_label(ctx, field)
+			case "species":
+				return ec.fieldContext_Strain_species(ctx, field)
+			case "plasmid":
+				return ec.fieldContext_Strain_plasmid(ctx, field)
+			case "parent":
+				return ec.fieldContext_Strain_parent(ctx, field)
+			case "names":
+				return ec.fieldContext_Strain_names(ctx, field)
+			case "in_stock":
+				return ec.fieldContext_Strain_in_stock(ctx, field)
+			case "phenotypes":
+				return ec.fieldContext_Strain_phenotypes(ctx, field)
+			case "genetic_modification":
+				return ec.fieldContext_Strain_genetic_modification(ctx, field)
+			case "mutagenesis_method":
+				return ec.fieldContext_Strain_mutagenesis_method(ctx, field)
+			case "characteristics":
+				return ec.fieldContext_Strain_characteristics(ctx, field)
+			case "genotypes":
+				return ec.fieldContext_Strain_genotypes(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Strain", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_listStrainsWithGene_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -2314,6 +2835,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "geneGeneralInformation":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_geneGeneralInformation(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "content":
 			field := field
 
@@ -2344,6 +2885,69 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_contentBySlug(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "listContentByNamespace":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listContentByNamespace(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "organism":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_organism(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "listOrganisms":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listOrganisms(ctx, field)
 				return res
 			}
 
@@ -2434,6 +3038,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "listPublicationsWithGene":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listPublicationsWithGene(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "plasmid":
 			field := field
 
@@ -2464,6 +3091,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_strain(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "listStrainsWithGene":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listStrainsWithGene(ctx, field)
 				return res
 			}
 
