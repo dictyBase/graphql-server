@@ -29,6 +29,8 @@ github.com/dictyBase/aphgrpc v1.4.2 h1:jkNyIpUBATNVNTM99TfAHln8UEpzyvNNNuM2+UY6t
 github.com/dictyBase/aphgrpc v1.4.2/go.mod h1:rzi2U95QntAuS6XpqespgZmQ8Ujo2Sq2R5FyhW5adA8=
 github.com/dictyBase/go-genproto v0.0.0-20231030202356-522cb6f9976a h1:V0xN+gehQLCJrqFPI1nNd8wCIi6Z0ZQgmoZ6dmkPlV0=
 github.com/dictyBase/go-genproto v0.0.0-20231030202356-522cb6f9976a/go.mod h1:KY6iUqXl1lLq81WTW9u5DfZE58xM61PsGLSLwwtePlk=
+github.com/dictyBase/go-genproto v0.0.0-20240815171842-0da89d7f57e4 h1:kxY0rlODJu8qk5jXv9dzeOpOl3hV8r66y1YByPKCDIs=
+github.com/dictyBase/go-genproto v0.0.0-20240815171842-0da89d7f57e4/go.mod h1:KY6iUqXl1lLq81WTW9u5DfZE58xM61PsGLSLwwtePlk=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
 github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=
