@@ -21,6 +21,11 @@ func (r *queryResolver) GeneOntologyAnnotation(ctx context.Context, gene string)
 	panic(fmt.Errorf("not implemented: GeneOntologyAnnotation - geneOntologyAnnotation"))
 }
 
+// GeneGeneralInformation is the resolver for the geneGeneralInformation field.
+func (r *queryResolver) GeneGeneralInformation(ctx context.Context, gene string) (*models.GeneGeneralInfo, error) {
+	panic(fmt.Errorf("not implemented: GeneGeneralInformation - geneGeneralInformation"))
+}
+
 // Content is the resolver for the content field.
 func (r *queryResolver) Content(ctx context.Context, id string) (*content.Content, error) {
 	panic("not implemented")
@@ -28,6 +33,21 @@ func (r *queryResolver) Content(ctx context.Context, id string) (*content.Conten
 
 // ContentBySlug is the resolver for the contentBySlug field.
 func (r *queryResolver) ContentBySlug(ctx context.Context, slug string) (*content.Content, error) {
+	panic("not implemented")
+}
+
+// ListContentByNamespace is the resolver for the listContentByNamespace field.
+func (r *queryResolver) ListContentByNamespace(ctx context.Context, namespace string) ([]*content.Content, error) {
+	panic(fmt.Errorf("not implemented: ListContentByNamespace - listContentByNamespace"))
+}
+
+// Organism is the resolver for the organism field.
+func (r *queryResolver) Organism(ctx context.Context, taxonID string) (*models.Organism, error) {
+	panic("not implemented")
+}
+
+// ListOrganisms is the resolver for the listOrganisms field.
+func (r *queryResolver) ListOrganisms(ctx context.Context) ([]*models.Organism, error) {
 	panic("not implemented")
 }
 
@@ -51,6 +71,11 @@ func (r *queryResolver) ListRecentPublications(ctx context.Context, limit int) (
 	panic(fmt.Errorf("not implemented: ListRecentPublications - listRecentPublications"))
 }
 
+// ListPublicationsWithGene is the resolver for the listPublicationsWithGene field.
+func (r *queryResolver) ListPublicationsWithGene(ctx context.Context, gene string) ([]*models.PublicationWithGene, error) {
+	panic(fmt.Errorf("not implemented: ListPublicationsWithGene - listPublicationsWithGene"))
+}
+
 // Plasmid is the resolver for the plasmid field.
 func (r *queryResolver) Plasmid(ctx context.Context, id string) (*models.Plasmid, error) {
 	panic("not implemented")
@@ -59,6 +84,11 @@ func (r *queryResolver) Plasmid(ctx context.Context, id string) (*models.Plasmid
 // Strain is the resolver for the strain field.
 func (r *queryResolver) Strain(ctx context.Context, id string) (*models.Strain, error) {
 	panic("not implemented")
+}
+
+// ListStrainsWithGene is the resolver for the listStrainsWithGene field.
+func (r *queryResolver) ListStrainsWithGene(ctx context.Context, gene string) ([]*models.Strain, error) {
+	panic(fmt.Errorf("not implemented: ListStrainsWithGene - listStrainsWithGene"))
 }
 
 // ListStrains is the resolver for the listStrains field.
@@ -138,12 +168,6 @@ type queryResolver struct{ *Resolver }
 //     it when you're done.
 //   - You have helper methods in this file. Move them out to keep these resolver files clean.
 func (r *queryResolver) GetRefreshToken(ctx context.Context, token string) (*auth.Auth, error) {
-	panic("not implemented")
-}
-func (r *queryResolver) Organism(ctx context.Context, taxonID string) (*models.Organism, error) {
-	panic("not implemented")
-}
-func (r *queryResolver) ListOrganisms(ctx context.Context) ([]*models.Organism, error) {
 	panic("not implemented")
 }
 func (r *queryResolver) Gene(ctx context.Context, gene string) (*models.Gene, error) {
