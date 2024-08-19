@@ -14,9 +14,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
-var (
-	noncharReg = regexp.MustCompile("[^a-z0-9]+")
-)
+var noncharReg = regexp.MustCompile("[^a-z0-9]+")
 
 func Slugify(name string) string {
 	return strings.Trim(
@@ -157,4 +155,40 @@ func (qrs *QueryResolver) ContentBySlug(
 	}
 	qrs.Logger.Debugf("successfully found content with slug %s", slug)
 	return content, nil
+}
+
+func (qrs *QueryResolver) ListContentByNamespace(
+	ctx context.Context,
+	namespace string,
+) ([]*pb.Content, error) {
+	contentColl, err := qrs.GetContentClient(registry.CONTENT).
+		ListContents(ctx, &pb.ListParameters{
+			Limit:  15,
+			Filter: fmt.Sprintf("namespace===%s", namespace),
+		})
+	if err != nil {
+		errMsg := fmt.Errorf("error in getting content %v", err)
+		errorutils.AddGQLError(ctx, errMsg)
+		qrs.Logger.Error(errMsg)
+		return nil, errMsg
+	}
+	qrs.Logger.Debugf("successfully listed content for namespace %s", namespace)
+	cntColl := make([]*pb.Content, 0)
+	for _, cldata := range contentColl.Data {
+		cntId, err := strconv.ParseInt(cldata.Id, 10, 64)
+		if err != nil {
+			errMsg := fmt.Errorf("error in converting id %v", err)
+			errorutils.AddGQLError(ctx, errMsg)
+			qrs.Logger.Error(errMsg)
+			return nil, errMsg
+		}
+		cnt := &pb.Content{
+			Data: &pb.ContentData{
+				Id:         cntId,
+				Attributes: cldata.Attributes,
+			},
+		}
+		cntColl = append(cntColl, cnt)
+	}
+	return cntColl, nil
 }
