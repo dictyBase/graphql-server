@@ -22,13 +22,6 @@ type Stock interface {
 	IsStock()
 }
 
-type AssociatedSequences struct {
-	GenbankGenomicFragment *NameWithLink   `json:"genbank_genomic_fragment,omitempty"`
-	GenbankMrna            *NameWithLink   `json:"genbank_mrna,omitempty"`
-	Ests                   []*NameWithLink `json:"ests"`
-	MoreLink               string          `json:"more_link"`
-}
-
 type Citation struct {
 	Authors  string `json:"authors"`
 	Title    string `json:"title"`
@@ -180,30 +173,16 @@ type GOAnnotation struct {
 }
 
 type Gene struct {
-	ID                  string                `json:"id"`
-	Name                string                `json:"name"`
-	Goas                []*GOAnnotation       `json:"goas,omitempty"`
-	Strains             []*Strain             `json:"strains,omitempty"`
-	Orthologs           []*Orthologs          `json:"orthologs,omitempty"`
-	ProductInfo         []*ProductInformation `json:"product_info,omitempty"`
-	GeneralInfo         *GeneralInfo          `json:"general_info"`
-	AssociatedSequences *AssociatedSequences  `json:"associated_sequences"`
-	Links               *Links                `json:"links"`
-	ProteinInformation  *ProteinInformation   `json:"protein_information,omitempty"`
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
-type GeneralInfo struct {
-	NameDescription []string `json:"name_description"`
-	AltGeneName     []string `json:"alt_gene_name,omitempty"`
-	GeneProduct     string   `json:"gene_product"`
-	AltProteinNames []string `json:"alt_protein_names,omitempty"`
-	Description     string   `json:"description"`
-}
-
-type GenomicCoordinates struct {
-	Exon        string `json:"exon"`
-	LocalCoords string `json:"local_coords"`
-	ChromCoords string `json:"chrom_coords"`
+type GeneGeneralInfo struct {
+	ID              string    `json:"id"`
+	NameDescription []*string `json:"name_description"`
+	GeneProduct     *string   `json:"gene_product,omitempty"`
+	Synonyms        []*string `json:"synonyms"`
+	Description     *string   `json:"description,omitempty"`
 }
 
 type Identity struct {
@@ -220,12 +199,6 @@ type ImageFile struct {
 	URL string `json:"url"`
 }
 
-type Links struct {
-	Expression   []*NameWithLink `json:"expression"`
-	Colleagues   *NameWithLink   `json:"colleagues"`
-	ExtResources []*NameWithLink `json:"ext_resources"`
-}
-
 type LoginInput struct {
 	ClientID    string `json:"client_id"`
 	State       string `json:"state"`
@@ -237,11 +210,6 @@ type LoginInput struct {
 
 type Logout struct {
 	Success bool `json:"success"`
-}
-
-type NameWithLink struct {
-	Name string `json:"name"`
-	Link string `json:"link"`
 }
 
 type NumberOfPublicationsWithGene struct {
@@ -264,14 +232,6 @@ type Organism struct {
 	Downloads      []*Download `json:"downloads"`
 }
 
-type Orthologs struct {
-	ID          *NameWithLink `json:"id"`
-	Species     string        `json:"species"`
-	Uniprotkb   *NameWithLink `json:"uniprotkb"`
-	GeneProduct string        `json:"gene_product"`
-	Source      []string      `json:"source"`
-}
-
 type Phenotype struct {
 	Phenotype   string       `json:"phenotype"`
 	Note        *string      `json:"note,omitempty"`
@@ -286,32 +246,6 @@ type PlasmidListWithCursor struct {
 	PreviousCursor int        `json:"previousCursor"`
 	Limit          *int       `json:"limit,omitempty"`
 	TotalCount     int        `json:"totalCount"`
-}
-
-type ProductInformation struct {
-	ProteinCodingGene      *NameWithLink         `json:"protein_coding_gene"`
-	ProteinLength          string                `json:"protein_length"`
-	ProteinMolecularWeight string                `json:"protein_molecular_weight"`
-	MoreProteinData        string                `json:"more_protein_data"`
-	GenomicCoords          []*GenomicCoordinates `json:"genomic_coords"`
-}
-
-type ProteinGeneralInfo struct {
-	GeneProduct         string        `json:"gene_product"`
-	DictybaseID         string        `json:"dictybase_id"`
-	Description         string        `json:"description"`
-	ProteinLength       string        `json:"protein_length"`
-	MolecularWeight     string        `json:"molecular_weight"`
-	AaComposition       *NameWithLink `json:"aa_composition"`
-	SubcellularLocation string        `json:"subcellular_location"`
-	ProteinExistence    string        `json:"protein_existence"`
-	Note                string        `json:"note"`
-}
-
-type ProteinInformation struct {
-	GeneralInfo     *ProteinGeneralInfo `json:"general_info"`
-	ExternalLinks   []*NameWithLink     `json:"external_links"`
-	ProteinSequence string              `json:"protein_sequence"`
 }
 
 type Publication struct {
