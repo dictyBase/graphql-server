@@ -7,7 +7,6 @@ package genresolver
 import (
 	"context"
 
-	"github.com/dictyBase/graphql-server/internal/graphql/generated"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 )
 
@@ -15,8 +14,5 @@ import (
 func (r *geneResolver) Goas(ctx context.Context, obj *models.Gene) ([]*models.GOAnnotation, error) {
 	panic("not implemented")
 }
-
-// Gene returns generated.GeneResolver implementation.
-func (r *Resolver) Gene() generated.GeneResolver { return &geneResolver{r} }
 
 type geneResolver struct{ *Resolver }
