@@ -55,7 +55,6 @@ func TestPlasmidGenes(t *testing.T) {
 	genes = append(genes, &models.Gene{
 		ID:   "DDB_G0285425",
 		Name: "gpaD",
-		Goas: nil,
 	})
 	assert.ElementsMatch(g, genes, "should match associated genes")
 }
