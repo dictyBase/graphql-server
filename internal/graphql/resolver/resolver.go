@@ -6,7 +6,6 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/generated"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolver/auth"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolver/content"
-	"github.com/dictyBase/graphql-server/internal/graphql/resolver/gene"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolver/order"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolver/organism"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolver/publication"
@@ -47,6 +46,7 @@ func (rrs *Resolver) Mutation() generated.MutationResolver {
 		Logger:   rrs.Logger,
 	}
 }
+
 func (rrs *Resolver) Query() generated.QueryResolver {
 	return &QueryResolver{
 		Registry:    rrs.Registry,
@@ -54,18 +54,21 @@ func (rrs *Resolver) Query() generated.QueryResolver {
 		Logger:      rrs.Logger,
 	}
 }
+
 func (rrs *Resolver) User() generated.UserResolver {
 	return &user.UserResolver{
 		Client: rrs.GetAuthClient(registry.AUTH),
 		Logger: rrs.Logger,
 	}
 }
+
 func (rrs *Resolver) Role() generated.RoleResolver {
 	return &user.RoleResolver{
 		Client: rrs.GetAuthClient(registry.AUTH),
 		Logger: rrs.Logger,
 	}
 }
+
 func (rrs *Resolver) Permission() generated.PermissionResolver {
 	return &user.PermissionResolver{
 		Client: rrs.GetPermissionClient(registry.PERMISSION),
@@ -78,6 +81,7 @@ func (rrs *Resolver) Author() generated.AuthorResolver {
 		Logger: rrs.Logger,
 	}
 }
+
 func (rrs *Resolver) Strain() generated.StrainResolver {
 	return &stock.StrainResolver{
 		Client:           rrs.GetStockClient(registry.STOCK),
@@ -87,6 +91,7 @@ func (rrs *Resolver) Strain() generated.StrainResolver {
 		Logger:           rrs.Logger,
 	}
 }
+
 func (rrs *Resolver) Plasmid() generated.PlasmidResolver {
 	return &stock.PlasmidResolver{
 		Client:           rrs.GetStockClient(registry.STOCK),
@@ -114,19 +119,12 @@ func (rrs *Resolver) Content() generated.ContentResolver {
 	}
 }
 
-func (rrs *Resolver) Auth() generated.AuthResolver {
-	return &auth.AuthResolver{}
-}
-
-func (rrs *Resolver) Gene() generated.GeneResolver {
-	return &gene.GeneResolver{
-		Redis:  rrs.GetRedisRepository("redis"),
-		Logger: rrs.Logger,
-	}
-}
-
 func (rrs *Resolver) Organism() generated.OrganismResolver {
 	return &organism.OrganismResolver{
 		Logger: rrs.Logger,
 	}
+}
+
+func (rrs *Resolver) Auth() generated.AuthResolver {
+	return &auth.AuthResolver{}
 }
