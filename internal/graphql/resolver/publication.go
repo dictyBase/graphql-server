@@ -48,3 +48,11 @@ func (qrs *QueryResolver) ListRecentPublications(
 ) ([]*models.Publication, error) {
 	return []*models.Publication{}, nil
 }
+
+// ListPublicationsWithGene is the resolver for the listPublicationsWithGene field.
+func (qrs *QueryResolver) ListPublicationsWithGene(
+	ctx context.Context,
+	gene string,
+) ([]*models.PublicationWithGene, error) {
+	return []*models.PublicationWithGene{}, nil
+}

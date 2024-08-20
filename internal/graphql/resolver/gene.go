@@ -83,3 +83,11 @@ func (qrs *QueryResolver) ListRecentGenes(
 ) ([]*models.Gene, error) {
 	return []*models.Gene{}, nil
 }
+
+// GeneGeneralInformation is the resolver for the geneGeneralInformation field.
+func (qrs *QueryResolver) GeneGeneralInformation(
+	ctx context.Context,
+	gene string,
+) (*models.GeneGeneralInfo, error) {
+	return &models.GeneGeneralInfo{}, nil
+}
