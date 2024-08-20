@@ -530,3 +530,11 @@ func (qrs *QueryResolver) reportStrainListError(
 	qrs.Logger.Error(err)
 	return &models.StrainListWithCursor{}, err
 }
+
+// ListStrainsWithGene is the resolver for the listStrainsWithGene field.
+func (qrs *QueryResolver) ListStrainsWithGene(
+	ctx context.Context,
+	gene string,
+) ([]*models.Strain, error) {
+	return []*models.Strain{}, nil
+}
