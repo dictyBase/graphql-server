@@ -175,7 +175,7 @@ func (qrs *QueryResolver) ListContentByNamespace(
 	qrs.Logger.Debugf("successfully listed content for namespace %s", namespace)
 	cntColl := make([]*pb.Content, 0)
 	for _, cldata := range contentColl.Data {
-		cntId, err := strconv.ParseInt(cldata.Id, 10, 64)
+		cntID, err := strconv.ParseInt(cldata.Id, 10, 64)
 		if err != nil {
 			errMsg := fmt.Errorf("error in converting id %v", err)
 			errorutils.AddGQLError(ctx, errMsg)
@@ -184,7 +184,7 @@ func (qrs *QueryResolver) ListContentByNamespace(
 		}
 		cnt := &pb.Content{
 			Data: &pb.ContentData{
-				Id:         cntId,
+				Id:         cntID,
 				Attributes: cldata.Attributes,
 			},
 		}
