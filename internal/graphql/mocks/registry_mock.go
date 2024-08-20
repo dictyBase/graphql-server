@@ -79,7 +79,15 @@ func (mr *MockRegistry) GetOrderClient(key string) order.OrderServiceClient {
 func (mr *MockRegistry) GetContentClient(
 	key string,
 ) content.ContentServiceClient {
-	return MockedContentClient()
+	v, ok := mr.ConnMap.Get(key)
+	if !ok {
+		return MockedContentClient()
+	}
+	client, ok := v.(content.ContentServiceClient)
+	if !ok {
+		return MockedContentClient()
+	}
+	return client
 }
 
 func (mr *MockRegistry) GetAnnotationClient(
