@@ -166,7 +166,7 @@ func (qrs *QueryResolver) GeneOntologyAnnotation(
 		return nil, fmt.Errorf("no UniProt ID found for gene %s", gene)
 	}
 
-	url := fmt.Sprintf(baseGoaURL+"%s", uniprotID)
+	url := fmt.Sprintf("%s%s", baseGoaURL, uniprotID)
 	geneOntology, err := fetchGOAs(url)
 	if err != nil {
 		return nil, fmt.Errorf(
