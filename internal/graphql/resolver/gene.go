@@ -9,6 +9,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	"github.com/sirupsen/logrus"
 )
@@ -104,9 +105,9 @@ func fetchGOAs(url string) (*quickGo, error) {
 
 func getValFromHash(
 	hash, key string,
-	cache repository.Repository,
+	redisRepo repository.Repository,
 ) (string, bool, error) {
-	exists, err := cache.HExists(hash, key)
+	exists, err := redisRepo.HExists(hash, key)
 	if err != nil {
 		return "", false, fmt.Errorf(
 			"error checking hash existence for %s/%s: %w",
@@ -118,7 +119,7 @@ func getValFromHash(
 	if !exists {
 		return "", false, nil
 	}
-	name, err := cache.HGet(hash, key)
+	name, err := redisRepo.HGet(hash, key)
 	if err != nil {
 		return "", true, fmt.Errorf(
 			"error getting value from hash %s/%s: %w",
@@ -132,7 +133,7 @@ func getValFromHash(
 
 func getNameFromDB(
 	db, id string,
-	cache repository.Repository,
+	redisRepo repository.Repository,
 ) (string, bool, error) {
 	hash, ok := dbHashMap[db]
 	if !ok {
@@ -144,7 +145,7 @@ func getNameFromDB(
 		key = fmt.Sprintf("%s:%s", db, id)
 	}
 
-	return getValFromHash(hash, key, cache)
+	return getValFromHash(hash, key, redisRepo)
 }
 
 func getWith(
@@ -272,8 +273,7 @@ func (qrs *QueryResolver) GeneOntologyAnnotation(
 	ctx context.Context,
 	gene string,
 ) ([]*models.GOAnnotation, error) {
-	redis := qrs.GetRedisRepository(cache.RedisKey)
-
+	redis := qrs.GetRedisRepository(registry.REDISREPO)
 	uniprotID, err := getUniprotIDForGene(gene, redis)
 	if err != nil {
 		qrs.Logger.WithFields(logrus.Fields{
@@ -292,7 +292,10 @@ func (qrs *QueryResolver) GeneOntologyAnnotation(
 			"error": err,
 		}).Error("failed to fetch gene ontology annotations")
 		errorutils.AddGQLError(ctx, err)
-		return nil, fmt.Errorf("error fetching gene ontology annotations: %w", err)
+		return nil, fmt.Errorf(
+			"error fetching gene ontology annotations: %w",
+			err,
+		)
 	}
 
 	annotations := make([]*models.GOAnnotation, 0, len(geneOntology.Results))
@@ -317,7 +320,7 @@ func (qrs *QueryResolver) Gene(
 	ctx context.Context,
 	geneID string,
 ) (*models.Gene, error) {
-	redis := qrs.GetRedisRepository(cache.RedisKey)
+	redis := qrs.GetRedisRepository(registry.REDISREPO)
 	gene, err := cache.GetGeneFromCache(ctx, redis, geneID)
 	if err != nil {
 		qrs.Logger.WithError(err).Error("Failed to get gene from cache")
