@@ -10,6 +10,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/repository"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -129,10 +130,13 @@ func getValFromHash(
 	return name, true, nil
 }
 
-func getNameFromDB(db, id string, cache repository.Repository) string {
+func getNameFromDB(
+	db, id string,
+	cache repository.Repository,
+) (string, bool, error) {
 	hash, ok := dbHashMap[db]
 	if !ok {
-		return ""
+		return "", false, nil
 	}
 
 	key := id
@@ -140,45 +144,128 @@ func getNameFromDB(db, id string, cache repository.Repository) string {
 		key = fmt.Sprintf("%s:%s", db, id)
 	}
 
-	val, _, err := getValFromHash(hash, key, cache)
-	if err != nil {
-		// Since the original function returned empty string on error,
-		// we'll maintain that behavior but could log the error if needed
-		return ""
-	}
-	return val
+	return getValFromHash(hash, key, cache)
 }
 
-func getWith(with []with, repo repository.Repository) []*models.With {
+func getWith(
+	with []with,
+	repo repository.Repository,
+) ([]*models.With, bool, error) {
 	wm := []*models.With{}
+	hasValidEntries := false
 	for _, v := range with {
 		for _, w := range v.ConnectedXRefs {
+			name, exists, err := getNameFromDB(w.DB, w.ID, repo)
+			if err != nil {
+				return nil, false, fmt.Errorf(
+					"error getting name for %s/%s: %w",
+					w.DB,
+					w.ID,
+					err,
+				)
+			}
+			if !exists {
+				// Skip entries where the name doesn't exist in the database
+				continue
+			}
+			hasValidEntries = true
 			wm = append(wm, &models.With{
 				ID:   w.ID,
 				Db:   w.DB,
-				Name: getNameFromDB(w.DB, w.ID, repo),
+				Name: name,
 			})
 		}
 	}
-	return wm
+	return wm, hasValidEntries, nil
 }
 
 func getExtensions(
 	extensions []extension,
 	repo repository.Repository,
-) []*models.Extension {
+) ([]*models.Extension, bool, error) {
 	ext := []*models.Extension{}
+	hasValidEntries := false
 	for _, v := range extensions {
 		for _, e := range v.ConnectedXRefs {
+			name, exists, err := getNameFromDB(e.DB, e.ID, repo)
+			if err != nil {
+				return nil, false, fmt.Errorf(
+					"error getting name for %s/%s: %w",
+					e.DB,
+					e.ID,
+					err,
+				)
+			}
+			if !exists {
+				// Skip entries where the name doesn't exist in the database
+				continue
+			}
+			hasValidEntries = true
 			ext = append(ext, &models.Extension{
 				ID:       e.ID,
 				Db:       e.DB,
 				Relation: e.Relation,
-				Name:     getNameFromDB(e.DB, e.ID, repo),
+				Name:     name,
 			})
 		}
 	}
-	return ext
+	return ext, hasValidEntries, nil
+}
+
+func getUniprotIDForGene(
+	gene string,
+	redis repository.Repository,
+) (string, error) {
+	uniprotID, exists, err := getValFromHash(geneUniprotHash, gene, redis)
+	if err != nil {
+		return "", fmt.Errorf(
+			"error getting UniProt ID for gene %s: %w",
+			gene,
+			err,
+		)
+	}
+	if !exists {
+		return "", fmt.Errorf("no UniProt ID found for gene %s", gene)
+	}
+	return uniprotID, nil
+}
+
+func buildGOAnnotation(
+	result result,
+	redis repository.Repository,
+) (*models.GOAnnotation, error) {
+	annotation := &models.GOAnnotation{
+		ID:           result.ID,
+		Type:         result.GoAspect,
+		Date:         result.Date,
+		EvidenceCode: result.GoEvidence,
+		GoTerm:       result.GoName,
+		Qualifier:    result.Qualifier,
+		Publication:  result.Reference,
+		AssignedBy:   result.AssignedBy,
+	}
+
+	if result.WithFrom != nil {
+		with, exists, err := getWith(result.WithFrom, redis)
+		if err != nil {
+			return nil, fmt.Errorf("error getting with data: %w", err)
+		}
+		if exists {
+			annotation.With = with
+		}
+	}
+
+	if result.Extensions != nil {
+		extensions, exists, err := getExtensions(result.Extensions, redis)
+		if err != nil {
+			return nil, fmt.Errorf("error getting extensions data: %w", err)
+		}
+		if exists {
+			annotation.Extensions = extensions
+		}
+	}
+
+	return annotation, nil
 }
 
 func (qrs *QueryResolver) GeneOntologyAnnotation(
@@ -186,47 +273,40 @@ func (qrs *QueryResolver) GeneOntologyAnnotation(
 	gene string,
 ) ([]*models.GOAnnotation, error) {
 	redis := qrs.GetRedisRepository(cache.RedisKey)
-	uniprotID, exists, err := getValFromHash(geneUniprotHash, gene, redis)
+
+	uniprotID, err := getUniprotIDForGene(gene, redis)
 	if err != nil {
-		return nil, fmt.Errorf(
-			"error getting UniProt ID for gene %s: %w",
-			gene,
-			err,
-		)
-	}
-	if !exists {
-		return nil, fmt.Errorf("no UniProt ID found for gene %s", gene)
+		qrs.Logger.WithFields(logrus.Fields{
+			"gene":  gene,
+			"error": err,
+		}).Error("failed to get UniProt ID for gene")
+		errorutils.AddGQLError(ctx, err)
+		return nil, fmt.Errorf("error getting UniProt ID: %w", err)
 	}
 
 	url := fmt.Sprintf("%s%s", baseGoaURL, uniprotID)
 	geneOntology, err := fetchGOAs(url)
 	if err != nil {
-		return nil, fmt.Errorf(
-			"error fetching gene ontology annotations: %w",
-			err,
-		)
+		qrs.Logger.WithFields(logrus.Fields{
+			"url":   url,
+			"error": err,
+		}).Error("failed to fetch gene ontology annotations")
+		errorutils.AddGQLError(ctx, err)
+		return nil, fmt.Errorf("error fetching gene ontology annotations: %w", err)
 	}
 
 	annotations := make([]*models.GOAnnotation, 0, len(geneOntology.Results))
 	for _, result := range geneOntology.Results {
-		annotation := &models.GOAnnotation{
-			ID:           result.ID,
-			Type:         result.GoAspect,
-			Date:         result.Date,
-			EvidenceCode: result.GoEvidence,
-			GoTerm:       result.GoName,
-			Qualifier:    result.Qualifier,
-			Publication:  result.Reference,
-			AssignedBy:   result.AssignedBy,
+		annotation, err := buildGOAnnotation(result, redis)
+		if err != nil {
+			qrs.Logger.WithFields(logrus.Fields{
+				"gene":          gene,
+				"annotation_id": result.ID,
+				"error":         err,
+			}).Error("failed to build GO annotation")
+			errorutils.AddGQLError(ctx, err)
+			return nil, fmt.Errorf("error building annotation: %w", err)
 		}
-
-		if result.WithFrom != nil {
-			annotation.With = getWith(result.WithFrom, redis)
-		}
-		if result.Extensions != nil {
-			annotation.Extensions = getExtensions(result.Extensions, redis)
-		}
-
 		annotations = append(annotations, annotation)
 	}
 
