@@ -86,6 +86,29 @@ type pageInfo struct {
 	Total          int `json:"total"`
 }
 
+type CachedAnnotationsParams struct {
+	Ctx    context.Context
+	Gene   string
+	Redis  repository.Repository
+	Logger *logrus.Entry
+}
+
+type FetchAndBuildAnnotationsParams struct {
+	Ctx       context.Context
+	Gene      string
+	UniprotID string
+	Redis     repository.Repository
+	Logger    *logrus.Entry
+}
+
+type CacheAnnotationsParams struct {
+	Ctx         context.Context
+	Gene        string
+	Annotations []*models.GOAnnotation
+	Redis       repository.Repository
+	Logger      *logrus.Entry
+}
+
 func fetchAndUnmarshalJSON(url string, target interface{}) error {
 	res, err := fetch.GetResp(url)
 	if err != nil {
@@ -237,78 +260,65 @@ func getCacheKey(geneID string) string {
 	return fmt.Sprintf("%s%s", geneGOAnnotationPrefix, geneID)
 }
 
-func getCachedAnnotations(
-	ctx context.Context,
-	gene string,
-	redis repository.Repository,
-	logger *logrus.Entry,
-) ([]*models.GOAnnotation, bool, error) {
-	cacheKey := getCacheKey(gene)
-	exists, err := redis.Exists(cacheKey)
+func getCachedAnnotations(params *CachedAnnotationsParams) ([]*models.GOAnnotation, bool, error) {
+	cacheKey := getCacheKey(params.Gene)
+	exists, err := params.Redis.Exists(cacheKey)
 	if err != nil {
-		logger.WithFields(logrus.Fields{
-			"gene":  gene,
+		params.Logger.WithFields(logrus.Fields{
+			"gene":  params.Gene,
 			"error": err,
 		}).Error("failed to check cache for gene ontology annotations")
-		errorutils.AddGQLError(ctx, err)
+		errorutils.AddGQLError(params.Ctx, err)
 		return nil, false, fmt.Errorf("error checking cache: %w", err)
 	}
 	if !exists {
 		return nil, false, nil
 	}
 
-	cached, err := redis.Get(cacheKey)
+	cached, err := params.Redis.Get(cacheKey)
 	if err != nil {
-		logger.WithFields(logrus.Fields{
-			"gene":  gene,
+		params.Logger.WithFields(logrus.Fields{
+			"gene":  params.Gene,
 			"error": err,
 		}).Error("failed to get cached gene ontology annotations")
-		errorutils.AddGQLError(ctx, err)
+		errorutils.AddGQLError(params.Ctx, err)
 		return nil, true, fmt.Errorf("error retrieving from cache: %w", err)
 	}
 
 	var annotations []*models.GOAnnotation
 	if err := json.Unmarshal([]byte(cached), &annotations); err != nil {
-		logger.WithFields(logrus.Fields{
-			"gene":  gene,
+		params.Logger.WithFields(logrus.Fields{
+			"gene":  params.Gene,
 			"error": err,
 		}).Error("failed to unmarshal cached gene ontology annotations")
-		errorutils.AddGQLError(ctx, err)
+		errorutils.AddGQLError(params.Ctx, err)
 		return nil, true, fmt.Errorf("error parsing cached data: %w", err)
 	}
 	return annotations, true, nil
 }
 
-func fetchAndBuildAnnotations(
-	ctx context.Context,
-	gene, uniprotID string,
-	redis repository.Repository,
-	logger *logrus.Entry,
-) ([]*models.GOAnnotation, error) {
-	url := fmt.Sprintf("%s%s", baseGoaURL, uniprotID)
+func fetchAndBuildAnnotations(params *FetchAndBuildAnnotationsParams) ([]*models.GOAnnotation, error) {
+	url := fmt.Sprintf("%s%s", baseGoaURL, params.UniprotID)
 	geneOntology, err := fetchGOAs(url)
 	if err != nil {
-		logger.WithFields(logrus.Fields{
+		params.Logger.WithFields(logrus.Fields{
 			"url":   url,
 			"error": err,
 		}).Error("failed to fetch gene ontology annotations")
-		errorutils.AddGQLError(ctx, err)
-		return nil, fmt.Errorf(
-			"error fetching gene ontology annotations: %w",
-			err,
-		)
+		errorutils.AddGQLError(params.Ctx, err)
+		return nil, fmt.Errorf("error fetching gene ontology annotations: %w", err)
 	}
 
 	annotations := make([]*models.GOAnnotation, 0, len(geneOntology.Results))
 	for _, result := range geneOntology.Results {
-		annotation, err := buildGOAnnotation(result, redis)
+		annotation, err := buildGOAnnotation(result, params.Redis)
 		if err != nil {
-			logger.WithFields(logrus.Fields{
-				"gene":          gene,
+			params.Logger.WithFields(logrus.Fields{
+				"gene":          params.Gene,
 				"annotation_id": result.ID,
 				"error":         err,
 			}).Error("failed to build GO annotation")
-			errorutils.AddGQLError(ctx, err)
+			errorutils.AddGQLError(params.Ctx, err)
 			return nil, fmt.Errorf("error building annotation: %w", err)
 		}
 		annotations = append(annotations, annotation)
@@ -316,29 +326,23 @@ func fetchAndBuildAnnotations(
 	return annotations, nil
 }
 
-func cacheAnnotations(
-	ctx context.Context,
-	gene string,
-	annotations []*models.GOAnnotation,
-	redis repository.Repository,
-	logger *logrus.Entry,
-) error {
-	cached, err := json.Marshal(annotations)
+func cacheAnnotations(params *CacheAnnotationsParams) error {
+	cached, err := json.Marshal(params.Annotations)
 	if err != nil {
-		logger.WithFields(logrus.Fields{
-			"gene":  gene,
+		params.Logger.WithFields(logrus.Fields{
+			"gene":  params.Gene,
 			"error": err,
 		}).Error("failed to marshal annotations for caching")
-		errorutils.AddGQLError(ctx, err)
+		errorutils.AddGQLError(params.Ctx, err)
 		return fmt.Errorf("error preparing data for cache: %w", err)
 	}
 
-	if err := redis.SetWithTTL(getCacheKey(gene), string(cached), 14*24*time.Hour); err != nil {
-		logger.WithFields(logrus.Fields{
-			"gene":  gene,
+	if err := params.Redis.SetWithTTL(getCacheKey(params.Gene), string(cached), 14*24*time.Hour); err != nil {
+		params.Logger.WithFields(logrus.Fields{
+			"gene":  params.Gene,
 			"error": err,
 		}).Error("failed to cache gene ontology annotations")
-		errorutils.AddGQLError(ctx, err)
+		errorutils.AddGQLError(params.Ctx, err)
 		return fmt.Errorf("error caching annotations: %w", err)
 	}
 	return nil
@@ -389,12 +393,12 @@ func (qrs *QueryResolver) GeneOntologyAnnotation(
 	redis := qrs.GetRedisRepository(registry.REDISREPO)
 
 	// Try to get from cache first
-	annotations, found, err := getCachedAnnotations(
-		ctx,
-		gene,
-		redis,
-		qrs.Logger,
-	)
+	annotations, found, err := getCachedAnnotations(&CachedAnnotationsParams{
+		Ctx:    ctx,
+		Gene:   gene,
+		Redis:  redis,
+		Logger: qrs.Logger,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -414,19 +418,25 @@ func (qrs *QueryResolver) GeneOntologyAnnotation(
 	}
 
 	// Fetch and build annotations
-	annotations, err = fetchAndBuildAnnotations(
-		ctx,
-		gene,
-		uniprotID,
-		redis,
-		qrs.Logger,
-	)
+	annotations, err = fetchAndBuildAnnotations(&FetchAndBuildAnnotationsParams{
+		Ctx:       ctx,
+		Gene:      gene,
+		UniprotID: uniprotID,
+		Redis:     redis,
+		Logger:    qrs.Logger,
+	})
 	if err != nil {
 		return nil, err
 	}
 
 	// Cache the results
-	if err := cacheAnnotations(ctx, gene, annotations, redis, qrs.Logger); err != nil {
+	if err := cacheAnnotations(&CacheAnnotationsParams{
+		Ctx:         ctx,
+		Gene:        gene,
+		Annotations: annotations,
+		Redis:       redis,
+		Logger:      qrs.Logger,
+	}); err != nil {
 		return nil, err
 	}
 
