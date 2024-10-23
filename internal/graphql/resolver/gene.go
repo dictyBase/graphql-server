@@ -6,6 +6,7 @@ import (
 
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
+	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/sirupsen/logrus"
@@ -45,8 +46,8 @@ func (qrs *QueryResolver) GeneOntologyAnnotation(
 	}
 
 	// Fetch and build annotations
-	annotations, err = cache.FetchAndBuildAnnotations(
-		&cache.FetchAndBuildAnnotationsParams{
+	annotations, err = fetch.FetchAndBuildAnnotations(
+		&fetch.FetchAndBuildAnnotationsParams{
 			Ctx:       ctx,
 			Gene:      gene,
 			UniprotID: uniprotID,
