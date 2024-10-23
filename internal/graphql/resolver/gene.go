@@ -101,13 +101,32 @@ func fetchGOAs(url string) (*quickGo, error) {
 	return goa, err
 }
 
-func getValFromHash(hash, key string, cache repository.Repository) string {
-	exists, _ := cache.HExists(hash, key)
-	if exists {
-		name, _ := cache.HGet(hash, key)
-		return name
+func getValFromHash(
+	hash, key string,
+	cache repository.Repository,
+) (string, bool, error) {
+	exists, err := cache.HExists(hash, key)
+	if err != nil {
+		return "", false, fmt.Errorf(
+			"error checking hash existence for %s/%s: %w",
+			hash,
+			key,
+			err,
+		)
 	}
-	return ""
+	if !exists {
+		return "", false, nil
+	}
+	name, err := cache.HGet(hash, key)
+	if err != nil {
+		return "", true, fmt.Errorf(
+			"error getting value from hash %s/%s: %w",
+			hash,
+			key,
+			err,
+		)
+	}
+	return name, true, nil
 }
 
 func getNameFromDB(db, id string, cache repository.Repository) string {
@@ -121,7 +140,13 @@ func getNameFromDB(db, id string, cache repository.Repository) string {
 		key = fmt.Sprintf("%s:%s", db, id)
 	}
 
-	return getValFromHash(hash, key, cache)
+	val, _, err := getValFromHash(hash, key, cache)
+	if err != nil {
+		// Since the original function returned empty string on error,
+		// we'll maintain that behavior but could log the error if needed
+		return ""
+	}
+	return val
 }
 
 func getWith(with []with, repo repository.Repository) []*models.With {
@@ -161,8 +186,15 @@ func (qrs *QueryResolver) GeneOntologyAnnotation(
 	gene string,
 ) ([]*models.GOAnnotation, error) {
 	redis := qrs.GetRedisRepository(cache.RedisKey)
-	uniprotID := getValFromHash(geneUniprotHash, gene, redis)
-	if uniprotID == "" {
+	uniprotID, exists, err := getValFromHash(geneUniprotHash, gene, redis)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"error getting UniProt ID for gene %s: %w",
+			gene,
+			err,
+		)
+	}
+	if !exists {
 		return nil, fmt.Errorf("no UniProt ID found for gene %s", gene)
 	}
 
