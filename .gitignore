@@ -8,3 +8,4 @@ node_modules
 .pnp.*
 internal/graphql/.DS_Store
 .aider*
+.env
