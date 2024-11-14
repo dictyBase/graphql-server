@@ -75,14 +75,8 @@ func (srs *StrainResolver) Genes(
 	obj *models.Strain,
 ) ([]*models.Gene, error) {
 	gntype := []*models.Gene{}
-	redis := srs.Registry.GetRedisRepository(cache.RedisKey)
 	for _, gne := range obj.Genes {
-		gene, err := cache.GetGeneFromCache(ctx, redis, gne)
-		if err != nil {
-			srs.Logger.Error(err)
-			continue
-		}
-		gntype = append(gntype, gene)
+		gntype = append(gntype, &models.Gene{ID: gne, Name: gne})
 	}
 	return gntype, nil
 }
@@ -151,7 +145,8 @@ func (srs *StrainResolver) Names(
 			Filter: fmt.Sprintf(
 				"entry_id===%s;tag===%s;ontology===%s",
 				obj.ID, registry.SynTag, registry.DictyAnnoOntology,
-			)})
+			),
+		})
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return names, nil
