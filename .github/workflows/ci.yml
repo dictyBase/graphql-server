@@ -28,10 +28,15 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           file: ./profile.cov
-  call-docker-build:
+  call-build-deploy:
     needs: test
-    uses: dictyBase/workflows/.github/workflows/docker-build-push.yaml@develop
+    uses: dictyBase/workflows/.github/workflows/composite-deploy.yaml@develop
     secrets: inherit
     with:
+      app: graphql-server
+      project: graphql_server
+      stack: experiments
       repository: ${{ github.repository }}
       ref: ${{ github.ref_name }}
+      dockerfile: build/package/Dockerfile
+      docker_image: graphql-server
