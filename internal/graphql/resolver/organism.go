@@ -32,7 +32,7 @@ type citation struct {
 	Link    string `json:"link"`
 }
 
-func fetchOrganisms(ctx context.Context, url string) (*organisms, error) {
+func fetchOrganisms(_ context.Context, url string) (*organisms, error) {
 	o := new(organisms)
 	res, err := fetch.GetResp(url)
 	if err != nil {
