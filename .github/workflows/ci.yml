@@ -40,3 +40,5 @@ jobs:
       ref: ${{ github.ref_name }}
       dockerfile: build/package/Dockerfile
       docker_image: graphql-server
+      cluster: ${{ vars.DEV_STAGING_CLUSTER }}
+      cluster_state_storage: ${{ vars.DEV_STAGING_KOPS_STATE_STORAGE }}
