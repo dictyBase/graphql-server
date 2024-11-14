@@ -4,13 +4,8 @@ on:
     branches-ignore:
       - master
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: check out code
-        uses: actions/checkout@v4
-      - name: run linter
-        uses: reviewdog/action-golangci-lint@v2
-        with:
-          github_token: ${{ secrets.github_token }}
-          golangci_lint_flags: "-c .golangci.yml"
+  call-lint:
+    uses: dictyBase/workflows/.github/workflows/golang-lint.yaml@develop
+    with:
+      repository: ${{ github.repository }}
+      ref: ${{ github.event.pull_request.head.sha }}
