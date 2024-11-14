@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
@@ -169,14 +168,12 @@ func TestGenes(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
 	r := strainResolver(mocks.MockedGenModClient())
-	rc := r.Registry.GetRedisRepository(cache.RedisKey)
-	rc.HSet(cache.GeneHash, "DDB_G0285425", "gpaD")
 	g, err := r.Genes(context.Background(), mockStrainInput)
 	assert.NoError(err, "expect no error from getting associated genes")
 	genes := []*models.Gene{}
 	genes = append(genes, &models.Gene{
 		ID:   "DDB_G0285425",
-		Name: "gpaD",
+		Name: "DDB_G0285425",
 	})
 	assert.ElementsMatch(g, genes, "should match associated genes")
 }
