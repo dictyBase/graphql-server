@@ -536,5 +536,22 @@ func (qrs *QueryResolver) ListStrainsWithGene(
 	ctx context.Context,
 	gene string,
 ) ([]*models.Strain, error) {
-	return []*models.Strain{}, nil
+	smodelList := make([]*models.Strain, 0)
+	strainList, err := qrs.GetStockClient(registry.STOCK).
+		ListStrains(ctx, &pb.StockParameters{
+			Limit:  int64(100),
+			Filter: fmt.Sprintf("gene@==%s", gene),
+		})
+	if err != nil {
+		errorutils.AddGQLError(ctx, err)
+		qrs.Logger.Error(err)
+		return smodelList, nil
+	}
+	for _, strain := range strainList.Data {
+		smodelList = append(
+			smodelList,
+			stock.ConvertToStrainModel(strain.Id, strain.Attributes),
+		)
+	}
+	return smodelList, nil
 }
