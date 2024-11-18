@@ -21,7 +21,7 @@ const (
 	AssayOntology           = "Dictyostelium Assay"
 	MutagenesisOntology     = "Dd Mutagenesis Method"
 	DictyAnnoOntology       = "dicty_annotation"
-	StrainCharOnto          = "strain_characteristics"
+	StrainCharOnto          = "dicty_strain_characteristics"
 	StrainInvOnto           = "strain_inventory"
 	PlasmidInvOnto          = "plasmid_inventory"
 	StrainInvTag            = "strain_inventory"
