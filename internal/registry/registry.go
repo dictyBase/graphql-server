@@ -84,6 +84,7 @@ type Registry interface {
 	GetOrderClient(key string) order.OrderServiceClient
 	GetContentClient(key string) content.ContentServiceClient
 	GetAnnotationClient(key string) annotation.TaggedAnnotationServiceClient
+	GetFeatAnnotationClient(key string) feature.FeatureAnnotationServiceClient
 	GetIdentityClient(key string) identity.IdentityServiceClient
 	GetRedisRepository(key string) repository.Repository
 	AddRecord(string, string)
