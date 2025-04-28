@@ -3,6 +3,7 @@ package registry
 import (
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	"github.com/dictyBase/go-genproto/dictybaseapis/content"
+	feature "github.com/dictyBase/go-genproto/dictybaseapis/feature_annotation"
 	"github.com/dictyBase/go-genproto/dictybaseapis/identity"
 	"github.com/dictyBase/go-genproto/dictybaseapis/order"
 	"github.com/dictyBase/go-genproto/dictybaseapis/stock"
@@ -51,6 +52,7 @@ const (
 	STOCK       = "stock"
 	ORDER       = "order"
 	CONTENT     = "content"
+	FEAT_ANNO   = "feature-annotation"
 	ANNOTATION  = "annotation"
 	AUTH        = "auth"
 	IDENTITY    = "identity"
@@ -95,10 +97,11 @@ func NewRegistry() Registry {
 
 func (coll *collection) ServiceMap() map[string]string {
 	return map[string]string{
-		"stock":      STOCK,
-		"order":      ORDER,
-		"annotation": ANNOTATION,
-		"content":    CONTENT,
+		"stock":              STOCK,
+		"order":              ORDER,
+		"annotation":         ANNOTATION,
+		"content":            CONTENT,
+		"feature-annotation": FEAT_ANNO,
 	}
 }
 
@@ -200,6 +203,14 @@ func (coll *collection) GetAnnotationClient(
 	key string,
 ) annotation.TaggedAnnotationServiceClient {
 	return annotation.NewTaggedAnnotationServiceClient(
+		coll.GetAPIConnection(key),
+	)
+}
+
+func (coll *collection) GetFeatAnnotationClient(
+	key string,
+) feature.FeatureAnnotationServiceClient {
+	return feature.NewFeatureAnnotationServiceClient(
 		coll.GetAPIConnection(key),
 	)
 }
