@@ -29,8 +29,8 @@ github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54 h1:SG7nF6SRlWhcT7c
 github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54/go.mod h1:if7Fbed8SFyPtHLHbg49SI7NAdJiC5WIA09pe59rfAA=
 github.com/dictyBase/aphgrpc v1.4.2 h1:jkNyIpUBATNVNTM99TfAHln8UEpzyvNNNuM2+UY6t2E=
 github.com/dictyBase/aphgrpc v1.4.2/go.mod h1:rzi2U95QntAuS6XpqespgZmQ8Ujo2Sq2R5FyhW5adA8=
-github.com/dictyBase/go-genproto v0.0.0-20250226001723-7ab397300b72 h1:J+gr9X4oOOdu7MotyqYNqq6aevHGdpCIX9pvuDVEApc=
-github.com/dictyBase/go-genproto v0.0.0-20250226001723-7ab397300b72/go.mod h1:rlUPhBs4duDUE73MswuLGW9UzbkcTWqQsbpsp/pGqTg=
+github.com/dictyBase/go-genproto v0.0.0-20250416011002-08ac47e2a066 h1:fhBHDjP5EPBfxnToKpULjv72XcrJ2Xu5dTUiM6QP32s=
+github.com/dictyBase/go-genproto v0.0.0-20250416011002-08ac47e2a066/go.mod h1:rlUPhBs4duDUE73MswuLGW9UzbkcTWqQsbpsp/pGqTg=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
 github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=
