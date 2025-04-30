@@ -6,11 +6,13 @@ import (
 
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	"github.com/dictyBase/go-genproto/dictybaseapis/content"
+	feature "github.com/dictyBase/go-genproto/dictybaseapis/feature_annotation"
 	"github.com/dictyBase/go-genproto/dictybaseapis/identity"
 	"github.com/dictyBase/go-genproto/dictybaseapis/order"
 	"github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
 	"github.com/dictyBase/graphql-server/internal/authentication"
+	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	"github.com/dictyBase/graphql-server/internal/repository/redis"
 	"github.com/emirpasic/gods/maps/hashmap"
@@ -104,6 +106,15 @@ func (mr *MockRegistry) GetIdentityClient(
 	key string,
 ) identity.IdentityServiceClient {
 	return MockedIdentityClient()
+}
+
+// GetFeatAnnotationClient provides a mock function with given fields: name
+func (mr *MockRegistry) GetFeatAnnotationClient(
+	name string,
+) feature.FeatureAnnotationServiceClient {
+	// For now, return a simple mock. You might need to enhance this
+	// if your tests require specific mock behavior for this client.
+	return &clients.MockFeatureAnnotationServiceClient{}
 }
 
 func (mr *MockRegistry) AddRecord(key, value string) {
