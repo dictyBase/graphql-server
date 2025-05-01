@@ -52,7 +52,7 @@ const (
 	STOCK       = "stock"
 	ORDER       = "order"
 	CONTENT     = "content"
-	FEAT_ANNO   = "feature-annotation"
+	FeatAnno    = "feature-annotation"
 	ANNOTATION  = "annotation"
 	AUTH        = "auth"
 	IDENTITY    = "identity"
@@ -102,7 +102,7 @@ func (coll *collection) ServiceMap() map[string]string {
 		"order":              ORDER,
 		"annotation":         ANNOTATION,
 		"content":            CONTENT,
-		"feature-annotation": FEAT_ANNO,
+		"feature-annotation": FeatAnno,
 	}
 }
 
