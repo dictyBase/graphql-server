@@ -19,6 +19,45 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// FetchPublicationDetailsParams defines the parameters for the fetchPublicationDetails function.
+type FetchPublicationDetailsParams struct {
+	Ctx        context.Context
+	PubID      string
+	GeneID     string // For logging context
+	Qrs        *QueryResolver
+	FeatClient feature.FeatureAnnotationServiceClient
+}
+
+// FetchGeneAnnotationParams defines the parameters for the fetchGeneAnnotation function.
+type FetchGeneAnnotationParams struct {
+	Ctx    context.Context
+	Client feature.FeatureAnnotationServiceClient
+	GeneID string
+	Logger *logrus.Entry
+}
+
+// CollectPublicationResultsParams defines the parameters for the collectPublicationResults function.
+type CollectPublicationResultsParams struct {
+	Ctx     context.Context
+	PubChan <-chan *models.PublicationWithGene
+	ErrChan <-chan error
+	Logger  *logrus.Entry
+}
+
+// LaunchPublicationFetchersParams defines the parameters for the launchPublicationFetchers method.
+type LaunchPublicationFetchersParams struct {
+	Ctx        context.Context
+	Gene       string
+	PubIDs     []string
+	FeatClient feature.FeatureAnnotationServiceClient
+	PubChan    chan<- *models.PublicationWithGene
+	ErrChan    chan<- error
+	Sem        *concurrency.Semaphore
+	Wg         *sync.WaitGroup
+	CancelFunc context.CancelFunc
+	Qrs        *QueryResolver
+}
+
 // fetchPubAsyncParams holds the parameters for the fetchPublicationAsync goroutine.
 type fetchPubAsyncParams struct {
 	ctx        context.Context
@@ -76,19 +115,48 @@ func (qrs *QueryResolver) fetchPublicationAsync(params *fetchPubAsyncParams) {
 	defer params.sem.Release()
 	defer params.wg.Done()
 
-	pubWithGene, err := fetchPublicationDetails(
-		params.ctx,
-		params.pubID,
-		params.gene,
-		params.qrs, // Pass the resolver itself
-		params.featClient,
-	)
+	fetchDetailsParams := &FetchPublicationDetailsParams{
+		Ctx:        params.ctx,
+		PubID:      params.pubID,
+		GeneID:     params.gene,
+		Qrs:        params.qrs,
+		FeatClient: params.featClient,
+	}
+	pubWithGene, err := fetchPublicationDetails(fetchDetailsParams)
 	if err != nil {
 		params.errChan <- fmt.Errorf("failed fetching details for pub %s: %w", params.pubID, err)
 		params.cancelFunc() // Cancel other ongoing operations
 		return
 	}
 	params.pubChan <- pubWithGene
+}
+
+// launchPublicationFetchers starts goroutines to fetch publication details concurrently.
+func (qrs *QueryResolver) launchPublicationFetchers(
+	params *LaunchPublicationFetchersParams,
+) {
+	for _, pubID := range params.PubIDs {
+		params.Wg.Add(1)
+		params.Sem.Acquire()
+		fetchParams := &fetchPubAsyncParams{
+			ctx:        params.Ctx,
+			pubID:      pubID,
+			gene:       params.Gene,
+			featClient: params.FeatClient,
+			pubChan:    params.PubChan,
+			errChan:    params.ErrChan,
+			sem:        params.Sem,
+			wg:         params.Wg,
+			cancelFunc: params.CancelFunc,
+			qrs:        params.Qrs, // Pass the resolver
+		}
+		go qrs.fetchPublicationAsync(fetchParams)
+	}
+	go func() {
+		params.Wg.Wait()
+		close(params.PubChan)
+		close(params.ErrChan)
+	}()
 }
 
 // ListPublicationsWithGene fetches all publications associated with a gene ID
@@ -101,10 +169,17 @@ func (qrs *QueryResolver) ListPublicationsWithGene(
 	gene string,
 ) ([]*models.PublicationWithGene, error) {
 	pubList := make([]*models.PublicationWithGene, 0)
-	featClient := qrs.GetFeatAnnotationClient(registry.FEAT_ANNO)
 
 	// 1. Fetch the initial gene annotation
-	feat, err := fetchGeneAnnotation(ctx, featClient, gene, qrs.Logger)
+	featClient := qrs.GetFeatAnnotationClient(
+		registry.FeatAnno,
+	)
+	feat, err := fetchGeneAnnotation(&FetchGeneAnnotationParams{
+		Ctx:    ctx,
+		Client: featClient,
+		GeneID: gene,
+		Logger: qrs.Logger,
+	})
 	if err != nil {
 		return nil, err // Error already logged and added to GraphQL errors
 	}
@@ -119,9 +194,9 @@ func (qrs *QueryResolver) ListPublicationsWithGene(
 		return pubList, nil
 	}
 
+	// featClient := qrs.GetFeatAnnotationClient(registry.FeatAnno) // Moved up
 	// 3. Setup concurrency
 	sem := concurrency.NewSemaphore(3) // Limit concurrency
-	var wg sync.WaitGroup
 	// Buffered channel to prevent goroutines from blocking indefinitely
 	pubChan := make(chan *models.PublicationWithGene, len(pubIDs))
 	errChan := make(
@@ -134,85 +209,91 @@ func (qrs *QueryResolver) ListPublicationsWithGene(
 	defer cancelFetch()
 
 	// 4. Launch goroutines to fetch publications concurrently
-	for _, pubID := range pubIDs {
-		wg.Add(1)
-		sem.Acquire()
-		params := &fetchPubAsyncParams{
-			ctx:        fetchCtx,
-			pubID:      pubID,
-			gene:       gene,
-			featClient: featClient,
-			pubChan:    pubChan,
-			errChan:    errChan,
-			sem:        sem,
-			wg:         &wg,
-			cancelFunc: cancelFetch,
-			qrs:        qrs, // Pass the resolver
-		}
-		go qrs.fetchPublicationAsync(params)
-	}
-
-	// 5. Wait for all goroutines to complete and close channels
-	go func() {
-		wg.Wait()
-		close(pubChan)
-		close(errChan)
-	}()
+	qrs.launchPublicationFetchers(&LaunchPublicationFetchersParams{
+		Ctx:        fetchCtx,
+		Gene:       gene,
+		PubIDs:     pubIDs,
+		FeatClient: featClient,
+		PubChan:    pubChan,
+		ErrChan:    errChan,
+		Sem:        sem,
+		Wg:         &sync.WaitGroup{},
+		CancelFunc: cancelFetch,
+		Qrs:        qrs,
+	})
 
 	// 6. Collect results and handle errors
-	// Process errors first to add them to GraphQL context
-	var firstErr error // Variable to store the first encountered error
-	for fetchErr := range errChan {
-		errorutils.AddGQLError(ctx, fetchErr) // Add specific fetch error
-		qrs.Logger.Error(fetchErr)            // Log the specific error
-		if firstErr == nil {
-			firstErr = fetchErr // Capture the first error
-		}
-	}
+	pubListResult, firstErr := collectPublicationResults(
+		&CollectPublicationResultsParams{
+			Ctx:     ctx,
+			PubChan: pubChan,
+			ErrChan: errChan,
+			Logger:  qrs.Logger,
+		},
+	)
 
 	// If any error occurred during fetching, return immediately
 	if firstErr != nil {
+		// Error logging and adding to GraphQL context happens within collectPublicationResults
 		return nil, fmt.Errorf(
 			"encountered errors while fetching publications: %w",
 			firstErr,
 		)
 	}
 
+	// 8. Return the collected list
+	return pubListResult, nil
+}
+
+// Colle
+
+// collectPublicationResults waits for fetchers, collects results, and handles errors.
+func collectPublicationResults(
+	params *CollectPublicationResultsParams,
+) ([]*models.PublicationWithGene, error) {
+	pubList := make([]*models.PublicationWithGene, 0)
+	var firstErr error
+
+	// Process errors first to add them to GraphQL context
+	for fetchErr := range params.ErrChan {
+		errorutils.AddGQLError(params.Ctx, fetchErr) // Add specific fetch error
+		params.Logger.Error(fetchErr)                // Log the specific error
+		if firstErr == nil {
+			firstErr = fetchErr // Capture the first error
+		}
+	}
+
 	// Collect successful results
-	for pub := range pubChan {
+	for pub := range params.PubChan {
 		pubList = append(pubList, pub)
 	}
 
-	// 8. Return the collected list (potentially partial if fetches failed)
-	return pubList, nil
+	return pubList, firstErr
 }
 
 // fetchGeneAnnotation retrieves the feature annotation for a given gene ID.
 // It handles NotFound errors gracefully by returning nil, nil.
 func fetchGeneAnnotation(
-	ctx context.Context,
-	client feature.FeatureAnnotationServiceClient,
-	geneID string,
-	logger *logrus.Entry,
+	params *FetchGeneAnnotationParams,
 ) (*feature.FeatureAnnotation, error) {
-	feat, err := client.GetFeatureAnnotation(
-		ctx,
-		&feature.FeatureAnnotationId{Id: geneID},
+	feat, err := params.Client.GetFeatureAnnotation(
+		params.Ctx,
+		&feature.FeatureAnnotationId{Id: params.GeneID},
 	)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
-			logger.Warnf("gene %s not found", geneID)
+			params.Logger.Warnf("gene %s not found", params.GeneID)
 			return nil, nil // Return nil, nil for NotFound
 		}
-		errorutils.AddGQLError(ctx, err)
-		logger.Errorf(
+		errorutils.AddGQLError(params.Ctx, err)
+		params.Logger.Errorf(
 			"error fetching feature annotation for gene ID %s: %v",
-			geneID,
+			params.GeneID,
 			err,
 		)
 		return nil, fmt.Errorf(
 			"error fetching feature annotation for gene %s: %w",
-			geneID,
+			params.GeneID,
 			err,
 		)
 	}
@@ -232,22 +313,22 @@ func featureAnnotationToGene(
 
 // fetchPublicationDetails fetches a single publication and its related genes.
 func fetchPublicationDetails(
-	ctx context.Context,
-	pubID string,
-	geneID string, // For logging context
-	qrs *QueryResolver,
-	featClient feature.FeatureAnnotationServiceClient,
+	params *FetchPublicationDetailsParams,
 ) (*models.PublicationWithGene, error) {
 	pub, err := fetch.FetchPublication(
-		ctx, qrs.GetRedisRepository(cache.RedisKey),
-		qrs.Registry.GetAPIEndpoint(registry.PUBLICATION), pubID,
+		params.Ctx, params.Qrs.GetRedisRepository(cache.RedisKey),
+		params.Qrs.Registry.GetAPIEndpoint(registry.PUBLICATION), params.PubID,
 	)
 	if err != nil {
 		// Error already logged by FetchPublication if needed, just wrap and return
-		return nil, fmt.Errorf("error fetching publication %s: %w", pubID, err)
+		return nil, fmt.Errorf(
+			"error fetching publication %s: %w",
+			params.PubID,
+			err,
+		)
 	}
 	pubWithGene := &models.PublicationWithGene{
-		ID:       pub.ID,
+		ID:       params.PubID, // Use params.PubID here, assuming pub.ID was a mistake in the diff
 		Doi:      pub.Doi,
 		Title:    pub.Title,
 		Abstract: pub.Abstract,
@@ -264,24 +345,27 @@ func fetchPublicationDetails(
 	}
 
 	// Fetch related genes for this publication
-	featAnnos, err := featClient.ListFeatureAnnotationsByPubmedId(
-		ctx,
-		&feature.PubmedId{Id: pubID}, // Corrected to use PublicationId
+	featAnnos, err := params.FeatClient.ListFeatureAnnotationsByPubmedId(
+		params.Ctx,
+		&feature.PubmedId{Id: params.PubID}, // Corrected to use PublicationId
 	)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
-			qrs.Logger.Warnf("genes for pubmed Id %s not found", pubID)
+			params.Qrs.Logger.Warnf(
+				"genes for pubmed Id %s not found",
+				params.PubID,
+			)
 			// return with empty relatedGenes
 			return pubWithGene, nil
 		}
 		// Log warning but don't fail the whole request for this publication
 		errMsg := fmt.Errorf(
 			"error fetching feature annotations for pubmed ID %s (related to gene %s): %v",
-			pubID,
-			geneID,
+			params.PubID,
+			params.GeneID,
 			err,
 		)
-		qrs.Logger.Error(errMsg)
+		params.Qrs.Logger.Error(errMsg)
 		return nil, errMsg
 	}
 	pubWithGene.RelatedGenes = collection.Map(
