@@ -11,6 +11,7 @@
     - Imports: Standard library first, then external packages, then internal packages
     - Prefer functional programming utilities from collection package where appropriate
     - Use options pattern for configurable components (see SQLiteVectorStore)
+    - Any function or method receiving more than three parameters should use a type struct
     - Document all exported functions, types, and constants with proper Go doc comments
     - Test coverage should be comprehensive with both unit and integration tests
 
