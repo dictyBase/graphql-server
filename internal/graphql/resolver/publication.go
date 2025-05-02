@@ -169,7 +169,6 @@ func (qrs *QueryResolver) ListPublicationsWithGene(
 	gene string,
 ) ([]*models.PublicationWithGene, error) {
 	pubList := make([]*models.PublicationWithGene, 0)
-
 	// 1. Fetch the initial gene annotation
 	featClient := qrs.GetFeatAnnotationClient(
 		registry.FeatAnno,
@@ -186,15 +185,12 @@ func (qrs *QueryResolver) ListPublicationsWithGene(
 	if feat == nil { // Gene not found
 		return pubList, nil
 	}
-
 	// 2. Check for PubMed IDs
 	pubIDs := feat.Attributes.Pubmed
 	if len(pubIDs) == 0 {
 		qrs.Logger.Warnf("no pubmed IDs found for gene %s", gene)
 		return pubList, nil
 	}
-
-	// featClient := qrs.GetFeatAnnotationClient(registry.FeatAnno) // Moved up
 	// 3. Setup concurrency
 	sem := concurrency.NewSemaphore(3) // Limit concurrency
 	// Buffered channel to prevent goroutines from blocking indefinitely
@@ -203,11 +199,9 @@ func (qrs *QueryResolver) ListPublicationsWithGene(
 		chan error,
 		len(pubIDs),
 	) // Channel for errors from goroutines
-
 	// Create a cancellable context to abort other operations on first error
 	fetchCtx, cancelFetch := context.WithCancel(ctx)
 	defer cancelFetch()
-
 	// 4. Launch goroutines to fetch publications concurrently
 	qrs.launchPublicationFetchers(&LaunchPublicationFetchersParams{
 		Ctx:        fetchCtx,
@@ -221,7 +215,6 @@ func (qrs *QueryResolver) ListPublicationsWithGene(
 		CancelFunc: cancelFetch,
 		Qrs:        qrs,
 	})
-
 	// 6. Collect results and handle errors
 	pubListResult, firstErr := collectPublicationResults(
 		&CollectPublicationResultsParams{
@@ -231,23 +224,19 @@ func (qrs *QueryResolver) ListPublicationsWithGene(
 			Logger:  qrs.Logger,
 		},
 	)
-
 	// If any error occurred during fetching, return immediately
 	if firstErr != nil {
-		// Error logging and adding to GraphQL context happens within collectPublicationResults
 		return nil, fmt.Errorf(
 			"encountered errors while fetching publications: %w",
 			firstErr,
 		)
 	}
-
 	// 8. Return the collected list
 	return pubListResult, nil
 }
 
-// Colle
-
-// collectPublicationResults waits for fetchers, collects results, and handles errors.
+// collectPublicationResults waits for fetchers, collects results, and handles
+// errors.
 func collectPublicationResults(
 	params *CollectPublicationResultsParams,
 ) ([]*models.PublicationWithGene, error) {
