@@ -151,13 +151,13 @@ func dscFlags() []cli.Flag {
 			Required: true,
 		},
 		cli.StringFlag{
-			Name:     "feat-annotation-grpc-host",
+			Name:     "feature-annotation-grpc-host",
 			EnvVar:   "ANNO_FEAT_API_SERVICE_HOST",
 			Usage:    "feature annotation grpc host",
 			Required: true,
 		},
 		cli.StringFlag{
-			Name:     "feat-annotation-grpc-port",
+			Name:     "feature-annotation-grpc-port",
 			EnvVar:   "ANNO_FEAT_API_SERVICE_PORT",
 			Usage:    "feature annotation grpc port",
 			Required: true,
