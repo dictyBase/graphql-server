@@ -192,7 +192,7 @@ func (qrs *QueryResolver) ListPublicationsWithGene(
 		return pubList, nil
 	}
 	// 3. Setup concurrency
-	sem := concurrency.NewSemaphore(3) // Limit concurrency
+	sem := concurrency.NewSemaphore(6) // Limit concurrency
 	// Buffered channel to prevent goroutines from blocking indefinitely
 	pubChan := make(chan *models.PublicationWithGene, len(pubIDs))
 	errChan := make(
