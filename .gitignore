@@ -9,3 +9,5 @@ node_modules
 internal/graphql/.DS_Store
 .aider*
 .env
+
+**/.claude/settings.local.json
