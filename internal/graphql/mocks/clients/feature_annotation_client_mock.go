@@ -304,6 +304,72 @@ func (_c *MockFeatureAnnotationServiceClient_GetFeatureAnnotation_Call) RunAndRe
 	return _c
 }
 
+// GetFeatureAnnotationByName provides a mock function for the type MockFeatureAnnotationServiceClient
+func (_mock *MockFeatureAnnotationServiceClient) GetFeatureAnnotationByName(ctx context.Context, in *feature_annotation.FeatureName, opts ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error) {
+	var tmpRet mock.Arguments
+	if len(opts) > 0 {
+		tmpRet = _mock.Called(ctx, in, opts)
+	} else {
+		tmpRet = _mock.Called(ctx, in)
+	}
+	ret := tmpRet
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetFeatureAnnotationByName")
+	}
+
+	var r0 *feature_annotation.FeatureAnnotation
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *feature_annotation.FeatureName, ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error)); ok {
+		return returnFunc(ctx, in, opts...)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *feature_annotation.FeatureName, ...grpc.CallOption) *feature_annotation.FeatureAnnotation); ok {
+		r0 = returnFunc(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*feature_annotation.FeatureAnnotation)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *feature_annotation.FeatureName, ...grpc.CallOption) error); ok {
+		r1 = returnFunc(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFeatureAnnotationServiceClient_GetFeatureAnnotationByName_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFeatureAnnotationByName'
+type MockFeatureAnnotationServiceClient_GetFeatureAnnotationByName_Call struct {
+	*mock.Call
+}
+
+// GetFeatureAnnotationByName is a helper method to define mock.On call
+//   - ctx
+//   - in
+//   - opts
+func (_e *MockFeatureAnnotationServiceClient_Expecter) GetFeatureAnnotationByName(ctx interface{}, in interface{}, opts ...interface{}) *MockFeatureAnnotationServiceClient_GetFeatureAnnotationByName_Call {
+	return &MockFeatureAnnotationServiceClient_GetFeatureAnnotationByName_Call{Call: _e.mock.On("GetFeatureAnnotationByName",
+		append([]interface{}{ctx, in}, opts...)...)}
+}
+
+func (_c *MockFeatureAnnotationServiceClient_GetFeatureAnnotationByName_Call) Run(run func(ctx context.Context, in *feature_annotation.FeatureName, opts ...grpc.CallOption)) *MockFeatureAnnotationServiceClient_GetFeatureAnnotationByName_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := args[2].([]grpc.CallOption)
+		run(args[0].(context.Context), args[1].(*feature_annotation.FeatureName), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *MockFeatureAnnotationServiceClient_GetFeatureAnnotationByName_Call) Return(featureAnnotation *feature_annotation.FeatureAnnotation, err error) *MockFeatureAnnotationServiceClient_GetFeatureAnnotationByName_Call {
+	_c.Call.Return(featureAnnotation, err)
+	return _c
+}
+
+func (_c *MockFeatureAnnotationServiceClient_GetFeatureAnnotationByName_Call) RunAndReturn(run func(ctx context.Context, in *feature_annotation.FeatureName, opts ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error)) *MockFeatureAnnotationServiceClient_GetFeatureAnnotationByName_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ListFeatureAnnotationsByDOI provides a mock function for the type MockFeatureAnnotationServiceClient
 func (_mock *MockFeatureAnnotationServiceClient) ListFeatureAnnotationsByDOI(ctx context.Context, in *feature_annotation.DOI, opts ...grpc.CallOption) (*feature_annotation.FeatureAnnotationCollection, error) {
 	var tmpRet mock.Arguments
