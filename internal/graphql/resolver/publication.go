@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"sync"
+	"time"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -207,8 +208,11 @@ func (qrs *QueryResolver) ListPublicationsWithGene(
 		chan error,
 		len(pubIDs),
 	) // Channel for errors from goroutines
-	// Create a cancellable context to abort other operations on first error
-	fetchCtx, cancelFetch := context.WithCancel(ctx)
+	// Create a cancellable context with a 300ms timeout.
+	fetchCtx, cancelFetch := context.WithDeadline(
+		ctx,
+		time.Now().Add(600*time.Millisecond),
+	)
 	defer cancelFetch()
 	// 4. Launch goroutines to fetch publications concurrently
 	qrs.launchPublicationFetchers(&LaunchPublicationFetchersParams{
