@@ -268,15 +268,24 @@ func collectPublicationResults(
 	return pubList, firstErr
 }
 
-// fetchGeneAnnotation retrieves the feature annotation for a given gene ID.
-// It handles NotFound errors gracefully by returning nil, nil.
 func fetchGeneAnnotation(
 	params *FetchGeneAnnotationParams,
 ) (*feature.FeatureAnnotation, error) {
-	feat, err := params.Client.GetFeatureAnnotation(
-		params.Ctx,
-		&feature.FeatureAnnotationId{Id: params.GeneID},
-	)
+	var feat *feature.FeatureAnnotation
+	var err error
+
+	if geneIDPattern.MatchString(params.GeneID) {
+		feat, err = params.Client.GetFeatureAnnotation(
+			params.Ctx,
+			&feature.FeatureAnnotationId{Id: params.GeneID},
+		)
+	} else {
+		feat, err = params.Client.GetFeatureAnnotationByName(
+			params.Ctx,
+			&feature.FeatureName{Name: params.GeneID},
+		)
+	}
+
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			params.Logger.Warnf("gene %s not found", params.GeneID)
@@ -284,7 +293,7 @@ func fetchGeneAnnotation(
 		}
 		errorutils.AddGQLError(params.Ctx, err)
 		params.Logger.Errorf(
-			"error fetching feature annotation for gene ID %s: %v",
+			"error fetching feature annotation for gene %s: %v",
 			params.GeneID,
 			err,
 		)
