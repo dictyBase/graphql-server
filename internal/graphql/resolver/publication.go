@@ -3,6 +3,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"sync"
 
 	"google.golang.org/grpc/codes"
@@ -18,6 +19,13 @@ import (
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/sirupsen/logrus"
 )
+
+// geneIDPattern is a regex to validate gene IDs like DDB_G0267479
+//   - starts with three capital letters
+//   - followed by underscore
+//   - followed by capital G
+//   - followed by 6 or more digit.
+var geneIDPattern = regexp.MustCompile(`^[A-Z]{3}_G[0-9]{6,}$`)
 
 // FetchPublicationDetailsParams defines the parameters for the fetchPublicationDetails function.
 type FetchPublicationDetailsParams struct {
