@@ -29,8 +29,6 @@ github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54 h1:SG7nF6SRlWhcT7c
 github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54/go.mod h1:if7Fbed8SFyPtHLHbg49SI7NAdJiC5WIA09pe59rfAA=
 github.com/dictyBase/aphgrpc v1.4.2 h1:jkNyIpUBATNVNTM99TfAHln8UEpzyvNNNuM2+UY6t2E=
 github.com/dictyBase/aphgrpc v1.4.2/go.mod h1:rzi2U95QntAuS6XpqespgZmQ8Ujo2Sq2R5FyhW5adA8=
-github.com/dictyBase/go-genproto v0.0.0-20250416011002-08ac47e2a066 h1:fhBHDjP5EPBfxnToKpULjv72XcrJ2Xu5dTUiM6QP32s=
-github.com/dictyBase/go-genproto v0.0.0-20250416011002-08ac47e2a066/go.mod h1:rlUPhBs4duDUE73MswuLGW9UzbkcTWqQsbpsp/pGqTg=
 github.com/dictyBase/go-genproto v0.0.0-20250503145026-526d1b85ed91 h1:LNHthD/Vux2kLCqSAlUqWyzKWcImqXtU+VjqnyblMUA=
 github.com/dictyBase/go-genproto v0.0.0-20250503145026-526d1b85ed91/go.mod h1:rlUPhBs4duDUE73MswuLGW9UzbkcTWqQsbpsp/pGqTg=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
@@ -176,8 +174,8 @@ github.com/vektah/dataloaden v0.3.0 h1:ZfVN2QD6swgvp+tDqdH/OIT/wu3Dhu0cus0k5gIZS
 github.com/vektah/dataloaden v0.3.0/go.mod h1:/HUdMve7rvxZma+2ZELQeNh88+003LL7Pf/CZ089j8U=
 github.com/vektah/gqlparser v1.3.1 h1:8b0IcD3qZKWJQHSzynbDlrtP3IxVydZ2DZepCGofqfU=
 github.com/vektah/gqlparser v1.3.1/go.mod h1:bkVf0FX+Stjg/MHnm8mEyubuaArhNEqfQhF+OTiAL74=
-github.com/vektah/gqlparser/v2 v2.5.26 h1:REqqFkO8+SOEgZHR/eHScjjVjGS8Nk3RMO/juiTobN4=
-github.com/vektah/gqlparser/v2 v2.5.26/go.mod h1:D1/VCZtV3LPnQrcPBeR/q5jkSQIPti0uYCP/RI0gIeo=
+github.com/vektah/gqlparser/v2 v2.5.27 h1:RHPD3JOplpk5mP5JGX8RKZkt2/Vwj/PZv0HxTdwFp0s=
+github.com/vektah/gqlparser/v2 v2.5.27/go.mod h1:D1/VCZtV3LPnQrcPBeR/q5jkSQIPti0uYCP/RI0gIeo=
 github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 h1:gEOO8jv9F4OT7lGCjxCBTO/36wtF6j2nSip77qHd4x4=
 github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1/go.mod h1:Ohn+xnUBiLI6FVj/9LpzZWtj1/D6lUovWYBkxHVV3aM=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
