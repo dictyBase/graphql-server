@@ -146,5 +146,67 @@ func (qrs *QueryResolver) GeneGeneralInformation(
 	ctx context.Context,
 	gene string,
 ) (*models.GeneGeneralInfo, error) {
-	return &models.GeneGeneralInfo{}, nil
+	// 1. Get FeatureAnnotationServiceClient
+	featClient := qrs.GetFeatAnnotationClient(registry.FeatAnno)
+
+	// 2. Fetch Gene Annotation
+	// fetchGeneAnnotation is defined in publication.go but is in the same package.
+	feat, err := fetchGeneAnnotation(&FetchGeneAnnotationParams{
+		Ctx:    ctx,
+		Client: featClient,
+		GeneID: gene,
+		Logger: qrs.Logger,
+	})
+	if err != nil {
+		// errorutils.AddGQLError and logging are handled by fetchGeneAnnotation
+		return nil, err
+	}
+	if feat == nil { // Gene not found
+		return nil, nil // GraphQL will handle this as null, or you can return a specific GraphQL error
+	}
+
+	// 3. Initialize slices and pointers for GeneGeneralInfo
+	var nameDescription []*string
+	var geneProduct *string
+	var description *string
+
+	// 4. Extract information from feat.Attributes.Properties
+	if feat.Attributes != nil {
+		for _, prop := range feat.Attributes.Properties {
+			if prop == nil {
+				continue
+			}
+			// Create a new variable for the address to avoid all pointers pointing to the last loop variable value.
+			propValue := prop.Value
+			switch prop.Tag {
+			case "name description":
+				nameDescription = append(nameDescription, &propValue)
+			case "gene_product":
+				geneProduct = &propValue
+			case "description":
+				description = &propValue
+			}
+		}
+	}
+
+	// 5. Extract synonyms from feat.Attributes.Synonyms
+	var synonyms []*string
+	if feat.Attributes != nil && feat.Attributes.Synonyms != nil {
+		for _, s := range feat.Attributes.Synonyms {
+			// Create a new variable for the address.
+			synVal := s
+			synonyms = append(synonyms, &synVal)
+		}
+	}
+
+	// 6. Construct GeneGeneralInfo
+	geneInfo := &models.GeneGeneralInfo{
+		ID:              feat.Id, // Assuming feat.Id is the correct field for the gene's ID
+		NameDescription: nameDescription,
+		GeneProduct:     geneProduct,
+		Synonyms:        synonyms,
+		Description:     description,
+	}
+
+	return geneInfo, nil
 }
