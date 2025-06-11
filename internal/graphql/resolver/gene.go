@@ -177,6 +177,7 @@ func (qrs *QueryResolver) GeneGeneralInformation(
 			stringToPointer,
 		),
 	}
+
 	for _, prop := range feat.Attributes.Properties {
 		switch prop.Tag {
 		case "name description":
@@ -184,9 +185,10 @@ func (qrs *QueryResolver) GeneGeneralInformation(
 				geneInfo.NameDescription,
 				&prop.Value,
 			)
-		// case "gene product":
 		case "description":
 			geneInfo.Description = &prop.Value
+		case "gene product":
+			geneInfo.GeneProduct = &prop.Value
 		}
 	}
 	return geneInfo, nil
