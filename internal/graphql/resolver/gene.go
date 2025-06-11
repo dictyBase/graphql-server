@@ -172,6 +172,10 @@ func (qrs *QueryResolver) GeneGeneralInformation(
 
 	geneInfo := &models.GeneGeneralInfo{
 		ID: feat.Id,
+		Synonyms: collection.Map(
+			feat.Attributes.Synonyms,
+			stringToPointer,
+		),
 	}
 	for _, prop := range feat.Attributes.Properties {
 		switch prop.Tag {
@@ -185,10 +189,5 @@ func (qrs *QueryResolver) GeneGeneralInformation(
 			geneInfo.Description = &prop.Value
 		}
 	}
-	geneInfo.Synonyms = collection.Map(
-		feat.Attributes.Synonyms,
-		stringToPointer,
-	)
-
 	return geneInfo, nil
 }
