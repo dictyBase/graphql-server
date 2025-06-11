@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/dictyBase/graphql-server/internal/collection"
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
@@ -11,6 +12,11 @@ import (
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/sirupsen/logrus"
 )
+
+// stringToPointer is a helper function to convert a string to a pointer to a string.
+func stringToPointer(s string) *string {
+	return &s
+}
 
 func (qrs *QueryResolver) GeneOntologyAnnotation(
 	ctx context.Context,
@@ -179,9 +185,10 @@ func (qrs *QueryResolver) GeneGeneralInformation(
 			geneInfo.Description = &prop.Value
 		}
 	}
-	for _, s := range feat.Attributes.Synonyms {
-		geneInfo.Synonyms = append(geneInfo.Synonyms, &s)
-	}
+	geneInfo.Synonyms = collection.Map(
+		feat.Attributes.Synonyms,
+		stringToPointer,
+	)
 
 	return geneInfo, nil
 }
