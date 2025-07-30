@@ -3,7 +3,9 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"strings"
 
+	feature "github.com/dictyBase/go-genproto/dictybaseapis/feature_annotation"
 	"github.com/dictyBase/graphql-server/internal/collection"
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
@@ -187,9 +189,23 @@ func (qrs *QueryResolver) GeneGeneralInformation(
 			)
 		case "description":
 			geneInfo.Description = &prop.Value
-		case "gene product":
-			geneInfo.GeneProduct = &prop.Value
 		}
+	}
+
+	geneProducts := collection.Map(
+		collection.Filter(
+			feat.Attributes.Properties,
+			func(prop *feature.TagProperty) bool {
+				return prop.Tag == "gene product"
+			},
+		),
+		func(prop *feature.TagProperty) string {
+			return prop.Value
+		},
+	)
+	if !collection.IsEmpty(geneProducts) {
+		gps := strings.Join(geneProducts, "\n")
+		geneInfo.GeneProduct = &gps
 	}
 	return geneInfo, nil
 }
