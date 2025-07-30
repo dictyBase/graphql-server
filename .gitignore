@@ -11,3 +11,4 @@ internal/graphql/.DS_Store
 .env
 
 **/.claude/settings.local.json
+.mcp.json
