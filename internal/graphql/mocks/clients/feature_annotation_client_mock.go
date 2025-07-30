@@ -106,6 +106,72 @@ func (_c *MockFeatureAnnotationServiceClient_AddTag_Call) RunAndReturn(run func(
 	return _c
 }
 
+// AddTags provides a mock function for the type MockFeatureAnnotationServiceClient
+func (_mock *MockFeatureAnnotationServiceClient) AddTags(ctx context.Context, in *feature_annotation.AddTagsRequest, opts ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error) {
+	var tmpRet mock.Arguments
+	if len(opts) > 0 {
+		tmpRet = _mock.Called(ctx, in, opts)
+	} else {
+		tmpRet = _mock.Called(ctx, in)
+	}
+	ret := tmpRet
+
+	if len(ret) == 0 {
+		panic("no return value specified for AddTags")
+	}
+
+	var r0 *feature_annotation.FeatureAnnotation
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *feature_annotation.AddTagsRequest, ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error)); ok {
+		return returnFunc(ctx, in, opts...)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *feature_annotation.AddTagsRequest, ...grpc.CallOption) *feature_annotation.FeatureAnnotation); ok {
+		r0 = returnFunc(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*feature_annotation.FeatureAnnotation)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *feature_annotation.AddTagsRequest, ...grpc.CallOption) error); ok {
+		r1 = returnFunc(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFeatureAnnotationServiceClient_AddTags_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddTags'
+type MockFeatureAnnotationServiceClient_AddTags_Call struct {
+	*mock.Call
+}
+
+// AddTags is a helper method to define mock.On call
+//   - ctx
+//   - in
+//   - opts
+func (_e *MockFeatureAnnotationServiceClient_Expecter) AddTags(ctx interface{}, in interface{}, opts ...interface{}) *MockFeatureAnnotationServiceClient_AddTags_Call {
+	return &MockFeatureAnnotationServiceClient_AddTags_Call{Call: _e.mock.On("AddTags",
+		append([]interface{}{ctx, in}, opts...)...)}
+}
+
+func (_c *MockFeatureAnnotationServiceClient_AddTags_Call) Run(run func(ctx context.Context, in *feature_annotation.AddTagsRequest, opts ...grpc.CallOption)) *MockFeatureAnnotationServiceClient_AddTags_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := args[2].([]grpc.CallOption)
+		run(args[0].(context.Context), args[1].(*feature_annotation.AddTagsRequest), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *MockFeatureAnnotationServiceClient_AddTags_Call) Return(featureAnnotation *feature_annotation.FeatureAnnotation, err error) *MockFeatureAnnotationServiceClient_AddTags_Call {
+	_c.Call.Return(featureAnnotation, err)
+	return _c
+}
+
+func (_c *MockFeatureAnnotationServiceClient_AddTags_Call) RunAndReturn(run func(ctx context.Context, in *feature_annotation.AddTagsRequest, opts ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error)) *MockFeatureAnnotationServiceClient_AddTags_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // CreateFeatureAnnotation provides a mock function for the type MockFeatureAnnotationServiceClient
 func (_mock *MockFeatureAnnotationServiceClient) CreateFeatureAnnotation(ctx context.Context, in *feature_annotation.NewFeatureAnnotation, opts ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error) {
 	var tmpRet mock.Arguments
@@ -564,6 +630,138 @@ func (_c *MockFeatureAnnotationServiceClient_RemoveTag_Call) Return(featureAnnot
 }
 
 func (_c *MockFeatureAnnotationServiceClient_RemoveTag_Call) RunAndReturn(run func(ctx context.Context, in *feature_annotation.RemoveTagRequest, opts ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error)) *MockFeatureAnnotationServiceClient_RemoveTag_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// RemoveTags provides a mock function for the type MockFeatureAnnotationServiceClient
+func (_mock *MockFeatureAnnotationServiceClient) RemoveTags(ctx context.Context, in *feature_annotation.RemoveTagsRequest, opts ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error) {
+	var tmpRet mock.Arguments
+	if len(opts) > 0 {
+		tmpRet = _mock.Called(ctx, in, opts)
+	} else {
+		tmpRet = _mock.Called(ctx, in)
+	}
+	ret := tmpRet
+
+	if len(ret) == 0 {
+		panic("no return value specified for RemoveTags")
+	}
+
+	var r0 *feature_annotation.FeatureAnnotation
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *feature_annotation.RemoveTagsRequest, ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error)); ok {
+		return returnFunc(ctx, in, opts...)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *feature_annotation.RemoveTagsRequest, ...grpc.CallOption) *feature_annotation.FeatureAnnotation); ok {
+		r0 = returnFunc(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*feature_annotation.FeatureAnnotation)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *feature_annotation.RemoveTagsRequest, ...grpc.CallOption) error); ok {
+		r1 = returnFunc(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFeatureAnnotationServiceClient_RemoveTags_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'RemoveTags'
+type MockFeatureAnnotationServiceClient_RemoveTags_Call struct {
+	*mock.Call
+}
+
+// RemoveTags is a helper method to define mock.On call
+//   - ctx
+//   - in
+//   - opts
+func (_e *MockFeatureAnnotationServiceClient_Expecter) RemoveTags(ctx interface{}, in interface{}, opts ...interface{}) *MockFeatureAnnotationServiceClient_RemoveTags_Call {
+	return &MockFeatureAnnotationServiceClient_RemoveTags_Call{Call: _e.mock.On("RemoveTags",
+		append([]interface{}{ctx, in}, opts...)...)}
+}
+
+func (_c *MockFeatureAnnotationServiceClient_RemoveTags_Call) Run(run func(ctx context.Context, in *feature_annotation.RemoveTagsRequest, opts ...grpc.CallOption)) *MockFeatureAnnotationServiceClient_RemoveTags_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := args[2].([]grpc.CallOption)
+		run(args[0].(context.Context), args[1].(*feature_annotation.RemoveTagsRequest), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *MockFeatureAnnotationServiceClient_RemoveTags_Call) Return(featureAnnotation *feature_annotation.FeatureAnnotation, err error) *MockFeatureAnnotationServiceClient_RemoveTags_Call {
+	_c.Call.Return(featureAnnotation, err)
+	return _c
+}
+
+func (_c *MockFeatureAnnotationServiceClient_RemoveTags_Call) RunAndReturn(run func(ctx context.Context, in *feature_annotation.RemoveTagsRequest, opts ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error)) *MockFeatureAnnotationServiceClient_RemoveTags_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SetTags provides a mock function for the type MockFeatureAnnotationServiceClient
+func (_mock *MockFeatureAnnotationServiceClient) SetTags(ctx context.Context, in *feature_annotation.SetTagsRequest, opts ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error) {
+	var tmpRet mock.Arguments
+	if len(opts) > 0 {
+		tmpRet = _mock.Called(ctx, in, opts)
+	} else {
+		tmpRet = _mock.Called(ctx, in)
+	}
+	ret := tmpRet
+
+	if len(ret) == 0 {
+		panic("no return value specified for SetTags")
+	}
+
+	var r0 *feature_annotation.FeatureAnnotation
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *feature_annotation.SetTagsRequest, ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error)); ok {
+		return returnFunc(ctx, in, opts...)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *feature_annotation.SetTagsRequest, ...grpc.CallOption) *feature_annotation.FeatureAnnotation); ok {
+		r0 = returnFunc(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*feature_annotation.FeatureAnnotation)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *feature_annotation.SetTagsRequest, ...grpc.CallOption) error); ok {
+		r1 = returnFunc(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFeatureAnnotationServiceClient_SetTags_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SetTags'
+type MockFeatureAnnotationServiceClient_SetTags_Call struct {
+	*mock.Call
+}
+
+// SetTags is a helper method to define mock.On call
+//   - ctx
+//   - in
+//   - opts
+func (_e *MockFeatureAnnotationServiceClient_Expecter) SetTags(ctx interface{}, in interface{}, opts ...interface{}) *MockFeatureAnnotationServiceClient_SetTags_Call {
+	return &MockFeatureAnnotationServiceClient_SetTags_Call{Call: _e.mock.On("SetTags",
+		append([]interface{}{ctx, in}, opts...)...)}
+}
+
+func (_c *MockFeatureAnnotationServiceClient_SetTags_Call) Run(run func(ctx context.Context, in *feature_annotation.SetTagsRequest, opts ...grpc.CallOption)) *MockFeatureAnnotationServiceClient_SetTags_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := args[2].([]grpc.CallOption)
+		run(args[0].(context.Context), args[1].(*feature_annotation.SetTagsRequest), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *MockFeatureAnnotationServiceClient_SetTags_Call) Return(featureAnnotation *feature_annotation.FeatureAnnotation, err error) *MockFeatureAnnotationServiceClient_SetTags_Call {
+	_c.Call.Return(featureAnnotation, err)
+	return _c
+}
+
+func (_c *MockFeatureAnnotationServiceClient_SetTags_Call) RunAndReturn(run func(ctx context.Context, in *feature_annotation.SetTagsRequest, opts ...grpc.CallOption) (*feature_annotation.FeatureAnnotation, error)) *MockFeatureAnnotationServiceClient_SetTags_Call {
 	_c.Call.Return(run)
 	return _c
 }
