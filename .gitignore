@@ -14,3 +14,4 @@ internal/graphql/.DS_Store
 .mcp.json
 .claude
 opencode.json
+.opencode
