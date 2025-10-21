@@ -128,5 +128,7 @@ func (r *Resolver) Plasmid() generated.PlasmidResolver { return &plasmidResolver
 // Strain returns generated.StrainResolver implementation.
 func (r *Resolver) Strain() generated.StrainResolver { return &strainResolver{r} }
 
-type plasmidResolver struct{ *Resolver }
-type strainResolver struct{ *Resolver }
+type (
+	plasmidResolver struct{ *Resolver }
+	strainResolver  struct{ *Resolver }
+)

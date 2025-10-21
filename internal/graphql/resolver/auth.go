@@ -13,6 +13,7 @@ func (mrs *MutationResolver) Login(
 ) (*pb.Auth, error) {
 	return &pb.Auth{}, nil
 }
+
 func (mrs *MutationResolver) Logout(ctx context.Context) (*models.Logout, error) {
 	return &models.Logout{}, nil
 }

@@ -64,6 +64,7 @@ func goasHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
+
 func uniprotHandler(w http.ResponseWriter, r *http.Request) {
 	if _, err := w.Write([]byte(mockUniprotID)); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

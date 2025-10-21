@@ -105,7 +105,8 @@ func (mrs *MutationResolver) CreateUserRoleRelationship(
 					Type: "role",
 					Id:   rid,
 				},
-			}})
+			},
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
@@ -382,27 +383,28 @@ func (qrs *QueryResolver) ListUsers(
 		return nil, err
 	}
 	for _, n := range g.Data {
-		item := &pb.User{Data: &pb.UserData{
-			Type: "user",
-			Id:   n.Id,
-			Attributes: &pb.UserAttributes{
-				FirstName:     n.Attributes.FirstName,
-				LastName:      n.Attributes.LastName,
-				Email:         n.Attributes.LastName,
-				Organization:  n.Attributes.Organization,
-				GroupName:     n.Attributes.GroupName,
-				FirstAddress:  n.Attributes.FirstAddress,
-				SecondAddress: n.Attributes.SecondAddress,
-				City:          n.Attributes.City,
-				State:         n.Attributes.State,
-				Zipcode:       n.Attributes.Zipcode,
-				Country:       n.Attributes.Country,
-				Phone:         n.Attributes.Phone,
-				IsActive:      n.Attributes.IsActive,
-				CreatedAt:     n.Attributes.CreatedAt,
-				UpdatedAt:     n.Attributes.UpdatedAt,
+		item := &pb.User{
+			Data: &pb.UserData{
+				Type: "user",
+				Id:   n.Id,
+				Attributes: &pb.UserAttributes{
+					FirstName:     n.Attributes.FirstName,
+					LastName:      n.Attributes.LastName,
+					Email:         n.Attributes.LastName,
+					Organization:  n.Attributes.Organization,
+					GroupName:     n.Attributes.GroupName,
+					FirstAddress:  n.Attributes.FirstAddress,
+					SecondAddress: n.Attributes.SecondAddress,
+					City:          n.Attributes.City,
+					State:         n.Attributes.State,
+					Zipcode:       n.Attributes.Zipcode,
+					Country:       n.Attributes.Country,
+					Phone:         n.Attributes.Phone,
+					IsActive:      n.Attributes.IsActive,
+					CreatedAt:     n.Attributes.CreatedAt,
+					UpdatedAt:     n.Attributes.UpdatedAt,
+				},
 			},
-		},
 		}
 		users = append(users, item)
 	}

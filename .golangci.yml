@@ -8,16 +8,18 @@ run:
   allow-parallel-runners: true
   # golangci-lint config
 linters-settings:
-  depguard:
-    rules:
-      main:
-        deny:
-          - pkg: io/ioutil
-            desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
-  revive:
+   funlen:
+     lines: 80
+   depguard:
      rules:
-       - name: var-naming
-         arguments: [["ID"]]
+       main:
+         deny:
+           - pkg: io/ioutil
+             desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
+   revive:
+      rules:
+        - name: var-naming
+          arguments: [["ID"]]
 linters:
   # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
   disable-all: true

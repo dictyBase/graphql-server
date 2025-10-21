@@ -12,6 +12,7 @@ import (
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
 	"github.com/dictyBase/graphql-server/internal/authentication"
+	"github.com/dictyBase/graphql-server/internal/collection"
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
@@ -75,17 +76,9 @@ func (prs *PlasmidResolver) Genes(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) ([]*models.Gene, error) {
-	g := []*models.Gene{}
-	redis := prs.Registry.GetRedisRepository(cache.RedisKey)
-	for _, v := range obj.Genes {
-		gene, err := cache.GetGeneFromCache(ctx, redis, v)
-		if err != nil {
-			prs.Logger.Error(err)
-			continue
-		}
-		g = append(g, gene)
-	}
-	return g, nil
+	return collection.Map(obj.Genes, func(g string) *models.Gene {
+		return &models.Gene{ID: g, Name: g}
+	}), nil
 }
 
 func (prs *PlasmidResolver) Publications(
