@@ -68,7 +68,8 @@ func (mrs *MutationResolver) CreateRolePermissionRelationship(
 					Type: "permission",
 					Id:   pid,
 				},
-			}})
+			},
+		})
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		mrs.Logger.Error(err)
@@ -166,6 +167,7 @@ func (qrs *QueryResolver) Role(
 	qrs.Logger.Debugf("successfully found role with ID %s", id)
 	return g, nil
 }
+
 func (qrs *QueryResolver) ListRoles(ctx context.Context) ([]*pb.Role, error) {
 	roles := []*pb.Role{}
 	l, err := qrs.GetRoleClient(registry.ROLE).

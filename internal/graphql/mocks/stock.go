@@ -10,8 +10,10 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-var t = time.Date(2020, time.January, 01, 01, 0, 0, 0, time.UTC)
-var StockTimestamp = timestamppb.New(t)
+var (
+	t              = time.Date(2020, time.January, 0o1, 0o1, 0, 0, 0, time.UTC)
+	StockTimestamp = timestamppb.New(t)
+)
 
 var MockPlasmidAttributes = &stock.PlasmidAttributes{
 	CreatedAt:       StockTimestamp,

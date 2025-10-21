@@ -195,9 +195,11 @@ func MockPhenotypeListAnno() *annotation.TaggedAnnotationCollection {
 	}
 }
 
-var MockSysNameAnno = MockTagAnno("DBS0236922", registry.SysnameTag)
-var MockGenModAnno = MockTagAnno("exogenous mutation", registry.MuttypeTag)
-var MockMutMethodAnno = MockTagAnno("Random Insertion", registry.MutmethodTag)
+var (
+	MockSysNameAnno   = MockTagAnno("DBS0236922", registry.SysnameTag)
+	MockGenModAnno    = MockTagAnno("exogenous mutation", registry.MuttypeTag)
+	MockMutMethodAnno = MockTagAnno("Random Insertion", registry.MutmethodTag)
+)
 
 var MockGenotypeAnno = MockTagAnno(
 	"axeA1,axeB1,axeC1,sadA-[sadA-KO],[pSadA-GFP],bsR,neoR",

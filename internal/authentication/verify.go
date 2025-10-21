@@ -9,9 +9,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/app/middleware"
 )
 
-var (
-	userReadRole = "user-user"
-)
+var userReadRole = "user-user"
 
 func ValidateContent(
 	ctx context.Context,

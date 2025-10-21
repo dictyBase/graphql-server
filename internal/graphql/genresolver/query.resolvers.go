@@ -170,33 +170,43 @@ type queryResolver struct{ *Resolver }
 func (r *queryResolver) GetRefreshToken(ctx context.Context, token string) (*auth.Auth, error) {
 	panic("not implemented")
 }
+
 func (r *queryResolver) Gene(ctx context.Context, gene string) (*models.Gene, error) {
 	panic("not implemented")
 }
+
 func (r *queryResolver) AllStrains(ctx context.Context, gene string) (*models.Gene, error) {
 	panic(fmt.Errorf("not implemented: AllStrains - allStrains"))
 }
+
 func (r *queryResolver) AllPublications(ctx context.Context, gene string, limit *int, sortBy *string) (*models.NumberOfPublicationsWithGene, error) {
 	panic(fmt.Errorf("not implemented: AllPublications - allPublications"))
 }
+
 func (r *queryResolver) AllOrthologs(ctx context.Context, gene string) (*models.Gene, error) {
 	panic(fmt.Errorf("not implemented: AllOrthologs - allOrthologs"))
 }
+
 func (r *queryResolver) ListRecentGenes(ctx context.Context, limit int) ([]*models.Gene, error) {
 	panic(fmt.Errorf("not implemented: ListRecentGenes - listRecentGenes"))
 }
+
 func (r *queryResolver) GeneralInformation(ctx context.Context, gene string) (*models.Gene, error) {
 	panic(fmt.Errorf("not implemented: GeneralInformation - generalInformation"))
 }
+
 func (r *queryResolver) GetAssociatedSequnces(ctx context.Context, gene string) (*models.Gene, error) {
 	panic(fmt.Errorf("not implemented: GetAssociatedSequnces - getAssociatedSequnces"))
 }
+
 func (r *queryResolver) GetLinks(ctx context.Context, gene string) (*models.Gene, error) {
 	panic(fmt.Errorf("not implemented: GetLinks - getLinks"))
 }
+
 func (r *queryResolver) GetProteinInformation(ctx context.Context, gene string) (*models.Gene, error) {
 	panic(fmt.Errorf("not implemented: GetProteinInformation - getProteinInformation"))
 }
+
 func (r *queryResolver) ListGeneProductInfo(ctx context.Context, gene string) (*models.Gene, error) {
 	panic(fmt.Errorf("not implemented: ListGeneProductInfo - listGeneProductInfo"))
 }

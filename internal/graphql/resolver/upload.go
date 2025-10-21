@@ -53,5 +53,6 @@ func (mrs *MutationResolver) UploadFile(
 			mrs.Registry.GetAPIEndpoint(registry.S3STORAGE),
 			bucket,
 			fileInBucket,
-		)}, nil
+		),
+	}, nil
 }

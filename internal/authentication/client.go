@@ -70,8 +70,7 @@ type UserResp struct {
 		ResearchInterest string `json:"research_interest,omitempty"`
 		SecondaryAddress string `json:"secondary_address,omitempty"`
 	} `json:"customData"`
-	Identities struct {
-	} `json:"identities,omitempty"`
+	Identities    struct{}   `json:"identities,omitempty"`
 	CreatedAt     CustomTime `json:"createdAt"`
 	ApplicationID any        `json:"applicationId,omitempty"`
 	IsSuspended   bool       `json:"isSuspended,omitempty"`

@@ -166,6 +166,8 @@ func (r *Resolver) Role() generated.RoleResolver { return &roleResolver{r} }
 // User returns generated.UserResolver implementation.
 func (r *Resolver) User() generated.UserResolver { return &userResolver{r} }
 
-type permissionResolver struct{ *Resolver }
-type roleResolver struct{ *Resolver }
-type userResolver struct{ *Resolver }
+type (
+	permissionResolver struct{ *Resolver }
+	roleResolver       struct{ *Resolver }
+	userResolver       struct{ *Resolver }
+)
