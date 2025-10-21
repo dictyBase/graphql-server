@@ -75,17 +75,11 @@ func (prs *PlasmidResolver) Genes(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) ([]*models.Gene, error) {
-	g := []*models.Gene{}
-	redis := prs.Registry.GetRedisRepository(cache.RedisKey)
-	for _, v := range obj.Genes {
-		gene, err := cache.GetGeneFromCache(ctx, redis, v)
-		if err != nil {
-			prs.Logger.Error(err)
-			continue
-		}
-		g = append(g, gene)
+	gntype := []*models.Gene{}
+	for _, gne := range obj.Genes {
+		gntype = append(gntype, &models.Gene{ID: gne, Name: gne})
 	}
-	return g, nil
+	return gntype, nil
 }
 
 func (prs *PlasmidResolver) Publications(
