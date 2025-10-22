@@ -41,12 +41,13 @@ import (
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) unmarshalNTimestamp2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
+func (ec *executionContext) unmarshalNTimestamp2timeᚐTime(ctx context.Context, v any) (time.Time, error) {
 	res, err := models.UnmarshalTimestamp(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNTimestamp2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
+	_ = sel
 	res := models.MarshalTimestamp(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -56,7 +57,7 @@ func (ec *executionContext) marshalNTimestamp2timeᚐTime(ctx context.Context, s
 	return res
 }
 
-func (ec *executionContext) unmarshalNTimestamp2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {
+func (ec *executionContext) unmarshalNTimestamp2ᚖtimeᚐTime(ctx context.Context, v any) (*time.Time, error) {
 	res, err := models.UnmarshalTimestamp(v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
@@ -68,6 +69,7 @@ func (ec *executionContext) marshalNTimestamp2ᚖtimeᚐTime(ctx context.Context
 		}
 		return graphql.Null
 	}
+	_ = sel
 	res := models.MarshalTimestamp(*v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -77,7 +79,7 @@ func (ec *executionContext) marshalNTimestamp2ᚖtimeᚐTime(ctx context.Context
 	return res
 }
 
-func (ec *executionContext) unmarshalOTimestamp2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {
+func (ec *executionContext) unmarshalOTimestamp2ᚖtimeᚐTime(ctx context.Context, v any) (*time.Time, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -89,6 +91,8 @@ func (ec *executionContext) marshalOTimestamp2ᚖtimeᚐTime(ctx context.Context
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := models.MarshalTimestamp(*v)
 	return res
 }

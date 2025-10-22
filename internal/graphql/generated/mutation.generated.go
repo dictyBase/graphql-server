@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/dictyBase/go-genproto/dictybaseapis/auth"
@@ -49,418 +50,294 @@ type MutationResolver interface {
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Mutation_createContent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createContent_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *models.CreateContentInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOCreateContentInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateContentInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreateContentInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateContentInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createOrder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createOrder_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *models.CreateOrderInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOCreateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateOrderInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateOrderInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createPermission_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createPermission_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *models.CreatePermissionInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOCreatePermissionInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreatePermissionInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreatePermissionInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreatePermissionInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createPlasmid_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createPlasmid_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *models.CreatePlasmidInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOCreatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreatePlasmidInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreatePlasmidInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createRolePermissionRelationship_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createRolePermissionRelationship_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["roleId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleId"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "roleId", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["roleId"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["permissionId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("permissionId"))
-		arg1, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "permissionId", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["permissionId"] = arg1
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createRole_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createRole_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *models.CreateRoleInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOCreateRoleInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateRoleInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreateRoleInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateRoleInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createStrain_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createStrain_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *models.CreateStrainInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOCreateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateStrainInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateStrainInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createUserRoleRelationship_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createUserRoleRelationship_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["userId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "userId", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["userId"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["roleId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleId"))
-		arg1, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "roleId", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["roleId"] = arg1
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *models.CreateUserInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOCreateUserInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateUserInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreateUserInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateUserInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteContent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteContent_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deletePermission_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deletePermission_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteRole_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteRole_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteStock_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteStock_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *models.LoginInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOLoginInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐLoginInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOLoginInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐLoginInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updateContent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateContent_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *models.UpdateContentInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOUpdateContentInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateContentInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdateContentInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateContentInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updateOrder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateOrder_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 *models.UpdateOrderInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalOUpdateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateOrderInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateOrderInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updatePermission_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updatePermission_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 *models.UpdatePermissionInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalOUpdatePermissionInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdatePermissionInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdatePermissionInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdatePermissionInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updatePlasmid_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updatePlasmid_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 *models.UpdatePlasmidInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalOUpdatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdatePlasmidInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdatePlasmidInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updateRole_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateRole_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 *models.UpdateRoleInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalOUpdateRoleInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateRoleInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdateRoleInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateRoleInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updateStrain_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateStrain_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 *models.UpdateStrainInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalOUpdateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 *models.UpdateUserInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalOUpdateUserInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateUserInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdateUserInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateUserInput)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_uploadFile_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_uploadFile_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 graphql.Upload
-	if tmp, ok := rawArgs["file"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
-		arg0, err = ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "file", ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload)
+	if err != nil {
+		return nil, err
 	}
 	args["file"] = arg0
 	return args, nil
@@ -475,31 +352,20 @@ func (ec *executionContext) field_Mutation_uploadFile_args(ctx context.Context, 
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_login(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Login(rctx, fc.Args["input"].(*models.LoginInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*auth.Auth)
-	fc.Result = res
-	return ec.marshalOAuth2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋauthᚐAuth(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_login,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().Login(ctx, fc.Args["input"].(*models.LoginInput))
+		},
+		nil,
+		ec.marshalOAuth2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋauthᚐAuth,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -529,40 +395,28 @@ func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, fie
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_login_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_logout(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Logout(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.Logout)
-	fc.Result = res
-	return ec.marshalOLogout2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐLogout(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_logout,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Mutation().Logout(ctx)
+		},
+		nil,
+		ec.marshalOLogout2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐLogout,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Mutation_logout(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_logout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -580,31 +434,20 @@ func (ec *executionContext) fieldContext_Mutation_logout(ctx context.Context, fi
 }
 
 func (ec *executionContext) _Mutation_createContent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createContent(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateContent(rctx, fc.Args["input"].(*models.CreateContentInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*content.Content)
-	fc.Result = res
-	return ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createContent,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateContent(ctx, fc.Args["input"].(*models.CreateContentInput))
+		},
+		nil,
+		ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createContent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -646,37 +489,26 @@ func (ec *executionContext) fieldContext_Mutation_createContent(ctx context.Cont
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createContent_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_updateContent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateContent(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateContent(rctx, fc.Args["input"].(*models.UpdateContentInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*content.Content)
-	fc.Result = res
-	return ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updateContent,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateContent(ctx, fc.Args["input"].(*models.UpdateContentInput))
+		},
+		nil,
+		ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateContent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -718,37 +550,26 @@ func (ec *executionContext) fieldContext_Mutation_updateContent(ctx context.Cont
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateContent_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_deleteContent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteContent(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteContent(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.DeleteContent)
-	fc.Result = res
-	return ec.marshalODeleteContent2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteContent(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_deleteContent,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().DeleteContent(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalODeleteContent2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteContent,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteContent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -774,37 +595,26 @@ func (ec *executionContext) fieldContext_Mutation_deleteContent(ctx context.Cont
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteContent_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_createOrder(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createOrder(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateOrder(rctx, fc.Args["input"].(*models.CreateOrderInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*order.Order)
-	fc.Result = res
-	return ec.marshalOOrder2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrder(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createOrder,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateOrder(ctx, fc.Args["input"].(*models.CreateOrderInput))
+		},
+		nil,
+		ec.marshalOOrder2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrder,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createOrder(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -854,37 +664,26 @@ func (ec *executionContext) fieldContext_Mutation_createOrder(ctx context.Contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createOrder_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_updateOrder(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateOrder(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateOrder(rctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateOrderInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*order.Order)
-	fc.Result = res
-	return ec.marshalOOrder2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrder(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updateOrder,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateOrder(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateOrderInput))
+		},
+		nil,
+		ec.marshalOOrder2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrder,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateOrder(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -934,37 +733,26 @@ func (ec *executionContext) fieldContext_Mutation_updateOrder(ctx context.Contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateOrder_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_createStrain(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createStrain(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateStrain(rctx, fc.Args["input"].(*models.CreateStrainInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.Strain)
-	fc.Result = res
-	return ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createStrain,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateStrain(ctx, fc.Args["input"].(*models.CreateStrainInput))
+		},
+		nil,
+		ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createStrain(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1034,37 +822,26 @@ func (ec *executionContext) fieldContext_Mutation_createStrain(ctx context.Conte
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createStrain_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_createPlasmid(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createPlasmid(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePlasmid(rctx, fc.Args["input"].(*models.CreatePlasmidInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.Plasmid)
-	fc.Result = res
-	return ec.marshalOPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createPlasmid,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreatePlasmid(ctx, fc.Args["input"].(*models.CreatePlasmidInput))
+		},
+		nil,
+		ec.marshalOPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createPlasmid(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1122,37 +899,26 @@ func (ec *executionContext) fieldContext_Mutation_createPlasmid(ctx context.Cont
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createPlasmid_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_updateStrain(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateStrain(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateStrain(rctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateStrainInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.Strain)
-	fc.Result = res
-	return ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updateStrain,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateStrain(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateStrainInput))
+		},
+		nil,
+		ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateStrain(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1222,37 +988,26 @@ func (ec *executionContext) fieldContext_Mutation_updateStrain(ctx context.Conte
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateStrain_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_updatePlasmid(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updatePlasmid(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdatePlasmid(rctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdatePlasmidInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.Plasmid)
-	fc.Result = res
-	return ec.marshalOPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updatePlasmid,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdatePlasmid(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdatePlasmidInput))
+		},
+		nil,
+		ec.marshalOPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updatePlasmid(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1310,37 +1065,26 @@ func (ec *executionContext) fieldContext_Mutation_updatePlasmid(ctx context.Cont
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updatePlasmid_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_deleteStock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteStock(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteStock(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.DeleteStock)
-	fc.Result = res
-	return ec.marshalODeleteStock2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStock(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_deleteStock,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().DeleteStock(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalODeleteStock2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStock,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteStock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1366,37 +1110,26 @@ func (ec *executionContext) fieldContext_Mutation_deleteStock(ctx context.Contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteStock_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(*models.CreateUserInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createUser,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateUser(ctx, fc.Args["input"].(*models.CreateUserInput))
+		},
+		nil,
+		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1454,37 +1187,26 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_createUserRoleRelationship(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createUserRoleRelationship(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUserRoleRelationship(rctx, fc.Args["userId"].(string), fc.Args["roleId"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createUserRoleRelationship,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateUserRoleRelationship(ctx, fc.Args["userId"].(string), fc.Args["roleId"].(string))
+		},
+		nil,
+		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createUserRoleRelationship(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1542,37 +1264,26 @@ func (ec *executionContext) fieldContext_Mutation_createUserRoleRelationship(ctx
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createUserRoleRelationship_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateUser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateUserInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updateUser,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateUser(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateUserInput))
+		},
+		nil,
+		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1630,37 +1341,26 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteUser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteUser(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.DeleteUser)
-	fc.Result = res
-	return ec.marshalODeleteUser2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_deleteUser,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().DeleteUser(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalODeleteUser2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteUser,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1686,37 +1386,26 @@ func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_createRole(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createRole(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateRole(rctx, fc.Args["input"].(*models.CreateRoleInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.Role)
-	fc.Result = res
-	return ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createRole,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateRole(ctx, fc.Args["input"].(*models.CreateRoleInput))
+		},
+		nil,
+		ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1752,37 +1441,26 @@ func (ec *executionContext) fieldContext_Mutation_createRole(ctx context.Context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createRole_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_createRolePermissionRelationship(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createRolePermissionRelationship(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateRolePermissionRelationship(rctx, fc.Args["roleId"].(string), fc.Args["permissionId"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.Role)
-	fc.Result = res
-	return ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createRolePermissionRelationship,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateRolePermissionRelationship(ctx, fc.Args["roleId"].(string), fc.Args["permissionId"].(string))
+		},
+		nil,
+		ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createRolePermissionRelationship(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1818,37 +1496,26 @@ func (ec *executionContext) fieldContext_Mutation_createRolePermissionRelationsh
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createRolePermissionRelationship_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_updateRole(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateRole(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateRole(rctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateRoleInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.Role)
-	fc.Result = res
-	return ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updateRole,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateRole(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateRoleInput))
+		},
+		nil,
+		ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1884,37 +1551,26 @@ func (ec *executionContext) fieldContext_Mutation_updateRole(ctx context.Context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateRole_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_deleteRole(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteRole(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteRole(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.DeleteRole)
-	fc.Result = res
-	return ec.marshalODeleteRole2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteRole(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_deleteRole,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().DeleteRole(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalODeleteRole2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteRole,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1940,37 +1596,26 @@ func (ec *executionContext) fieldContext_Mutation_deleteRole(ctx context.Context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteRole_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_createPermission(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createPermission(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePermission(rctx, fc.Args["input"].(*models.CreatePermissionInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.Permission)
-	fc.Result = res
-	return ec.marshalOPermission2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermission(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createPermission,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreatePermission(ctx, fc.Args["input"].(*models.CreatePermissionInput))
+		},
+		nil,
+		ec.marshalOPermission2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermission,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createPermission(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2006,37 +1651,26 @@ func (ec *executionContext) fieldContext_Mutation_createPermission(ctx context.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createPermission_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_updatePermission(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updatePermission(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdatePermission(rctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdatePermissionInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.Permission)
-	fc.Result = res
-	return ec.marshalOPermission2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermission(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updatePermission,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdatePermission(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdatePermissionInput))
+		},
+		nil,
+		ec.marshalOPermission2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermission,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updatePermission(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2072,37 +1706,26 @@ func (ec *executionContext) fieldContext_Mutation_updatePermission(ctx context.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updatePermission_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_deletePermission(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deletePermission(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeletePermission(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.DeletePermission)
-	fc.Result = res
-	return ec.marshalODeletePermission2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeletePermission(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_deletePermission,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().DeletePermission(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalODeletePermission2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeletePermission,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deletePermission(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2128,40 +1751,26 @@ func (ec *executionContext) fieldContext_Mutation_deletePermission(ctx context.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deletePermission_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Mutation_uploadFile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_uploadFile(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UploadFile(rctx, fc.Args["file"].(graphql.Upload))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models.ImageFile)
-	fc.Result = res
-	return ec.marshalNImageFile2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐImageFile(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_uploadFile,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UploadFile(ctx, fc.Args["file"].(graphql.Upload))
+		},
+		nil,
+		ec.marshalNImageFile2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐImageFile,
+		true,
+		true,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_uploadFile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2187,7 +1796,7 @@ func (ec *executionContext) fieldContext_Mutation_uploadFile(ctx context.Context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_uploadFile_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
@@ -2213,7 +1822,7 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	})
 
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
 			Object: field.Name,
@@ -2224,160 +1833,124 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "login":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_login(ctx, field)
 			})
-
 		case "logout":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_logout(ctx, field)
 			})
-
 		case "createContent":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createContent(ctx, field)
 			})
-
 		case "updateContent":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateContent(ctx, field)
 			})
-
 		case "deleteContent":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteContent(ctx, field)
 			})
-
 		case "createOrder":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createOrder(ctx, field)
 			})
-
 		case "updateOrder":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateOrder(ctx, field)
 			})
-
 		case "createStrain":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createStrain(ctx, field)
 			})
-
 		case "createPlasmid":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createPlasmid(ctx, field)
 			})
-
 		case "updateStrain":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateStrain(ctx, field)
 			})
-
 		case "updatePlasmid":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updatePlasmid(ctx, field)
 			})
-
 		case "deleteStock":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteStock(ctx, field)
 			})
-
 		case "createUser":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createUser(ctx, field)
 			})
-
 		case "createUserRoleRelationship":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createUserRoleRelationship(ctx, field)
 			})
-
 		case "updateUser":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateUser(ctx, field)
 			})
-
 		case "deleteUser":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteUser(ctx, field)
 			})
-
 		case "createRole":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createRole(ctx, field)
 			})
-
 		case "createRolePermissionRelationship":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createRolePermissionRelationship(ctx, field)
 			})
-
 		case "updateRole":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateRole(ctx, field)
 			})
-
 		case "deleteRole":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteRole(ctx, field)
 			})
-
 		case "createPermission":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createPermission(ctx, field)
 			})
-
 		case "updatePermission":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updatePermission(ctx, field)
 			})
-
 		case "deletePermission":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deletePermission(ctx, field)
 			})
-
 		case "uploadFile":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_uploadFile(ctx, field)
 			})
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 

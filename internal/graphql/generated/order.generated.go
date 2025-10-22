@@ -49,37 +49,22 @@ type OrderResolver interface {
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _Order_id(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().ID(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_id,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().ID(ctx, obj)
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -93,37 +78,22 @@ func (ec *executionContext) fieldContext_Order_id(ctx context.Context, field gra
 }
 
 func (ec *executionContext) _Order_created_at(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_created_at(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().CreatedAt(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*time.Time)
-	fc.Result = res
-	return ec.marshalNTimestamp2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_created_at,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().CreatedAt(ctx, obj)
+		},
+		nil,
+		ec.marshalNTimestamp2ᚖtimeᚐTime,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -137,37 +107,22 @@ func (ec *executionContext) fieldContext_Order_created_at(ctx context.Context, f
 }
 
 func (ec *executionContext) _Order_updated_at(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_updated_at(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().UpdatedAt(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*time.Time)
-	fc.Result = res
-	return ec.marshalNTimestamp2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_updated_at,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().UpdatedAt(ctx, obj)
+		},
+		nil,
+		ec.marshalNTimestamp2ᚖtimeᚐTime,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -181,34 +136,22 @@ func (ec *executionContext) fieldContext_Order_updated_at(ctx context.Context, f
 }
 
 func (ec *executionContext) _Order_courier(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_courier(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().Courier(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_courier,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().Courier(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_courier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_courier(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -222,34 +165,22 @@ func (ec *executionContext) fieldContext_Order_courier(ctx context.Context, fiel
 }
 
 func (ec *executionContext) _Order_courier_account(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_courier_account(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().CourierAccount(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_courier_account,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().CourierAccount(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_courier_account(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_courier_account(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -263,34 +194,22 @@ func (ec *executionContext) fieldContext_Order_courier_account(ctx context.Conte
 }
 
 func (ec *executionContext) _Order_comments(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_comments(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().Comments(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_comments,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().Comments(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_comments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_comments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -304,34 +223,22 @@ func (ec *executionContext) fieldContext_Order_comments(ctx context.Context, fie
 }
 
 func (ec *executionContext) _Order_payment(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_payment(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().Payment(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_payment,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().Payment(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_payment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_payment(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -345,34 +252,22 @@ func (ec *executionContext) fieldContext_Order_payment(ctx context.Context, fiel
 }
 
 func (ec *executionContext) _Order_purchase_order_num(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_purchase_order_num(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().PurchaseOrderNum(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_purchase_order_num,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().PurchaseOrderNum(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_purchase_order_num(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_purchase_order_num(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -386,34 +281,22 @@ func (ec *executionContext) fieldContext_Order_purchase_order_num(ctx context.Co
 }
 
 func (ec *executionContext) _Order_status(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_status(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().Status(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.StatusEnum)
-	fc.Result = res
-	return ec.marshalOStatusEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_status,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().Status(ctx, obj)
+		},
+		nil,
+		ec.marshalOStatusEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -427,34 +310,22 @@ func (ec *executionContext) fieldContext_Order_status(ctx context.Context, field
 }
 
 func (ec *executionContext) _Order_consumer(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_consumer(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().Consumer(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_consumer,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().Consumer(ctx, obj)
+		},
+		nil,
+		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_consumer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_consumer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -504,34 +375,22 @@ func (ec *executionContext) fieldContext_Order_consumer(ctx context.Context, fie
 }
 
 func (ec *executionContext) _Order_payer(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_payer(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().Payer(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_payer,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().Payer(ctx, obj)
+		},
+		nil,
+		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_payer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_payer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -581,34 +440,22 @@ func (ec *executionContext) fieldContext_Order_payer(ctx context.Context, field 
 }
 
 func (ec *executionContext) _Order_purchaser(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_purchaser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().Purchaser(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_purchaser,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().Purchaser(ctx, obj)
+		},
+		nil,
+		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_purchaser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_purchaser(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -658,34 +505,22 @@ func (ec *executionContext) fieldContext_Order_purchaser(ctx context.Context, fi
 }
 
 func (ec *executionContext) _Order_items(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_items(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().Items(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]models.Stock)
-	fc.Result = res
-	return ec.marshalOStock2ᚕgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Order_items,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Order().Items(ctx, obj)
+		},
+		nil,
+		ec.marshalOStock2ᚕgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Order_items(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Order_items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Order",
 		Field:      field,
@@ -699,37 +534,22 @@ func (ec *executionContext) fieldContext_Order_items(ctx context.Context, field 
 }
 
 func (ec *executionContext) _OrderListWithCursor_orders(ctx context.Context, field graphql.CollectedField, obj *models.OrderListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrderListWithCursor_orders(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Orders, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*order.Order)
-	fc.Result = res
-	return ec.marshalNOrder2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrderᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_OrderListWithCursor_orders,
+		func(ctx context.Context) (any, error) {
+			return obj.Orders, nil
+		},
+		nil,
+		ec.marshalNOrder2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrderᚄ,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_OrderListWithCursor_orders(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrderListWithCursor_orders(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OrderListWithCursor",
 		Field:      field,
@@ -771,37 +591,22 @@ func (ec *executionContext) fieldContext_OrderListWithCursor_orders(ctx context.
 }
 
 func (ec *executionContext) _OrderListWithCursor_nextCursor(ctx context.Context, field graphql.CollectedField, obj *models.OrderListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrderListWithCursor_nextCursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.NextCursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_OrderListWithCursor_nextCursor,
+		func(ctx context.Context) (any, error) {
+			return obj.NextCursor, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_OrderListWithCursor_nextCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrderListWithCursor_nextCursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OrderListWithCursor",
 		Field:      field,
@@ -815,37 +620,22 @@ func (ec *executionContext) fieldContext_OrderListWithCursor_nextCursor(ctx cont
 }
 
 func (ec *executionContext) _OrderListWithCursor_previousCursor(ctx context.Context, field graphql.CollectedField, obj *models.OrderListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrderListWithCursor_previousCursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PreviousCursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_OrderListWithCursor_previousCursor,
+		func(ctx context.Context) (any, error) {
+			return obj.PreviousCursor, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_OrderListWithCursor_previousCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrderListWithCursor_previousCursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OrderListWithCursor",
 		Field:      field,
@@ -859,34 +649,22 @@ func (ec *executionContext) fieldContext_OrderListWithCursor_previousCursor(ctx 
 }
 
 func (ec *executionContext) _OrderListWithCursor_limit(ctx context.Context, field graphql.CollectedField, obj *models.OrderListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrderListWithCursor_limit(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Limit, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_OrderListWithCursor_limit,
+		func(ctx context.Context) (any, error) {
+			return obj.Limit, nil
+		},
+		nil,
+		ec.marshalOInt2ᚖint,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_OrderListWithCursor_limit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrderListWithCursor_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OrderListWithCursor",
 		Field:      field,
@@ -900,37 +678,22 @@ func (ec *executionContext) fieldContext_OrderListWithCursor_limit(ctx context.C
 }
 
 func (ec *executionContext) _OrderListWithCursor_totalCount(ctx context.Context, field graphql.CollectedField, obj *models.OrderListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrderListWithCursor_totalCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_OrderListWithCursor_totalCount,
+		func(ctx context.Context) (any, error) {
+			return obj.TotalCount, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_OrderListWithCursor_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrderListWithCursor_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OrderListWithCursor",
 		Field:      field,
@@ -947,10 +710,10 @@ func (ec *executionContext) fieldContext_OrderListWithCursor_totalCount(ctx cont
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, obj interface{}) (models.CreateOrderInput, error) {
+func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, obj any) (models.CreateOrderInput, error) {
 	var it models.CreateOrderInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
@@ -962,8 +725,6 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 		}
 		switch k {
 		case "courier":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("courier"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -971,8 +732,6 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 			}
 			it.Courier = data
 		case "courier_account":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("courier_account"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -980,8 +739,6 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 			}
 			it.CourierAccount = data
 		case "comments":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comments"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -989,8 +746,6 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 			}
 			it.Comments = data
 		case "payment":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("payment"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -998,8 +753,6 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 			}
 			it.Payment = data
 		case "purchase_order_num":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("purchase_order_num"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -1007,8 +760,6 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 			}
 			it.PurchaseOrderNum = data
 		case "status":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
 			data, err := ec.unmarshalNStatusEnum2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum(ctx, v)
 			if err != nil {
@@ -1016,8 +767,6 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 			}
 			it.Status = data
 		case "consumer":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("consumer"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -1025,8 +774,6 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 			}
 			it.Consumer = data
 		case "payer":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("payer"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -1034,8 +781,6 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 			}
 			it.Payer = data
 		case "purchaser":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("purchaser"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -1043,8 +788,6 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 			}
 			it.Purchaser = data
 		case "items":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("items"))
 			data, err := ec.unmarshalNString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -1057,10 +800,10 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, obj interface{}) (models.UpdateOrderInput, error) {
+func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, obj any) (models.UpdateOrderInput, error) {
 	var it models.UpdateOrderInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
@@ -1072,8 +815,6 @@ func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, 
 		}
 		switch k {
 		case "courier":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("courier"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -1081,8 +822,6 @@ func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, 
 			}
 			it.Courier = data
 		case "courier_account":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("courier_account"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -1090,8 +829,6 @@ func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, 
 			}
 			it.CourierAccount = data
 		case "comments":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comments"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -1099,8 +836,6 @@ func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, 
 			}
 			it.Comments = data
 		case "payment":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("payment"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -1108,8 +843,6 @@ func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, 
 			}
 			it.Payment = data
 		case "purchase_order_num":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("purchase_order_num"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -1117,8 +850,6 @@ func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, 
 			}
 			it.PurchaseOrderNum = data
 		case "status":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
 			data, err := ec.unmarshalOStatusEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum(ctx, v)
 			if err != nil {
@@ -1126,8 +857,6 @@ func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, 
 			}
 			it.Status = data
 		case "items":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("items"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -1152,8 +881,9 @@ var orderImplementors = []string{"Order"}
 
 func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, obj *order.Order) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, orderImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -1161,7 +891,7 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 		case "id":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1169,19 +899,35 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				}()
 				res = ec._Order_id(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "created_at":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1189,19 +935,35 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				}()
 				res = ec._Order_created_at(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "updated_at":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1209,19 +971,35 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				}()
 				res = ec._Order_updated_at(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "courier":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1231,14 +1009,30 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "courier_account":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1248,14 +1042,30 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "comments":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1265,14 +1075,30 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "payment":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1282,14 +1108,30 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "purchase_order_num":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1299,14 +1141,30 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "status":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1316,14 +1174,30 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "consumer":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1333,14 +1207,30 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "payer":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1350,14 +1240,30 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "purchaser":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1367,14 +1273,30 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "items":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1384,18 +1306,46 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -1403,52 +1353,55 @@ var orderListWithCursorImplementors = []string{"OrderListWithCursor"}
 
 func (ec *executionContext) _OrderListWithCursor(ctx context.Context, sel ast.SelectionSet, obj *models.OrderListWithCursor) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, orderListWithCursorImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("OrderListWithCursor")
 		case "orders":
-
 			out.Values[i] = ec._OrderListWithCursor_orders(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "nextCursor":
-
 			out.Values[i] = ec._OrderListWithCursor_nextCursor(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "previousCursor":
-
 			out.Values[i] = ec._OrderListWithCursor_previousCursor(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "limit":
-
 			out.Values[i] = ec._OrderListWithCursor_limit(ctx, field, obj)
-
 		case "totalCount":
-
 			out.Values[i] = ec._OrderListWithCursor_totalCount(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -1510,7 +1463,7 @@ func (ec *executionContext) marshalNOrder2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgen
 	return ec._Order(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNStatusEnum2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum(ctx context.Context, v interface{}) (models.StatusEnum, error) {
+func (ec *executionContext) unmarshalNStatusEnum2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum(ctx context.Context, v any) (models.StatusEnum, error) {
 	var res models.StatusEnum
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -1520,7 +1473,7 @@ func (ec *executionContext) marshalNStatusEnum2githubᚗcomᚋdictyBaseᚋgraphq
 	return v
 }
 
-func (ec *executionContext) unmarshalOCreateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateOrderInput(ctx context.Context, v interface{}) (*models.CreateOrderInput, error) {
+func (ec *executionContext) unmarshalOCreateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateOrderInput(ctx context.Context, v any) (*models.CreateOrderInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -1542,7 +1495,7 @@ func (ec *executionContext) marshalOOrderListWithCursor2ᚖgithubᚗcomᚋdictyB
 	return ec._OrderListWithCursor(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOStatusEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum(ctx context.Context, v interface{}) (*models.StatusEnum, error) {
+func (ec *executionContext) unmarshalOStatusEnum2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStatusEnum(ctx context.Context, v any) (*models.StatusEnum, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -1558,7 +1511,7 @@ func (ec *executionContext) marshalOStatusEnum2ᚖgithubᚗcomᚋdictyBaseᚋgra
 	return v
 }
 
-func (ec *executionContext) unmarshalOUpdateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateOrderInput(ctx context.Context, v interface{}) (*models.UpdateOrderInput, error) {
+func (ec *executionContext) unmarshalOUpdateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateOrderInput(ctx context.Context, v any) (*models.UpdateOrderInput, error) {
 	if v == nil {
 		return nil, nil
 	}

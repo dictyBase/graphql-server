@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
-	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
@@ -65,37 +64,22 @@ type StrainResolver interface {
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _DeleteStock_success(ctx context.Context, field graphql.CollectedField, obj *models.DeleteStock) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_DeleteStock_success(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Success, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DeleteStock_success,
+		func(ctx context.Context) (any, error) {
+			return obj.Success, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_DeleteStock_success(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DeleteStock_success(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DeleteStock",
 		Field:      field,
@@ -109,37 +93,22 @@ func (ec *executionContext) fieldContext_DeleteStock_success(ctx context.Context
 }
 
 func (ec *executionContext) _Phenotype_phenotype(ctx context.Context, field graphql.CollectedField, obj *models.Phenotype) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Phenotype_phenotype(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Phenotype, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Phenotype_phenotype,
+		func(ctx context.Context) (any, error) {
+			return obj.Phenotype, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Phenotype_phenotype(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Phenotype_phenotype(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Phenotype",
 		Field:      field,
@@ -153,34 +122,22 @@ func (ec *executionContext) fieldContext_Phenotype_phenotype(ctx context.Context
 }
 
 func (ec *executionContext) _Phenotype_note(ctx context.Context, field graphql.CollectedField, obj *models.Phenotype) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Phenotype_note(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Note, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Phenotype_note,
+		func(ctx context.Context) (any, error) {
+			return obj.Note, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Phenotype_note(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Phenotype_note(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Phenotype",
 		Field:      field,
@@ -194,34 +151,22 @@ func (ec *executionContext) fieldContext_Phenotype_note(ctx context.Context, fie
 }
 
 func (ec *executionContext) _Phenotype_assay(ctx context.Context, field graphql.CollectedField, obj *models.Phenotype) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Phenotype_assay(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Assay, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Phenotype_assay,
+		func(ctx context.Context) (any, error) {
+			return obj.Assay, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Phenotype_assay(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Phenotype_assay(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Phenotype",
 		Field:      field,
@@ -235,34 +180,22 @@ func (ec *executionContext) fieldContext_Phenotype_assay(ctx context.Context, fi
 }
 
 func (ec *executionContext) _Phenotype_environment(ctx context.Context, field graphql.CollectedField, obj *models.Phenotype) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Phenotype_environment(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Environment, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Phenotype_environment,
+		func(ctx context.Context) (any, error) {
+			return obj.Environment, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Phenotype_environment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Phenotype_environment(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Phenotype",
 		Field:      field,
@@ -276,34 +209,22 @@ func (ec *executionContext) fieldContext_Phenotype_environment(ctx context.Conte
 }
 
 func (ec *executionContext) _Phenotype_publication(ctx context.Context, field graphql.CollectedField, obj *models.Phenotype) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Phenotype_publication(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Publication, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.Publication)
-	fc.Result = res
-	return ec.marshalOPublication2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublication(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Phenotype_publication,
+		func(ctx context.Context) (any, error) {
+			return obj.Publication, nil
+		},
+		nil,
+		ec.marshalOPublication2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublication,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Phenotype_publication(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Phenotype_publication(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Phenotype",
 		Field:      field,
@@ -347,37 +268,22 @@ func (ec *executionContext) fieldContext_Phenotype_publication(ctx context.Conte
 }
 
 func (ec *executionContext) _Plasmid_id(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -391,37 +297,22 @@ func (ec *executionContext) fieldContext_Plasmid_id(ctx context.Context, field g
 }
 
 func (ec *executionContext) _Plasmid_created_at(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_created_at(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTimestamp2timeᚐTime(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_created_at,
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		ec.marshalNTimestamp2timeᚐTime,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -435,37 +326,22 @@ func (ec *executionContext) fieldContext_Plasmid_created_at(ctx context.Context,
 }
 
 func (ec *executionContext) _Plasmid_updated_at(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_updated_at(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTimestamp2timeᚐTime(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_updated_at,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		ec.marshalNTimestamp2timeᚐTime,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -479,37 +355,22 @@ func (ec *executionContext) fieldContext_Plasmid_updated_at(ctx context.Context,
 }
 
 func (ec *executionContext) _Plasmid_created_by(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_created_by(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Plasmid().CreatedBy(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_created_by,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Plasmid().CreatedBy(ctx, obj)
+		},
+		nil,
+		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_created_by(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_created_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -559,37 +420,22 @@ func (ec *executionContext) fieldContext_Plasmid_created_by(ctx context.Context,
 }
 
 func (ec *executionContext) _Plasmid_updated_by(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_updated_by(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Plasmid().UpdatedBy(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_updated_by,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Plasmid().UpdatedBy(ctx, obj)
+		},
+		nil,
+		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_updated_by(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_updated_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -639,34 +485,22 @@ func (ec *executionContext) fieldContext_Plasmid_updated_by(ctx context.Context,
 }
 
 func (ec *executionContext) _Plasmid_summary(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_summary(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Summary, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_summary,
+		func(ctx context.Context) (any, error) {
+			return obj.Summary, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_summary(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_summary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -680,34 +514,22 @@ func (ec *executionContext) fieldContext_Plasmid_summary(ctx context.Context, fi
 }
 
 func (ec *executionContext) _Plasmid_editable_summary(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_editable_summary(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EditableSummary, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_editable_summary,
+		func(ctx context.Context) (any, error) {
+			return obj.EditableSummary, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_editable_summary(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_editable_summary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -721,37 +543,22 @@ func (ec *executionContext) fieldContext_Plasmid_editable_summary(ctx context.Co
 }
 
 func (ec *executionContext) _Plasmid_depositor(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_depositor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Plasmid().Depositor(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_depositor,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Plasmid().Depositor(ctx, obj)
+		},
+		nil,
+		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_depositor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_depositor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -801,34 +608,22 @@ func (ec *executionContext) fieldContext_Plasmid_depositor(ctx context.Context, 
 }
 
 func (ec *executionContext) _Plasmid_genes(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_genes(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Plasmid().Genes(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Gene)
-	fc.Result = res
-	return ec.marshalOGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_genes,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Plasmid().Genes(ctx, obj)
+		},
+		nil,
+		ec.marshalOGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_genes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_genes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -848,34 +643,22 @@ func (ec *executionContext) fieldContext_Plasmid_genes(ctx context.Context, fiel
 }
 
 func (ec *executionContext) _Plasmid_dbxrefs(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_dbxrefs(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Dbxrefs, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*string)
-	fc.Result = res
-	return ec.marshalOString2ᚕᚖstringᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_dbxrefs,
+		func(ctx context.Context) (any, error) {
+			return obj.Dbxrefs, nil
+		},
+		nil,
+		ec.marshalOString2ᚕᚖstringᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_dbxrefs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_dbxrefs(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -889,34 +672,22 @@ func (ec *executionContext) fieldContext_Plasmid_dbxrefs(ctx context.Context, fi
 }
 
 func (ec *executionContext) _Plasmid_publications(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_publications(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Plasmid().Publications(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Publication)
-	fc.Result = res
-	return ec.marshalOPublication2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_publications,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Plasmid().Publications(ctx, obj)
+		},
+		nil,
+		ec.marshalOPublication2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_publications(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_publications(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -960,37 +731,22 @@ func (ec *executionContext) fieldContext_Plasmid_publications(ctx context.Contex
 }
 
 func (ec *executionContext) _Plasmid_name(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_name,
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -1004,34 +760,22 @@ func (ec *executionContext) fieldContext_Plasmid_name(ctx context.Context, field
 }
 
 func (ec *executionContext) _Plasmid_image_map(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_image_map(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ImageMap, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_image_map,
+		func(ctx context.Context) (any, error) {
+			return obj.ImageMap, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_image_map(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_image_map(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -1045,34 +789,22 @@ func (ec *executionContext) fieldContext_Plasmid_image_map(ctx context.Context, 
 }
 
 func (ec *executionContext) _Plasmid_sequence(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_sequence(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Sequence, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_sequence,
+		func(ctx context.Context) (any, error) {
+			return obj.Sequence, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_sequence(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_sequence(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -1086,37 +818,22 @@ func (ec *executionContext) fieldContext_Plasmid_sequence(ctx context.Context, f
 }
 
 func (ec *executionContext) _Plasmid_in_stock(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_in_stock(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Plasmid().InStock(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_in_stock,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Plasmid().InStock(ctx, obj)
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_in_stock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_in_stock(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -1130,34 +847,22 @@ func (ec *executionContext) fieldContext_Plasmid_in_stock(ctx context.Context, f
 }
 
 func (ec *executionContext) _Plasmid_keywords(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_keywords(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Plasmid().Keywords(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_keywords,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Plasmid().Keywords(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚕstringᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_keywords(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_keywords(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -1171,34 +876,22 @@ func (ec *executionContext) fieldContext_Plasmid_keywords(ctx context.Context, f
 }
 
 func (ec *executionContext) _Plasmid_genbank_accession(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Plasmid_genbank_accession(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Plasmid().GenbankAccession(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Plasmid_genbank_accession,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Plasmid().GenbankAccession(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Plasmid_genbank_accession(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Plasmid_genbank_accession(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
 		Field:      field,
@@ -1212,37 +905,22 @@ func (ec *executionContext) fieldContext_Plasmid_genbank_accession(ctx context.C
 }
 
 func (ec *executionContext) _PlasmidListWithCursor_plasmids(ctx context.Context, field graphql.CollectedField, obj *models.PlasmidListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PlasmidListWithCursor_plasmids(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Plasmids, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Plasmid)
-	fc.Result = res
-	return ec.marshalNPlasmid2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PlasmidListWithCursor_plasmids,
+		func(ctx context.Context) (any, error) {
+			return obj.Plasmids, nil
+		},
+		nil,
+		ec.marshalNPlasmid2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidᚄ,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PlasmidListWithCursor_plasmids(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PlasmidListWithCursor_plasmids(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PlasmidListWithCursor",
 		Field:      field,
@@ -1292,37 +970,22 @@ func (ec *executionContext) fieldContext_PlasmidListWithCursor_plasmids(ctx cont
 }
 
 func (ec *executionContext) _PlasmidListWithCursor_nextCursor(ctx context.Context, field graphql.CollectedField, obj *models.PlasmidListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PlasmidListWithCursor_nextCursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.NextCursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PlasmidListWithCursor_nextCursor,
+		func(ctx context.Context) (any, error) {
+			return obj.NextCursor, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PlasmidListWithCursor_nextCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PlasmidListWithCursor_nextCursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PlasmidListWithCursor",
 		Field:      field,
@@ -1336,37 +999,22 @@ func (ec *executionContext) fieldContext_PlasmidListWithCursor_nextCursor(ctx co
 }
 
 func (ec *executionContext) _PlasmidListWithCursor_previousCursor(ctx context.Context, field graphql.CollectedField, obj *models.PlasmidListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PlasmidListWithCursor_previousCursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PreviousCursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PlasmidListWithCursor_previousCursor,
+		func(ctx context.Context) (any, error) {
+			return obj.PreviousCursor, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PlasmidListWithCursor_previousCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PlasmidListWithCursor_previousCursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PlasmidListWithCursor",
 		Field:      field,
@@ -1380,34 +1028,22 @@ func (ec *executionContext) fieldContext_PlasmidListWithCursor_previousCursor(ct
 }
 
 func (ec *executionContext) _PlasmidListWithCursor_limit(ctx context.Context, field graphql.CollectedField, obj *models.PlasmidListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PlasmidListWithCursor_limit(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Limit, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PlasmidListWithCursor_limit,
+		func(ctx context.Context) (any, error) {
+			return obj.Limit, nil
+		},
+		nil,
+		ec.marshalOInt2ᚖint,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_PlasmidListWithCursor_limit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PlasmidListWithCursor_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PlasmidListWithCursor",
 		Field:      field,
@@ -1421,37 +1057,22 @@ func (ec *executionContext) fieldContext_PlasmidListWithCursor_limit(ctx context
 }
 
 func (ec *executionContext) _PlasmidListWithCursor_totalCount(ctx context.Context, field graphql.CollectedField, obj *models.PlasmidListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PlasmidListWithCursor_totalCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PlasmidListWithCursor_totalCount,
+		func(ctx context.Context) (any, error) {
+			return obj.TotalCount, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PlasmidListWithCursor_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PlasmidListWithCursor_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PlasmidListWithCursor",
 		Field:      field,
@@ -1465,37 +1086,22 @@ func (ec *executionContext) fieldContext_PlasmidListWithCursor_totalCount(ctx co
 }
 
 func (ec *executionContext) _Strain_id(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -1509,37 +1115,22 @@ func (ec *executionContext) fieldContext_Strain_id(ctx context.Context, field gr
 }
 
 func (ec *executionContext) _Strain_created_at(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_created_at(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTimestamp2timeᚐTime(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_created_at,
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		ec.marshalNTimestamp2timeᚐTime,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -1553,37 +1144,22 @@ func (ec *executionContext) fieldContext_Strain_created_at(ctx context.Context, 
 }
 
 func (ec *executionContext) _Strain_updated_at(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_updated_at(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTimestamp2timeᚐTime(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_updated_at,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		ec.marshalNTimestamp2timeᚐTime,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -1597,37 +1173,22 @@ func (ec *executionContext) fieldContext_Strain_updated_at(ctx context.Context, 
 }
 
 func (ec *executionContext) _Strain_created_by(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_created_by(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().CreatedBy(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_created_by,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().CreatedBy(ctx, obj)
+		},
+		nil,
+		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_created_by(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_created_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -1677,37 +1238,22 @@ func (ec *executionContext) fieldContext_Strain_created_by(ctx context.Context, 
 }
 
 func (ec *executionContext) _Strain_updated_by(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_updated_by(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().UpdatedBy(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_updated_by,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().UpdatedBy(ctx, obj)
+		},
+		nil,
+		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_updated_by(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_updated_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -1757,34 +1303,22 @@ func (ec *executionContext) fieldContext_Strain_updated_by(ctx context.Context, 
 }
 
 func (ec *executionContext) _Strain_summary(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_summary(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Summary, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_summary,
+		func(ctx context.Context) (any, error) {
+			return obj.Summary, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_summary(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_summary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -1798,34 +1332,22 @@ func (ec *executionContext) fieldContext_Strain_summary(ctx context.Context, fie
 }
 
 func (ec *executionContext) _Strain_editable_summary(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_editable_summary(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EditableSummary, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_editable_summary,
+		func(ctx context.Context) (any, error) {
+			return obj.EditableSummary, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_editable_summary(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_editable_summary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -1839,37 +1361,22 @@ func (ec *executionContext) fieldContext_Strain_editable_summary(ctx context.Con
 }
 
 func (ec *executionContext) _Strain_depositor(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_depositor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().Depositor(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_depositor,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().Depositor(ctx, obj)
+		},
+		nil,
+		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_depositor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_depositor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -1919,34 +1426,22 @@ func (ec *executionContext) fieldContext_Strain_depositor(ctx context.Context, f
 }
 
 func (ec *executionContext) _Strain_genes(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_genes(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().Genes(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Gene)
-	fc.Result = res
-	return ec.marshalOGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_genes,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().Genes(ctx, obj)
+		},
+		nil,
+		ec.marshalOGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_genes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_genes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -1966,34 +1461,22 @@ func (ec *executionContext) fieldContext_Strain_genes(ctx context.Context, field
 }
 
 func (ec *executionContext) _Strain_dbxrefs(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_dbxrefs(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Dbxrefs, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_dbxrefs,
+		func(ctx context.Context) (any, error) {
+			return obj.Dbxrefs, nil
+		},
+		nil,
+		ec.marshalOString2ᚕstringᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_dbxrefs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_dbxrefs(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2007,34 +1490,22 @@ func (ec *executionContext) fieldContext_Strain_dbxrefs(ctx context.Context, fie
 }
 
 func (ec *executionContext) _Strain_publications(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_publications(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().Publications(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Publication)
-	fc.Result = res
-	return ec.marshalOPublication2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_publications,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().Publications(ctx, obj)
+		},
+		nil,
+		ec.marshalOPublication2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_publications(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_publications(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2078,37 +1549,22 @@ func (ec *executionContext) fieldContext_Strain_publications(ctx context.Context
 }
 
 func (ec *executionContext) _Strain_systematic_name(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_systematic_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().SystematicName(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_systematic_name,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().SystematicName(ctx, obj)
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_systematic_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_systematic_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2122,37 +1578,22 @@ func (ec *executionContext) fieldContext_Strain_systematic_name(ctx context.Cont
 }
 
 func (ec *executionContext) _Strain_label(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_label(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Label, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_label,
+		func(ctx context.Context) (any, error) {
+			return obj.Label, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_label(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_label(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2166,37 +1607,22 @@ func (ec *executionContext) fieldContext_Strain_label(ctx context.Context, field
 }
 
 func (ec *executionContext) _Strain_species(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_species(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Species, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_species,
+		func(ctx context.Context) (any, error) {
+			return obj.Species, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_species(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_species(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2210,34 +1636,22 @@ func (ec *executionContext) fieldContext_Strain_species(ctx context.Context, fie
 }
 
 func (ec *executionContext) _Strain_plasmid(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_plasmid(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Plasmid, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_plasmid,
+		func(ctx context.Context) (any, error) {
+			return obj.Plasmid, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_plasmid(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_plasmid(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2251,34 +1665,22 @@ func (ec *executionContext) fieldContext_Strain_plasmid(ctx context.Context, fie
 }
 
 func (ec *executionContext) _Strain_parent(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_parent(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().Parent(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.Strain)
-	fc.Result = res
-	return ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_parent,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().Parent(ctx, obj)
+		},
+		nil,
+		ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_parent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_parent(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2340,34 +1742,22 @@ func (ec *executionContext) fieldContext_Strain_parent(ctx context.Context, fiel
 }
 
 func (ec *executionContext) _Strain_names(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_names(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().Names(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_names,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().Names(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚕstringᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_names(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_names(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2381,37 +1771,22 @@ func (ec *executionContext) fieldContext_Strain_names(ctx context.Context, field
 }
 
 func (ec *executionContext) _Strain_in_stock(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_in_stock(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().InStock(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_in_stock,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().InStock(ctx, obj)
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_in_stock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_in_stock(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2425,34 +1800,22 @@ func (ec *executionContext) fieldContext_Strain_in_stock(ctx context.Context, fi
 }
 
 func (ec *executionContext) _Strain_phenotypes(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_phenotypes(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().Phenotypes(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Phenotype)
-	fc.Result = res
-	return ec.marshalOPhenotype2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPhenotypeᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_phenotypes,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().Phenotypes(ctx, obj)
+		},
+		nil,
+		ec.marshalOPhenotype2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPhenotypeᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_phenotypes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_phenotypes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2478,34 +1841,22 @@ func (ec *executionContext) fieldContext_Strain_phenotypes(ctx context.Context, 
 }
 
 func (ec *executionContext) _Strain_genetic_modification(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_genetic_modification(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().GeneticModification(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_genetic_modification,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().GeneticModification(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_genetic_modification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_genetic_modification(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2519,34 +1870,22 @@ func (ec *executionContext) fieldContext_Strain_genetic_modification(ctx context
 }
 
 func (ec *executionContext) _Strain_mutagenesis_method(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_mutagenesis_method(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().MutagenesisMethod(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_mutagenesis_method,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().MutagenesisMethod(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_mutagenesis_method(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_mutagenesis_method(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2560,34 +1899,22 @@ func (ec *executionContext) fieldContext_Strain_mutagenesis_method(ctx context.C
 }
 
 func (ec *executionContext) _Strain_characteristics(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_characteristics(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().Characteristics(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_characteristics,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().Characteristics(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚕstringᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_characteristics(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_characteristics(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2601,34 +1928,22 @@ func (ec *executionContext) fieldContext_Strain_characteristics(ctx context.Cont
 }
 
 func (ec *executionContext) _Strain_genotypes(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Strain_genotypes(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Strain().Genotypes(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Strain_genotypes,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Strain().Genotypes(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚕstringᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Strain_genotypes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Strain_genotypes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
 		Field:      field,
@@ -2642,37 +1957,22 @@ func (ec *executionContext) fieldContext_Strain_genotypes(ctx context.Context, f
 }
 
 func (ec *executionContext) _StrainListWithCursor_strains(ctx context.Context, field graphql.CollectedField, obj *models.StrainListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StrainListWithCursor_strains(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Strains, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Strain)
-	fc.Result = res
-	return ec.marshalNStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_StrainListWithCursor_strains,
+		func(ctx context.Context) (any, error) {
+			return obj.Strains, nil
+		},
+		nil,
+		ec.marshalNStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_StrainListWithCursor_strains(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_StrainListWithCursor_strains(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "StrainListWithCursor",
 		Field:      field,
@@ -2734,37 +2034,22 @@ func (ec *executionContext) fieldContext_StrainListWithCursor_strains(ctx contex
 }
 
 func (ec *executionContext) _StrainListWithCursor_nextCursor(ctx context.Context, field graphql.CollectedField, obj *models.StrainListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StrainListWithCursor_nextCursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.NextCursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_StrainListWithCursor_nextCursor,
+		func(ctx context.Context) (any, error) {
+			return obj.NextCursor, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_StrainListWithCursor_nextCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_StrainListWithCursor_nextCursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "StrainListWithCursor",
 		Field:      field,
@@ -2778,37 +2063,22 @@ func (ec *executionContext) fieldContext_StrainListWithCursor_nextCursor(ctx con
 }
 
 func (ec *executionContext) _StrainListWithCursor_previousCursor(ctx context.Context, field graphql.CollectedField, obj *models.StrainListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StrainListWithCursor_previousCursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PreviousCursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_StrainListWithCursor_previousCursor,
+		func(ctx context.Context) (any, error) {
+			return obj.PreviousCursor, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_StrainListWithCursor_previousCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_StrainListWithCursor_previousCursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "StrainListWithCursor",
 		Field:      field,
@@ -2822,34 +2092,22 @@ func (ec *executionContext) fieldContext_StrainListWithCursor_previousCursor(ctx
 }
 
 func (ec *executionContext) _StrainListWithCursor_limit(ctx context.Context, field graphql.CollectedField, obj *models.StrainListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StrainListWithCursor_limit(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Limit, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_StrainListWithCursor_limit,
+		func(ctx context.Context) (any, error) {
+			return obj.Limit, nil
+		},
+		nil,
+		ec.marshalOInt2ᚖint,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_StrainListWithCursor_limit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_StrainListWithCursor_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "StrainListWithCursor",
 		Field:      field,
@@ -2863,37 +2121,22 @@ func (ec *executionContext) fieldContext_StrainListWithCursor_limit(ctx context.
 }
 
 func (ec *executionContext) _StrainListWithCursor_totalCount(ctx context.Context, field graphql.CollectedField, obj *models.StrainListWithCursor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StrainListWithCursor_totalCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_StrainListWithCursor_totalCount,
+		func(ctx context.Context) (any, error) {
+			return obj.TotalCount, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_StrainListWithCursor_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_StrainListWithCursor_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "StrainListWithCursor",
 		Field:      field,
@@ -2910,10 +2153,10 @@ func (ec *executionContext) fieldContext_StrainListWithCursor_totalCount(ctx con
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context, obj interface{}) (models.CreatePlasmidInput, error) {
+func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context, obj any) (models.CreatePlasmidInput, error) {
 	var it models.CreatePlasmidInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
@@ -2925,8 +2168,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 		}
 		switch k {
 		case "created_by":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("created_by"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -2934,8 +2175,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.CreatedBy = data
 		case "updated_by":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updated_by"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -2943,8 +2182,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.UpdatedBy = data
 		case "summary":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -2952,8 +2189,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.Summary = data
 		case "editable_summary":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("editable_summary"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -2961,8 +2196,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.EditableSummary = data
 		case "depositor":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("depositor"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -2970,8 +2203,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.Depositor = data
 		case "genes":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genes"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -2979,8 +2210,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.Genes = data
 		case "dbxrefs":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dbxrefs"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -2988,8 +2217,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.Dbxrefs = data
 		case "publications":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publications"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -2997,8 +2224,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.Publications = data
 		case "name":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3006,8 +2231,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.Name = data
 		case "image_map":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image_map"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3015,8 +2238,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.ImageMap = data
 		case "sequence":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sequence"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3024,8 +2245,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.Sequence = data
 		case "in_stock":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in_stock"))
 			data, err := ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
@@ -3033,8 +2252,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.InStock = data
 		case "keywords":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keywords"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3042,8 +2259,6 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			}
 			it.Keywords = data
 		case "genbank_accession":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genbank_accession"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3056,10 +2271,10 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context, obj interface{}) (models.CreateStrainInput, error) {
+func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context, obj any) (models.CreateStrainInput, error) {
 	var it models.CreateStrainInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
@@ -3071,8 +2286,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 		}
 		switch k {
 		case "created_by":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("created_by"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3080,8 +2293,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.CreatedBy = data
 		case "updated_by":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updated_by"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3089,8 +2300,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.UpdatedBy = data
 		case "summary":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3098,8 +2307,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Summary = data
 		case "editable_summary":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("editable_summary"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3107,8 +2314,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.EditableSummary = data
 		case "depositor":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("depositor"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3116,8 +2321,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Depositor = data
 		case "genes":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genes"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3125,8 +2328,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Genes = data
 		case "dbxrefs":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dbxrefs"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3134,8 +2335,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Dbxrefs = data
 		case "publications":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publications"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3143,8 +2342,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Publications = data
 		case "systematic_name":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("systematic_name"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3152,8 +2349,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.SystematicName = data
 		case "label":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("label"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3161,8 +2356,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Label = data
 		case "species":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("species"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3170,8 +2363,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Species = data
 		case "plasmid":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("plasmid"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3179,8 +2370,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Plasmid = data
 		case "parent":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parent"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3188,8 +2377,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Parent = data
 		case "names":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("names"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3197,8 +2384,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Names = data
 		case "in_stock":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in_stock"))
 			data, err := ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
@@ -3206,8 +2391,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.InStock = data
 		case "phenotypes":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phenotypes"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3215,8 +2398,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Phenotypes = data
 		case "genetic_modification":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genetic_modification"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3224,8 +2405,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.GeneticModification = data
 		case "mutagenesis_method":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mutagenesis_method"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3233,8 +2412,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.MutagenesisMethod = data
 		case "characteristics":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("characteristics"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3242,8 +2419,6 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			}
 			it.Characteristics = data
 		case "genotypes":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genotypes"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3256,10 +2431,10 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, obj interface{}) (models.StrainListFilter, error) {
+func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, obj any) (models.StrainListFilter, error) {
 	var it models.StrainListFilter
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
@@ -3271,8 +2446,6 @@ func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, 
 		}
 		switch k {
 		case "label":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("label"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3280,8 +2453,6 @@ func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, 
 			}
 			it.Label = data
 		case "summary":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3289,8 +2460,6 @@ func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, 
 			}
 			it.Summary = data
 		case "id":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
 			if err != nil {
@@ -3298,8 +2467,6 @@ func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, 
 			}
 			it.ID = data
 		case "in_stock":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in_stock"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
@@ -3307,8 +2474,6 @@ func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, 
 			}
 			it.InStock = data
 		case "strain_type":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("strain_type"))
 			data, err := ec.unmarshalNStrainType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainType(ctx, v)
 			if err != nil {
@@ -3321,10 +2486,10 @@ func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context, obj interface{}) (models.UpdatePlasmidInput, error) {
+func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context, obj any) (models.UpdatePlasmidInput, error) {
 	var it models.UpdatePlasmidInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
@@ -3336,8 +2501,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 		}
 		switch k {
 		case "updated_by":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updated_by"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3345,8 +2508,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.UpdatedBy = data
 		case "summary":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3354,8 +2515,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.Summary = data
 		case "editable_summary":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("editable_summary"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3363,8 +2522,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.EditableSummary = data
 		case "depositor":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("depositor"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3372,8 +2529,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.Depositor = data
 		case "genes":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genes"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3381,8 +2536,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.Genes = data
 		case "dbxrefs":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dbxrefs"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3390,8 +2543,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.Dbxrefs = data
 		case "publications":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publications"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3399,8 +2550,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.Publications = data
 		case "name":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3408,8 +2557,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.Name = data
 		case "image_map":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image_map"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3417,8 +2564,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.ImageMap = data
 		case "sequence":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sequence"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3426,8 +2571,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.Sequence = data
 		case "in_stock":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in_stock"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
@@ -3435,8 +2578,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.InStock = data
 		case "keywords":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keywords"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3444,8 +2585,6 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			}
 			it.Keywords = data
 		case "genbank_accession":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genbank_accession"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3458,10 +2597,10 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context, obj interface{}) (models.UpdateStrainInput, error) {
+func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context, obj any) (models.UpdateStrainInput, error) {
 	var it models.UpdateStrainInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
@@ -3473,8 +2612,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 		}
 		switch k {
 		case "updated_by":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updated_by"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -3482,8 +2619,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.UpdatedBy = data
 		case "summary":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3491,8 +2626,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Summary = data
 		case "editable_summary":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("editable_summary"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3500,8 +2633,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.EditableSummary = data
 		case "depositor":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("depositor"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3509,8 +2640,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Depositor = data
 		case "genes":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genes"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3518,8 +2647,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Genes = data
 		case "dbxrefs":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dbxrefs"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3527,8 +2654,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Dbxrefs = data
 		case "publications":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publications"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3536,8 +2661,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Publications = data
 		case "systematic_name":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("systematic_name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3545,8 +2668,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.SystematicName = data
 		case "label":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("label"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3554,8 +2675,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Label = data
 		case "species":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("species"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3563,8 +2682,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Species = data
 		case "plasmid":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("plasmid"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3572,8 +2689,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Plasmid = data
 		case "parent":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parent"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3581,8 +2696,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Parent = data
 		case "names":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("names"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3590,8 +2703,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Names = data
 		case "in_stock":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in_stock"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
@@ -3599,8 +2710,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.InStock = data
 		case "phenotypes":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phenotypes"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3608,8 +2717,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Phenotypes = data
 		case "genetic_modification":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genetic_modification"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3617,8 +2724,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.GeneticModification = data
 		case "mutagenesis_method":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mutagenesis_method"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -3626,8 +2731,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.MutagenesisMethod = data
 		case "characteristics":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("characteristics"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3635,8 +2738,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			}
 			it.Characteristics = data
 		case "genotypes":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genotypes"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -3684,27 +2785,38 @@ var deleteStockImplementors = []string{"DeleteStock"}
 
 func (ec *executionContext) _DeleteStock(ctx context.Context, sel ast.SelectionSet, obj *models.DeleteStock) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, deleteStockImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("DeleteStock")
 		case "success":
-
 			out.Values[i] = ec._DeleteStock_success(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -3712,43 +2824,46 @@ var phenotypeImplementors = []string{"Phenotype"}
 
 func (ec *executionContext) _Phenotype(ctx context.Context, sel ast.SelectionSet, obj *models.Phenotype) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, phenotypeImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Phenotype")
 		case "phenotype":
-
 			out.Values[i] = ec._Phenotype_phenotype(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "note":
-
 			out.Values[i] = ec._Phenotype_note(ctx, field, obj)
-
 		case "assay":
-
 			out.Values[i] = ec._Phenotype_assay(ctx, field, obj)
-
 		case "environment":
-
 			out.Values[i] = ec._Phenotype_environment(ctx, field, obj)
-
 		case "publication":
-
 			out.Values[i] = ec._Phenotype_publication(ctx, field, obj)
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -3756,37 +2871,32 @@ var plasmidImplementors = []string{"Plasmid", "Stock"}
 
 func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, obj *models.Plasmid) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, plasmidImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Plasmid")
 		case "id":
-
 			out.Values[i] = ec._Plasmid_id(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "created_at":
-
 			out.Values[i] = ec._Plasmid_created_at(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updated_at":
-
 			out.Values[i] = ec._Plasmid_updated_at(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "created_by":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3794,19 +2904,35 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 				}()
 				res = ec._Plasmid_created_by(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "updated_by":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3814,27 +2940,39 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 				}()
 				res = ec._Plasmid_updated_by(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "summary":
-
 			out.Values[i] = ec._Plasmid_summary(ctx, field, obj)
-
 		case "editable_summary":
-
 			out.Values[i] = ec._Plasmid_editable_summary(ctx, field, obj)
-
 		case "depositor":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3842,19 +2980,35 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 				}()
 				res = ec._Plasmid_depositor(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "genes":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3864,18 +3018,32 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "dbxrefs":
-
 			out.Values[i] = ec._Plasmid_dbxrefs(ctx, field, obj)
-
 		case "publications":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3885,29 +3053,39 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "name":
-
 			out.Values[i] = ec._Plasmid_name(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "image_map":
-
 			out.Values[i] = ec._Plasmid_image_map(ctx, field, obj)
-
 		case "sequence":
-
 			out.Values[i] = ec._Plasmid_sequence(ctx, field, obj)
-
 		case "in_stock":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3915,19 +3093,35 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 				}()
 				res = ec._Plasmid_in_stock(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "keywords":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3937,14 +3131,30 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "genbank_accession":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3954,18 +3164,46 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -3973,52 +3211,55 @@ var plasmidListWithCursorImplementors = []string{"PlasmidListWithCursor"}
 
 func (ec *executionContext) _PlasmidListWithCursor(ctx context.Context, sel ast.SelectionSet, obj *models.PlasmidListWithCursor) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, plasmidListWithCursorImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("PlasmidListWithCursor")
 		case "plasmids":
-
 			out.Values[i] = ec._PlasmidListWithCursor_plasmids(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "nextCursor":
-
 			out.Values[i] = ec._PlasmidListWithCursor_nextCursor(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "previousCursor":
-
 			out.Values[i] = ec._PlasmidListWithCursor_previousCursor(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "limit":
-
 			out.Values[i] = ec._PlasmidListWithCursor_limit(ctx, field, obj)
-
 		case "totalCount":
-
 			out.Values[i] = ec._PlasmidListWithCursor_totalCount(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -4026,37 +3267,32 @@ var strainImplementors = []string{"Strain", "Stock"}
 
 func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, obj *models.Strain) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, strainImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Strain")
 		case "id":
-
 			out.Values[i] = ec._Strain_id(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "created_at":
-
 			out.Values[i] = ec._Strain_created_at(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updated_at":
-
 			out.Values[i] = ec._Strain_updated_at(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "created_by":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4064,19 +3300,35 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				}()
 				res = ec._Strain_created_by(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "updated_by":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4084,27 +3336,39 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				}()
 				res = ec._Strain_updated_by(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "summary":
-
 			out.Values[i] = ec._Strain_summary(ctx, field, obj)
-
 		case "editable_summary":
-
 			out.Values[i] = ec._Strain_editable_summary(ctx, field, obj)
-
 		case "depositor":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4112,19 +3376,35 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				}()
 				res = ec._Strain_depositor(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "genes":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4134,18 +3414,32 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "dbxrefs":
-
 			out.Values[i] = ec._Strain_dbxrefs(ctx, field, obj)
-
 		case "publications":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4155,14 +3449,30 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "systematic_name":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4170,37 +3480,47 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				}()
 				res = ec._Strain_systematic_name(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "label":
-
 			out.Values[i] = ec._Strain_label(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "species":
-
 			out.Values[i] = ec._Strain_species(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "plasmid":
-
 			out.Values[i] = ec._Strain_plasmid(ctx, field, obj)
-
 		case "parent":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4210,14 +3530,30 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "names":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4227,14 +3563,30 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "in_stock":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4242,19 +3594,35 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				}()
 				res = ec._Strain_in_stock(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "phenotypes":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4264,14 +3632,30 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "genetic_modification":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4281,14 +3665,30 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "mutagenesis_method":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4298,14 +3698,30 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "characteristics":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4315,14 +3731,30 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "genotypes":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -4332,18 +3764,46 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -4351,52 +3811,55 @@ var strainListWithCursorImplementors = []string{"StrainListWithCursor"}
 
 func (ec *executionContext) _StrainListWithCursor(ctx context.Context, sel ast.SelectionSet, obj *models.StrainListWithCursor) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, strainListWithCursorImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("StrainListWithCursor")
 		case "strains":
-
 			out.Values[i] = ec._StrainListWithCursor_strains(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "nextCursor":
-
 			out.Values[i] = ec._StrainListWithCursor_nextCursor(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "previousCursor":
-
 			out.Values[i] = ec._StrainListWithCursor_previousCursor(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "limit":
-
 			out.Values[i] = ec._StrainListWithCursor_limit(ctx, field, obj)
-
 		case "totalCount":
-
 			out.Values[i] = ec._StrainListWithCursor_totalCount(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -4532,7 +3995,7 @@ func (ec *executionContext) marshalNStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphql
 	return ec._Strain(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNStrainType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainType(ctx context.Context, v interface{}) (models.StrainType, error) {
+func (ec *executionContext) unmarshalNStrainType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainType(ctx context.Context, v any) (models.StrainType, error) {
 	var res models.StrainType
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -4542,7 +4005,7 @@ func (ec *executionContext) marshalNStrainType2githubᚗcomᚋdictyBaseᚋgraphq
 	return v
 }
 
-func (ec *executionContext) unmarshalOCreatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreatePlasmidInput(ctx context.Context, v interface{}) (*models.CreatePlasmidInput, error) {
+func (ec *executionContext) unmarshalOCreatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreatePlasmidInput(ctx context.Context, v any) (*models.CreatePlasmidInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -4550,7 +4013,7 @@ func (ec *executionContext) unmarshalOCreatePlasmidInput2ᚖgithubᚗcomᚋdicty
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOCreateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateStrainInput(ctx context.Context, v interface{}) (*models.CreateStrainInput, error) {
+func (ec *executionContext) unmarshalOCreateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateStrainInput(ctx context.Context, v any) (*models.CreateStrainInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -4774,7 +4237,7 @@ func (ec *executionContext) marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphql
 	return ec._Strain(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOStrainListFilter2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListFilter(ctx context.Context, v interface{}) (*models.StrainListFilter, error) {
+func (ec *executionContext) unmarshalOStrainListFilter2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListFilter(ctx context.Context, v any) (*models.StrainListFilter, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -4789,7 +4252,7 @@ func (ec *executionContext) marshalOStrainListWithCursor2ᚖgithubᚗcomᚋdicty
 	return ec._StrainListWithCursor(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOUpdatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdatePlasmidInput(ctx context.Context, v interface{}) (*models.UpdatePlasmidInput, error) {
+func (ec *executionContext) unmarshalOUpdatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdatePlasmidInput(ctx context.Context, v any) (*models.UpdatePlasmidInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -4797,7 +4260,7 @@ func (ec *executionContext) unmarshalOUpdatePlasmidInput2ᚖgithubᚗcomᚋdicty
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOUpdateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainInput(ctx context.Context, v interface{}) (*models.UpdateStrainInput, error) {
+func (ec *executionContext) unmarshalOUpdateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainInput(ctx context.Context, v any) (*models.UpdateStrainInput, error) {
 	if v == nil {
 		return nil, nil
 	}

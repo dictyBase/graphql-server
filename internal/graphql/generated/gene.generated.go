@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
@@ -29,37 +30,22 @@ import (
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _Extension_id(ctx context.Context, field graphql.CollectedField, obj *models.Extension) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Extension_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Extension_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Extension_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Extension_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Extension",
 		Field:      field,
@@ -73,37 +59,22 @@ func (ec *executionContext) fieldContext_Extension_id(ctx context.Context, field
 }
 
 func (ec *executionContext) _Extension_db(ctx context.Context, field graphql.CollectedField, obj *models.Extension) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Extension_db(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Db, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Extension_db,
+		func(ctx context.Context) (any, error) {
+			return obj.Db, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Extension_db(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Extension_db(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Extension",
 		Field:      field,
@@ -117,37 +88,22 @@ func (ec *executionContext) fieldContext_Extension_db(ctx context.Context, field
 }
 
 func (ec *executionContext) _Extension_relation(ctx context.Context, field graphql.CollectedField, obj *models.Extension) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Extension_relation(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Relation, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Extension_relation,
+		func(ctx context.Context) (any, error) {
+			return obj.Relation, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Extension_relation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Extension_relation(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Extension",
 		Field:      field,
@@ -161,37 +117,22 @@ func (ec *executionContext) fieldContext_Extension_relation(ctx context.Context,
 }
 
 func (ec *executionContext) _Extension_name(ctx context.Context, field graphql.CollectedField, obj *models.Extension) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Extension_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Extension_name,
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Extension_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Extension_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Extension",
 		Field:      field,
@@ -205,37 +146,22 @@ func (ec *executionContext) fieldContext_Extension_name(ctx context.Context, fie
 }
 
 func (ec *executionContext) _GOAnnotation_id(ctx context.Context, field graphql.CollectedField, obj *models.GOAnnotation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GOAnnotation_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GOAnnotation_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_GOAnnotation_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GOAnnotation_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GOAnnotation",
 		Field:      field,
@@ -249,37 +175,22 @@ func (ec *executionContext) fieldContext_GOAnnotation_id(ctx context.Context, fi
 }
 
 func (ec *executionContext) _GOAnnotation_type(ctx context.Context, field graphql.CollectedField, obj *models.GOAnnotation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GOAnnotation_type(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Type, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GOAnnotation_type,
+		func(ctx context.Context) (any, error) {
+			return obj.Type, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_GOAnnotation_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GOAnnotation_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GOAnnotation",
 		Field:      field,
@@ -293,37 +204,22 @@ func (ec *executionContext) fieldContext_GOAnnotation_type(ctx context.Context, 
 }
 
 func (ec *executionContext) _GOAnnotation_date(ctx context.Context, field graphql.CollectedField, obj *models.GOAnnotation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GOAnnotation_date(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Date, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GOAnnotation_date,
+		func(ctx context.Context) (any, error) {
+			return obj.Date, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_GOAnnotation_date(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GOAnnotation_date(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GOAnnotation",
 		Field:      field,
@@ -337,37 +233,22 @@ func (ec *executionContext) fieldContext_GOAnnotation_date(ctx context.Context, 
 }
 
 func (ec *executionContext) _GOAnnotation_evidence_code(ctx context.Context, field graphql.CollectedField, obj *models.GOAnnotation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GOAnnotation_evidence_code(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EvidenceCode, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GOAnnotation_evidence_code,
+		func(ctx context.Context) (any, error) {
+			return obj.EvidenceCode, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_GOAnnotation_evidence_code(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GOAnnotation_evidence_code(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GOAnnotation",
 		Field:      field,
@@ -381,37 +262,22 @@ func (ec *executionContext) fieldContext_GOAnnotation_evidence_code(ctx context.
 }
 
 func (ec *executionContext) _GOAnnotation_go_term(ctx context.Context, field graphql.CollectedField, obj *models.GOAnnotation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GOAnnotation_go_term(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.GoTerm, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GOAnnotation_go_term,
+		func(ctx context.Context) (any, error) {
+			return obj.GoTerm, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_GOAnnotation_go_term(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GOAnnotation_go_term(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GOAnnotation",
 		Field:      field,
@@ -425,37 +291,22 @@ func (ec *executionContext) fieldContext_GOAnnotation_go_term(ctx context.Contex
 }
 
 func (ec *executionContext) _GOAnnotation_qualifier(ctx context.Context, field graphql.CollectedField, obj *models.GOAnnotation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GOAnnotation_qualifier(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Qualifier, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GOAnnotation_qualifier,
+		func(ctx context.Context) (any, error) {
+			return obj.Qualifier, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_GOAnnotation_qualifier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GOAnnotation_qualifier(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GOAnnotation",
 		Field:      field,
@@ -469,37 +320,22 @@ func (ec *executionContext) fieldContext_GOAnnotation_qualifier(ctx context.Cont
 }
 
 func (ec *executionContext) _GOAnnotation_publication(ctx context.Context, field graphql.CollectedField, obj *models.GOAnnotation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GOAnnotation_publication(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Publication, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GOAnnotation_publication,
+		func(ctx context.Context) (any, error) {
+			return obj.Publication, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_GOAnnotation_publication(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GOAnnotation_publication(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GOAnnotation",
 		Field:      field,
@@ -513,34 +349,22 @@ func (ec *executionContext) fieldContext_GOAnnotation_publication(ctx context.Co
 }
 
 func (ec *executionContext) _GOAnnotation_with(ctx context.Context, field graphql.CollectedField, obj *models.GOAnnotation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GOAnnotation_with(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.With, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.With)
-	fc.Result = res
-	return ec.marshalOWith2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐWithᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GOAnnotation_with,
+		func(ctx context.Context) (any, error) {
+			return obj.With, nil
+		},
+		nil,
+		ec.marshalOWith2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐWithᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_GOAnnotation_with(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GOAnnotation_with(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GOAnnotation",
 		Field:      field,
@@ -562,34 +386,22 @@ func (ec *executionContext) fieldContext_GOAnnotation_with(ctx context.Context, 
 }
 
 func (ec *executionContext) _GOAnnotation_extensions(ctx context.Context, field graphql.CollectedField, obj *models.GOAnnotation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GOAnnotation_extensions(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Extensions, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Extension)
-	fc.Result = res
-	return ec.marshalOExtension2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐExtensionᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GOAnnotation_extensions,
+		func(ctx context.Context) (any, error) {
+			return obj.Extensions, nil
+		},
+		nil,
+		ec.marshalOExtension2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐExtensionᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_GOAnnotation_extensions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GOAnnotation_extensions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GOAnnotation",
 		Field:      field,
@@ -613,37 +425,22 @@ func (ec *executionContext) fieldContext_GOAnnotation_extensions(ctx context.Con
 }
 
 func (ec *executionContext) _GOAnnotation_assigned_by(ctx context.Context, field graphql.CollectedField, obj *models.GOAnnotation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GOAnnotation_assigned_by(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AssignedBy, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GOAnnotation_assigned_by,
+		func(ctx context.Context) (any, error) {
+			return obj.AssignedBy, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_GOAnnotation_assigned_by(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GOAnnotation_assigned_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GOAnnotation",
 		Field:      field,
@@ -657,37 +454,22 @@ func (ec *executionContext) fieldContext_GOAnnotation_assigned_by(ctx context.Co
 }
 
 func (ec *executionContext) _Gene_id(ctx context.Context, field graphql.CollectedField, obj *models.Gene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Gene_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Gene_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Gene_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Gene_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Gene",
 		Field:      field,
@@ -701,37 +483,22 @@ func (ec *executionContext) fieldContext_Gene_id(ctx context.Context, field grap
 }
 
 func (ec *executionContext) _Gene_name(ctx context.Context, field graphql.CollectedField, obj *models.Gene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Gene_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Gene_name,
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Gene_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Gene_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Gene",
 		Field:      field,
@@ -745,37 +512,22 @@ func (ec *executionContext) fieldContext_Gene_name(ctx context.Context, field gr
 }
 
 func (ec *executionContext) _GeneGeneralInfo_id(ctx context.Context, field graphql.CollectedField, obj *models.GeneGeneralInfo) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GeneGeneralInfo_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GeneGeneralInfo_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_GeneGeneralInfo_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GeneGeneralInfo_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GeneGeneralInfo",
 		Field:      field,
@@ -789,37 +541,22 @@ func (ec *executionContext) fieldContext_GeneGeneralInfo_id(ctx context.Context,
 }
 
 func (ec *executionContext) _GeneGeneralInfo_name_description(ctx context.Context, field graphql.CollectedField, obj *models.GeneGeneralInfo) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GeneGeneralInfo_name_description(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.NameDescription, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*string)
-	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GeneGeneralInfo_name_description,
+		func(ctx context.Context) (any, error) {
+			return obj.NameDescription, nil
+		},
+		nil,
+		ec.marshalNString2ᚕᚖstring,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_GeneGeneralInfo_name_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GeneGeneralInfo_name_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GeneGeneralInfo",
 		Field:      field,
@@ -833,34 +570,22 @@ func (ec *executionContext) fieldContext_GeneGeneralInfo_name_description(ctx co
 }
 
 func (ec *executionContext) _GeneGeneralInfo_gene_product(ctx context.Context, field graphql.CollectedField, obj *models.GeneGeneralInfo) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GeneGeneralInfo_gene_product(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.GeneProduct, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GeneGeneralInfo_gene_product,
+		func(ctx context.Context) (any, error) {
+			return obj.GeneProduct, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_GeneGeneralInfo_gene_product(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GeneGeneralInfo_gene_product(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GeneGeneralInfo",
 		Field:      field,
@@ -874,37 +599,22 @@ func (ec *executionContext) fieldContext_GeneGeneralInfo_gene_product(ctx contex
 }
 
 func (ec *executionContext) _GeneGeneralInfo_synonyms(ctx context.Context, field graphql.CollectedField, obj *models.GeneGeneralInfo) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GeneGeneralInfo_synonyms(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Synonyms, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*string)
-	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GeneGeneralInfo_synonyms,
+		func(ctx context.Context) (any, error) {
+			return obj.Synonyms, nil
+		},
+		nil,
+		ec.marshalNString2ᚕᚖstring,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_GeneGeneralInfo_synonyms(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GeneGeneralInfo_synonyms(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GeneGeneralInfo",
 		Field:      field,
@@ -918,34 +628,22 @@ func (ec *executionContext) fieldContext_GeneGeneralInfo_synonyms(ctx context.Co
 }
 
 func (ec *executionContext) _GeneGeneralInfo_description(ctx context.Context, field graphql.CollectedField, obj *models.GeneGeneralInfo) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GeneGeneralInfo_description(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GeneGeneralInfo_description,
+		func(ctx context.Context) (any, error) {
+			return obj.Description, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_GeneGeneralInfo_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GeneGeneralInfo_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GeneGeneralInfo",
 		Field:      field,
@@ -959,37 +657,22 @@ func (ec *executionContext) fieldContext_GeneGeneralInfo_description(ctx context
 }
 
 func (ec *executionContext) _With_id(ctx context.Context, field graphql.CollectedField, obj *models.With) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_With_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_With_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_With_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_With_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "With",
 		Field:      field,
@@ -1003,37 +686,22 @@ func (ec *executionContext) fieldContext_With_id(ctx context.Context, field grap
 }
 
 func (ec *executionContext) _With_db(ctx context.Context, field graphql.CollectedField, obj *models.With) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_With_db(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Db, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_With_db,
+		func(ctx context.Context) (any, error) {
+			return obj.Db, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_With_db(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_With_db(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "With",
 		Field:      field,
@@ -1047,37 +715,22 @@ func (ec *executionContext) fieldContext_With_db(ctx context.Context, field grap
 }
 
 func (ec *executionContext) _With_name(ctx context.Context, field graphql.CollectedField, obj *models.With) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_With_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_With_name,
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_With_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_With_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "With",
 		Field:      field,
@@ -1106,48 +759,53 @@ var extensionImplementors = []string{"Extension"}
 
 func (ec *executionContext) _Extension(ctx context.Context, sel ast.SelectionSet, obj *models.Extension) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, extensionImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Extension")
 		case "id":
-
 			out.Values[i] = ec._Extension_id(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "db":
-
 			out.Values[i] = ec._Extension_db(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "relation":
-
 			out.Values[i] = ec._Extension_relation(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "name":
-
 			out.Values[i] = ec._Extension_name(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -1155,84 +813,77 @@ var gOAnnotationImplementors = []string{"GOAnnotation"}
 
 func (ec *executionContext) _GOAnnotation(ctx context.Context, sel ast.SelectionSet, obj *models.GOAnnotation) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, gOAnnotationImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("GOAnnotation")
 		case "id":
-
 			out.Values[i] = ec._GOAnnotation_id(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "type":
-
 			out.Values[i] = ec._GOAnnotation_type(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "date":
-
 			out.Values[i] = ec._GOAnnotation_date(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "evidence_code":
-
 			out.Values[i] = ec._GOAnnotation_evidence_code(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "go_term":
-
 			out.Values[i] = ec._GOAnnotation_go_term(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "qualifier":
-
 			out.Values[i] = ec._GOAnnotation_qualifier(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "publication":
-
 			out.Values[i] = ec._GOAnnotation_publication(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "with":
-
 			out.Values[i] = ec._GOAnnotation_with(ctx, field, obj)
-
 		case "extensions":
-
 			out.Values[i] = ec._GOAnnotation_extensions(ctx, field, obj)
-
 		case "assigned_by":
-
 			out.Values[i] = ec._GOAnnotation_assigned_by(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -1240,34 +891,43 @@ var geneImplementors = []string{"Gene"}
 
 func (ec *executionContext) _Gene(ctx context.Context, sel ast.SelectionSet, obj *models.Gene) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, geneImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Gene")
 		case "id":
-
 			out.Values[i] = ec._Gene_id(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "name":
-
 			out.Values[i] = ec._Gene_name(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -1275,49 +935,52 @@ var geneGeneralInfoImplementors = []string{"GeneGeneralInfo"}
 
 func (ec *executionContext) _GeneGeneralInfo(ctx context.Context, sel ast.SelectionSet, obj *models.GeneGeneralInfo) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, geneGeneralInfoImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("GeneGeneralInfo")
 		case "id":
-
 			out.Values[i] = ec._GeneGeneralInfo_id(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "name_description":
-
 			out.Values[i] = ec._GeneGeneralInfo_name_description(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "gene_product":
-
 			out.Values[i] = ec._GeneGeneralInfo_gene_product(ctx, field, obj)
-
 		case "synonyms":
-
 			out.Values[i] = ec._GeneGeneralInfo_synonyms(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "description":
-
 			out.Values[i] = ec._GeneGeneralInfo_description(ctx, field, obj)
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -1325,41 +988,48 @@ var withImplementors = []string{"With"}
 
 func (ec *executionContext) _With(ctx context.Context, sel ast.SelectionSet, obj *models.With) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, withImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("With")
 		case "id":
-
 			out.Values[i] = ec._With_id(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "db":
-
 			out.Values[i] = ec._With_db(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "name":
-
 			out.Values[i] = ec._With_name(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 

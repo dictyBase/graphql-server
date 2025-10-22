@@ -34,37 +34,22 @@ type OrganismResolver interface {
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _Citation_authors(ctx context.Context, field graphql.CollectedField, obj *models.Citation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Citation_authors(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Authors, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Citation_authors,
+		func(ctx context.Context) (any, error) {
+			return obj.Authors, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Citation_authors(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Citation_authors(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Citation",
 		Field:      field,
@@ -78,37 +63,22 @@ func (ec *executionContext) fieldContext_Citation_authors(ctx context.Context, f
 }
 
 func (ec *executionContext) _Citation_title(ctx context.Context, field graphql.CollectedField, obj *models.Citation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Citation_title(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Citation_title,
+		func(ctx context.Context) (any, error) {
+			return obj.Title, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Citation_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Citation_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Citation",
 		Field:      field,
@@ -122,37 +92,22 @@ func (ec *executionContext) fieldContext_Citation_title(ctx context.Context, fie
 }
 
 func (ec *executionContext) _Citation_journal(ctx context.Context, field graphql.CollectedField, obj *models.Citation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Citation_journal(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Journal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Citation_journal,
+		func(ctx context.Context) (any, error) {
+			return obj.Journal, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Citation_journal(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Citation_journal(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Citation",
 		Field:      field,
@@ -166,37 +121,22 @@ func (ec *executionContext) fieldContext_Citation_journal(ctx context.Context, f
 }
 
 func (ec *executionContext) _Citation_pubmed_id(ctx context.Context, field graphql.CollectedField, obj *models.Citation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Citation_pubmed_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PubmedID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Citation_pubmed_id,
+		func(ctx context.Context) (any, error) {
+			return obj.PubmedID, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Citation_pubmed_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Citation_pubmed_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Citation",
 		Field:      field,
@@ -210,37 +150,22 @@ func (ec *executionContext) fieldContext_Citation_pubmed_id(ctx context.Context,
 }
 
 func (ec *executionContext) _Download_title(ctx context.Context, field graphql.CollectedField, obj *models.Download) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Download_title(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Download_title,
+		func(ctx context.Context) (any, error) {
+			return obj.Title, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Download_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Download_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Download",
 		Field:      field,
@@ -254,37 +179,22 @@ func (ec *executionContext) fieldContext_Download_title(ctx context.Context, fie
 }
 
 func (ec *executionContext) _Download_items(ctx context.Context, field graphql.CollectedField, obj *models.Download) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Download_items(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Items, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*models.DownloadItem)
-	fc.Result = res
-	return ec.marshalNDownloadItem2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDownloadItemᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Download_items,
+		func(ctx context.Context) (any, error) {
+			return obj.Items, nil
+		},
+		nil,
+		ec.marshalNDownloadItem2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDownloadItemᚄ,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Download_items(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Download_items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Download",
 		Field:      field,
@@ -304,37 +214,22 @@ func (ec *executionContext) fieldContext_Download_items(ctx context.Context, fie
 }
 
 func (ec *executionContext) _DownloadItem_title(ctx context.Context, field graphql.CollectedField, obj *models.DownloadItem) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_DownloadItem_title(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DownloadItem_title,
+		func(ctx context.Context) (any, error) {
+			return obj.Title, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_DownloadItem_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DownloadItem_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DownloadItem",
 		Field:      field,
@@ -348,37 +243,22 @@ func (ec *executionContext) fieldContext_DownloadItem_title(ctx context.Context,
 }
 
 func (ec *executionContext) _DownloadItem_url(ctx context.Context, field graphql.CollectedField, obj *models.DownloadItem) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_DownloadItem_url(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.URL, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DownloadItem_url,
+		func(ctx context.Context) (any, error) {
+			return obj.URL, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_DownloadItem_url(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DownloadItem_url(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DownloadItem",
 		Field:      field,
@@ -392,37 +272,22 @@ func (ec *executionContext) fieldContext_DownloadItem_url(ctx context.Context, f
 }
 
 func (ec *executionContext) _Organism_taxon_id(ctx context.Context, field graphql.CollectedField, obj *models.Organism) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Organism_taxon_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TaxonID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Organism_taxon_id,
+		func(ctx context.Context) (any, error) {
+			return obj.TaxonID, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Organism_taxon_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Organism_taxon_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Organism",
 		Field:      field,
@@ -436,37 +301,22 @@ func (ec *executionContext) fieldContext_Organism_taxon_id(ctx context.Context, 
 }
 
 func (ec *executionContext) _Organism_scientific_name(ctx context.Context, field graphql.CollectedField, obj *models.Organism) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Organism_scientific_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ScientificName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Organism_scientific_name,
+		func(ctx context.Context) (any, error) {
+			return obj.ScientificName, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Organism_scientific_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Organism_scientific_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Organism",
 		Field:      field,
@@ -480,37 +330,22 @@ func (ec *executionContext) fieldContext_Organism_scientific_name(ctx context.Co
 }
 
 func (ec *executionContext) _Organism_citations(ctx context.Context, field graphql.CollectedField, obj *models.Organism) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Organism_citations(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Citations, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Citation)
-	fc.Result = res
-	return ec.marshalNCitation2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCitationᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Organism_citations,
+		func(ctx context.Context) (any, error) {
+			return obj.Citations, nil
+		},
+		nil,
+		ec.marshalNCitation2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCitationᚄ,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Organism_citations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Organism_citations(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Organism",
 		Field:      field,
@@ -534,37 +369,22 @@ func (ec *executionContext) fieldContext_Organism_citations(ctx context.Context,
 }
 
 func (ec *executionContext) _Organism_downloads(ctx context.Context, field graphql.CollectedField, obj *models.Organism) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Organism_downloads(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Organism().Downloads(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Download)
-	fc.Result = res
-	return ec.marshalNDownload2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDownloadᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Organism_downloads,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Organism().Downloads(ctx, obj)
+		},
+		nil,
+		ec.marshalNDownload2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDownloadᚄ,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Organism_downloads(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Organism_downloads(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Organism",
 		Field:      field,
@@ -599,48 +419,53 @@ var citationImplementors = []string{"Citation"}
 
 func (ec *executionContext) _Citation(ctx context.Context, sel ast.SelectionSet, obj *models.Citation) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, citationImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Citation")
 		case "authors":
-
 			out.Values[i] = ec._Citation_authors(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "title":
-
 			out.Values[i] = ec._Citation_title(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "journal":
-
 			out.Values[i] = ec._Citation_journal(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "pubmed_id":
-
 			out.Values[i] = ec._Citation_pubmed_id(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -648,34 +473,43 @@ var downloadImplementors = []string{"Download"}
 
 func (ec *executionContext) _Download(ctx context.Context, sel ast.SelectionSet, obj *models.Download) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, downloadImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Download")
 		case "title":
-
 			out.Values[i] = ec._Download_title(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "items":
-
 			out.Values[i] = ec._Download_items(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -683,34 +517,43 @@ var downloadItemImplementors = []string{"DownloadItem"}
 
 func (ec *executionContext) _DownloadItem(ctx context.Context, sel ast.SelectionSet, obj *models.DownloadItem) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, downloadItemImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("DownloadItem")
 		case "title":
-
 			out.Values[i] = ec._DownloadItem_title(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "url":
-
 			out.Values[i] = ec._DownloadItem_url(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -718,37 +561,32 @@ var organismImplementors = []string{"Organism"}
 
 func (ec *executionContext) _Organism(ctx context.Context, sel ast.SelectionSet, obj *models.Organism) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, organismImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Organism")
 		case "taxon_id":
-
 			out.Values[i] = ec._Organism_taxon_id(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "scientific_name":
-
 			out.Values[i] = ec._Organism_scientific_name(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "citations":
-
 			out.Values[i] = ec._Organism_citations(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "downloads":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -756,23 +594,51 @@ func (ec *executionContext) _Organism(ctx context.Context, sel ast.SelectionSet,
 				}()
 				res = ec._Organism_downloads(ctx, field, obj)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 

@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"strconv"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
@@ -27,37 +28,22 @@ import (
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _ImageFile_url(ctx context.Context, field graphql.CollectedField, obj *models.ImageFile) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ImageFile_url(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.URL, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ImageFile_url,
+		func(ctx context.Context) (any, error) {
+			return obj.URL, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_ImageFile_url(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageFile_url(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageFile",
 		Field:      field,
@@ -74,10 +60,10 @@ func (ec *executionContext) fieldContext_ImageFile_url(ctx context.Context, fiel
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputFileToUpload(ctx context.Context, obj interface{}) (models.FileToUpload, error) {
+func (ec *executionContext) unmarshalInputFileToUpload(ctx context.Context, obj any) (models.FileToUpload, error) {
 	var it models.FileToUpload
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
@@ -89,8 +75,6 @@ func (ec *executionContext) unmarshalInputFileToUpload(ctx context.Context, obj 
 		}
 		switch k {
 		case "id":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 			data, err := ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
@@ -98,8 +82,6 @@ func (ec *executionContext) unmarshalInputFileToUpload(ctx context.Context, obj 
 			}
 			it.ID = data
 		case "file":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
 			data, err := ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
 			if err != nil {
@@ -124,27 +106,38 @@ var imageFileImplementors = []string{"ImageFile"}
 
 func (ec *executionContext) _ImageFile(ctx context.Context, sel ast.SelectionSet, obj *models.ImageFile) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, imageFileImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ImageFile")
 		case "url":
-
 			out.Values[i] = ec._ImageFile_url(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -166,12 +159,13 @@ func (ec *executionContext) marshalNImageFile2ᚖgithubᚗcomᚋdictyBaseᚋgrap
 	return ec._ImageFile(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (graphql.Upload, error) {
+func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v any) (graphql.Upload, error) {
 	res, err := graphql.UnmarshalUpload(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v graphql.Upload) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalUpload(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {

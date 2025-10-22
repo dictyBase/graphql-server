@@ -9,7 +9,6 @@ import (
 	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/dictyBase/go-genproto/dictybaseapis/content"
 	"github.com/dictyBase/go-genproto/dictybaseapis/order"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
@@ -54,517 +53,357 @@ type QueryResolver interface {
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["name"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "name", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["name"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_contentBySlug_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_contentBySlug_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["slug"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slug"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "slug", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["slug"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_content_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_content_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_geneGeneralInformation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_geneGeneralInformation_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["gene"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gene"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "gene", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["gene"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_geneOntologyAnnotation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_geneOntologyAnnotation_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["gene"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gene"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "gene", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["gene"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listContentByNamespace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listContentByNamespace_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["namespace"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "namespace", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["namespace"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listOrders_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listOrders_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["cursor"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cursor"))
-		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "cursor", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
 	}
 	args["cursor"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
 	}
 	args["limit"] = arg1
-	var arg2 *string
-	if tmp, ok := rawArgs["filter"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "filter", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
 	}
 	args["filter"] = arg2
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listPlasmidsWithAnnotation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listPlasmidsWithAnnotation_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["cursor"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cursor"))
-		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "cursor", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
 	}
 	args["cursor"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
 	}
 	args["limit"] = arg1
-	var arg2 string
-	if tmp, ok := rawArgs["type"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-		arg2, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "type", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["type"] = arg2
-	var arg3 string
-	if tmp, ok := rawArgs["annotation"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("annotation"))
-		arg3, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "annotation", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["annotation"] = arg3
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listPlasmids_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listPlasmids_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["cursor"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cursor"))
-		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "cursor", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
 	}
 	args["cursor"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
 	}
 	args["limit"] = arg1
-	var arg2 *string
-	if tmp, ok := rawArgs["filter"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "filter", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
 	}
 	args["filter"] = arg2
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listPublicationsWithGene_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listPublicationsWithGene_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["gene"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gene"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "gene", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["gene"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listRecentPlasmids_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listRecentPlasmids_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalNInt2int)
+	if err != nil {
+		return nil, err
 	}
 	args["limit"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listRecentPublications_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listRecentPublications_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalNInt2int)
+	if err != nil {
+		return nil, err
 	}
 	args["limit"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listRecentStrains_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listRecentStrains_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalNInt2int)
+	if err != nil {
+		return nil, err
 	}
 	args["limit"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listStrainsWithAnnotation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listStrainsWithAnnotation_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["cursor"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cursor"))
-		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "cursor", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
 	}
 	args["cursor"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
 	}
 	args["limit"] = arg1
-	var arg2 string
-	if tmp, ok := rawArgs["type"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-		arg2, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "type", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["type"] = arg2
-	var arg3 string
-	if tmp, ok := rawArgs["annotation"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("annotation"))
-		arg3, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "annotation", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["annotation"] = arg3
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listStrainsWithGene_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listStrainsWithGene_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["gene"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gene"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "gene", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["gene"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listStrains_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listStrains_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["cursor"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cursor"))
-		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "cursor", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
 	}
 	args["cursor"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
 	}
 	args["limit"] = arg1
-	var arg2 *models.StrainListFilter
-	if tmp, ok := rawArgs["filter"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg2, err = ec.unmarshalOStrainListFilter2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListFilter(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "filter", ec.unmarshalOStrainListFilter2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListFilter)
+	if err != nil {
+		return nil, err
 	}
 	args["filter"] = arg2
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listUsers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listUsers_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["pagenum"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagenum"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "pagenum", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["pagenum"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["pagesize"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagesize"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "pagesize", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["pagesize"] = arg1
-	var arg2 string
-	if tmp, ok := rawArgs["filter"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg2, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "filter", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["filter"] = arg2
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_order_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_order_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_organism_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_organism_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["taxon_id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taxon_id"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "taxon_id", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["taxon_id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_permission_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_permission_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_plasmid_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_plasmid_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_publication_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_publication_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_role_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_role_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_strain_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_strain_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_userByEmail_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_userByEmail_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["email"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "email", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
 	}
 	args["email"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
@@ -579,31 +418,20 @@ func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs m
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _Query_geneOntologyAnnotation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_geneOntologyAnnotation(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GeneOntologyAnnotation(rctx, fc.Args["gene"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.GOAnnotation)
-	fc.Result = res
-	return ec.marshalOGOAnnotation2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGOAnnotationᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_geneOntologyAnnotation,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().GeneOntologyAnnotation(ctx, fc.Args["gene"].(string))
+		},
+		nil,
+		ec.marshalOGOAnnotation2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGOAnnotationᚄ,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_geneOntologyAnnotation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -647,37 +475,26 @@ func (ec *executionContext) fieldContext_Query_geneOntologyAnnotation(ctx contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_geneOntologyAnnotation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_geneGeneralInformation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_geneGeneralInformation(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GeneGeneralInformation(rctx, fc.Args["gene"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.GeneGeneralInfo)
-	fc.Result = res
-	return ec.marshalOGeneGeneralInfo2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneGeneralInfo(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_geneGeneralInformation,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().GeneGeneralInformation(ctx, fc.Args["gene"].(string))
+		},
+		nil,
+		ec.marshalOGeneGeneralInfo2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneGeneralInfo,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_geneGeneralInformation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -711,37 +528,26 @@ func (ec *executionContext) fieldContext_Query_geneGeneralInformation(ctx contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_geneGeneralInformation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_content(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_content(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Content(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*content.Content)
-	fc.Result = res
-	return ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_content,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().Content(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_content(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -783,37 +589,26 @@ func (ec *executionContext) fieldContext_Query_content(ctx context.Context, fiel
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_content_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_contentBySlug(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_contentBySlug(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ContentBySlug(rctx, fc.Args["slug"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*content.Content)
-	fc.Result = res
-	return ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_contentBySlug,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ContentBySlug(ctx, fc.Args["slug"].(string))
+		},
+		nil,
+		ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_contentBySlug(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -855,40 +650,26 @@ func (ec *executionContext) fieldContext_Query_contentBySlug(ctx context.Context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_contentBySlug_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listContentByNamespace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listContentByNamespace(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListContentByNamespace(rctx, fc.Args["namespace"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*content.Content)
-	fc.Result = res
-	return ec.marshalNContent2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContentᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listContentByNamespace,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListContentByNamespace(ctx, fc.Args["namespace"].(string))
+		},
+		nil,
+		ec.marshalNContent2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContentᚄ,
+		true,
+		true,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listContentByNamespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -930,37 +711,26 @@ func (ec *executionContext) fieldContext_Query_listContentByNamespace(ctx contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listContentByNamespace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_organism(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_organism(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Organism(rctx, fc.Args["taxon_id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.Organism)
-	fc.Result = res
-	return ec.marshalOOrganism2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐOrganism(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_organism,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().Organism(ctx, fc.Args["taxon_id"].(string))
+		},
+		nil,
+		ec.marshalOOrganism2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐOrganism,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_organism(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -992,40 +762,28 @@ func (ec *executionContext) fieldContext_Query_organism(ctx context.Context, fie
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_organism_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listOrganisms(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listOrganisms(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListOrganisms(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Organism)
-	fc.Result = res
-	return ec.marshalOOrganism2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐOrganismᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listOrganisms,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().ListOrganisms(ctx)
+		},
+		nil,
+		ec.marshalOOrganism2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐOrganismᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Query_listOrganisms(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_listOrganisms(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -1049,31 +807,20 @@ func (ec *executionContext) fieldContext_Query_listOrganisms(ctx context.Context
 }
 
 func (ec *executionContext) _Query_order(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_order(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Order(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*order.Order)
-	fc.Result = res
-	return ec.marshalOOrder2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrder(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_order,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().Order(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalOOrder2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrder,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_order(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1123,37 +870,26 @@ func (ec *executionContext) fieldContext_Query_order(ctx context.Context, field 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_order_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listOrders(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listOrders(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListOrders(rctx, fc.Args["cursor"].(*int), fc.Args["limit"].(*int), fc.Args["filter"].(*string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.OrderListWithCursor)
-	fc.Result = res
-	return ec.marshalOOrderListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐOrderListWithCursor(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listOrders,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListOrders(ctx, fc.Args["cursor"].(*int), fc.Args["limit"].(*int), fc.Args["filter"].(*string))
+		},
+		nil,
+		ec.marshalOOrderListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐOrderListWithCursor,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listOrders(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1187,37 +923,26 @@ func (ec *executionContext) fieldContext_Query_listOrders(ctx context.Context, f
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listOrders_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_publication(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_publication(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Publication(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.Publication)
-	fc.Result = res
-	return ec.marshalOPublication2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublication(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_publication,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().Publication(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalOPublication2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublication,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_publication(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1269,37 +994,26 @@ func (ec *executionContext) fieldContext_Query_publication(ctx context.Context, 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_publication_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listRecentPublications(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listRecentPublications(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListRecentPublications(rctx, fc.Args["limit"].(int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Publication)
-	fc.Result = res
-	return ec.marshalOPublication2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listRecentPublications,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListRecentPublications(ctx, fc.Args["limit"].(int))
+		},
+		nil,
+		ec.marshalOPublication2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationᚄ,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listRecentPublications(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1351,40 +1065,26 @@ func (ec *executionContext) fieldContext_Query_listRecentPublications(ctx contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listRecentPublications_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listPublicationsWithGene(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listPublicationsWithGene(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListPublicationsWithGene(rctx, fc.Args["gene"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*models.PublicationWithGene)
-	fc.Result = res
-	return ec.marshalNPublicationWithGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationWithGeneᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listPublicationsWithGene,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListPublicationsWithGene(ctx, fc.Args["gene"].(string))
+		},
+		nil,
+		ec.marshalNPublicationWithGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationWithGeneᚄ,
+		true,
+		true,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listPublicationsWithGene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1438,37 +1138,26 @@ func (ec *executionContext) fieldContext_Query_listPublicationsWithGene(ctx cont
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listPublicationsWithGene_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_plasmid(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_plasmid(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Plasmid(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.Plasmid)
-	fc.Result = res
-	return ec.marshalOPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_plasmid,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().Plasmid(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalOPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_plasmid(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1526,37 +1215,26 @@ func (ec *executionContext) fieldContext_Query_plasmid(ctx context.Context, fiel
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_plasmid_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_strain(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_strain(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Strain(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.Strain)
-	fc.Result = res
-	return ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_strain,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().Strain(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_strain(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1626,37 +1304,26 @@ func (ec *executionContext) fieldContext_Query_strain(ctx context.Context, field
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_strain_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listStrainsWithGene(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listStrainsWithGene(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListStrainsWithGene(rctx, fc.Args["gene"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Strain)
-	fc.Result = res
-	return ec.marshalOStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listStrainsWithGene,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListStrainsWithGene(ctx, fc.Args["gene"].(string))
+		},
+		nil,
+		ec.marshalOStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listStrainsWithGene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1726,37 +1393,26 @@ func (ec *executionContext) fieldContext_Query_listStrainsWithGene(ctx context.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listStrainsWithGene_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listStrains(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listStrains(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListStrains(rctx, fc.Args["cursor"].(*int), fc.Args["limit"].(*int), fc.Args["filter"].(*models.StrainListFilter))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.StrainListWithCursor)
-	fc.Result = res
-	return ec.marshalOStrainListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListWithCursor(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listStrains,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListStrains(ctx, fc.Args["cursor"].(*int), fc.Args["limit"].(*int), fc.Args["filter"].(*models.StrainListFilter))
+		},
+		nil,
+		ec.marshalOStrainListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListWithCursor,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listStrains(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1790,37 +1446,26 @@ func (ec *executionContext) fieldContext_Query_listStrains(ctx context.Context, 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listStrains_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listPlasmids(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listPlasmids(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListPlasmids(rctx, fc.Args["cursor"].(*int), fc.Args["limit"].(*int), fc.Args["filter"].(*string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.PlasmidListWithCursor)
-	fc.Result = res
-	return ec.marshalOPlasmidListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidListWithCursor(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listPlasmids,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListPlasmids(ctx, fc.Args["cursor"].(*int), fc.Args["limit"].(*int), fc.Args["filter"].(*string))
+		},
+		nil,
+		ec.marshalOPlasmidListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidListWithCursor,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listPlasmids(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1854,37 +1499,26 @@ func (ec *executionContext) fieldContext_Query_listPlasmids(ctx context.Context,
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listPlasmids_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listStrainsWithAnnotation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listStrainsWithAnnotation(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListStrainsWithAnnotation(rctx, fc.Args["cursor"].(*int), fc.Args["limit"].(*int), fc.Args["type"].(string), fc.Args["annotation"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.StrainListWithCursor)
-	fc.Result = res
-	return ec.marshalOStrainListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListWithCursor(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listStrainsWithAnnotation,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListStrainsWithAnnotation(ctx, fc.Args["cursor"].(*int), fc.Args["limit"].(*int), fc.Args["type"].(string), fc.Args["annotation"].(string))
+		},
+		nil,
+		ec.marshalOStrainListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainListWithCursor,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listStrainsWithAnnotation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1918,37 +1552,26 @@ func (ec *executionContext) fieldContext_Query_listStrainsWithAnnotation(ctx con
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listStrainsWithAnnotation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listPlasmidsWithAnnotation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listPlasmidsWithAnnotation(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListPlasmidsWithAnnotation(rctx, fc.Args["cursor"].(*int), fc.Args["limit"].(*int), fc.Args["type"].(string), fc.Args["annotation"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.PlasmidListWithCursor)
-	fc.Result = res
-	return ec.marshalOPlasmidListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidListWithCursor(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listPlasmidsWithAnnotation,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListPlasmidsWithAnnotation(ctx, fc.Args["cursor"].(*int), fc.Args["limit"].(*int), fc.Args["type"].(string), fc.Args["annotation"].(string))
+		},
+		nil,
+		ec.marshalOPlasmidListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidListWithCursor,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listPlasmidsWithAnnotation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1982,37 +1605,26 @@ func (ec *executionContext) fieldContext_Query_listPlasmidsWithAnnotation(ctx co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listPlasmidsWithAnnotation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listRecentPlasmids(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listRecentPlasmids(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListRecentPlasmids(rctx, fc.Args["limit"].(int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Plasmid)
-	fc.Result = res
-	return ec.marshalOPlasmid2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listRecentPlasmids,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListRecentPlasmids(ctx, fc.Args["limit"].(int))
+		},
+		nil,
+		ec.marshalOPlasmid2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidᚄ,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listRecentPlasmids(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2070,37 +1682,26 @@ func (ec *executionContext) fieldContext_Query_listRecentPlasmids(ctx context.Co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listRecentPlasmids_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listRecentStrains(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listRecentStrains(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListRecentStrains(rctx, fc.Args["limit"].(int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Strain)
-	fc.Result = res
-	return ec.marshalOStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listRecentStrains,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListRecentStrains(ctx, fc.Args["limit"].(int))
+		},
+		nil,
+		ec.marshalOStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listRecentStrains(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2170,37 +1771,26 @@ func (ec *executionContext) fieldContext_Query_listRecentStrains(ctx context.Con
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listRecentStrains_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_user(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().User(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_user,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().User(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2258,37 +1848,26 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_user_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_userByEmail(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_userByEmail(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().UserByEmail(rctx, fc.Args["email"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_userByEmail,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().UserByEmail(ctx, fc.Args["email"].(string))
+		},
+		nil,
+		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_userByEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2346,37 +1925,26 @@ func (ec *executionContext) fieldContext_Query_userByEmail(ctx context.Context, 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_userByEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listUsers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listUsers(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListUsers(rctx, fc.Args["pagenum"].(string), fc.Args["pagesize"].(string), fc.Args["filter"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.UserList)
-	fc.Result = res
-	return ec.marshalOUserList2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUserList(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listUsers,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ListUsers(ctx, fc.Args["pagenum"].(string), fc.Args["pagesize"].(string), fc.Args["filter"].(string))
+		},
+		nil,
+		ec.marshalOUserList2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUserList,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_listUsers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2408,37 +1976,26 @@ func (ec *executionContext) fieldContext_Query_listUsers(ctx context.Context, fi
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listUsers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_role(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_role(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Role(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.Role)
-	fc.Result = res
-	return ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_role,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().Role(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_role(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2474,40 +2031,28 @@ func (ec *executionContext) fieldContext_Query_role(ctx context.Context, field g
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_role_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listRoles(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listRoles(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListRoles(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*user.Role)
-	fc.Result = res
-	return ec.marshalORole2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRoleᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listRoles,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().ListRoles(ctx)
+		},
+		nil,
+		ec.marshalORole2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRoleᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Query_listRoles(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_listRoles(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -2535,31 +2080,20 @@ func (ec *executionContext) fieldContext_Query_listRoles(ctx context.Context, fi
 }
 
 func (ec *executionContext) _Query_permission(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_permission(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Permission(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*user.Permission)
-	fc.Result = res
-	return ec.marshalOPermission2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermission(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_permission,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().Permission(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		ec.marshalOPermission2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermission,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query_permission(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2595,40 +2129,28 @@ func (ec *executionContext) fieldContext_Query_permission(ctx context.Context, f
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_permission_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query_listPermissions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listPermissions(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListPermissions(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*user.Permission)
-	fc.Result = res
-	return ec.marshalOPermission2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermissionᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_listPermissions,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().ListPermissions(ctx)
+		},
+		nil,
+		ec.marshalOPermission2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermissionᚄ,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Query_listPermissions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_listPermissions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -2656,31 +2178,20 @@ func (ec *executionContext) fieldContext_Query_listPermissions(ctx context.Conte
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query___type(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.introspectType(fc.Args["name"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*introspection.Type)
-	fc.Result = res
-	return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query___type,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.introspectType(fc.Args["name"].(string))
+		},
+		nil,
+		ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2697,6 +2208,8 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -2709,8 +2222,8 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -2724,40 +2237,28 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query___type_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return
+		return fc, err
 	}
 	return fc, nil
 }
 
 func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query___schema(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.introspectSchema()
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*introspection.Schema)
-	fc.Result = res
-	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query___schema,
+		func(ctx context.Context) (any, error) {
+			return ec.introspectSchema()
+		},
+		nil,
+		ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -2805,7 +2306,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	})
 
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
 			Object: field.Name,
@@ -2818,7 +2319,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		case "geneOntologyAnnotation":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -2829,16 +2330,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "geneGeneralInformation":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -2849,16 +2349,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "content":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -2869,16 +2368,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "contentBySlug":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -2889,16 +2387,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listContentByNamespace":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -2906,22 +2403,21 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_listContentByNamespace(ctx, field)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "organism":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -2932,16 +2428,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listOrganisms":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -2952,16 +2447,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "order":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -2972,16 +2466,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listOrders":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -2992,16 +2485,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "publication":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3012,16 +2504,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listRecentPublications":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3032,16 +2523,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listPublicationsWithGene":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3049,22 +2539,21 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_listPublicationsWithGene(ctx, field)
 				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
+					atomic.AddUint32(&fs.Invalids, 1)
 				}
 				return res
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "plasmid":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3075,16 +2564,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "strain":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3095,16 +2583,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listStrainsWithGene":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3115,16 +2602,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listStrains":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3135,16 +2621,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listPlasmids":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3155,16 +2640,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listStrainsWithAnnotation":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3175,16 +2659,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listPlasmidsWithAnnotation":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3195,16 +2678,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listRecentPlasmids":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3215,16 +2697,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listRecentStrains":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3235,16 +2716,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "user":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3255,16 +2735,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "userByEmail":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3275,16 +2754,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listUsers":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3295,16 +2773,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "role":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3315,16 +2792,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listRoles":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3335,16 +2811,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "permission":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3355,16 +2830,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "listPermissions":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -3375,32 +2849,39 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
 			})
-
 		case "__schema":
-
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
