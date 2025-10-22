@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
-	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/dictyBase/go-genproto/dictybaseapis/publication"
@@ -36,37 +35,22 @@ type AuthorResolver interface {
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _Author_last_name(ctx context.Context, field graphql.CollectedField, obj *publication.Author) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Author_last_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LastName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Author_last_name,
+		func(ctx context.Context) (any, error) {
+			return obj.LastName, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Author_last_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Author_last_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Author",
 		Field:      field,
@@ -80,34 +64,22 @@ func (ec *executionContext) fieldContext_Author_last_name(ctx context.Context, f
 }
 
 func (ec *executionContext) _Author_first_name(ctx context.Context, field graphql.CollectedField, obj *publication.Author) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Author_first_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.FirstName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Author_first_name,
+		func(ctx context.Context) (any, error) {
+			return obj.FirstName, nil
+		},
+		nil,
+		ec.marshalOString2string,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Author_first_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Author_first_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Author",
 		Field:      field,
@@ -121,34 +93,22 @@ func (ec *executionContext) fieldContext_Author_first_name(ctx context.Context, 
 }
 
 func (ec *executionContext) _Author_initials(ctx context.Context, field graphql.CollectedField, obj *publication.Author) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Author_initials(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Initials, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Author_initials,
+		func(ctx context.Context) (any, error) {
+			return obj.Initials, nil
+		},
+		nil,
+		ec.marshalOString2string,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Author_initials(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Author_initials(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Author",
 		Field:      field,
@@ -162,34 +122,22 @@ func (ec *executionContext) fieldContext_Author_initials(ctx context.Context, fi
 }
 
 func (ec *executionContext) _Author_rank(ctx context.Context, field graphql.CollectedField, obj *publication.Author) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Author_rank(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Author().Rank(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Author_rank,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Author().Rank(ctx, obj)
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Author_rank(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Author_rank(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Author",
 		Field:      field,
@@ -203,37 +151,22 @@ func (ec *executionContext) fieldContext_Author_rank(ctx context.Context, field 
 }
 
 func (ec *executionContext) _NumberOfPublicationsWithGene_num_pubs(ctx context.Context, field graphql.CollectedField, obj *models.NumberOfPublicationsWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NumberOfPublicationsWithGene_num_pubs(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.NumPubs, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_NumberOfPublicationsWithGene_num_pubs,
+		func(ctx context.Context) (any, error) {
+			return obj.NumPubs, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_NumberOfPublicationsWithGene_num_pubs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_NumberOfPublicationsWithGene_num_pubs(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "NumberOfPublicationsWithGene",
 		Field:      field,
@@ -247,37 +180,22 @@ func (ec *executionContext) fieldContext_NumberOfPublicationsWithGene_num_pubs(c
 }
 
 func (ec *executionContext) _NumberOfPublicationsWithGene_publications(ctx context.Context, field graphql.CollectedField, obj *models.NumberOfPublicationsWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NumberOfPublicationsWithGene_publications(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Publications, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*models.PublicationWithGene)
-	fc.Result = res
-	return ec.marshalNPublicationWithGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationWithGeneᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_NumberOfPublicationsWithGene_publications,
+		func(ctx context.Context) (any, error) {
+			return obj.Publications, nil
+		},
+		nil,
+		ec.marshalNPublicationWithGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationWithGeneᚄ,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_NumberOfPublicationsWithGene_publications(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_NumberOfPublicationsWithGene_publications(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "NumberOfPublicationsWithGene",
 		Field:      field,
@@ -323,37 +241,22 @@ func (ec *executionContext) fieldContext_NumberOfPublicationsWithGene_publicatio
 }
 
 func (ec *executionContext) _Publication_id(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -367,34 +270,22 @@ func (ec *executionContext) fieldContext_Publication_id(ctx context.Context, fie
 }
 
 func (ec *executionContext) _Publication_doi(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_doi(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Doi, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_doi,
+		func(ctx context.Context) (any, error) {
+			return obj.Doi, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_doi(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_doi(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -408,37 +299,22 @@ func (ec *executionContext) fieldContext_Publication_doi(ctx context.Context, fi
 }
 
 func (ec *executionContext) _Publication_title(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_title(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_title,
+		func(ctx context.Context) (any, error) {
+			return obj.Title, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -452,37 +328,22 @@ func (ec *executionContext) fieldContext_Publication_title(ctx context.Context, 
 }
 
 func (ec *executionContext) _Publication_abstract(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_abstract(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Abstract, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_abstract,
+		func(ctx context.Context) (any, error) {
+			return obj.Abstract, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_abstract(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_abstract(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -496,37 +357,22 @@ func (ec *executionContext) fieldContext_Publication_abstract(ctx context.Contex
 }
 
 func (ec *executionContext) _Publication_journal(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_journal(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Journal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_journal,
+		func(ctx context.Context) (any, error) {
+			return obj.Journal, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_journal(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_journal(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -540,34 +386,22 @@ func (ec *executionContext) fieldContext_Publication_journal(ctx context.Context
 }
 
 func (ec *executionContext) _Publication_pub_date(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_pub_date(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PubDate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*time.Time)
-	fc.Result = res
-	return ec.marshalOTimestamp2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_pub_date,
+		func(ctx context.Context) (any, error) {
+			return obj.PubDate, nil
+		},
+		nil,
+		ec.marshalOTimestamp2ᚖtimeᚐTime,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_pub_date(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_pub_date(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -581,34 +415,22 @@ func (ec *executionContext) fieldContext_Publication_pub_date(ctx context.Contex
 }
 
 func (ec *executionContext) _Publication_volume(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_volume(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Volume, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_volume,
+		func(ctx context.Context) (any, error) {
+			return obj.Volume, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_volume(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_volume(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -622,34 +444,22 @@ func (ec *executionContext) fieldContext_Publication_volume(ctx context.Context,
 }
 
 func (ec *executionContext) _Publication_pages(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_pages(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Pages, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_pages,
+		func(ctx context.Context) (any, error) {
+			return obj.Pages, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_pages(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_pages(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -663,34 +473,22 @@ func (ec *executionContext) fieldContext_Publication_pages(ctx context.Context, 
 }
 
 func (ec *executionContext) _Publication_issn(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_issn(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Issn, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_issn,
+		func(ctx context.Context) (any, error) {
+			return obj.Issn, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_issn(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_issn(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -704,37 +502,22 @@ func (ec *executionContext) fieldContext_Publication_issn(ctx context.Context, f
 }
 
 func (ec *executionContext) _Publication_pub_type(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_pub_type(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PubType, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_pub_type,
+		func(ctx context.Context) (any, error) {
+			return obj.PubType, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_pub_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_pub_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -748,37 +531,22 @@ func (ec *executionContext) fieldContext_Publication_pub_type(ctx context.Contex
 }
 
 func (ec *executionContext) _Publication_source(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_source(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Source, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_source,
+		func(ctx context.Context) (any, error) {
+			return obj.Source, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_source(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -792,34 +560,22 @@ func (ec *executionContext) fieldContext_Publication_source(ctx context.Context,
 }
 
 func (ec *executionContext) _Publication_issue(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_issue(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Issue, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_issue,
+		func(ctx context.Context) (any, error) {
+			return obj.Issue, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_issue(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_issue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -833,34 +589,22 @@ func (ec *executionContext) fieldContext_Publication_issue(ctx context.Context, 
 }
 
 func (ec *executionContext) _Publication_status(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_status(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Status, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_status,
+		func(ctx context.Context) (any, error) {
+			return obj.Status, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -874,37 +618,22 @@ func (ec *executionContext) fieldContext_Publication_status(ctx context.Context,
 }
 
 func (ec *executionContext) _Publication_authors(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Publication_authors(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Authors, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*publication.Author)
-	fc.Result = res
-	return ec.marshalNAuthor2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthorᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Publication_authors,
+		func(ctx context.Context) (any, error) {
+			return obj.Authors, nil
+		},
+		nil,
+		ec.marshalNAuthor2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthorᚄ,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_Publication_authors(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Publication_authors(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
 		Field:      field,
@@ -928,37 +657,22 @@ func (ec *executionContext) fieldContext_Publication_authors(ctx context.Context
 }
 
 func (ec *executionContext) _PublicationWithGene_related_genes(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_related_genes(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RelatedGenes, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Gene)
-	fc.Result = res
-	return ec.marshalNGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_related_genes,
+		func(ctx context.Context) (any, error) {
+			return obj.RelatedGenes, nil
+		},
+		nil,
+		ec.marshalNGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_related_genes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_related_genes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -978,37 +692,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_related_genes(ctx c
 }
 
 func (ec *executionContext) _PublicationWithGene_id(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1022,34 +721,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_id(ctx context.Cont
 }
 
 func (ec *executionContext) _PublicationWithGene_doi(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_doi(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Doi, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_doi,
+		func(ctx context.Context) (any, error) {
+			return obj.Doi, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_doi(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_doi(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1063,37 +750,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_doi(ctx context.Con
 }
 
 func (ec *executionContext) _PublicationWithGene_title(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_title(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_title,
+		func(ctx context.Context) (any, error) {
+			return obj.Title, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1107,37 +779,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_title(ctx context.C
 }
 
 func (ec *executionContext) _PublicationWithGene_abstract(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_abstract(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Abstract, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_abstract,
+		func(ctx context.Context) (any, error) {
+			return obj.Abstract, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_abstract(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_abstract(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1151,37 +808,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_abstract(ctx contex
 }
 
 func (ec *executionContext) _PublicationWithGene_journal(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_journal(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Journal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_journal,
+		func(ctx context.Context) (any, error) {
+			return obj.Journal, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_journal(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_journal(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1195,34 +837,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_journal(ctx context
 }
 
 func (ec *executionContext) _PublicationWithGene_pub_date(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_pub_date(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PubDate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*time.Time)
-	fc.Result = res
-	return ec.marshalOTimestamp2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_pub_date,
+		func(ctx context.Context) (any, error) {
+			return obj.PubDate, nil
+		},
+		nil,
+		ec.marshalOTimestamp2ᚖtimeᚐTime,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_pub_date(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_pub_date(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1236,34 +866,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_pub_date(ctx contex
 }
 
 func (ec *executionContext) _PublicationWithGene_volume(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_volume(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Volume, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_volume,
+		func(ctx context.Context) (any, error) {
+			return obj.Volume, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_volume(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_volume(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1277,34 +895,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_volume(ctx context.
 }
 
 func (ec *executionContext) _PublicationWithGene_pages(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_pages(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Pages, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_pages,
+		func(ctx context.Context) (any, error) {
+			return obj.Pages, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_pages(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_pages(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1318,34 +924,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_pages(ctx context.C
 }
 
 func (ec *executionContext) _PublicationWithGene_issn(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_issn(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Issn, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_issn,
+		func(ctx context.Context) (any, error) {
+			return obj.Issn, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_issn(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_issn(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1359,37 +953,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_issn(ctx context.Co
 }
 
 func (ec *executionContext) _PublicationWithGene_pub_type(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_pub_type(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PubType, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_pub_type,
+		func(ctx context.Context) (any, error) {
+			return obj.PubType, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_pub_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_pub_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1403,37 +982,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_pub_type(ctx contex
 }
 
 func (ec *executionContext) _PublicationWithGene_source(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_source(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Source, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_source,
+		func(ctx context.Context) (any, error) {
+			return obj.Source, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_source(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1447,34 +1011,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_source(ctx context.
 }
 
 func (ec *executionContext) _PublicationWithGene_issue(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_issue(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Issue, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_issue,
+		func(ctx context.Context) (any, error) {
+			return obj.Issue, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_issue(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_issue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1488,34 +1040,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_issue(ctx context.C
 }
 
 func (ec *executionContext) _PublicationWithGene_status(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_status(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Status, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_status,
+		func(ctx context.Context) (any, error) {
+			return obj.Status, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1529,37 +1069,22 @@ func (ec *executionContext) fieldContext_PublicationWithGene_status(ctx context.
 }
 
 func (ec *executionContext) _PublicationWithGene_authors(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PublicationWithGene_authors(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Authors, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*publication.Author)
-	fc.Result = res
-	return ec.marshalNAuthor2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthorᚄ(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PublicationWithGene_authors,
+		func(ctx context.Context) (any, error) {
+			return obj.Authors, nil
+		},
+		nil,
+		ec.marshalNAuthor2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthorᚄ,
+		true,
+		true,
+	)
 }
 
-func (ec *executionContext) fieldContext_PublicationWithGene_authors(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PublicationWithGene_authors(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
 		Field:      field,
@@ -1594,13 +1119,6 @@ func (ec *executionContext) _BasePublication(ctx context.Context, sel ast.Select
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case models.Publication:
-		return ec._Publication(ctx, sel, &obj)
-	case *models.Publication:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Publication(ctx, sel, obj)
 	case models.PublicationWithGene:
 		return ec._PublicationWithGene(ctx, sel, &obj)
 	case *models.PublicationWithGene:
@@ -1608,6 +1126,13 @@ func (ec *executionContext) _BasePublication(ctx context.Context, sel ast.Select
 			return graphql.Null
 		}
 		return ec._PublicationWithGene(ctx, sel, obj)
+	case models.Publication:
+		return ec._Publication(ctx, sel, &obj)
+	case *models.Publication:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Publication(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -1621,31 +1146,26 @@ var authorImplementors = []string{"Author"}
 
 func (ec *executionContext) _Author(ctx context.Context, sel ast.SelectionSet, obj *publication.Author) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, authorImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Author")
 		case "last_name":
-
 			out.Values[i] = ec._Author_last_name(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "first_name":
-
 			out.Values[i] = ec._Author_first_name(ctx, field, obj)
-
 		case "initials":
-
 			out.Values[i] = ec._Author_initials(ctx, field, obj)
-
 		case "rank":
 			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -1655,18 +1175,46 @@ func (ec *executionContext) _Author(ctx context.Context, sel ast.SelectionSet, o
 				return res
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
 
-			})
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -1674,34 +1222,43 @@ var numberOfPublicationsWithGeneImplementors = []string{"NumberOfPublicationsWit
 
 func (ec *executionContext) _NumberOfPublicationsWithGene(ctx context.Context, sel ast.SelectionSet, obj *models.NumberOfPublicationsWithGene) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, numberOfPublicationsWithGeneImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("NumberOfPublicationsWithGene")
 		case "num_pubs":
-
 			out.Values[i] = ec._NumberOfPublicationsWithGene_num_pubs(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "publications":
-
 			out.Values[i] = ec._NumberOfPublicationsWithGene_publications(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -1709,97 +1266,82 @@ var publicationImplementors = []string{"Publication", "BasePublication"}
 
 func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionSet, obj *models.Publication) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, publicationImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Publication")
 		case "id":
-
 			out.Values[i] = ec._Publication_id(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "doi":
-
 			out.Values[i] = ec._Publication_doi(ctx, field, obj)
-
 		case "title":
-
 			out.Values[i] = ec._Publication_title(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "abstract":
-
 			out.Values[i] = ec._Publication_abstract(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "journal":
-
 			out.Values[i] = ec._Publication_journal(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "pub_date":
-
 			out.Values[i] = ec._Publication_pub_date(ctx, field, obj)
-
 		case "volume":
-
 			out.Values[i] = ec._Publication_volume(ctx, field, obj)
-
 		case "pages":
-
 			out.Values[i] = ec._Publication_pages(ctx, field, obj)
-
 		case "issn":
-
 			out.Values[i] = ec._Publication_issn(ctx, field, obj)
-
 		case "pub_type":
-
 			out.Values[i] = ec._Publication_pub_type(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "source":
-
 			out.Values[i] = ec._Publication_source(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "issue":
-
 			out.Values[i] = ec._Publication_issue(ctx, field, obj)
-
 		case "status":
-
 			out.Values[i] = ec._Publication_status(ctx, field, obj)
-
 		case "authors":
-
 			out.Values[i] = ec._Publication_authors(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 
@@ -1807,104 +1349,87 @@ var publicationWithGeneImplementors = []string{"PublicationWithGene", "BasePubli
 
 func (ec *executionContext) _PublicationWithGene(ctx context.Context, sel ast.SelectionSet, obj *models.PublicationWithGene) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, publicationWithGeneImplementors)
+
 	out := graphql.NewFieldSet(fields)
-	var invalids uint32
+	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("PublicationWithGene")
 		case "related_genes":
-
 			out.Values[i] = ec._PublicationWithGene_related_genes(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "id":
-
 			out.Values[i] = ec._PublicationWithGene_id(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "doi":
-
 			out.Values[i] = ec._PublicationWithGene_doi(ctx, field, obj)
-
 		case "title":
-
 			out.Values[i] = ec._PublicationWithGene_title(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "abstract":
-
 			out.Values[i] = ec._PublicationWithGene_abstract(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "journal":
-
 			out.Values[i] = ec._PublicationWithGene_journal(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "pub_date":
-
 			out.Values[i] = ec._PublicationWithGene_pub_date(ctx, field, obj)
-
 		case "volume":
-
 			out.Values[i] = ec._PublicationWithGene_volume(ctx, field, obj)
-
 		case "pages":
-
 			out.Values[i] = ec._PublicationWithGene_pages(ctx, field, obj)
-
 		case "issn":
-
 			out.Values[i] = ec._PublicationWithGene_issn(ctx, field, obj)
-
 		case "pub_type":
-
 			out.Values[i] = ec._PublicationWithGene_pub_type(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "source":
-
 			out.Values[i] = ec._PublicationWithGene_source(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		case "issue":
-
 			out.Values[i] = ec._PublicationWithGene_issue(ctx, field, obj)
-
 		case "status":
-
 			out.Values[i] = ec._PublicationWithGene_status(ctx, field, obj)
-
 		case "authors":
-
 			out.Values[i] = ec._PublicationWithGene_authors(ctx, field, obj)
-
 			if out.Values[i] == graphql.Null {
-				invalids++
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	out.Dispatch()
-	if invalids > 0 {
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
 		return graphql.Null
 	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
 	return out
 }
 

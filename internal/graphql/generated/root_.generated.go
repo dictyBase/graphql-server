@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -17,6 +18,7 @@ import (
 // NewExecutableSchema creates an ExecutableSchema from the ResolverRoot interface.
 func NewExecutableSchema(cfg Config) graphql.ExecutableSchema {
 	return &executableSchema{
+		schema:     cfg.Schema,
 		resolvers:  cfg.Resolvers,
 		directives: cfg.Directives,
 		complexity: cfg.Complexity,
@@ -24,6 +26,7 @@ func NewExecutableSchema(cfg Config) graphql.ExecutableSchema {
 }
 
 type Config struct {
+	Schema     *ast.Schema
 	Resolvers  ResolverRoot
 	Directives DirectiveRoot
 	Complexity ComplexityRoot
@@ -412,17 +415,21 @@ type ComplexityRoot struct {
 }
 
 type executableSchema struct {
+	schema     *ast.Schema
 	resolvers  ResolverRoot
 	directives DirectiveRoot
 	complexity ComplexityRoot
 }
 
 func (e *executableSchema) Schema() *ast.Schema {
+	if e.schema != nil {
+		return e.schema
+	}
 	return parsedSchema
 }
 
-func (e *executableSchema) Complexity(typeName, field string, childComplexity int, rawArgs map[string]interface{}) (int, bool) {
-	ec := executionContext{nil, e}
+func (e *executableSchema) Complexity(ctx context.Context, typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
+	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
 
@@ -837,7 +844,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createContent_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createContent_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -849,7 +856,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createOrder_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createOrder_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -861,7 +868,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createPermission_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createPermission_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -873,7 +880,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createPlasmid_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createPlasmid_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -885,7 +892,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createRole_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createRole_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -897,7 +904,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createRolePermissionRelationship_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createRolePermissionRelationship_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -909,7 +916,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createStrain_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createStrain_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -921,7 +928,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createUser_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createUser_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -933,7 +940,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createUserRoleRelationship_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createUserRoleRelationship_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -945,7 +952,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteContent_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteContent_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -957,7 +964,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deletePermission_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deletePermission_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -969,7 +976,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteRole_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteRole_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -981,7 +988,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteStock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteStock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -993,7 +1000,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteUser_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteUser_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1005,7 +1012,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_login_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_login_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1024,7 +1031,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateContent_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateContent_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1036,7 +1043,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateOrder_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateOrder_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1048,7 +1055,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updatePermission_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updatePermission_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1060,7 +1067,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updatePlasmid_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updatePlasmid_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1072,7 +1079,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateRole_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateRole_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1084,7 +1091,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateStrain_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateStrain_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1096,7 +1103,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateUser_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateUser_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1108,7 +1115,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_uploadFile_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_uploadFile_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1722,7 +1729,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_content_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_content_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1734,7 +1741,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_contentBySlug_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_contentBySlug_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1746,7 +1753,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_geneGeneralInformation_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_geneGeneralInformation_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1758,7 +1765,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_geneOntologyAnnotation_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_geneOntologyAnnotation_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1770,7 +1777,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listContentByNamespace_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listContentByNamespace_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1782,7 +1789,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listOrders_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listOrders_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1808,7 +1815,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listPlasmids_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listPlasmids_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1820,7 +1827,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listPlasmidsWithAnnotation_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listPlasmidsWithAnnotation_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1832,7 +1839,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listPublicationsWithGene_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listPublicationsWithGene_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1844,7 +1851,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listRecentPlasmids_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listRecentPlasmids_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1856,7 +1863,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listRecentPublications_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listRecentPublications_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1868,7 +1875,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listRecentStrains_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listRecentStrains_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1887,7 +1894,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listStrains_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listStrains_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1899,7 +1906,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listStrainsWithAnnotation_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listStrainsWithAnnotation_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1911,7 +1918,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listStrainsWithGene_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listStrainsWithGene_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1923,7 +1930,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_listUsers_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_listUsers_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1935,7 +1942,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_order_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_order_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1947,7 +1954,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_organism_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_organism_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1959,7 +1966,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_permission_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_permission_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1971,7 +1978,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_plasmid_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_plasmid_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1983,7 +1990,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_publication_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_publication_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1995,7 +2002,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_role_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_role_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2007,7 +2014,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_strain_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_strain_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2019,7 +2026,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_user_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_user_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2031,7 +2038,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_userByEmail_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_userByEmail_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2449,8 +2456,8 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 }
 
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
-	rc := graphql.GetOperationContext(ctx)
-	ec := executionContext{rc, e}
+	opCtx := graphql.GetOperationContext(ctx)
+	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreateContentInput,
 		ec.unmarshalInputCreateOrderInput,
@@ -2472,21 +2479,36 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	)
 	first := true
 
-	switch rc.Operation.Operation {
+	switch opCtx.Operation.Operation {
 	case ast.Query:
 		return func(ctx context.Context) *graphql.Response {
-			if !first {
-				return nil
+			var response graphql.Response
+			var data graphql.Marshaler
+			if first {
+				first = false
+				ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
+				data = ec._Query(ctx, opCtx.Operation.SelectionSet)
+			} else {
+				if atomic.LoadInt32(&ec.pendingDeferred) > 0 {
+					result := <-ec.deferredResults
+					atomic.AddInt32(&ec.pendingDeferred, -1)
+					data = result.Result
+					response.Path = result.Path
+					response.Label = result.Label
+					response.Errors = result.Errors
+				} else {
+					return nil
+				}
 			}
-			first = false
-			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
-			data := ec._Query(ctx, rc.Operation.SelectionSet)
 			var buf bytes.Buffer
 			data.MarshalGQL(&buf)
-
-			return &graphql.Response{
-				Data: buf.Bytes(),
+			response.Data = buf.Bytes()
+			if atomic.LoadInt32(&ec.deferred) > 0 {
+				hasNext := atomic.LoadInt32(&ec.pendingDeferred) > 0
+				response.HasNext = &hasNext
 			}
+
+			return &response
 		}
 	case ast.Mutation:
 		return func(ctx context.Context) *graphql.Response {
@@ -2495,7 +2517,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			}
 			first = false
 			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
-			data := ec._Mutation(ctx, rc.Operation.SelectionSet)
+			data := ec._Mutation(ctx, opCtx.Operation.SelectionSet)
 			var buf bytes.Buffer
 			data.MarshalGQL(&buf)
 
@@ -2512,20 +2534,42 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 type executionContext struct {
 	*graphql.OperationContext
 	*executableSchema
+	deferred        int32
+	pendingDeferred int32
+	deferredResults chan graphql.DeferredResult
+}
+
+func (ec *executionContext) processDeferredGroup(dg graphql.DeferredGroup) {
+	atomic.AddInt32(&ec.pendingDeferred, 1)
+	go func() {
+		ctx := graphql.WithFreshResponseContext(dg.Context)
+		dg.FieldSet.Dispatch(ctx)
+		ds := graphql.DeferredResult{
+			Path:   dg.Path,
+			Label:  dg.Label,
+			Result: dg.FieldSet,
+			Errors: graphql.GetErrors(ctx),
+		}
+		// null fields should bubble up
+		if dg.FieldSet.Invalids > 0 {
+			ds.Result = graphql.Null
+		}
+		ec.deferredResults <- ds
+	}()
 }
 
 func (ec *executionContext) introspectSchema() (*introspection.Schema, error) {
 	if ec.DisableIntrospection {
 		return nil, errors.New("introspection disabled")
 	}
-	return introspection.WrapSchema(parsedSchema), nil
+	return introspection.WrapSchema(ec.Schema()), nil
 }
 
 func (ec *executionContext) introspectType(name string) (*introspection.Type, error) {
 	if ec.DisableIntrospection {
 		return nil, errors.New("introspection disabled")
 	}
-	return introspection.WrapTypeFromDef(parsedSchema, parsedSchema.Types[name]), nil
+	return introspection.WrapTypeFromDef(ec.Schema(), ec.Schema().Types[name]), nil
 }
 
 var sources = []*ast.Source{
