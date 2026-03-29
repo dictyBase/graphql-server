@@ -3,6 +3,7 @@
 package models
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"strconv"
@@ -22,6 +23,14 @@ type Stock interface {
 	IsStock()
 }
 
+type AddStrainPhenotypeInput struct {
+	Phenotype   string  `json:"phenotype"`
+	Environment *string `json:"environment,omitempty"`
+	Assay       *string `json:"assay,omitempty"`
+	Publication string  `json:"publication"`
+	Notes       *string `json:"notes,omitempty"`
+}
+
 type Citation struct {
 	Authors  string `json:"authors"`
 	Title    string `json:"title"`
@@ -34,6 +43,14 @@ type CreateContentInput struct {
 	CreatedBy string `json:"created_by"`
 	Content   string `json:"content"`
 	Namespace string `json:"namespace"`
+}
+
+type CreateGeneGeneralInfoInput struct {
+	NameDescription []*string `json:"name_description,omitempty"`
+	GeneProduct     *string   `json:"gene_product,omitempty"`
+	Synonyms        []*string `json:"synonyms,omitempty"`
+	Description     *string   `json:"description,omitempty"`
+	User            string    `json:"user"`
 }
 
 type CreateOrderInput struct {
@@ -132,6 +149,18 @@ type DeleteStock struct {
 	Success bool `json:"success"`
 }
 
+type DeleteStrainPhenotype struct {
+	Success bool `json:"success"`
+}
+
+type DeleteStrainPhenotypeInput struct {
+	Phenotype   string  `json:"phenotype"`
+	Environment *string `json:"environment,omitempty"`
+	Assay       *string `json:"assay,omitempty"`
+	Publication string  `json:"publication"`
+	Notes       *string `json:"notes,omitempty"`
+}
+
 type DeleteUser struct {
 	Success bool `json:"success"`
 }
@@ -178,11 +207,15 @@ type Gene struct {
 }
 
 type GeneGeneralInfo struct {
-	ID              string    `json:"id"`
-	NameDescription []*string `json:"name_description"`
-	GeneProduct     *string   `json:"gene_product,omitempty"`
-	Synonyms        []*string `json:"synonyms"`
-	Description     *string   `json:"description,omitempty"`
+	ID              string     `json:"id"`
+	NameDescription []*string  `json:"name_description"`
+	GeneProduct     *string    `json:"gene_product,omitempty"`
+	Synonyms        []*string  `json:"synonyms"`
+	Description     *string    `json:"description,omitempty"`
+	CreatedAt       *time.Time `json:"created_at,omitempty"`
+	CreatedBy       *user.User `json:"created_by,omitempty"`
+	UpdatedAt       *time.Time `json:"updated_at,omitempty"`
+	UpdatedBy       *user.User `json:"updated_by,omitempty"`
 }
 
 type Identity struct {
@@ -212,6 +245,9 @@ type Logout struct {
 	Success bool `json:"success"`
 }
 
+type Mutation struct {
+}
+
 type NumberOfPublicationsWithGene struct {
 	NumPubs      int                    `json:"num_pubs"`
 	Publications []*PublicationWithGene `json:"publications"`
@@ -238,6 +274,14 @@ type Phenotype struct {
 	Assay       *string      `json:"assay,omitempty"`
 	Environment *string      `json:"environment,omitempty"`
 	Publication *Publication `json:"publication,omitempty"`
+}
+
+type PlasmidListFilter struct {
+	Name        *string     `json:"name,omitempty"`
+	Summary     *string     `json:"summary,omitempty"`
+	ID          *string     `json:"id,omitempty"`
+	InStock     *bool       `json:"in_stock,omitempty"`
+	PlasmidType PlasmidType `json:"plasmid_type"`
 }
 
 type PlasmidListWithCursor struct {
@@ -287,6 +331,9 @@ type PublicationWithGene struct {
 
 func (PublicationWithGene) IsBasePublication() {}
 
+type Query struct {
+}
+
 type StrainListFilter struct {
 	Label      *string    `json:"label,omitempty"`
 	Summary    *string    `json:"summary,omitempty"`
@@ -307,6 +354,14 @@ type UpdateContentInput struct {
 	ID        string `json:"id"`
 	UpdatedBy string `json:"updated_by"`
 	Content   string `json:"content"`
+}
+
+type UpdateGeneGeneralInfoInput struct {
+	NameDescription []*string `json:"name_description,omitempty"`
+	GeneProduct     *string   `json:"gene_product,omitempty"`
+	Synonyms        []*string `json:"synonyms,omitempty"`
+	Description     *string   `json:"description,omitempty"`
+	User            string    `json:"user"`
 }
 
 type UpdateOrderInput struct {
@@ -368,6 +423,22 @@ type UpdateStrainInput struct {
 	Genotypes           []string `json:"genotypes,omitempty"`
 }
 
+type UpdateStrainPhenotypePayloadInput struct {
+	Phenotype   *string `json:"phenotype,omitempty"`
+	Environment *string `json:"environment,omitempty"`
+	Assay       *string `json:"assay,omitempty"`
+	Publication *string `json:"publication,omitempty"`
+	Notes       *string `json:"notes,omitempty"`
+}
+
+type UpdateStrainPhenotypeTargetInput struct {
+	Phenotype   string  `json:"phenotype"`
+	Environment *string `json:"environment,omitempty"`
+	Assay       *string `json:"assay,omitempty"`
+	Publication string  `json:"publication"`
+	Notes       *string `json:"notes,omitempty"`
+}
+
 type UpdateUserInput struct {
 	FirstName     *string `json:"first_name,omitempty"`
 	LastName      *string `json:"last_name,omitempty"`
@@ -394,6 +465,63 @@ type With struct {
 	ID   string `json:"id"`
 	Db   string `json:"db"`
 	Name string `json:"name"`
+}
+
+type PlasmidType string
+
+const (
+	PlasmidTypeAll         PlasmidType = "ALL"
+	PlasmidTypeRegular     PlasmidType = "REGULAR"
+	PlasmidTypeGoldenBraid PlasmidType = "GOLDEN_BRAID"
+)
+
+var AllPlasmidType = []PlasmidType{
+	PlasmidTypeAll,
+	PlasmidTypeRegular,
+	PlasmidTypeGoldenBraid,
+}
+
+func (e PlasmidType) IsValid() bool {
+	switch e {
+	case PlasmidTypeAll, PlasmidTypeRegular, PlasmidTypeGoldenBraid:
+		return true
+	}
+	return false
+}
+
+func (e PlasmidType) String() string {
+	return string(e)
+}
+
+func (e *PlasmidType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = PlasmidType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid PlasmidType", str)
+	}
+	return nil
+}
+
+func (e PlasmidType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *PlasmidType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e PlasmidType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type StatusEnum string
@@ -424,7 +552,7 @@ func (e StatusEnum) String() string {
 	return string(e)
 }
 
-func (e *StatusEnum) UnmarshalGQL(v interface{}) error {
+func (e *StatusEnum) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -439,6 +567,20 @@ func (e *StatusEnum) UnmarshalGQL(v interface{}) error {
 
 func (e StatusEnum) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *StatusEnum) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e StatusEnum) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type StrainType string
@@ -469,7 +611,7 @@ func (e StrainType) String() string {
 	return string(e)
 }
 
-func (e *StrainType) UnmarshalGQL(v interface{}) error {
+func (e *StrainType) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -484,4 +626,18 @@ func (e *StrainType) UnmarshalGQL(v interface{}) error {
 
 func (e StrainType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *StrainType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e StrainType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
