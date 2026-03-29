@@ -1,4 +1,4 @@
-query GeneSummary($gene: String!) {
+query GeneGeneralInformationSummary($gene: String!) {
   geneGeneralInformation(gene: $gene) {
     id
     name_description
@@ -6,6 +6,9 @@ query GeneSummary($gene: String!) {
     synonyms
     description
   }  
+}
+
+query GeneOntologyAnnotationSummary($gene: String!) {
   geneOntologyAnnotation(gene: $gene) {
     id
     type
@@ -24,6 +27,9 @@ query GeneSummary($gene: String!) {
       name
     }
   }
+}
+
+query ListPublicationsWithGeneSummary($gene: String!) {
   listPublicationsWithGene(gene: $gene) {
     id
     title

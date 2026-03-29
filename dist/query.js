@@ -1,6 +1,8 @@
-import gql from 'graphql-tag';
-
-export const Login = gql`
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserByEmail = exports.ListPhenotypeAssays = exports.ListPhenotypeEnvironments = exports.ListPhenotypes = exports.ListRecentStrains = exports.ListRecentPlasmids = exports.Strain = exports.Plasmid = exports.PlasmidListFilter = exports.ListPlasmidsInventory = exports.ListStrainsInventory = exports.ListBacterialStrains = exports.ListStrainsWithPhenotype = exports.StrainList = exports.ListPublicationsWithGene = exports.ListRecentPublications = exports.Publication = exports.ListStrainsWithGene = exports.GeneOntologyAnnotation = exports.ListPublicationsWithGeneSummary = exports.GeneOntologyAnnotationSummary = exports.GeneGeneralInformationSummary = exports.ListOrganisms = exports.Content = exports.ContentBySlug = exports.ListContentByNamespace = exports.UpdateUser = exports.CreateUser = exports.UploadFile = exports.UpdateStrainPhenotype = exports.AddStrainPhenotype = exports.CreateOrder = exports.UpdateGeneGeneralInfo = exports.CreateGeneGeneralInfo = exports.DeleteContent = exports.UpdateContent = exports.CreateContent = exports.Logout = exports.Login = void 0;
+const graphql_tag_1 = require("graphql-tag");
+exports.Login = (0, graphql_tag_1.default) `
     mutation Login($input: LoginInput!) {
   login(input: $input) {
     token
@@ -23,14 +25,14 @@ export const Login = gql`
   }
 }
     `;
-export const Logout = gql`
+exports.Logout = (0, graphql_tag_1.default) `
     mutation Logout {
   logout {
     success
   }
 }
     `;
-export const CreateContent = gql`
+exports.CreateContent = (0, graphql_tag_1.default) `
     mutation CreateContent($input: CreateContentInput!) {
   createContent(input: $input) {
     name
@@ -42,7 +44,7 @@ export const CreateContent = gql`
   }
 }
     `;
-export const UpdateContent = gql`
+exports.UpdateContent = (0, graphql_tag_1.default) `
     mutation UpdateContent($input: UpdateContentInput!) {
   updateContent(input: $input) {
     id
@@ -53,14 +55,14 @@ export const UpdateContent = gql`
   }
 }
     `;
-export const DeleteContent = gql`
+exports.DeleteContent = (0, graphql_tag_1.default) `
     mutation DeleteContent($id: ID!) {
   deleteContent(id: $id) {
     success
   }
 }
     `;
-export const CreateGeneGeneralInfo = gql`
+exports.CreateGeneGeneralInfo = (0, graphql_tag_1.default) `
     mutation CreateGeneGeneralInfo($id: ID!, $input: CreateGeneGeneralInfoInput!) {
   createGeneGeneralInfo(id: $id, input: $input) {
     id
@@ -70,7 +72,7 @@ export const CreateGeneGeneralInfo = gql`
   }
 }
     `;
-export const UpdateGeneGeneralInfo = gql`
+exports.UpdateGeneGeneralInfo = (0, graphql_tag_1.default) `
     mutation UpdateGeneGeneralInfo($id: ID!, $input: UpdateGeneGeneralInfoInput!) {
   updateGeneGeneralInfo(id: $id, input: $input) {
     id
@@ -80,14 +82,14 @@ export const UpdateGeneGeneralInfo = gql`
   }
 }
     `;
-export const CreateOrder = gql`
+exports.CreateOrder = (0, graphql_tag_1.default) `
     mutation CreateOrder($input: CreateOrderInput!) {
   createOrder(input: $input) {
     id
   }
 }
     `;
-export const AddStrainPhenotype = gql`
+exports.AddStrainPhenotype = (0, graphql_tag_1.default) `
     mutation AddStrainPhenotype($strainId: ID!, $input: AddStrainPhenotypeInput!) {
   addStrainPhenotype(strainId: $strainId, input: $input) {
     id
@@ -112,7 +114,7 @@ export const AddStrainPhenotype = gql`
   }
 }
     `;
-export const UpdateStrainPhenotype = gql`
+exports.UpdateStrainPhenotype = (0, graphql_tag_1.default) `
     mutation UpdateStrainPhenotype($strainId: ID!, $target: UpdateStrainPhenotypeTargetInput!, $payload: UpdateStrainPhenotypePayloadInput!) {
   updateStrainPhenotype(strainId: $strainId, target: $target, payload: $payload) {
     id
@@ -137,28 +139,28 @@ export const UpdateStrainPhenotype = gql`
   }
 }
     `;
-export const UploadFile = gql`
+exports.UploadFile = (0, graphql_tag_1.default) `
     mutation UploadFile($file: Upload!) {
   uploadFile(file: $file) {
     url
   }
 }
     `;
-export const CreateUser = gql`
+exports.CreateUser = (0, graphql_tag_1.default) `
     mutation CreateUser($input: CreateUserInput!) {
   createUser(input: $input) {
     id
   }
 }
     `;
-export const UpdateUser = gql`
+exports.UpdateUser = (0, graphql_tag_1.default) `
     mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {
   updateUser(id: $id, input: $input) {
     id
   }
 }
     `;
-export const ListContentByNamespace = gql`
+exports.ListContentByNamespace = (0, graphql_tag_1.default) `
     query ListContentByNamespace($namespace: String!) {
   listContentByNamespace(namespace: $namespace) {
     id
@@ -182,7 +184,7 @@ export const ListContentByNamespace = gql`
   }
 }
     `;
-export const ContentBySlug = gql`
+exports.ContentBySlug = (0, graphql_tag_1.default) `
     query ContentBySlug($slug: String!) {
   contentBySlug(slug: $slug) {
     id
@@ -206,7 +208,7 @@ export const ContentBySlug = gql`
   }
 }
     `;
-export const Content = gql`
+exports.Content = (0, graphql_tag_1.default) `
     query Content($id: ID!) {
   content(id: $id) {
     id
@@ -231,7 +233,7 @@ export const Content = gql`
   }
 }
     `;
-export const ListOrganisms = gql`
+exports.ListOrganisms = (0, graphql_tag_1.default) `
     query ListOrganisms {
   listOrganisms {
     taxon_id
@@ -252,7 +254,7 @@ export const ListOrganisms = gql`
   }
 }
     `;
-export const GeneGeneralInformationSummary = gql`
+exports.GeneGeneralInformationSummary = (0, graphql_tag_1.default) `
     query GeneGeneralInformationSummary($gene: String!) {
   geneGeneralInformation(gene: $gene) {
     id
@@ -263,7 +265,7 @@ export const GeneGeneralInformationSummary = gql`
   }
 }
     `;
-export const GeneOntologyAnnotationSummary = gql`
+exports.GeneOntologyAnnotationSummary = (0, graphql_tag_1.default) `
     query GeneOntologyAnnotationSummary($gene: String!) {
   geneOntologyAnnotation(gene: $gene) {
     id
@@ -285,7 +287,7 @@ export const GeneOntologyAnnotationSummary = gql`
   }
 }
     `;
-export const ListPublicationsWithGeneSummary = gql`
+exports.ListPublicationsWithGeneSummary = (0, graphql_tag_1.default) `
     query ListPublicationsWithGeneSummary($gene: String!) {
   listPublicationsWithGene(gene: $gene) {
     id
@@ -299,7 +301,7 @@ export const ListPublicationsWithGeneSummary = gql`
   }
 }
     `;
-export const GeneOntologyAnnotation = gql`
+exports.GeneOntologyAnnotation = (0, graphql_tag_1.default) `
     query GeneOntologyAnnotation($gene: String!) {
   geneOntologyAnnotation(gene: $gene) {
     id
@@ -324,7 +326,7 @@ export const GeneOntologyAnnotation = gql`
   }
 }
     `;
-export const ListStrainsWithGene = gql`
+exports.ListStrainsWithGene = (0, graphql_tag_1.default) `
     query ListStrainsWithGene($gene: String!) {
   listStrainsWithGene(gene: $gene) {
     id
@@ -349,7 +351,7 @@ export const ListStrainsWithGene = gql`
   }
 }
     `;
-export const Publication = gql`
+exports.Publication = (0, graphql_tag_1.default) `
     query Publication($id: ID!) {
   publication(id: $id) {
     id
@@ -368,7 +370,7 @@ export const Publication = gql`
   }
 }
     `;
-export const ListRecentPublications = gql`
+exports.ListRecentPublications = (0, graphql_tag_1.default) `
     query ListRecentPublications($limit: Int! = 4) {
   listRecentPublications(limit: $limit) {
     id
@@ -387,7 +389,7 @@ export const ListRecentPublications = gql`
   }
 }
     `;
-export const ListPublicationsWithGene = gql`
+exports.ListPublicationsWithGene = (0, graphql_tag_1.default) `
     query ListPublicationsWithGene($gene: String!) {
   listPublicationsWithGene(gene: $gene) {
     related_genes {
@@ -411,7 +413,7 @@ export const ListPublicationsWithGene = gql`
   }
 }
     `;
-export const StrainList = gql`
+exports.StrainList = (0, graphql_tag_1.default) `
     query StrainList($cursor: Int!, $limit: Int!, $filter: StrainListFilter) {
   listStrains(cursor: $cursor, limit: $limit, filter: $filter) {
     nextCursor
@@ -425,7 +427,7 @@ export const StrainList = gql`
   }
 }
     `;
-export const ListStrainsWithPhenotype = gql`
+exports.ListStrainsWithPhenotype = (0, graphql_tag_1.default) `
     query ListStrainsWithPhenotype($cursor: Int!, $limit: Int!, $type: String!, $annotation: String!) {
   listStrainsWithAnnotation(
     cursor: $cursor
@@ -456,7 +458,7 @@ export const ListStrainsWithPhenotype = gql`
   }
 }
     `;
-export const ListBacterialStrains = gql`
+exports.ListBacterialStrains = (0, graphql_tag_1.default) `
     query ListBacterialStrains {
   bacterialFoodSource: listStrainsWithAnnotation(
     cursor: 0
@@ -490,7 +492,7 @@ export const ListBacterialStrains = gql`
   }
 }
     `;
-export const ListStrainsInventory = gql`
+exports.ListStrainsInventory = (0, graphql_tag_1.default) `
     query ListStrainsInventory($cursor: Int!, $limit: Int!) {
   listStrainsWithAnnotation(
     cursor: $cursor
@@ -509,7 +511,7 @@ export const ListStrainsInventory = gql`
   }
 }
     `;
-export const ListPlasmidsInventory = gql`
+exports.ListPlasmidsInventory = (0, graphql_tag_1.default) `
     query ListPlasmidsInventory($cursor: Int!, $limit: Int!) {
   listPlasmidsWithAnnotation(
     cursor: $cursor
@@ -528,7 +530,7 @@ export const ListPlasmidsInventory = gql`
   }
 }
     `;
-export const PlasmidListFilter = gql`
+exports.PlasmidListFilter = (0, graphql_tag_1.default) `
     query PlasmidListFilter($cursor: Int!, $limit: Int!, $filter: PlasmidListFilter) {
   listPlasmids(cursor: $cursor, limit: $limit, filter: $filter) {
     nextCursor
@@ -542,7 +544,7 @@ export const PlasmidListFilter = gql`
   }
 }
     `;
-export const Plasmid = gql`
+exports.Plasmid = (0, graphql_tag_1.default) `
     query Plasmid($id: ID!) {
   plasmid(id: $id) {
     id
@@ -576,7 +578,7 @@ export const Plasmid = gql`
   }
 }
     `;
-export const Strain = gql`
+exports.Strain = (0, graphql_tag_1.default) `
     query Strain($id: ID!) {
   strain(id: $id) {
     id
@@ -635,7 +637,7 @@ export const Strain = gql`
   }
 }
     `;
-export const ListRecentPlasmids = gql`
+exports.ListRecentPlasmids = (0, graphql_tag_1.default) `
     query ListRecentPlasmids($limit: Int! = 4) {
   listRecentPlasmids(limit: $limit) {
     id
@@ -644,7 +646,7 @@ export const ListRecentPlasmids = gql`
   }
 }
     `;
-export const ListRecentStrains = gql`
+exports.ListRecentStrains = (0, graphql_tag_1.default) `
     query ListRecentStrains($limit: Int! = 4) {
   listRecentStrains(limit: $limit) {
     id
@@ -653,22 +655,22 @@ export const ListRecentStrains = gql`
   }
 }
     `;
-export const ListPhenotypes = gql`
+exports.ListPhenotypes = (0, graphql_tag_1.default) `
     query ListPhenotypes($search: String!) {
   listPhenotypes(search: $search)
 }
     `;
-export const ListPhenotypeEnvironments = gql`
+exports.ListPhenotypeEnvironments = (0, graphql_tag_1.default) `
     query ListPhenotypeEnvironments($search: String!) {
   listPhenotypeEnvironments(search: $search)
 }
     `;
-export const ListPhenotypeAssays = gql`
+exports.ListPhenotypeAssays = (0, graphql_tag_1.default) `
     query ListPhenotypeAssays($search: String!) {
   listPhenotypeAssays(search: $search)
 }
     `;
-export const UserByEmail = gql`
+exports.UserByEmail = (0, graphql_tag_1.default) `
     query UserByEmail($email: String!) {
   userByEmail(email: $email) {
     id

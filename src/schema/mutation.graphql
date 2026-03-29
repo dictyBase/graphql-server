@@ -13,8 +13,14 @@ type Mutation {
   createStrain(input: CreateStrainInput): Strain
   createPlasmid(input: CreatePlasmidInput): Plasmid
   updateStrain(id: ID!, input: UpdateStrainInput): Strain
+  addStrainPhenotype(strainId: ID!, input: AddStrainPhenotypeInput!): Strain
+  updateStrainPhenotype(strainId: ID!, target: UpdateStrainPhenotypeTargetInput!, payload: UpdateStrainPhenotypePayloadInput!): Strain
+  deleteStrainPhenotype(strainId: ID!, input: DeleteStrainPhenotypeInput!): DeleteStrainPhenotype!
   updatePlasmid(id: ID!, input: UpdatePlasmidInput): Plasmid
   deleteStock(id: ID!): DeleteStock
+  # Gene mutations
+  createGeneGeneralInfo(id: ID!, input: CreateGeneGeneralInfoInput!): GeneGeneralInfo
+  updateGeneGeneralInfo(id: ID!, input: UpdateGeneGeneralInfoInput!): GeneGeneralInfo
   # User mutations
   createUser(input: CreateUserInput): User
   createUserRoleRelationship(userId: ID!, roleId: ID!): User
@@ -27,5 +33,5 @@ type Mutation {
   createPermission(input: CreatePermissionInput): Permission
   updatePermission(id: ID!, input: UpdatePermissionInput): Permission
   deletePermission(id: ID!): DeletePermission
-  uploadFile(file: Upload! ): ImageFile!
+  uploadFile(file: Upload!): ImageFile!
 }

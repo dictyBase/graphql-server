@@ -1,0 +1,48 @@
+mutation AddStrainPhenotype($strainId: ID!, $input: AddStrainPhenotypeInput!) {
+  addStrainPhenotype(strainId: $strainId, input: $input) {
+    id
+    label
+    phenotypes {
+      phenotype
+      note
+      assay
+      environment
+      publication {
+        id
+        pub_date
+        title
+        journal
+        volume
+        pages
+        authors {
+          last_name
+        }
+      }
+    }
+  }
+}
+
+mutation UpdateStrainPhenotype($strainId: ID!, $target: UpdateStrainPhenotypeTargetInput!, $payload: UpdateStrainPhenotypePayloadInput!) {
+  updateStrainPhenotype(strainId: $strainId, target: $target, payload: $payload) {
+    id
+    label
+    phenotypes {
+      phenotype
+      environment
+      assay
+      note
+      publication {
+        id
+        pub_date
+        title
+        journal
+        volume
+        pages
+        authors {
+          last_name
+        }
+      }
+    }
+  }
+}
+
