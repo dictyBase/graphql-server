@@ -99,6 +99,10 @@ type ComplexityRoot struct {
 		Success func(childComplexity int) int
 	}
 
+	DeleteStrainPhenotype struct {
+		Success func(childComplexity int) int
+	}
+
 	DeleteUser struct {
 		Success func(childComplexity int) int
 	}
@@ -139,11 +143,15 @@ type ComplexityRoot struct {
 	}
 
 	GeneGeneralInfo struct {
+		CreatedAt       func(childComplexity int) int
+		CreatedBy       func(childComplexity int) int
 		Description     func(childComplexity int) int
 		GeneProduct     func(childComplexity int) int
 		ID              func(childComplexity int) int
 		NameDescription func(childComplexity int) int
 		Synonyms        func(childComplexity int) int
+		UpdatedAt       func(childComplexity int) int
+		UpdatedBy       func(childComplexity int) int
 	}
 
 	Identity struct {
@@ -164,7 +172,9 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		AddStrainPhenotype               func(childComplexity int, strainID string, input models.AddStrainPhenotypeInput) int
 		CreateContent                    func(childComplexity int, input *models.CreateContentInput) int
+		CreateGeneGeneralInfo            func(childComplexity int, id string, input models.CreateGeneGeneralInfoInput) int
 		CreateOrder                      func(childComplexity int, input *models.CreateOrderInput) int
 		CreatePermission                 func(childComplexity int, input *models.CreatePermissionInput) int
 		CreatePlasmid                    func(childComplexity int, input *models.CreatePlasmidInput) int
@@ -177,15 +187,18 @@ type ComplexityRoot struct {
 		DeletePermission                 func(childComplexity int, id string) int
 		DeleteRole                       func(childComplexity int, id string) int
 		DeleteStock                      func(childComplexity int, id string) int
+		DeleteStrainPhenotype            func(childComplexity int, strainID string, input models.DeleteStrainPhenotypeInput) int
 		DeleteUser                       func(childComplexity int, id string) int
 		Login                            func(childComplexity int, input *models.LoginInput) int
 		Logout                           func(childComplexity int) int
 		UpdateContent                    func(childComplexity int, input *models.UpdateContentInput) int
+		UpdateGeneGeneralInfo            func(childComplexity int, id string, input models.UpdateGeneGeneralInfoInput) int
 		UpdateOrder                      func(childComplexity int, id string, input *models.UpdateOrderInput) int
 		UpdatePermission                 func(childComplexity int, id string, input *models.UpdatePermissionInput) int
 		UpdatePlasmid                    func(childComplexity int, id string, input *models.UpdatePlasmidInput) int
 		UpdateRole                       func(childComplexity int, id string, input *models.UpdateRoleInput) int
 		UpdateStrain                     func(childComplexity int, id string, input *models.UpdateStrainInput) int
+		UpdateStrainPhenotype            func(childComplexity int, strainID string, target models.UpdateStrainPhenotypeTargetInput, payload models.UpdateStrainPhenotypePayloadInput) int
 		UpdateUser                       func(childComplexity int, id string, input *models.UpdateUserInput) int
 		UploadFile                       func(childComplexity int, file graphql.Upload) int
 	}
@@ -315,7 +328,10 @@ type ComplexityRoot struct {
 		ListOrders                 func(childComplexity int, cursor *int, limit *int, filter *string) int
 		ListOrganisms              func(childComplexity int) int
 		ListPermissions            func(childComplexity int) int
-		ListPlasmids               func(childComplexity int, cursor *int, limit *int, filter *string) int
+		ListPhenotypeAssays        func(childComplexity int, search string) int
+		ListPhenotypeEnvironments  func(childComplexity int, search string) int
+		ListPhenotypes             func(childComplexity int, search string) int
+		ListPlasmids               func(childComplexity int, cursor *int, limit *int, filter *models.PlasmidListFilter) int
 		ListPlasmidsWithAnnotation func(childComplexity int, cursor *int, limit *int, typeArg string, annotation string) int
 		ListPublicationsWithGene   func(childComplexity int, gene string) int
 		ListRecentPlasmids         func(childComplexity int, limit int) int
@@ -601,6 +617,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DeleteStock.Success(childComplexity), true
 
+	case "DeleteStrainPhenotype.success":
+		if e.complexity.DeleteStrainPhenotype.Success == nil {
+			break
+		}
+
+		return e.complexity.DeleteStrainPhenotype.Success(childComplexity), true
+
 	case "DeleteUser.success":
 		if e.complexity.DeleteUser.Success == nil {
 			break
@@ -748,6 +771,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Gene.Name(childComplexity), true
 
+	case "GeneGeneralInfo.created_at":
+		if e.complexity.GeneGeneralInfo.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.GeneGeneralInfo.CreatedAt(childComplexity), true
+
+	case "GeneGeneralInfo.created_by":
+		if e.complexity.GeneGeneralInfo.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.GeneGeneralInfo.CreatedBy(childComplexity), true
+
 	case "GeneGeneralInfo.description":
 		if e.complexity.GeneGeneralInfo.Description == nil {
 			break
@@ -782,6 +819,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.GeneGeneralInfo.Synonyms(childComplexity), true
+
+	case "GeneGeneralInfo.updated_at":
+		if e.complexity.GeneGeneralInfo.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.GeneGeneralInfo.UpdatedAt(childComplexity), true
+
+	case "GeneGeneralInfo.updated_by":
+		if e.complexity.GeneGeneralInfo.UpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.GeneGeneralInfo.UpdatedBy(childComplexity), true
 
 	case "Identity.created_at":
 		if e.complexity.Identity.CreatedAt == nil {
@@ -839,6 +890,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Logout.Success(childComplexity), true
 
+	case "Mutation.addStrainPhenotype":
+		if e.complexity.Mutation.AddStrainPhenotype == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addStrainPhenotype_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddStrainPhenotype(childComplexity, args["strainId"].(string), args["input"].(models.AddStrainPhenotypeInput)), true
+
 	case "Mutation.createContent":
 		if e.complexity.Mutation.CreateContent == nil {
 			break
@@ -850,6 +913,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CreateContent(childComplexity, args["input"].(*models.CreateContentInput)), true
+
+	case "Mutation.createGeneGeneralInfo":
+		if e.complexity.Mutation.CreateGeneGeneralInfo == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createGeneGeneralInfo_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateGeneGeneralInfo(childComplexity, args["id"].(string), args["input"].(models.CreateGeneGeneralInfoInput)), true
 
 	case "Mutation.createOrder":
 		if e.complexity.Mutation.CreateOrder == nil {
@@ -995,6 +1070,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.DeleteStock(childComplexity, args["id"].(string)), true
 
+	case "Mutation.deleteStrainPhenotype":
+		if e.complexity.Mutation.DeleteStrainPhenotype == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteStrainPhenotype_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteStrainPhenotype(childComplexity, args["strainId"].(string), args["input"].(models.DeleteStrainPhenotypeInput)), true
+
 	case "Mutation.deleteUser":
 		if e.complexity.Mutation.DeleteUser == nil {
 			break
@@ -1037,6 +1124,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateContent(childComplexity, args["input"].(*models.UpdateContentInput)), true
+
+	case "Mutation.updateGeneGeneralInfo":
+		if e.complexity.Mutation.UpdateGeneGeneralInfo == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateGeneGeneralInfo_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateGeneGeneralInfo(childComplexity, args["id"].(string), args["input"].(models.UpdateGeneGeneralInfoInput)), true
 
 	case "Mutation.updateOrder":
 		if e.complexity.Mutation.UpdateOrder == nil {
@@ -1097,6 +1196,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateStrain(childComplexity, args["id"].(string), args["input"].(*models.UpdateStrainInput)), true
+
+	case "Mutation.updateStrainPhenotype":
+		if e.complexity.Mutation.UpdateStrainPhenotype == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateStrainPhenotype_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateStrainPhenotype(childComplexity, args["strainId"].(string), args["target"].(models.UpdateStrainPhenotypeTargetInput), args["payload"].(models.UpdateStrainPhenotypePayloadInput)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -1810,6 +1921,42 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.ListPermissions(childComplexity), true
 
+	case "Query.listPhenotypeAssays":
+		if e.complexity.Query.ListPhenotypeAssays == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listPhenotypeAssays_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListPhenotypeAssays(childComplexity, args["search"].(string)), true
+
+	case "Query.listPhenotypeEnvironments":
+		if e.complexity.Query.ListPhenotypeEnvironments == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listPhenotypeEnvironments_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListPhenotypeEnvironments(childComplexity, args["search"].(string)), true
+
+	case "Query.listPhenotypes":
+		if e.complexity.Query.ListPhenotypes == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listPhenotypes_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListPhenotypes(childComplexity, args["search"].(string)), true
+
 	case "Query.listPlasmids":
 		if e.complexity.Query.ListPlasmids == nil {
 			break
@@ -1820,7 +1967,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListPlasmids(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string)), true
+		return e.complexity.Query.ListPlasmids(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*models.PlasmidListFilter)), true
 
 	case "Query.listPlasmidsWithAnnotation":
 		if e.complexity.Query.ListPlasmidsWithAnnotation == nil {
@@ -2459,22 +2606,29 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputAddStrainPhenotypeInput,
 		ec.unmarshalInputCreateContentInput,
+		ec.unmarshalInputCreateGeneGeneralInfoInput,
 		ec.unmarshalInputCreateOrderInput,
 		ec.unmarshalInputCreatePermissionInput,
 		ec.unmarshalInputCreatePlasmidInput,
 		ec.unmarshalInputCreateRoleInput,
 		ec.unmarshalInputCreateStrainInput,
 		ec.unmarshalInputCreateUserInput,
+		ec.unmarshalInputDeleteStrainPhenotypeInput,
 		ec.unmarshalInputFileToUpload,
 		ec.unmarshalInputLoginInput,
+		ec.unmarshalInputPlasmidListFilter,
 		ec.unmarshalInputStrainListFilter,
 		ec.unmarshalInputUpdateContentInput,
+		ec.unmarshalInputUpdateGeneGeneralInfoInput,
 		ec.unmarshalInputUpdateOrderInput,
 		ec.unmarshalInputUpdatePermissionInput,
 		ec.unmarshalInputUpdatePlasmidInput,
 		ec.unmarshalInputUpdateRoleInput,
 		ec.unmarshalInputUpdateStrainInput,
+		ec.unmarshalInputUpdateStrainPhenotypePayloadInput,
+		ec.unmarshalInputUpdateStrainPhenotypeTargetInput,
 		ec.unmarshalInputUpdateUserInput,
 	)
 	first := true
@@ -2690,6 +2844,27 @@ type GeneGeneralInfo {
   gene_product: String
   synonyms: [String]!
   description: String
+  # New
+  created_at: Timestamp
+  created_by: User
+  updated_at: Timestamp
+  updated_by: User
+}
+
+input UpdateGeneGeneralInfoInput {
+  name_description: [String]
+  gene_product: String
+  synonyms: [String]
+  description: String
+  user: String!
+}
+
+input CreateGeneGeneralInfoInput {
+  name_description: [String]
+  gene_product: String
+  synonyms: [String]
+  description: String
+  user: String!
 }
 `, BuiltIn: false},
 	{Name: "../../../api/src/schema/mutation.graphql", Input: `type Mutation {
@@ -2707,8 +2882,14 @@ type GeneGeneralInfo {
   createStrain(input: CreateStrainInput): Strain
   createPlasmid(input: CreatePlasmidInput): Plasmid
   updateStrain(id: ID!, input: UpdateStrainInput): Strain
+  addStrainPhenotype(strainId: ID!, input: AddStrainPhenotypeInput!): Strain
+  updateStrainPhenotype(strainId: ID!, target: UpdateStrainPhenotypeTargetInput!, payload: UpdateStrainPhenotypePayloadInput!): Strain
+  deleteStrainPhenotype(strainId: ID!, input: DeleteStrainPhenotypeInput!): DeleteStrainPhenotype!
   updatePlasmid(id: ID!, input: UpdatePlasmidInput): Plasmid
   deleteStock(id: ID!): DeleteStock
+  # Gene mutations
+  createGeneGeneralInfo(id: ID!, input: CreateGeneGeneralInfoInput!): GeneGeneralInfo
+  updateGeneGeneralInfo(id: ID!, input: UpdateGeneGeneralInfoInput!): GeneGeneralInfo
   # User mutations
   createUser(input: CreateUserInput): User
   createUserRoleRelationship(userId: ID!, roleId: ID!): User
@@ -2721,7 +2902,7 @@ type GeneGeneralInfo {
   createPermission(input: CreatePermissionInput): Permission
   updatePermission(id: ID!, input: UpdatePermissionInput): Permission
   deletePermission(id: ID!): DeletePermission
-  uploadFile(file: Upload! ): ImageFile!
+  uploadFile(file: Upload!): ImageFile!
 }
 `, BuiltIn: false},
 	{Name: "../../../api/src/schema/order.graphql", Input: `type Order {
@@ -2927,7 +3108,7 @@ type Author {
     limit: Int
     filter: StrainListFilter
   ): StrainListWithCursor
-  listPlasmids(cursor: Int, limit: Int, filter: String): PlasmidListWithCursor
+  listPlasmids(cursor: Int, limit: Int, filter: PlasmidListFilter): PlasmidListWithCursor
   listStrainsWithAnnotation(
     cursor: Int
     limit: Int
@@ -2946,6 +3127,12 @@ type Author {
   # List strain query that is by default is sorted by strain
   # date in descendent order
   listRecentStrains(limit: Int!): [Strain!]
+  # List Phenotypes that match the provided search string
+  listPhenotypes(search: String!): [String!]!
+  # List Phenotype Environments that match the provided search string
+  listPhenotypeEnvironments(search: String!): [String!]!
+  # List Phenotype Assays that match the provided search string
+  listPhenotypeAssays(search: String!): [String!]!
   # User queries
   user(id: ID!): User
   userByEmail(email: String!): User
@@ -2957,6 +3144,7 @@ type Author {
 }
 `, BuiltIn: false},
 	{Name: "../../../api/src/schema/scalar.graphql", Input: `scalar Timestamp
+scalar StringSet
 `, BuiltIn: false},
 	{Name: "../../../api/src/schema/stock.graphql", Input: `interface Stock {
   id: ID!
@@ -3144,6 +3332,12 @@ enum StrainType {
   BACTERIAL
 }
 
+enum PlasmidType {
+  ALL 
+  REGULAR 
+  GOLDEN_BRAID
+}
+
 input StrainListFilter {
   label: String
   summary: String
@@ -3151,6 +3345,51 @@ input StrainListFilter {
   in_stock: Boolean
   strain_type: StrainType!
 }
+
+input PlasmidListFilter {
+  name: String
+  summary: String
+  id: ID
+  in_stock: Boolean
+  plasmid_type: PlasmidType!
+}
+
+input AddStrainPhenotypeInput {
+  phenotype: String!
+  environment: String
+  assay: String
+  publication: String!
+  notes: String
+}
+
+input UpdateStrainPhenotypeTargetInput {
+  phenotype: String!
+  environment: String
+  assay: String
+  publication: String!
+  notes: String
+}
+
+input UpdateStrainPhenotypePayloadInput {
+  phenotype: String
+  environment: String
+  assay: String
+  publication: String
+  notes: String
+}
+
+input DeleteStrainPhenotypeInput {
+  phenotype: String!
+  environment: String
+  assay: String
+  publication: String!
+  notes: String
+}
+
+type DeleteStrainPhenotype {
+  success: Boolean!
+}
+
 `, BuiltIn: false},
 	{Name: "../../../api/src/schema/upload.graphql", Input: `"The ` + "`" + `Upload` + "`" + ` scalar type represents a multipart file upload."
 scalar Upload

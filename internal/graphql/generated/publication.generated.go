@@ -1134,7 +1134,11 @@ func (ec *executionContext) _BasePublication(ctx context.Context, sel ast.Select
 		}
 		return ec._Publication(ctx, sel, obj)
 	default:
-		panic(fmt.Errorf("unexpected type %T", obj))
+		if typedObj, ok := obj.(graphql.Marshaler); ok {
+			return typedObj
+		} else {
+			panic(fmt.Errorf("unexpected type %T; non-generated variants of BasePublication must implement graphql.Marshaler", obj))
+		}
 	}
 }
 
@@ -1484,7 +1488,7 @@ func (ec *executionContext) marshalNAuthor2ᚕᚖgithubᚗcomᚋdictyBaseᚋgo�
 func (ec *executionContext) marshalNAuthor2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthor(ctx context.Context, sel ast.SelectionSet, v *publication.Author) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -1494,7 +1498,7 @@ func (ec *executionContext) marshalNAuthor2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑge
 func (ec *executionContext) marshalNPublication2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublication(ctx context.Context, sel ast.SelectionSet, v *models.Publication) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -1548,7 +1552,7 @@ func (ec *executionContext) marshalNPublicationWithGene2ᚕᚖgithubᚗcomᚋdic
 func (ec *executionContext) marshalNPublicationWithGene2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationWithGene(ctx context.Context, sel ast.SelectionSet, v *models.PublicationWithGene) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
