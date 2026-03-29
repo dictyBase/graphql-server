@@ -15,3 +15,4 @@ internal/graphql/.DS_Store
 .claude
 opencode.json
 .opencode
+.crush
