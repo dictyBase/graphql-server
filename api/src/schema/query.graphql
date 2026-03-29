@@ -27,7 +27,7 @@ type Query {
     limit: Int
     filter: StrainListFilter
   ): StrainListWithCursor
-  listPlasmids(cursor: Int, limit: Int, filter: String): PlasmidListWithCursor
+  listPlasmids(cursor: Int, limit: Int, filter: PlasmidListFilter): PlasmidListWithCursor
   listStrainsWithAnnotation(
     cursor: Int
     limit: Int
@@ -46,6 +46,12 @@ type Query {
   # List strain query that is by default is sorted by strain
   # date in descendent order
   listRecentStrains(limit: Int!): [Strain!]
+  # List Phenotypes that match the provided search string
+  listPhenotypes(search: String!): [String!]!
+  # List Phenotype Environments that match the provided search string
+  listPhenotypeEnvironments(search: String!): [String!]!
+  # List Phenotype Assays that match the provided search string
+  listPhenotypeAssays(search: String!): [String!]!
   # User queries
   user(id: ID!): User
   userByEmail(email: String!): User

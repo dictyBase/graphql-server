@@ -116,7 +116,7 @@ query ListPlasmidsInventory($cursor: Int!, $limit: Int!) {
   }
 }
 
-query PlasmidListFilter($cursor: Int!, $limit: Int!, $filter: String!) {
+query PlasmidListFilter($cursor: Int!, $limit: Int!, $filter: PlasmidListFilter) {
   listPlasmids(cursor: $cursor, limit: $limit, filter: $filter) {
     nextCursor
     totalCount
@@ -236,3 +236,14 @@ query ListRecentStrains($limit: Int! = 4) {
   }
 }
 
+query ListPhenotypes($search: String!) {
+  listPhenotypes(search: $search)
+}
+
+query ListPhenotypeEnvironments($search: String!) {
+  listPhenotypeEnvironments(search: $search)
+}
+
+query ListPhenotypeAssays($search: String!) {
+  listPhenotypeAssays(search: $search)
+}

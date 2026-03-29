@@ -1,0 +1,17 @@
+mutation CreateGeneGeneralInfo($id: ID!, $input: CreateGeneGeneralInfoInput!) {
+  createGeneGeneralInfo(id: $id, input: $input) {
+    id
+    created_by {
+      id
+    }
+  }
+}
+
+mutation UpdateGeneGeneralInfo($id: ID!, $input: UpdateGeneGeneralInfoInput!) {
+  updateGeneGeneralInfo(id: $id, input: $input) {
+    id
+    updated_by {
+      id
+    }
+  }
+}

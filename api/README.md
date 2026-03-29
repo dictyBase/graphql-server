@@ -8,7 +8,7 @@ folder contains the graphql schema definitions. The `mutations` and
 `queries` folders has the graphql documents. 
 
 ## Install
-`yarn add dictybase/dicty-graphql-schema`   
+`yarn add dictybase/dicty-graphql-schema`
 
 To install a particular version (check tags/release first)  
 
@@ -92,7 +92,7 @@ Details [here](https://the-guild.dev/graphql/codegen/plugins/typescript/typescri
 - Install [bun](https://bun.sh/docs/installation)
 - Run `bun install`
 - Complete any necessary work.
-- Run `bun run --bun generat` to generate code from the schema. The generated code will go in the `types` folder.
+- Run `bun run --bun generate` to generate code from the schema. The generated typescript code will go in the `types` folder. CommonJS javascript code will be generated in the `dist` folder.
 - Commit all changes and create a github pull request.
 - Repeat the cycle until the work is done. When finished, merge to `develop`.
 

@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
+    "target": "ES2019",
     "strict": true,
     "outDir": "dist",
     "declaration": true,
-    "emitDeclarationOnly": true,
+    "module": "commonjs",
     "moduleResolution": "node"
+
   },
-  "include": ["types/*"]
+  "include": ["types/query.ts", "types/mocks.ts"]
 }

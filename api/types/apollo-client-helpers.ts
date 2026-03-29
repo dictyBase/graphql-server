@@ -64,6 +64,10 @@ export type DeleteStockKeySpecifier = ('success' | DeleteStockKeySpecifier)[];
 export type DeleteStockFieldPolicy = {
 	success?: FieldPolicy<any> | FieldReadFunction<any>
 };
+export type DeleteStrainPhenotypeKeySpecifier = ('success' | DeleteStrainPhenotypeKeySpecifier)[];
+export type DeleteStrainPhenotypeFieldPolicy = {
+	success?: FieldPolicy<any> | FieldReadFunction<any>
+};
 export type DeleteUserKeySpecifier = ('success' | DeleteUserKeySpecifier)[];
 export type DeleteUserFieldPolicy = {
 	success?: FieldPolicy<any> | FieldReadFunction<any>
@@ -103,13 +107,17 @@ export type GeneFieldPolicy = {
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	name?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type GeneGeneralInfoKeySpecifier = ('description' | 'gene_product' | 'id' | 'name_description' | 'synonyms' | GeneGeneralInfoKeySpecifier)[];
+export type GeneGeneralInfoKeySpecifier = ('created_at' | 'created_by' | 'description' | 'gene_product' | 'id' | 'name_description' | 'synonyms' | 'updated_at' | 'updated_by' | GeneGeneralInfoKeySpecifier)[];
 export type GeneGeneralInfoFieldPolicy = {
+	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
+	created_by?: FieldPolicy<any> | FieldReadFunction<any>,
 	description?: FieldPolicy<any> | FieldReadFunction<any>,
 	gene_product?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	name_description?: FieldPolicy<any> | FieldReadFunction<any>,
-	synonyms?: FieldPolicy<any> | FieldReadFunction<any>
+	synonyms?: FieldPolicy<any> | FieldReadFunction<any>,
+	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
+	updated_by?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type IdentityKeySpecifier = ('created_at' | 'id' | 'identifier' | 'provider' | 'updated_at' | 'user_id' | IdentityKeySpecifier)[];
 export type IdentityFieldPolicy = {
@@ -128,9 +136,11 @@ export type LogoutKeySpecifier = ('success' | LogoutKeySpecifier)[];
 export type LogoutFieldPolicy = {
 	success?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type MutationKeySpecifier = ('createContent' | 'createOrder' | 'createPermission' | 'createPlasmid' | 'createRole' | 'createRolePermissionRelationship' | 'createStrain' | 'createUser' | 'createUserRoleRelationship' | 'deleteContent' | 'deletePermission' | 'deleteRole' | 'deleteStock' | 'deleteUser' | 'login' | 'logout' | 'updateContent' | 'updateOrder' | 'updatePermission' | 'updatePlasmid' | 'updateRole' | 'updateStrain' | 'updateUser' | 'uploadFile' | MutationKeySpecifier)[];
+export type MutationKeySpecifier = ('addStrainPhenotype' | 'createContent' | 'createGeneGeneralInfo' | 'createOrder' | 'createPermission' | 'createPlasmid' | 'createRole' | 'createRolePermissionRelationship' | 'createStrain' | 'createUser' | 'createUserRoleRelationship' | 'deleteContent' | 'deletePermission' | 'deleteRole' | 'deleteStock' | 'deleteStrainPhenotype' | 'deleteUser' | 'login' | 'logout' | 'updateContent' | 'updateGeneGeneralInfo' | 'updateOrder' | 'updatePermission' | 'updatePlasmid' | 'updateRole' | 'updateStrain' | 'updateStrainPhenotype' | 'updateUser' | 'uploadFile' | MutationKeySpecifier)[];
 export type MutationFieldPolicy = {
+	addStrainPhenotype?: FieldPolicy<any> | FieldReadFunction<any>,
 	createContent?: FieldPolicy<any> | FieldReadFunction<any>,
+	createGeneGeneralInfo?: FieldPolicy<any> | FieldReadFunction<any>,
 	createOrder?: FieldPolicy<any> | FieldReadFunction<any>,
 	createPermission?: FieldPolicy<any> | FieldReadFunction<any>,
 	createPlasmid?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -143,15 +153,18 @@ export type MutationFieldPolicy = {
 	deletePermission?: FieldPolicy<any> | FieldReadFunction<any>,
 	deleteRole?: FieldPolicy<any> | FieldReadFunction<any>,
 	deleteStock?: FieldPolicy<any> | FieldReadFunction<any>,
+	deleteStrainPhenotype?: FieldPolicy<any> | FieldReadFunction<any>,
 	deleteUser?: FieldPolicy<any> | FieldReadFunction<any>,
 	login?: FieldPolicy<any> | FieldReadFunction<any>,
 	logout?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateContent?: FieldPolicy<any> | FieldReadFunction<any>,
+	updateGeneGeneralInfo?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateOrder?: FieldPolicy<any> | FieldReadFunction<any>,
 	updatePermission?: FieldPolicy<any> | FieldReadFunction<any>,
 	updatePlasmid?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateRole?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateStrain?: FieldPolicy<any> | FieldReadFunction<any>,
+	updateStrainPhenotype?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateUser?: FieldPolicy<any> | FieldReadFunction<any>,
 	uploadFile?: FieldPolicy<any> | FieldReadFunction<any>
 };
@@ -271,7 +284,7 @@ export type PublicationWithGeneFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	volume?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPhenotypeAssays' | 'listPhenotypeEnvironments' | 'listPhenotypes' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	content?: FieldPolicy<any> | FieldReadFunction<any>,
 	contentBySlug?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -281,6 +294,9 @@ export type QueryFieldPolicy = {
 	listOrders?: FieldPolicy<any> | FieldReadFunction<any>,
 	listOrganisms?: FieldPolicy<any> | FieldReadFunction<any>,
 	listPermissions?: FieldPolicy<any> | FieldReadFunction<any>,
+	listPhenotypeAssays?: FieldPolicy<any> | FieldReadFunction<any>,
+	listPhenotypeEnvironments?: FieldPolicy<any> | FieldReadFunction<any>,
+	listPhenotypes?: FieldPolicy<any> | FieldReadFunction<any>,
 	listPlasmids?: FieldPolicy<any> | FieldReadFunction<any>,
 	listPlasmidsWithAnnotation?: FieldPolicy<any> | FieldReadFunction<any>,
 	listPublicationsWithGene?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -429,6 +445,10 @@ export type StrictTypedTypePolicies = {
 	DeleteStock?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | DeleteStockKeySpecifier | (() => undefined | DeleteStockKeySpecifier),
 		fields?: DeleteStockFieldPolicy,
+	},
+	DeleteStrainPhenotype?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | DeleteStrainPhenotypeKeySpecifier | (() => undefined | DeleteStrainPhenotypeKeySpecifier),
+		fields?: DeleteStrainPhenotypeFieldPolicy,
 	},
 	DeleteUser?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | DeleteUserKeySpecifier | (() => undefined | DeleteUserKeySpecifier),

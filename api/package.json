@@ -1,19 +1,35 @@
 {
   "name": "dicty-graphql-schema",
-  "version": "1.24.0",
+  "version": "1.37.0",
   "description": "GraphQL schema and typings for the dictyBase API.",
+  "exports": {
+    ".": "./types/index.ts",
+    "./package.json": "./package.json",
+    "./dist/mocks": {
+      "types": "./dist/mocks.d.ts",
+      "import": "./types/mocks.ts",
+      "default": "./types/mocks.ts"
+    },
+    "./dist/query": {
+      "require": "./dist/query.js",
+      "import": "./dist/query.js",
+      "types": "./dist/query.d.ts",
+      "default": "./types/query.ts"
+    }
+  },
   "main": "./types/index.ts",
-  "type": "module",
   "files": [
     "types",
-    "package.json"
+    "package.json",
+    "dist"
   ],
   "private": true,
   "engines": {
     "node": ">= 20.11.1"
   },
   "scripts": {
-    "generate": "graphql-codegen -c src/codegen.ts",
+    "generate": "graphql-codegen -c src/codegen.ts && bun transpile",
+    "transpile": "tsc",
     "create-release": "semantic-release"
   },
   "repository": {
@@ -50,13 +66,14 @@
     "graphql": "^16.8.1"
   },
   "devDependencies": {
+    "@apollo/client": "^3.13.9",
     "@graphql-codegen/cli": "5.0.2",
     "@graphql-codegen/fragment-matcher": "^5.0.2",
     "@graphql-codegen/introspection": "^4.0.3",
     "@graphql-codegen/typescript": "^4.0.6",
     "@graphql-codegen/typescript-apollo-client-helpers": "^3.0.0",
     "@graphql-codegen/typescript-document-nodes": "^4.0.6",
-    "@graphql-codegen/typescript-msw": "^2.0.0",
+    "@graphql-codegen/typescript-msw": "^3.0.0",
     "@graphql-codegen/typescript-operations": "^4.2.0",
     "@graphql-codegen/typescript-react-apollo": "^3.0.0",
     "@graphql-eslint/eslint-plugin": "^3.20.1",
