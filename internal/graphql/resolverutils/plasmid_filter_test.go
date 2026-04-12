@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
-	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,18 +14,18 @@ func TestPlasmidFilterToQueryNilFilter(t *testing.T) {
 	require.Equal(t, "", query)
 }
 
-func TestPlasmidFilterToQuerySummaryOnly(t *testing.T) {
+func TestPlasmidFilterToQuerySummaryOnlyWithAllType(t *testing.T) {
 	t.Parallel()
 	summary := "GoldenBraid"
 	query, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
 		Summary:     &summary,
-		PlasmidType: models.PlasmidTypeRegular,
+		PlasmidType: models.PlasmidTypeAll,
 	})
 	require.NoError(t, err)
-	require.Equal(t, "summary=~GoldenBraid;ontology==dicty_plasmid_keyword;tag==regular plasmid", query)
+	require.Equal(t, "summary=~GoldenBraid", query)
 }
 
-func TestPlasmidFilterToQueryNameOnly(t *testing.T) {
+func TestPlasmidFilterToQueryNameOnlyWithAllType(t *testing.T) {
 	t.Parallel()
 	name := "pTest"
 	query, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
@@ -34,47 +33,47 @@ func TestPlasmidFilterToQueryNameOnly(t *testing.T) {
 		PlasmidType: models.PlasmidTypeAll,
 	})
 	require.NoError(t, err)
-	require.Equal(t, "plasmid_name===pTest;ontology==dicty_plasmid_keyword;tag==regular plasmid,tag==golden braid", query)
+	require.Equal(t, "plasmid_name===pTest", query)
 }
 
-func TestPlasmidFilterToQueryCombinedSummaryAndName(t *testing.T) {
+func TestPlasmidFilterToQueryCombinedSummaryAndNameWithAllType(t *testing.T) {
 	t.Parallel()
 	summary := "test"
 	name := "pTest"
 	query, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
 		Summary:     &summary,
 		Name:        &name,
-		PlasmidType: models.PlasmidTypeGoldenBraid,
+		PlasmidType: models.PlasmidTypeAll,
 	})
 	require.NoError(t, err)
-	require.Equal(t, "summary=~test;plasmid_name===pTest;ontology==dicty_plasmid_keyword;tag==golden braid", query)
+	require.Equal(t, "summary=~test;plasmid_name===pTest", query)
 }
 
-func TestPlasmidFilterToQueryPlasmidTypeAll(t *testing.T) {
+func TestPlasmidFilterToQueryPlasmidTypeAllOnly(t *testing.T) {
 	t.Parallel()
 	query, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
 		PlasmidType: models.PlasmidTypeAll,
 	})
 	require.NoError(t, err)
-	require.Equal(t, "ontology==dicty_plasmid_keyword;tag==regular plasmid,tag==golden braid", query)
+	require.Equal(t, "", query)
 }
 
-func TestPlasmidFilterToQueryPlasmidTypeRegular(t *testing.T) {
+func TestPlasmidFilterToQueryPlasmidTypeRegularUnverified(t *testing.T) {
 	t.Parallel()
-	query, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
+	_, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
 		PlasmidType: models.PlasmidTypeRegular,
 	})
-	require.NoError(t, err)
-	require.Equal(t, "ontology==dicty_plasmid_keyword;tag==regular plasmid", query)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "plasmid_type filter is not yet verified")
 }
 
-func TestPlasmidFilterToQueryPlasmidTypeGoldenBraid(t *testing.T) {
+func TestPlasmidFilterToQueryPlasmidTypeGoldenBraidUnverified(t *testing.T) {
 	t.Parallel()
-	query, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
+	_, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
 		PlasmidType: models.PlasmidTypeGoldenBraid,
 	})
-	require.NoError(t, err)
-	require.Equal(t, "ontology==dicty_plasmid_keyword;tag==golden braid", query)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "plasmid_type filter is not yet verified")
 }
 
 func TestPlasmidFilterToQueryInvalidPlasmidType(t *testing.T) {
@@ -92,7 +91,7 @@ func TestPlasmidFilterToQueryUnsupportedInStock(t *testing.T) {
 	inStock := true
 	_, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
 		InStock:     &inStock,
-		PlasmidType: models.PlasmidTypeRegular,
+		PlasmidType: models.PlasmidTypeAll,
 	})
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "in_stock filter is not yet supported")
@@ -103,19 +102,8 @@ func TestPlasmidFilterToQueryUnsupportedID(t *testing.T) {
 	id := "DBP123456"
 	_, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
 		ID:          &id,
-		PlasmidType: models.PlasmidTypeRegular,
+		PlasmidType: models.PlasmidTypeAll,
 	})
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "id filter is not yet supported")
-}
-
-func TestPlasmidTypeQueryAllTags(t *testing.T) {
-	t.Parallel()
-	query, err := plasmidTypeQuery(&models.PlasmidListFilter{
-		PlasmidType: models.PlasmidTypeAll,
-	})
-	require.NoError(t, err)
-	require.Contains(t, query, registry.DictyPlasmidPropOntology)
-	require.Contains(t, query, registry.RegularPlasmidTag)
-	require.Contains(t, query, registry.GoldenBraidPlasmidTag)
 }
