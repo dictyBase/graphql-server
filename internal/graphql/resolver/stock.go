@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	F "github.com/IBM/fp-go/v2/function"
+	IOE "github.com/IBM/fp-go/v2/ioeither"
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
@@ -311,39 +313,39 @@ func (qrs *QueryResolver) ListPlasmids(
 	ctx context.Context,
 	cursor *int,
 	limit *int,
-	filter *string,
+	filter *models.PlasmidListFilter,
 ) (*models.PlasmidListWithCursor, error) {
-	c := resolverutils.GetCursor(cursor)
-	list, err := qrs.GetStockClient(registry.STOCK).
-		ListPlasmids(ctx, &pb.StockParameters{
-			Cursor: c,
-			Limit:  resolverutils.GetLimit(limit),
-			Filter: resolverutils.GetFilter(filter),
-		})
+	cus := resolverutils.GetCursor(cursor)
+	lmt := resolverutils.GetLimit(limit)
+
+	filterQuery, err := resolverutils.PlasmidFilterToQuery(filter)
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
 		qrs.Logger.Error(err)
 		return &models.PlasmidListWithCursor{}, err
 	}
-	plasmids := []*models.Plasmid{}
-	for _, n := range list.Data {
-		attr := n.Attributes
-		item := stock.ConvertToPlasmidModel(n.Id, attr)
-		plasmids = append(plasmids, item)
-	}
-	qrs.Logger.Debugf(
-		"successfully retrieved list of %v plasmids",
-		list.Meta.Total,
-	)
-	return &models.PlasmidListWithCursor{
-		Limit: func(i int64) *int { lm := int(i); return &lm }(
-			list.Meta.Limit,
+
+	result := foldPlasmidListResult(
+		F.Pipe1(
+			callListPlasmids(
+				qrs.GetStockClient(registry.STOCK),
+				ctx,
+				buildPlasmidStockParameters(cus, lmt, filterQuery),
+			),
+			IOE.Map[error](func(list *pb.PlasmidCollection) *models.PlasmidListWithCursor {
+				return buildPlasmidListResult(list, cus)
+			}),
 		),
-		NextCursor:     int(list.Meta.NextCursor),
-		TotalCount:     int(list.Meta.Total),
-		PreviousCursor: int(c),
-		Plasmids:       plasmids,
-	}, nil
+	)
+
+	if result.F1 != nil {
+		errorutils.AddGQLError(ctx, result.F1)
+		qrs.Logger.Error(result.F1)
+		return result.F2, result.F1
+	}
+
+	qrs.Logger.Debugf("successfully retrieved list of %v plasmids", result.F2.TotalCount)
+	return result.F2, nil
 }
 
 //nolint:dupl
@@ -554,4 +556,66 @@ func (qrs *QueryResolver) ListStrainsWithGene(
 		)
 	}
 	return smodelList, nil
+}
+
+func (mrs *MutationResolver) CreateGeneGeneralInfo(
+	ctx context.Context,
+	id string,
+	input models.CreateGeneGeneralInfoInput,
+) (*models.GeneGeneralInfo, error) {
+	return &models.GeneGeneralInfo{}, fmt.Errorf("CreateGeneGeneralInfo is not yet implemented")
+}
+
+func (mrs *MutationResolver) UpdateGeneGeneralInfo(
+	ctx context.Context,
+	id string,
+	input models.UpdateGeneGeneralInfoInput,
+) (*models.GeneGeneralInfo, error) {
+	return &models.GeneGeneralInfo{}, fmt.Errorf("UpdateGeneGeneralInfo is not yet implemented")
+}
+
+func (mrs *MutationResolver) UpdateStrainPhenotype(
+	ctx context.Context,
+	strainID string,
+	target models.UpdateStrainPhenotypeTargetInput,
+	payload models.UpdateStrainPhenotypePayloadInput,
+) (*models.Strain, error) {
+	return &models.Strain{}, fmt.Errorf("UpdateStrainPhenotype is not yet implemented")
+}
+
+func (mrs *MutationResolver) DeleteStrainPhenotype(
+	ctx context.Context,
+	strainID string,
+	input models.DeleteStrainPhenotypeInput,
+) (*models.DeleteStrainPhenotype, error) {
+	return &models.DeleteStrainPhenotype{}, fmt.Errorf("DeleteStrainPhenotype is not yet implemented")
+}
+
+func (mrs *MutationResolver) AddStrainPhenotype(
+	ctx context.Context,
+	strainID string,
+	input models.AddStrainPhenotypeInput,
+) (*models.Strain, error) {
+	return &models.Strain{}, fmt.Errorf("AddStrainPhenotype is not yet implemented")
+}
+
+func (qrs *QueryResolver) ListPhenotypeAssays(
+	ctx context.Context,
+	search string,
+) ([]string, error) {
+	return []string{}, fmt.Errorf("ListPhenotypeAssays is not yet implemented")
+}
+
+func (qrs *QueryResolver) ListPhenotypeEnvironments(
+	ctx context.Context,
+	search string,
+) ([]string, error) {
+	return []string{}, fmt.Errorf("ListPhenotypeEnvironments is not yet implemented")
+}
+
+func (qrs *QueryResolver) ListPhenotypes(
+	ctx context.Context,
+	search string,
+) ([]string, error) {
+	return []string{}, fmt.Errorf("ListPhenotypes is not yet implemented")
 }
