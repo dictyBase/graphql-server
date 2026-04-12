@@ -157,9 +157,11 @@ func TestListPlasmids(t *testing.T) {
 	}
 	cursor := 0
 	limit := 10
-	filter := "type===plasmid"
-	p, err := q.ListPlasmids(context.Background(), &cursor, &limit, &filter)
-	assert.NoError(err, "expect no error from getting list of strains")
+	filter := &models.PlasmidListFilter{
+		PlasmidType: models.PlasmidTypeAll,
+	}
+	p, err := q.ListPlasmids(context.Background(), &cursor, &limit, filter)
+	assert.NoError(err, "expect no error from getting list of plasmids")
 	assert.Equal(p.Limit, &limit, "should match limit")
 	assert.Equal(p.PreviousCursor, cursor, "should match previous cursor")
 	assert.Equal(
