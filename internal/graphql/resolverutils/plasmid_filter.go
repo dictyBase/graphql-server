@@ -22,15 +22,8 @@ func PlasmidFilterToQuery(filter *models.PlasmidListFilter) (string, error) {
 		query.WriteString(fieldQuery)
 	}
 
-	typeQuery, err := plasmidTypeQuery(filter)
-	if err != nil {
+	if err := plasmidTypeQuery(filter); err != nil {
 		return "", err
-	}
-	if typeQuery != "" {
-		if query.Len() > 0 {
-			query.WriteString(";")
-		}
-		query.WriteString(typeQuery)
 	}
 
 	return query.String(), nil
@@ -58,15 +51,15 @@ func plasmidFieldsQuery(filter *models.PlasmidListFilter) (string, error) {
 	return query.String(), nil
 }
 
-func plasmidTypeQuery(filter *models.PlasmidListFilter) (string, error) {
+func plasmidTypeQuery(filter *models.PlasmidListFilter) error {
 	switch filter.PlasmidType {
 	case models.PlasmidTypeAll:
-		return "", nil
+		return nil
 	case models.PlasmidTypeRegular, models.PlasmidTypeGoldenBraid:
-		return "", fmt.Errorf(
+		return fmt.Errorf(
 			"plasmid_type filter is not yet verified for stock query conversion",
 		)
 	}
 
-	return "", fmt.Errorf("invalid plasmid type %s", filter.PlasmidType.String())
+	return fmt.Errorf("invalid plasmid type %s", filter.PlasmidType.String())
 }
