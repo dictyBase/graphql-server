@@ -71,13 +71,13 @@ func strainFieldsQuery(filter *models.StrainListFilter) string {
 		if query.Len() > 0 {
 			query.WriteString(";")
 		}
-		query.WriteString(fmt.Sprintf("label=~%s", *filter.Label))
+		fmt.Fprintf(&query, "label=~%s", *filter.Label)
 	}
 	if filter.Summary != nil {
 		if query.Len() > 0 {
 			query.WriteString(";")
 		}
-		query.WriteString(fmt.Sprintf("summary=~%s", *filter.Summary))
+		fmt.Fprintf(&query, "summary=~%s", *filter.Summary)
 	}
 
 	return query.String()
