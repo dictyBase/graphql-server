@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
-	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
 func PlasmidFilterToQuery(filter *models.PlasmidListFilter) (string, error) {
@@ -62,24 +61,11 @@ func plasmidFieldsQuery(filter *models.PlasmidListFilter) (string, error) {
 func plasmidTypeQuery(filter *models.PlasmidListFilter) (string, error) {
 	switch filter.PlasmidType {
 	case models.PlasmidTypeAll:
-		return fmt.Sprintf(
-			"ontology==%s;tag==%s,tag==%s",
-			registry.DictyPlasmidPropOntology,
-			registry.RegularPlasmidTag,
-			registry.GoldenBraidPlasmidTag,
-		), nil
-	case models.PlasmidTypeRegular:
-		return fmt.Sprintf(
-			"ontology==%s;tag==%s",
-			registry.DictyPlasmidPropOntology,
-			registry.RegularPlasmidTag,
-		), nil
-	case models.PlasmidTypeGoldenBraid:
-		return fmt.Sprintf(
-			"ontology==%s;tag==%s",
-			registry.DictyPlasmidPropOntology,
-			registry.GoldenBraidPlasmidTag,
-		), nil
+		return "", nil
+	case models.PlasmidTypeRegular, models.PlasmidTypeGoldenBraid:
+		return "", fmt.Errorf(
+			"plasmid_type filter is not yet verified for stock query conversion",
+		)
 	}
 
 	return "", fmt.Errorf("invalid plasmid type %s", filter.PlasmidType.String())
