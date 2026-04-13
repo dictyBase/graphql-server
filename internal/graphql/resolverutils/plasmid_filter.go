@@ -15,17 +15,22 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 )
 
-func PlasmidFilterToQuery(filter *models.PlasmidListFilter) (string, error) {
+func PlasmidFilterToQueryE(
+	filter *models.PlasmidListFilter,
+) E.Either[error, string] {
 	if filter == nil {
-		return "", nil
+		return E.Right[error]("")
 	}
-
-	return E.UnwrapError(F.Pipe1(
+	return F.Pipe1(
 		validatePlasmidFilter(filter),
 		E.Map[error](func(_ struct{}) string {
 			return buildPlasmidFieldQuery(filter)
 		}),
-	))
+	)
+}
+
+func PlasmidFilterToQuery(filter *models.PlasmidListFilter) (string, error) {
+	return E.UnwrapError(PlasmidFilterToQueryE(filter))
 }
 
 func validatePlasmidFilter(filter *models.PlasmidListFilter) E.Either[error, struct{}] {
