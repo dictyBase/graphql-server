@@ -1,3 +1,7 @@
+// Package resolver contains the GraphQL resolvers for the stock service. This
+// includesolvers for strains and plasmids, as well as any related types. The resolvers
+// in this package are responsible for handling GraphQL queries and mutations related to
+// stocks, and they interact with the stock service to perform the necessary operations.
 package resolver
 
 import (
@@ -49,9 +53,9 @@ func (mrs *MutationResolver) CreateStrain(
 
 func normalizeCreateStrainAttr(
 	attr *models.CreateStrainInput,
-) map[string]interface{} {
+) map[string]any {
 	fields := structs.Fields(attr)
-	newAttr := make(map[string]interface{})
+	newAttr := make(map[string]any)
 	for _, k := range fields {
 		if !k.IsZero() {
 			newAttr[k.Name()] = k.Value()
@@ -110,9 +114,9 @@ func (mrs *MutationResolver) CreatePlasmid(
 
 func normalizeCreatePlasmidAttr(
 	attr *models.CreatePlasmidInput,
-) map[string]interface{} {
+) map[string]any {
 	fields := structs.Fields(attr)
-	newAttr := make(map[string]interface{})
+	newAttr := make(map[string]any)
 	for _, k := range fields {
 		if !k.IsZero() {
 			newAttr[k.Name()] = k.Value()
@@ -174,9 +178,9 @@ func (mrs *MutationResolver) UpdateStrain(
 
 func normalizeUpdateStrainAttr(
 	attr *models.UpdateStrainInput,
-) map[string]interface{} {
+) map[string]any {
 	fields := structs.Fields(attr)
-	newAttr := make(map[string]interface{})
+	newAttr := make(map[string]any)
 	for _, k := range fields {
 		if !k.IsZero() {
 			newAttr[k.Name()] = k.Value()
@@ -225,9 +229,9 @@ func (mrs *MutationResolver) UpdatePlasmid(
 
 func normalizeUpdatePlasmidAttr(
 	attr *models.UpdatePlasmidInput,
-) map[string]interface{} {
+) map[string]any {
 	fields := structs.Fields(attr)
-	newAttr := make(map[string]interface{})
+	newAttr := make(map[string]any)
 	for _, k := range fields {
 		if !k.IsZero() {
 			newAttr[k.Name()] = k.Value()
