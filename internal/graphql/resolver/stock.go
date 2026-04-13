@@ -348,7 +348,10 @@ func (qrs *QueryResolver) ListPlasmids(
 		return result.F2, result.F1
 	}
 
-	qrs.Logger.Debugf("successfully retrieved list of %v plasmids", result.F2.TotalCount)
+	qrs.Logger.Debugf(
+		"successfully retrieved list of %v plasmids",
+		result.F2.TotalCount,
+	)
 	return result.F2, nil
 }
 
