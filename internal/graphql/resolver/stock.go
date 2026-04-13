@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
@@ -319,27 +320,20 @@ func (qrs *QueryResolver) ListPlasmids(
 	limit *int,
 	filter *models.PlasmidListFilter,
 ) (*models.PlasmidListWithCursor, error) {
-	cus := resolverutils.GetCursor(cursor)
-	lmt := resolverutils.GetLimit(limit)
-
-	filterQuery, err := resolverutils.PlasmidFilterToQuery(filter)
-	if err != nil {
-		errorutils.AddGQLError(ctx, err)
-		qrs.Logger.Error(err)
-		return &models.PlasmidListWithCursor{}, err
-	}
-
-	result := foldPlasmidListResult(
-		F.Pipe1(
-			callListPlasmids(
-				qrs.GetStockClient(registry.STOCK),
-				ctx,
-				buildPlasmidStockParameters(cus, lmt, filterQuery),
-			),
-			IOE.Map[error](func(list *pb.PlasmidCollection) *models.PlasmidListWithCursor {
-				return buildPlasmidListResult(list, cus)
-			}),
-		),
+	result := F.Pipe6(
+		IOE.Of[error](listPlasmidsContext{
+			client: qrs.GetStockClient(registry.STOCK),
+			gctx:   ctx,
+			cursor: cursor,
+			limit:  limit,
+			filter: filter,
+		}),
+		IOE.Let[error](setListPlasmidParams, computeListPlasmidParams),
+		IOE.Bind(setListPlasmidFilter, buildListPlasmidFilterQuery),
+		IOE.Bind(setListPlasmidCollection, fetchListPlasmidCollection),
+		IOE.Map[error](extractListPlasmidResult),
+		toEither[error, *models.PlasmidListWithCursor],
+		E.Fold(onPlasmidListError, onPlasmidListSuccess),
 	)
 
 	if result.F1 != nil {
