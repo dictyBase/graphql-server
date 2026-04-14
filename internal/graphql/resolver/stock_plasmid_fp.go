@@ -120,42 +120,70 @@ func fetchListPlasmidCollection(
 	})
 }
 
+type plasmidResultContext struct {
+	limit      int64
+	nextCursor int64
+	total      int64
+	cursor     int64
+}
+
+type rawPlasmidResultTuple = T.Tuple2[[]*pb.PlasmidCollection_Data, plasmidResultContext]
+
+type plasmidResultTuple = T.Tuple2[[]*models.Plasmid, plasmidResultContext]
+
+var ptrString = func(s string) *string { return &s }
+
+var convertPlasmidDataItem = func(item *pb.PlasmidCollection_Data) *models.Plasmid {
+	return &models.Plasmid{
+		ID:              item.Id,
+		CreatedAt:       aphgrpc.ProtoTimeStamp(item.Attributes.CreatedAt),
+		UpdatedAt:       aphgrpc.ProtoTimeStamp(item.Attributes.UpdatedAt),
+		Summary:         &item.Attributes.Summary,
+		EditableSummary: &item.Attributes.EditableSummary,
+		Dbxrefs:         A.Map(ptrString)(item.Attributes.Dbxrefs),
+		ImageMap:        &item.Attributes.ImageMap,
+		Sequence:        &item.Attributes.Sequence,
+		Name:            item.Attributes.Name,
+		LazyStock: models.LazyStock{
+			CreatedBy:    item.Attributes.CreatedBy,
+			UpdatedBy:    item.Attributes.UpdatedBy,
+			Depositor:    item.Attributes.Depositor,
+			Genes:        item.Attributes.Genes,
+			Publications: item.Attributes.Publications,
+		},
+	}
+}
+
+func buildPlasmidListFromTuple(tuple plasmidResultTuple) *models.PlasmidListWithCursor {
+	lmt := int(tuple.F2.limit)
+	return &models.PlasmidListWithCursor{
+		Plasmids:       tuple.F1,
+		NextCursor:     int(tuple.F2.nextCursor),
+		PreviousCursor: int(tuple.F2.cursor),
+		Limit:          &lmt,
+		TotalCount:     int(tuple.F2.total),
+	}
+}
+
 func extractListPlasmidResult(
 	ctx withListPlasmidCollection,
 ) *models.PlasmidListWithCursor {
-	plasmids := F.Pipe1(
-		ctx.collection.Data,
-		A.Map(func(item *pb.PlasmidCollection_Data) *models.Plasmid {
-			dbxrefs := F.Pipe1(
-				item.Attributes.Dbxrefs,
-				A.Map(func(s string) *string { return &s }),
+	return F.Pipe2(
+		T.MakeTuple2(
+			ctx.collection.Data,
+			plasmidResultContext{
+				limit:      ctx.collection.Meta.Limit,
+				nextCursor: ctx.collection.Meta.NextCursor,
+				total:      ctx.collection.Meta.Total,
+				cursor:     ctx.cus,
+			},
+		),
+		func(tuple rawPlasmidResultTuple) plasmidResultTuple {
+			return T.MakeTuple2(
+				F.Pipe1(tuple.F1, A.Map(convertPlasmidDataItem)),
+				tuple.F2,
 			)
-			return &models.Plasmid{
-				ID:              item.Id,
-				CreatedAt:       aphgrpc.ProtoTimeStamp(item.Attributes.CreatedAt),
-				UpdatedAt:       aphgrpc.ProtoTimeStamp(item.Attributes.UpdatedAt),
-				Summary:         &item.Attributes.Summary,
-				EditableSummary: &item.Attributes.EditableSummary,
-				Dbxrefs:         dbxrefs,
-				ImageMap:        &item.Attributes.ImageMap,
-				Sequence:        &item.Attributes.Sequence,
-				Name:            item.Attributes.Name,
-				LazyStock: models.LazyStock{
-					CreatedBy:    item.Attributes.CreatedBy,
-					UpdatedBy:    item.Attributes.UpdatedBy,
-					Depositor:    item.Attributes.Depositor,
-					Genes:        item.Attributes.Genes,
-					Publications: item.Attributes.Publications,
-				},
-			}
-		}),
+		},
+		buildPlasmidListFromTuple,
 	)
-	lmt := int(ctx.collection.Meta.Limit)
-	return &models.PlasmidListWithCursor{
-		Plasmids:       plasmids,
-		NextCursor:     int(ctx.collection.Meta.NextCursor),
-		PreviousCursor: int(ctx.cus),
-		Limit:          &lmt,
-		TotalCount:     int(ctx.collection.Meta.Total),
-	}
 }
