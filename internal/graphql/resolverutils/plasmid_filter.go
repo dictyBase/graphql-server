@@ -23,8 +23,8 @@ var isNilID = F.Pipe1(
 
 var CheckIDField = E.FromPredicate(
 	isNilID,
-	func(_ *models.PlasmidListFilter) error {
-		return fmt.Errorf("id filter is not yet supported in stock query conversion")
+	func(filter *models.PlasmidListFilter) error {
+		return fmt.Errorf("plasmid list filter %v: id filter is not yet supported in stock query conversion", filter)
 	},
 )
 
