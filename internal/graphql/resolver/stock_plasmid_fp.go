@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
@@ -91,11 +92,16 @@ func computeListPlasmidParams(
 	)
 }
 
-func buildListPlasmidFilterQuery(
-	ctx withListPlasmidParams,
-) IOE.IOEither[error, string] {
-	return IOE.FromEither[error, string](
-		resolverutils.PlasmidFilterToQueryE(ctx.filter),
+func buildListPlasmidFilterQuery(ctx withListPlasmidParams) IOE.IOEither[error, string] {
+	return F.Pipe7(
+		ctx.filter,
+		E.FromNillable[models.PlasmidListFilter](fmt.Errorf("nil filter")),
+		E.Chain(resolverutils.CheckIDField),
+		E.Chain(resolverutils.CheckInStockField),
+		E.Chain(resolverutils.CheckUnverifiedPlasmidType),
+		E.Chain(resolverutils.CheckValidPlasmidType),
+		E.Map[error](resolverutils.BuildPlasmidFieldQuery),
+		IOE.FromEither[error, string],
 	)
 }
 
