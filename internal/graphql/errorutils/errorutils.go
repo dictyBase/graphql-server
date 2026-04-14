@@ -12,6 +12,9 @@ import (
 
 // AddGQLError adds a custom error to the GraphQL response.
 func AddGQLError(ctx context.Context, err error) {
+	defer func() {
+		_ = recover()
+	}()
 	errStatus, _ := status.FromError(err)
 	code := fmt.Sprint(errStatus.Code())
 	graphql.AddError(ctx, &gqlerror.Error{
