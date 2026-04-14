@@ -24,7 +24,10 @@ var isNilID = F.Pipe1(
 var CheckIDField = E.FromPredicate(
 	isNilID,
 	func(filter *models.PlasmidListFilter) error {
-		return fmt.Errorf("plasmid list filter %v: id filter is not yet supported in stock query conversion", filter)
+		return fmt.Errorf(
+			"plasmid list filter %v: id filter is not yet supported in stock query conversion",
+			filter,
+		)
 	},
 )
 
@@ -35,9 +38,10 @@ var isNilInStock = F.Pipe1(
 
 var CheckInStockField = E.FromPredicate(
 	isNilInStock,
-	func(_ *models.PlasmidListFilter) error {
+	func(filter *models.PlasmidListFilter) error {
 		return fmt.Errorf(
-			"in_stock filter is not yet supported in stock query conversion",
+			"plasmid list filter %v: in_stock filter is not yet supported in stock query conversion",
+			filter,
 		)
 	},
 )
@@ -60,9 +64,10 @@ var isUnverifiedPlasmidType = F.Pipe2(
 
 var CheckUnverifiedPlasmidType = E.FromPredicate(
 	isUnverifiedPlasmidType,
-	func(_ *models.PlasmidListFilter) error {
+	func(filter *models.PlasmidListFilter) error {
 		return fmt.Errorf(
-			"plasmid_type filter is not yet verified for stock query conversion",
+			"plasmid list filter %v: plasmid_type filter is not yet verified for stock query conversion",
+			filter,
 		)
 	},
 )
