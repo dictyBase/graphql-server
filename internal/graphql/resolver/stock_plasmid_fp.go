@@ -9,9 +9,10 @@ import (
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
 	T "github.com/IBM/fp-go/v2/tuple"
+	"github.com/dictyBase/aphgrpc"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
-	"github.com/dictyBase/graphql-server/internal/graphql/resolver/stock"
+
 	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 )
 
@@ -122,31 +123,39 @@ func fetchListPlasmidCollection(
 func extractListPlasmidResult(
 	ctx withListPlasmidCollection,
 ) *models.PlasmidListWithCursor {
-	return buildPlasmidListResult(ctx.collection, ctx.cus)
-}
-
-func convertPlasmidCollection(
-	list *pb.PlasmidCollection,
-) []*models.Plasmid {
-	return F.Pipe1(
-		list.Data,
+	plasmids := F.Pipe1(
+		ctx.collection.Data,
 		A.Map(func(item *pb.PlasmidCollection_Data) *models.Plasmid {
-			return stock.ConvertToPlasmidModel(item.Id, item.Attributes)
+			dbxrefs := F.Pipe1(
+				item.Attributes.Dbxrefs,
+				A.Map(func(s string) *string { return &s }),
+			)
+			return &models.Plasmid{
+				ID:              item.Id,
+				CreatedAt:       aphgrpc.ProtoTimeStamp(item.Attributes.CreatedAt),
+				UpdatedAt:       aphgrpc.ProtoTimeStamp(item.Attributes.UpdatedAt),
+				Summary:         &item.Attributes.Summary,
+				EditableSummary: &item.Attributes.EditableSummary,
+				Dbxrefs:         dbxrefs,
+				ImageMap:        &item.Attributes.ImageMap,
+				Sequence:        &item.Attributes.Sequence,
+				Name:            item.Attributes.Name,
+				LazyStock: models.LazyStock{
+					CreatedBy:    item.Attributes.CreatedBy,
+					UpdatedBy:    item.Attributes.UpdatedBy,
+					Depositor:    item.Attributes.Depositor,
+					Genes:        item.Attributes.Genes,
+					Publications: item.Attributes.Publications,
+				},
+			}
 		}),
 	)
-}
-
-func buildPlasmidListResult(
-	list *pb.PlasmidCollection,
-	cursor int64,
-) *models.PlasmidListWithCursor {
-	plasmids := convertPlasmidCollection(list)
-	lmt := int(list.Meta.Limit)
+	lmt := int(ctx.collection.Meta.Limit)
 	return &models.PlasmidListWithCursor{
 		Plasmids:       plasmids,
-		NextCursor:     int(list.Meta.NextCursor),
-		PreviousCursor: int(cursor),
+		NextCursor:     int(ctx.collection.Meta.NextCursor),
+		PreviousCursor: int(ctx.cus),
 		Limit:          &lmt,
-		TotalCount:     int(list.Meta.Total),
+		TotalCount:     int(ctx.collection.Meta.Total),
 	}
 }
