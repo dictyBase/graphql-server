@@ -16,6 +16,15 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 )
 
+type plasmidResultContext struct {
+	limit      int64
+	nextCursor int64
+	total      int64
+	cursor     int64
+}
+
+type plasmidResultTuple = T.Tuple2[[]*models.Plasmid, plasmidResultContext]
+
 type listPlasmidsContext struct {
 	client pb.StockServiceClient
 	gctx   context.Context
@@ -120,17 +129,6 @@ func fetchListPlasmidCollection(
 	})
 }
 
-type plasmidResultContext struct {
-	limit      int64
-	nextCursor int64
-	total      int64
-	cursor     int64
-}
-
-type rawPlasmidResultTuple = T.Tuple2[[]*pb.PlasmidCollection_Data, plasmidResultContext]
-
-type plasmidResultTuple = T.Tuple2[[]*models.Plasmid, plasmidResultContext]
-
 var ptrString = func(s string) *string { return &s }
 
 var convertPlasmidDataItem = func(item *pb.PlasmidCollection_Data) *models.Plasmid {
@@ -154,17 +152,6 @@ var convertPlasmidDataItem = func(item *pb.PlasmidCollection_Data) *models.Plasm
 	}
 }
 
-func buildPlasmidListFromTuple(tuple plasmidResultTuple) *models.PlasmidListWithCursor {
-	lmt := int(tuple.F2.limit)
-	return &models.PlasmidListWithCursor{
-		Plasmids:       tuple.F1,
-		NextCursor:     int(tuple.F2.nextCursor),
-		PreviousCursor: int(tuple.F2.cursor),
-		Limit:          &lmt,
-		TotalCount:     int(tuple.F2.total),
-	}
-}
-
 func extractListPlasmidResult(
 	ctx withListPlasmidCollection,
 ) *models.PlasmidListWithCursor {
@@ -178,12 +165,16 @@ func extractListPlasmidResult(
 				cursor:     ctx.cus,
 			},
 		),
-		func(tuple rawPlasmidResultTuple) plasmidResultTuple {
-			return T.MakeTuple2(
-				F.Pipe1(tuple.F1, A.Map(convertPlasmidDataItem)),
-				tuple.F2,
-			)
+		T.Map2(A.Map(convertPlasmidDataItem), F.Identity[plasmidResultContext]),
+		func(tuple plasmidResultTuple) *models.PlasmidListWithCursor {
+			lmt := int(tuple.F2.limit)
+			return &models.PlasmidListWithCursor{
+				Plasmids:       tuple.F1,
+				NextCursor:     int(tuple.F2.nextCursor),
+				PreviousCursor: int(tuple.F2.cursor),
+				Limit:          &lmt,
+				TotalCount:     int(tuple.F2.total),
+			}
 		},
-		buildPlasmidListFromTuple,
 	)
 }
