@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -13,6 +12,7 @@ import (
 
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/repository"
 	"github.com/dictyBase/graphql-server/internal/repository/redis"
 	"github.com/stretchr/testify/assert"
 )
@@ -47,11 +47,20 @@ func goaTestData() ([]byte, error) {
 	path := filepath.Join(
 		filepath.Dir(dir), "../../../testdata", "goas.json",
 	)
-	b, err := ioutil.ReadFile(path)
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return b, errors.New("unable to read test file")
 	}
 	return b, nil
+}
+
+func newTestCache(t *testing.T) repository.Repository {
+	t.Helper()
+	repo, err := redis.NewCache(redisAddr)
+	if err != nil {
+		t.Skipf("redis unavailable: %v", err)
+	}
+	return repo
 }
 
 func goasHandler(w http.ResponseWriter, r *http.Request) {
@@ -78,8 +87,7 @@ func TestGoas(t *testing.T) {
 	g := httptest.NewServer(http.HandlerFunc(goasHandler))
 	defer g.Close()
 	assert := assert.New(t)
-	repo, err := redis.NewCache(redisAddr)
-	assert.NoError(err, "error connecting to redis")
+	repo := newTestCache(t)
 	gr := &GeneResolver{
 		Registry:   &mocks.MockRegistry{},
 		Logger:     mocks.TestLogger(),
@@ -106,9 +114,8 @@ func TestFetchGOAs(t *testing.T) {
 func TestGetValFromHash(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
-	repo, err := redis.NewCache(redisAddr)
-	assert.NoError(err, "error connecting to redis")
-	err = repo.HSet(mockGeneHash, mockGeneID, mockValue)
+	repo := newTestCache(t)
+	err := repo.HSet(mockGeneHash, mockGeneID, mockValue)
 	assert.NoError(err, "error in setting key")
 	v := getValFromHash(mockGeneHash, mockGeneID, repo)
 	assert.Equal(v, mockValue, "should match value from hash")
