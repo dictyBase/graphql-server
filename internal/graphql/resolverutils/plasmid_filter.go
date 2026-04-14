@@ -10,51 +10,96 @@ import (
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	O "github.com/IBM/fp-go/v2/option"
+	P "github.com/IBM/fp-go/v2/predicate"
 	S "github.com/IBM/fp-go/v2/string"
 
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 )
 
-func PlasmidFilterToQueryE(
-	filter *models.PlasmidListFilter,
-) E.Either[error, string] {
-	if filter == nil {
-		return E.Right[error]("")
-	}
-	return F.Pipe1(
-		validatePlasmidFilter(filter),
-		E.Map[error](func(_ struct{}) string {
-			return buildPlasmidFieldQuery(filter)
-		}),
-	)
-}
+var isNilID = F.Pipe1(
+	P.IsZero[*string](),
+	P.ContraMap(func(f *models.PlasmidListFilter) *string { return f.ID }),
+)
+
+var CheckIDField = E.FromPredicate(
+	isNilID,
+	func(_ *models.PlasmidListFilter) error {
+		return fmt.Errorf("id filter is not yet supported in stock query conversion")
+	},
+)
+
+var isNilInStock = F.Pipe1(
+	P.IsZero[*bool](),
+	P.ContraMap(func(f *models.PlasmidListFilter) *bool { return f.InStock }),
+)
+
+var CheckInStockField = E.FromPredicate(
+	isNilInStock,
+	func(_ *models.PlasmidListFilter) error {
+		return fmt.Errorf(
+			"in_stock filter is not yet supported in stock query conversion",
+		)
+	},
+)
+
+var isNotRegular = P.Not(
+	P.IsStrictEqual[models.PlasmidType]()(models.PlasmidTypeRegular),
+)
+
+var isNotGoldenBraid = P.Not(
+	P.IsStrictEqual[models.PlasmidType]()(models.PlasmidTypeGoldenBraid),
+)
+
+var isUnverifiedPlasmidType = F.Pipe2(
+	isNotRegular,
+	P.And(isNotGoldenBraid),
+	P.ContraMap(func(f *models.PlasmidListFilter) models.PlasmidType {
+		return f.PlasmidType
+	}),
+)
+
+var CheckUnverifiedPlasmidType = E.FromPredicate(
+	isUnverifiedPlasmidType,
+	func(_ *models.PlasmidListFilter) error {
+		return fmt.Errorf(
+			"plasmid_type filter is not yet verified for stock query conversion",
+		)
+	},
+)
+
+var isAllPlasmidType = F.Pipe1(
+	P.IsStrictEqual[models.PlasmidType]()(models.PlasmidTypeAll),
+	P.ContraMap(func(f *models.PlasmidListFilter) models.PlasmidType {
+		return f.PlasmidType
+	}),
+)
+
+var CheckValidPlasmidType = E.FromPredicate(
+	isAllPlasmidType,
+	func(f *models.PlasmidListFilter) error {
+		return fmt.Errorf("invalid plasmid type %s", f.PlasmidType.String())
+	},
+)
+
+var validateFilterPipeline = F.Flow5(
+	CheckIDField,
+	E.Chain(CheckInStockField),
+	E.Chain(CheckUnverifiedPlasmidType),
+	E.Chain(CheckValidPlasmidType),
+	E.Map[error](BuildPlasmidFieldQuery),
+)
 
 func PlasmidFilterToQuery(filter *models.PlasmidListFilter) (string, error) {
-	return E.UnwrapError(PlasmidFilterToQueryE(filter))
+	return E.UnwrapError(F.Pipe1(
+		O.FromNillable(filter),
+		O.Fold(
+			F.Constant(E.Right[error]("")),
+			validateFilterPipeline,
+		),
+	))
 }
 
-func validatePlasmidFilter(filter *models.PlasmidListFilter) E.Either[error, struct{}] {
-	return E.MonadChain(
-		validatePlasmidUnsupportedFields(filter),
-		func(_ struct{}) E.Either[error, struct{}] {
-			return validatePlasmidType(filter)
-		},
-	)
-}
-
-func validatePlasmidType(filter *models.PlasmidListFilter) E.Either[error, struct{}] {
-	switch filter.PlasmidType {
-	case models.PlasmidTypeAll:
-		return E.Right[error](struct{}{})
-	case models.PlasmidTypeRegular, models.PlasmidTypeGoldenBraid:
-		return E.Left[struct{}](fmt.Errorf(
-			"plasmid_type filter is not yet verified for stock query conversion",
-		))
-	}
-	return E.Left[struct{}](fmt.Errorf("invalid plasmid type %s", filter.PlasmidType.String()))
-}
-
-func buildPlasmidFieldQuery(filter *models.PlasmidListFilter) string {
+func BuildPlasmidFieldQuery(filter *models.PlasmidListFilter) string {
 	return F.Pipe2(
 		[]O.Option[string]{
 			F.Pipe1(
@@ -76,14 +121,4 @@ func buildPlasmidFieldQuery(filter *models.PlasmidListFilter) string {
 		)),
 		A.Intercalate(S.Monoid)(";"),
 	)
-}
-
-func validatePlasmidUnsupportedFields(filter *models.PlasmidListFilter) E.Either[error, struct{}] {
-	if filter.ID != nil {
-		return E.Left[struct{}](fmt.Errorf("id filter is not yet supported in stock query conversion"))
-	}
-	if filter.InStock != nil {
-		return E.Left[struct{}](fmt.Errorf("in_stock filter is not yet supported in stock query conversion"))
-	}
-	return E.Right[error](struct{}{})
 }
