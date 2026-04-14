@@ -49,32 +49,57 @@ type withListPlasmidCollection struct {
 	collection *pb.PlasmidCollection
 }
 
-var setListPlasmidParams = F.Curry2(
-	func(params T.Tuple2[int64, int64], ctx listPlasmidsContext) withListPlasmidParams {
-		return withListPlasmidParams{
-			listPlasmidsContext: ctx,
-			cus:                 params.F1,
-			lmt:                 params.F2,
-		}
-	},
-)
+var (
+	setListPlasmidParams = F.Curry2(
+		func(params T.Tuple2[int64, int64], ctx listPlasmidsContext) withListPlasmidParams {
+			return withListPlasmidParams{
+				listPlasmidsContext: ctx,
+				cus:                 params.F1,
+				lmt:                 params.F2,
+			}
+		},
+	)
 
-var setListPlasmidFilter = F.Curry2(
-	func(query string, ctx withListPlasmidParams) withListPlasmidFilter {
-		return withListPlasmidFilter{
-			withListPlasmidParams: ctx,
-			filterQuery:           query,
-		}
-	},
-)
+	setListPlasmidFilter = F.Curry2(
+		func(query string, ctx withListPlasmidParams) withListPlasmidFilter {
+			return withListPlasmidFilter{
+				withListPlasmidParams: ctx,
+				filterQuery:           query,
+			}
+		},
+	)
 
-var setListPlasmidCollection = F.Curry2(
-	func(coll *pb.PlasmidCollection, ctx withListPlasmidFilter) withListPlasmidCollection {
-		return withListPlasmidCollection{
-			withListPlasmidFilter: ctx,
-			collection:            coll,
+	setListPlasmidCollection = F.Curry2(
+		func(coll *pb.PlasmidCollection, ctx withListPlasmidFilter) withListPlasmidCollection {
+			return withListPlasmidCollection{
+				withListPlasmidFilter: ctx,
+				collection:            coll,
+			}
+		},
+	)
+
+	ptrString = func(s string) *string { return &s }
+
+	convertPlasmidDataItem = func(item *pb.PlasmidCollection_Data) *models.Plasmid {
+		return &models.Plasmid{
+			ID:              item.Id,
+			CreatedAt:       aphgrpc.ProtoTimeStamp(item.Attributes.CreatedAt),
+			UpdatedAt:       aphgrpc.ProtoTimeStamp(item.Attributes.UpdatedAt),
+			Summary:         &item.Attributes.Summary,
+			EditableSummary: &item.Attributes.EditableSummary,
+			Dbxrefs:         A.Map(ptrString)(item.Attributes.Dbxrefs),
+			ImageMap:        &item.Attributes.ImageMap,
+			Sequence:        &item.Attributes.Sequence,
+			Name:            item.Attributes.Name,
+			LazyStock: models.LazyStock{
+				CreatedBy:    item.Attributes.CreatedBy,
+				UpdatedBy:    item.Attributes.UpdatedBy,
+				Depositor:    item.Attributes.Depositor,
+				Genes:        item.Attributes.Genes,
+				Publications: item.Attributes.Publications,
+			},
 		}
-	},
+	}
 )
 
 func toEither[ERR, A any](ioe IOE.IOEither[ERR, A]) E.Either[ERR, A] {
@@ -127,29 +152,6 @@ func fetchListPlasmidCollection(
 				Filter: ctx.filterQuery,
 			})
 	})
-}
-
-var ptrString = func(s string) *string { return &s }
-
-var convertPlasmidDataItem = func(item *pb.PlasmidCollection_Data) *models.Plasmid {
-	return &models.Plasmid{
-		ID:              item.Id,
-		CreatedAt:       aphgrpc.ProtoTimeStamp(item.Attributes.CreatedAt),
-		UpdatedAt:       aphgrpc.ProtoTimeStamp(item.Attributes.UpdatedAt),
-		Summary:         &item.Attributes.Summary,
-		EditableSummary: &item.Attributes.EditableSummary,
-		Dbxrefs:         A.Map(ptrString)(item.Attributes.Dbxrefs),
-		ImageMap:        &item.Attributes.ImageMap,
-		Sequence:        &item.Attributes.Sequence,
-		Name:            item.Attributes.Name,
-		LazyStock: models.LazyStock{
-			CreatedBy:    item.Attributes.CreatedBy,
-			UpdatedBy:    item.Attributes.UpdatedBy,
-			Depositor:    item.Attributes.Depositor,
-			Genes:        item.Attributes.Genes,
-			Publications: item.Attributes.Publications,
-		},
-	}
 }
 
 func extractListPlasmidResult(
