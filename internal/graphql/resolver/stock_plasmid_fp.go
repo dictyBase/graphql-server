@@ -108,38 +108,21 @@ func buildListPlasmidFilterQuery(ctx withListPlasmidParams) IOE.IOEither[error, 
 func fetchListPlasmidCollection(
 	ctx withListPlasmidFilter,
 ) IOE.IOEither[error, *pb.PlasmidCollection] {
-	return callListPlasmids(
-		ctx.client,
-		ctx.gctx,
-		buildPlasmidStockParameters(ctx.cus, ctx.lmt, ctx.filterQuery),
-	)
+	return IOE.TryCatchError(func() (*pb.PlasmidCollection, error) {
+		return ctx.client.ListPlasmids(
+			ctx.gctx,
+			&pb.StockParameters{
+				Cursor: ctx.cus,
+				Limit:  ctx.lmt,
+				Filter: ctx.filterQuery,
+			})
+	})
 }
 
 func extractListPlasmidResult(
 	ctx withListPlasmidCollection,
 ) *models.PlasmidListWithCursor {
 	return buildPlasmidListResult(ctx.collection, ctx.cus)
-}
-
-func buildPlasmidStockParameters(
-	cursor, limit int64,
-	filter string,
-) *pb.StockParameters {
-	return &pb.StockParameters{
-		Cursor: cursor,
-		Limit:  limit,
-		Filter: filter,
-	}
-}
-
-func callListPlasmids(
-	client pb.StockServiceClient,
-	ctx context.Context,
-	params *pb.StockParameters,
-) IOE.IOEither[error, *pb.PlasmidCollection] {
-	return IOE.TryCatchError(func() (*pb.PlasmidCollection, error) {
-		return client.ListPlasmids(ctx, params)
-	})
 }
 
 func convertPlasmidCollection(
