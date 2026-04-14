@@ -8,6 +8,7 @@ import (
 
 	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
+	eq "github.com/IBM/fp-go/v2/eq"
 	F "github.com/IBM/fp-go/v2/function"
 	O "github.com/IBM/fp-go/v2/option"
 	P "github.com/IBM/fp-go/v2/predicate"
@@ -16,82 +17,80 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 )
 
-var isNilID = F.Pipe1(
-	P.IsZero[*string](),
-	P.ContraMap(func(f *models.PlasmidListFilter) *string { return f.ID }),
-)
+var (
+	plasmidTypeEq = eq.FromStrictEquals[models.PlasmidType]()
 
-var CheckIDField = E.FromPredicate(
-	isNilID,
-	func(filter *models.PlasmidListFilter) error {
-		return fmt.Errorf(
-			"plasmid list filter %v: id filter is not yet supported in stock query conversion",
-			filter,
-		)
-	},
-)
+	isNilID = F.Pipe1(
+		P.IsZero[*string](),
+		P.ContraMap(func(f *models.PlasmidListFilter) *string {
+			return f.ID
+		}),
+	)
+	CheckIDField = E.FromPredicate(
+		isNilID,
+		func(filter *models.PlasmidListFilter) error {
+			return fmt.Errorf(
+				"plasmid list filter %v: id filter is not yet supported in stock query conversion",
+				filter,
+			)
+		},
+	)
 
-var isNilInStock = F.Pipe1(
-	P.IsZero[*bool](),
-	P.ContraMap(func(f *models.PlasmidListFilter) *bool { return f.InStock }),
-)
+	isNilInStock = F.Pipe1(
+		P.IsZero[*bool](),
+		P.ContraMap(func(f *models.PlasmidListFilter) *bool {
+			return f.InStock
+		}),
+	)
+	CheckInStockField = E.FromPredicate(
+		isNilInStock,
+		func(filter *models.PlasmidListFilter) error {
+			return fmt.Errorf(
+				"plasmid list filter %v: in_stock filter is not yet supported in stock query conversion",
+				filter,
+			)
+		},
+	)
 
-var CheckInStockField = E.FromPredicate(
-	isNilInStock,
-	func(filter *models.PlasmidListFilter) error {
-		return fmt.Errorf(
-			"plasmid list filter %v: in_stock filter is not yet supported in stock query conversion",
-			filter,
-		)
-	},
-)
+	isRegularPlasmidType     = eq.Equals(plasmidTypeEq)(models.PlasmidTypeRegular)
+	isGoldenBraidPlasmidType = eq.Equals(plasmidTypeEq)(models.PlasmidTypeGoldenBraid)
+	isUnverifiedPlasmidType  = F.Pipe2(
+		isRegularPlasmidType,
+		P.Or(isGoldenBraidPlasmidType),
+		P.ContraMap(func(f *models.PlasmidListFilter) models.PlasmidType {
+			return f.PlasmidType
+		}),
+	)
+	CheckUnverifiedPlasmidType = E.FromPredicate(
+		P.Not(isUnverifiedPlasmidType),
+		func(filter *models.PlasmidListFilter) error {
+			return fmt.Errorf(
+				"plasmid list filter %v: plasmid_type filter is not yet verified for stock query conversion",
+				filter,
+			)
+		},
+	)
 
-var isNotRegular = P.Not(
-	P.IsStrictEqual[models.PlasmidType]()(models.PlasmidTypeRegular),
-)
+	isAllPlasmidType = F.Pipe1(
+		eq.Equals(plasmidTypeEq)(models.PlasmidTypeAll),
+		P.ContraMap(func(f *models.PlasmidListFilter) models.PlasmidType {
+			return f.PlasmidType
+		}),
+	)
+	CheckValidPlasmidType = E.FromPredicate(
+		isAllPlasmidType,
+		func(f *models.PlasmidListFilter) error {
+			return fmt.Errorf("invalid plasmid type %s", f.PlasmidType.String())
+		},
+	)
 
-var isNotGoldenBraid = P.Not(
-	P.IsStrictEqual[models.PlasmidType]()(models.PlasmidTypeGoldenBraid),
-)
-
-var isUnverifiedPlasmidType = F.Pipe2(
-	isNotRegular,
-	P.And(isNotGoldenBraid),
-	P.ContraMap(func(f *models.PlasmidListFilter) models.PlasmidType {
-		return f.PlasmidType
-	}),
-)
-
-var CheckUnverifiedPlasmidType = E.FromPredicate(
-	isUnverifiedPlasmidType,
-	func(filter *models.PlasmidListFilter) error {
-		return fmt.Errorf(
-			"plasmid list filter %v: plasmid_type filter is not yet verified for stock query conversion",
-			filter,
-		)
-	},
-)
-
-var isAllPlasmidType = F.Pipe1(
-	P.IsStrictEqual[models.PlasmidType]()(models.PlasmidTypeAll),
-	P.ContraMap(func(f *models.PlasmidListFilter) models.PlasmidType {
-		return f.PlasmidType
-	}),
-)
-
-var CheckValidPlasmidType = E.FromPredicate(
-	isAllPlasmidType,
-	func(f *models.PlasmidListFilter) error {
-		return fmt.Errorf("invalid plasmid type %s", f.PlasmidType.String())
-	},
-)
-
-var validateFilterPipeline = F.Flow5(
-	CheckIDField,
-	E.Chain(CheckInStockField),
-	E.Chain(CheckUnverifiedPlasmidType),
-	E.Chain(CheckValidPlasmidType),
-	E.Map[error](BuildPlasmidFieldQuery),
+	validateFilterPipeline = F.Flow5(
+		CheckIDField,
+		E.Chain(CheckInStockField),
+		E.Chain(CheckUnverifiedPlasmidType),
+		E.Chain(CheckValidPlasmidType),
+		E.Map[error](BuildPlasmidFieldQuery),
+	)
 )
 
 func PlasmidFilterToQuery(filter *models.PlasmidListFilter) (string, error) {
