@@ -16,3 +16,4 @@ internal/graphql/.DS_Store
 opencode.json
 .opencode
 .crush
+tea_debug.log
