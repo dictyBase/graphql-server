@@ -184,6 +184,12 @@ enum StrainType {
   BACTERIAL
 }
 
+enum PlasmidType {
+  ALL 
+  REGULAR 
+  GOLDEN_BRAID
+}
+
 input StrainListFilter {
   label: String
   summary: String
@@ -191,3 +197,48 @@ input StrainListFilter {
   in_stock: Boolean
   strain_type: StrainType!
 }
+
+input PlasmidListFilter {
+  name: String
+  summary: String
+  id: ID
+  in_stock: Boolean
+  plasmid_type: PlasmidType!
+}
+
+input AddStrainPhenotypeInput {
+  phenotype: String!
+  environment: String
+  assay: String
+  publication: String!
+  notes: String
+}
+
+input UpdateStrainPhenotypeTargetInput {
+  phenotype: String!
+  environment: String
+  assay: String
+  publication: String!
+  notes: String
+}
+
+input UpdateStrainPhenotypePayloadInput {
+  phenotype: String
+  environment: String
+  assay: String
+  publication: String
+  notes: String
+}
+
+input DeleteStrainPhenotypeInput {
+  phenotype: String!
+  environment: String
+  assay: String
+  publication: String!
+  notes: String
+}
+
+type DeleteStrainPhenotype {
+  success: Boolean!
+}
+

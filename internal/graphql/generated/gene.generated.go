@@ -656,6 +656,194 @@ func (ec *executionContext) fieldContext_GeneGeneralInfo_description(_ context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _GeneGeneralInfo_created_at(ctx context.Context, field graphql.CollectedField, obj *models.GeneGeneralInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GeneGeneralInfo_created_at,
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		ec.marshalOTimestamp2ᚖtimeᚐTime,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_GeneGeneralInfo_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GeneGeneralInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Timestamp does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GeneGeneralInfo_created_by(ctx context.Context, field graphql.CollectedField, obj *models.GeneGeneralInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GeneGeneralInfo_created_by,
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedBy, nil
+		},
+		nil,
+		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_GeneGeneralInfo_created_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GeneGeneralInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "first_name":
+				return ec.fieldContext_User_first_name(ctx, field)
+			case "last_name":
+				return ec.fieldContext_User_last_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "organization":
+				return ec.fieldContext_User_organization(ctx, field)
+			case "group_name":
+				return ec.fieldContext_User_group_name(ctx, field)
+			case "first_address":
+				return ec.fieldContext_User_first_address(ctx, field)
+			case "second_address":
+				return ec.fieldContext_User_second_address(ctx, field)
+			case "city":
+				return ec.fieldContext_User_city(ctx, field)
+			case "state":
+				return ec.fieldContext_User_state(ctx, field)
+			case "zipcode":
+				return ec.fieldContext_User_zipcode(ctx, field)
+			case "country":
+				return ec.fieldContext_User_country(ctx, field)
+			case "phone":
+				return ec.fieldContext_User_phone(ctx, field)
+			case "is_active":
+				return ec.fieldContext_User_is_active(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "roles":
+				return ec.fieldContext_User_roles(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GeneGeneralInfo_updated_at(ctx context.Context, field graphql.CollectedField, obj *models.GeneGeneralInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GeneGeneralInfo_updated_at,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		ec.marshalOTimestamp2ᚖtimeᚐTime,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_GeneGeneralInfo_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GeneGeneralInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Timestamp does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GeneGeneralInfo_updated_by(ctx context.Context, field graphql.CollectedField, obj *models.GeneGeneralInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GeneGeneralInfo_updated_by,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedBy, nil
+		},
+		nil,
+		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_GeneGeneralInfo_updated_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GeneGeneralInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "first_name":
+				return ec.fieldContext_User_first_name(ctx, field)
+			case "last_name":
+				return ec.fieldContext_User_last_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "organization":
+				return ec.fieldContext_User_organization(ctx, field)
+			case "group_name":
+				return ec.fieldContext_User_group_name(ctx, field)
+			case "first_address":
+				return ec.fieldContext_User_first_address(ctx, field)
+			case "second_address":
+				return ec.fieldContext_User_second_address(ctx, field)
+			case "city":
+				return ec.fieldContext_User_city(ctx, field)
+			case "state":
+				return ec.fieldContext_User_state(ctx, field)
+			case "zipcode":
+				return ec.fieldContext_User_zipcode(ctx, field)
+			case "country":
+				return ec.fieldContext_User_country(ctx, field)
+			case "phone":
+				return ec.fieldContext_User_phone(ctx, field)
+			case "is_active":
+				return ec.fieldContext_User_is_active(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "roles":
+				return ec.fieldContext_User_roles(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _With_id(ctx context.Context, field graphql.CollectedField, obj *models.With) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -746,6 +934,116 @@ func (ec *executionContext) fieldContext_With_name(_ context.Context, field grap
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
+
+func (ec *executionContext) unmarshalInputCreateGeneGeneralInfoInput(ctx context.Context, obj any) (models.CreateGeneGeneralInfoInput, error) {
+	var it models.CreateGeneGeneralInfoInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name_description", "gene_product", "synonyms", "description", "user"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name_description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name_description"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameDescription = data
+		case "gene_product":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gene_product"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GeneProduct = data
+		case "synonyms":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("synonyms"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Synonyms = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
+		case "user":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.User = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateGeneGeneralInfoInput(ctx context.Context, obj any) (models.UpdateGeneGeneralInfoInput, error) {
+	var it models.UpdateGeneGeneralInfoInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name_description", "gene_product", "synonyms", "description", "user"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name_description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name_description"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameDescription = data
+		case "gene_product":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gene_product"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GeneProduct = data
+		case "synonyms":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("synonyms"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Synonyms = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
+		case "user":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.User = data
+		}
+	}
+
+	return it, nil
+}
 
 // endregion **************************** input.gotpl *****************************
 
@@ -961,6 +1259,14 @@ func (ec *executionContext) _GeneGeneralInfo(ctx context.Context, sel ast.Select
 			}
 		case "description":
 			out.Values[i] = ec._GeneGeneralInfo_description(ctx, field, obj)
+		case "created_at":
+			out.Values[i] = ec._GeneGeneralInfo_created_at(ctx, field, obj)
+		case "created_by":
+			out.Values[i] = ec._GeneGeneralInfo_created_by(ctx, field, obj)
+		case "updated_at":
+			out.Values[i] = ec._GeneGeneralInfo_updated_at(ctx, field, obj)
+		case "updated_by":
+			out.Values[i] = ec._GeneGeneralInfo_updated_by(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1037,10 +1343,15 @@ func (ec *executionContext) _With(ctx context.Context, sel ast.SelectionSet, obj
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) unmarshalNCreateGeneGeneralInfoInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateGeneGeneralInfoInput(ctx context.Context, v any) (models.CreateGeneGeneralInfoInput, error) {
+	res, err := ec.unmarshalInputCreateGeneGeneralInfoInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNExtension2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐExtension(ctx context.Context, sel ast.SelectionSet, v *models.Extension) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -1050,7 +1361,7 @@ func (ec *executionContext) marshalNExtension2ᚖgithubᚗcomᚋdictyBaseᚋgrap
 func (ec *executionContext) marshalNGOAnnotation2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGOAnnotation(ctx context.Context, sel ast.SelectionSet, v *models.GOAnnotation) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -1104,17 +1415,22 @@ func (ec *executionContext) marshalNGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphq
 func (ec *executionContext) marshalNGene2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGene(ctx context.Context, sel ast.SelectionSet, v *models.Gene) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
 	return ec._Gene(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNUpdateGeneGeneralInfoInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateGeneGeneralInfoInput(ctx context.Context, v any) (models.UpdateGeneGeneralInfoInput, error) {
+	res, err := ec.unmarshalInputUpdateGeneGeneralInfoInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNWith2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐWith(ctx context.Context, sel ast.SelectionSet, v *models.With) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}

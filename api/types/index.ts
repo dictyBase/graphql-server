@@ -15,9 +15,18 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  Timestamp: { input: any; output: any; }
+  StringSet: { input: Set<string>; output: Set<string>; }
+  Timestamp: { input: string; output: string; }
   /** The `Upload` scalar type represents a multipart file upload. */
-  Upload: { input: any; output: any; }
+  Upload: { input: File; output: File; }
+};
+
+export type AddStrainPhenotypeInput = {
+  assay?: InputMaybe<Scalars['String']['input']>;
+  environment?: InputMaybe<Scalars['String']['input']>;
+  notes?: InputMaybe<Scalars['String']['input']>;
+  phenotype: Scalars['String']['input'];
+  publication: Scalars['String']['input'];
 };
 
 export type Auth = {
@@ -78,6 +87,14 @@ export type CreateContentInput = {
   created_by: Scalars['String']['input'];
   name: Scalars['String']['input'];
   namespace: Scalars['String']['input'];
+};
+
+export type CreateGeneGeneralInfoInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  gene_product?: InputMaybe<Scalars['String']['input']>;
+  name_description?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  synonyms?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  user: Scalars['String']['input'];
 };
 
 export type CreateOrderInput = {
@@ -180,6 +197,19 @@ export type DeleteStock = {
   success: Scalars['Boolean']['output'];
 };
 
+export type DeleteStrainPhenotype = {
+  __typename?: 'DeleteStrainPhenotype';
+  success: Scalars['Boolean']['output'];
+};
+
+export type DeleteStrainPhenotypeInput = {
+  assay?: InputMaybe<Scalars['String']['input']>;
+  environment?: InputMaybe<Scalars['String']['input']>;
+  notes?: InputMaybe<Scalars['String']['input']>;
+  phenotype: Scalars['String']['input'];
+  publication: Scalars['String']['input'];
+};
+
 export type DeleteUser = {
   __typename?: 'DeleteUser';
   success: Scalars['Boolean']['output'];
@@ -233,11 +263,15 @@ export type Gene = {
 
 export type GeneGeneralInfo = {
   __typename?: 'GeneGeneralInfo';
+  created_at?: Maybe<Scalars['Timestamp']['output']>;
+  created_by?: Maybe<User>;
   description?: Maybe<Scalars['String']['output']>;
   gene_product?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name_description: Array<Maybe<Scalars['String']['output']>>;
   synonyms: Array<Maybe<Scalars['String']['output']>>;
+  updated_at?: Maybe<Scalars['Timestamp']['output']>;
+  updated_by?: Maybe<User>;
 };
 
 export type Identity = {
@@ -272,7 +306,9 @@ export type Logout = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addStrainPhenotype?: Maybe<Strain>;
   createContent?: Maybe<Content>;
+  createGeneGeneralInfo?: Maybe<GeneGeneralInfo>;
   createOrder?: Maybe<Order>;
   createPermission?: Maybe<Permission>;
   createPlasmid?: Maybe<Plasmid>;
@@ -285,22 +321,37 @@ export type Mutation = {
   deletePermission?: Maybe<DeletePermission>;
   deleteRole?: Maybe<DeleteRole>;
   deleteStock?: Maybe<DeleteStock>;
+  deleteStrainPhenotype: DeleteStrainPhenotype;
   deleteUser?: Maybe<DeleteUser>;
   login?: Maybe<Auth>;
   logout?: Maybe<Logout>;
   updateContent?: Maybe<Content>;
+  updateGeneGeneralInfo?: Maybe<GeneGeneralInfo>;
   updateOrder?: Maybe<Order>;
   updatePermission?: Maybe<Permission>;
   updatePlasmid?: Maybe<Plasmid>;
   updateRole?: Maybe<Role>;
   updateStrain?: Maybe<Strain>;
+  updateStrainPhenotype?: Maybe<Strain>;
   updateUser?: Maybe<User>;
   uploadFile: ImageFile;
 };
 
 
+export type MutationAddStrainPhenotypeArgs = {
+  input: AddStrainPhenotypeInput;
+  strainId: Scalars['ID']['input'];
+};
+
+
 export type MutationCreateContentArgs = {
   input?: InputMaybe<CreateContentInput>;
+};
+
+
+export type MutationCreateGeneGeneralInfoArgs = {
+  id: Scalars['ID']['input'];
+  input: CreateGeneGeneralInfoInput;
 };
 
 
@@ -366,6 +417,12 @@ export type MutationDeleteStockArgs = {
 };
 
 
+export type MutationDeleteStrainPhenotypeArgs = {
+  input: DeleteStrainPhenotypeInput;
+  strainId: Scalars['ID']['input'];
+};
+
+
 export type MutationDeleteUserArgs = {
   id: Scalars['ID']['input'];
 };
@@ -378,6 +435,12 @@ export type MutationLoginArgs = {
 
 export type MutationUpdateContentArgs = {
   input?: InputMaybe<UpdateContentInput>;
+};
+
+
+export type MutationUpdateGeneGeneralInfoArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdateGeneGeneralInfoInput;
 };
 
 
@@ -408,6 +471,13 @@ export type MutationUpdateRoleArgs = {
 export type MutationUpdateStrainArgs = {
   id: Scalars['ID']['input'];
   input?: InputMaybe<UpdateStrainInput>;
+};
+
+
+export type MutationUpdateStrainPhenotypeArgs = {
+  payload: UpdateStrainPhenotypePayloadInput;
+  strainId: Scalars['ID']['input'];
+  target: UpdateStrainPhenotypeTargetInput;
 };
 
 
@@ -501,6 +571,14 @@ export type Plasmid = Stock & {
   updated_by: User;
 };
 
+export type PlasmidListFilter = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  in_stock?: InputMaybe<Scalars['Boolean']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  plasmid_type: PlasmidType;
+  summary?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type PlasmidListWithCursor = {
   __typename?: 'PlasmidListWithCursor';
   limit?: Maybe<Scalars['Int']['output']>;
@@ -509,6 +587,12 @@ export type PlasmidListWithCursor = {
   previousCursor: Scalars['Int']['output'];
   totalCount: Scalars['Int']['output'];
 };
+
+export enum PlasmidType {
+  All = 'ALL',
+  GoldenBraid = 'GOLDEN_BRAID',
+  Regular = 'REGULAR'
+}
 
 export type Publication = BasePublication & {
   __typename?: 'Publication';
@@ -557,6 +641,9 @@ export type Query = {
   listOrders?: Maybe<OrderListWithCursor>;
   listOrganisms?: Maybe<Array<Organism>>;
   listPermissions?: Maybe<Array<Permission>>;
+  listPhenotypeAssays: Array<Scalars['String']['output']>;
+  listPhenotypeEnvironments: Array<Scalars['String']['output']>;
+  listPhenotypes: Array<Scalars['String']['output']>;
   listPlasmids?: Maybe<PlasmidListWithCursor>;
   listPlasmidsWithAnnotation?: Maybe<PlasmidListWithCursor>;
   listPublicationsWithGene: Array<PublicationWithGene>;
@@ -612,9 +699,24 @@ export type QueryListOrdersArgs = {
 };
 
 
+export type QueryListPhenotypeAssaysArgs = {
+  search: Scalars['String']['input'];
+};
+
+
+export type QueryListPhenotypeEnvironmentsArgs = {
+  search: Scalars['String']['input'];
+};
+
+
+export type QueryListPhenotypesArgs = {
+  search: Scalars['String']['input'];
+};
+
+
 export type QueryListPlasmidsArgs = {
   cursor?: InputMaybe<Scalars['Int']['input']>;
-  filter?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<PlasmidListFilter>;
   limit?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -807,6 +909,14 @@ export type UpdateContentInput = {
   updated_by: Scalars['String']['input'];
 };
 
+export type UpdateGeneGeneralInfoInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  gene_product?: InputMaybe<Scalars['String']['input']>;
+  name_description?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  synonyms?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  user: Scalars['String']['input'];
+};
+
 export type UpdateOrderInput = {
   comments?: InputMaybe<Scalars['String']['input']>;
   courier?: InputMaybe<Scalars['String']['input']>;
@@ -864,6 +974,22 @@ export type UpdateStrainInput = {
   summary?: InputMaybe<Scalars['String']['input']>;
   systematic_name?: InputMaybe<Scalars['String']['input']>;
   updated_by: Scalars['String']['input'];
+};
+
+export type UpdateStrainPhenotypePayloadInput = {
+  assay?: InputMaybe<Scalars['String']['input']>;
+  environment?: InputMaybe<Scalars['String']['input']>;
+  notes?: InputMaybe<Scalars['String']['input']>;
+  phenotype?: InputMaybe<Scalars['String']['input']>;
+  publication?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateStrainPhenotypeTargetInput = {
+  assay?: InputMaybe<Scalars['String']['input']>;
+  environment?: InputMaybe<Scalars['String']['input']>;
+  notes?: InputMaybe<Scalars['String']['input']>;
+  phenotype: Scalars['String']['input'];
+  publication: Scalars['String']['input'];
 };
 
 export type UpdateUserInput = {
@@ -950,12 +1076,45 @@ export type DeleteContentMutationVariables = Exact<{
 
 export type DeleteContentMutation = { __typename?: 'Mutation', deleteContent?: { __typename?: 'DeleteContent', success: boolean } | null };
 
+export type CreateGeneGeneralInfoMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: CreateGeneGeneralInfoInput;
+}>;
+
+
+export type CreateGeneGeneralInfoMutation = { __typename?: 'Mutation', createGeneGeneralInfo?: { __typename?: 'GeneGeneralInfo', id: string, created_by?: { __typename?: 'User', id: string } | null } | null };
+
+export type UpdateGeneGeneralInfoMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: UpdateGeneGeneralInfoInput;
+}>;
+
+
+export type UpdateGeneGeneralInfoMutation = { __typename?: 'Mutation', updateGeneGeneralInfo?: { __typename?: 'GeneGeneralInfo', id: string, updated_by?: { __typename?: 'User', id: string } | null } | null };
+
 export type CreateOrderMutationVariables = Exact<{
   input: CreateOrderInput;
 }>;
 
 
 export type CreateOrderMutation = { __typename?: 'Mutation', createOrder?: { __typename?: 'Order', id: string } | null };
+
+export type AddStrainPhenotypeMutationVariables = Exact<{
+  strainId: Scalars['ID']['input'];
+  input: AddStrainPhenotypeInput;
+}>;
+
+
+export type AddStrainPhenotypeMutation = { __typename?: 'Mutation', addStrainPhenotype?: { __typename?: 'Strain', id: string, label: string, phenotypes?: Array<{ __typename?: 'Phenotype', phenotype: string, note?: string | null, assay?: string | null, environment?: string | null, publication?: { __typename?: 'Publication', id: string, pub_date?: string | null, title: string, journal: string, volume?: string | null, pages?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> } | null }> | null } | null };
+
+export type UpdateStrainPhenotypeMutationVariables = Exact<{
+  strainId: Scalars['ID']['input'];
+  target: UpdateStrainPhenotypeTargetInput;
+  payload: UpdateStrainPhenotypePayloadInput;
+}>;
+
+
+export type UpdateStrainPhenotypeMutation = { __typename?: 'Mutation', updateStrainPhenotype?: { __typename?: 'Strain', id: string, label: string, phenotypes?: Array<{ __typename?: 'Phenotype', phenotype: string, environment?: string | null, assay?: string | null, note?: string | null, publication?: { __typename?: 'Publication', id: string, pub_date?: string | null, title: string, journal: string, volume?: string | null, pages?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> } | null }> | null } | null };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload']['input'];
@@ -984,33 +1143,47 @@ export type ListContentByNamespaceQueryVariables = Exact<{
 }>;
 
 
-export type ListContentByNamespaceQuery = { __typename?: 'Query', listContentByNamespace: Array<{ __typename?: 'Content', id: string, content: string, name: string, slug: string, created_at: any, updated_at: any, created_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string }, updated_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string } }> };
+export type ListContentByNamespaceQuery = { __typename?: 'Query', listContentByNamespace: Array<{ __typename?: 'Content', id: string, content: string, name: string, slug: string, created_at: string, updated_at: string, created_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string }, updated_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string } }> };
 
 export type ContentBySlugQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
 
 
-export type ContentBySlugQuery = { __typename?: 'Query', contentBySlug?: { __typename?: 'Content', id: string, content: string, name: string, slug: string, created_at: any, updated_at: any, created_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string }, updated_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string } } | null };
+export type ContentBySlugQuery = { __typename?: 'Query', contentBySlug?: { __typename?: 'Content', id: string, content: string, name: string, slug: string, created_at: string, updated_at: string, created_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string }, updated_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string } } | null };
 
 export type ContentQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type ContentQuery = { __typename?: 'Query', content?: { __typename?: 'Content', id: string, content: string, name: string, slug: string, namespace: string, created_at: any, updated_at: any, created_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string }, updated_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string } } | null };
+export type ContentQuery = { __typename?: 'Query', content?: { __typename?: 'Content', id: string, content: string, name: string, slug: string, namespace: string, created_at: string, updated_at: string, created_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string }, updated_by: { __typename?: 'User', id: string, email: string, first_name: string, last_name: string } } | null };
 
 export type ListOrganismsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ListOrganismsQuery = { __typename?: 'Query', listOrganisms?: Array<{ __typename?: 'Organism', taxon_id: string, scientific_name: string, citations: Array<{ __typename?: 'Citation', title: string, authors: string, pubmed_id: string, journal: string }>, downloads: Array<{ __typename?: 'Download', title: string, items: Array<{ __typename?: 'DownloadItem', title: string, url: string }> }> }> | null };
 
-export type GeneSummaryQueryVariables = Exact<{
+export type GeneGeneralInformationSummaryQueryVariables = Exact<{
   gene: Scalars['String']['input'];
 }>;
 
 
-export type GeneSummaryQuery = { __typename?: 'Query', geneGeneralInformation?: { __typename?: 'GeneGeneralInfo', id: string, name_description: Array<string | null>, gene_product?: string | null, synonyms: Array<string | null>, description?: string | null } | null, geneOntologyAnnotation?: Array<{ __typename?: 'GOAnnotation', id: string, type: string, date: string, go_term: string, evidence_code: string, with?: Array<{ __typename?: 'With', id: string, db: string, name: string }> | null, extensions?: Array<{ __typename?: 'Extension', id: string, db: string, relation: string, name: string }> | null }> | null, listPublicationsWithGene: Array<{ __typename?: 'PublicationWithGene', id: string, title: string, journal: string, pages?: string | null, issue?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> }> };
+export type GeneGeneralInformationSummaryQuery = { __typename?: 'Query', geneGeneralInformation?: { __typename?: 'GeneGeneralInfo', id: string, name_description: Array<string | null>, gene_product?: string | null, synonyms: Array<string | null>, description?: string | null } | null };
+
+export type GeneOntologyAnnotationSummaryQueryVariables = Exact<{
+  gene: Scalars['String']['input'];
+}>;
+
+
+export type GeneOntologyAnnotationSummaryQuery = { __typename?: 'Query', geneOntologyAnnotation?: Array<{ __typename?: 'GOAnnotation', id: string, type: string, date: string, go_term: string, evidence_code: string, with?: Array<{ __typename?: 'With', id: string, db: string, name: string }> | null, extensions?: Array<{ __typename?: 'Extension', id: string, db: string, relation: string, name: string }> | null }> | null };
+
+export type ListPublicationsWithGeneSummaryQueryVariables = Exact<{
+  gene: Scalars['String']['input'];
+}>;
+
+
+export type ListPublicationsWithGeneSummaryQuery = { __typename?: 'Query', listPublicationsWithGene: Array<{ __typename?: 'PublicationWithGene', id: string, title: string, journal: string, pages?: string | null, issue?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> }> };
 
 export type GeneOntologyAnnotationQueryVariables = Exact<{
   gene: Scalars['String']['input'];
@@ -1024,28 +1197,28 @@ export type ListStrainsWithGeneQueryVariables = Exact<{
 }>;
 
 
-export type ListStrainsWithGeneQuery = { __typename?: 'Query', listStrainsWithGene?: Array<{ __typename?: 'Strain', id: string, label: string, characteristics?: Array<string> | null, in_stock: boolean, phenotypes?: Array<{ __typename?: 'Phenotype', phenotype: string, publication?: { __typename?: 'Publication', id: string, title: string, journal: string, pages?: string | null, volume?: string | null, pub_date?: any | null, authors: Array<{ __typename?: 'Author', last_name: string, rank?: string | null }> } | null }> | null }> | null };
+export type ListStrainsWithGeneQuery = { __typename?: 'Query', listStrainsWithGene?: Array<{ __typename?: 'Strain', id: string, label: string, characteristics?: Array<string> | null, in_stock: boolean, phenotypes?: Array<{ __typename?: 'Phenotype', phenotype: string, publication?: { __typename?: 'Publication', id: string, title: string, journal: string, pages?: string | null, volume?: string | null, pub_date?: string | null, authors: Array<{ __typename?: 'Author', last_name: string, rank?: string | null }> } | null }> | null }> | null };
 
 export type PublicationQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type PublicationQuery = { __typename?: 'Query', publication?: { __typename?: 'Publication', id: string, doi?: string | null, title: string, abstract: string, journal: string, pub_date?: any | null, pages?: string | null, issue?: string | null, volume?: string | null, authors: Array<{ __typename?: 'Author', initials?: string | null, last_name: string }> } | null };
+export type PublicationQuery = { __typename?: 'Query', publication?: { __typename?: 'Publication', id: string, doi?: string | null, title: string, abstract: string, journal: string, pub_date?: string | null, pages?: string | null, issue?: string | null, volume?: string | null, authors: Array<{ __typename?: 'Author', initials?: string | null, last_name: string }> } | null };
 
 export type ListRecentPublicationsQueryVariables = Exact<{
   limit?: Scalars['Int']['input'];
 }>;
 
 
-export type ListRecentPublicationsQuery = { __typename?: 'Query', listRecentPublications?: Array<{ __typename?: 'Publication', id: string, doi?: string | null, title: string, abstract: string, journal: string, pub_date?: any | null, pages?: string | null, issue?: string | null, volume?: string | null, authors: Array<{ __typename?: 'Author', initials?: string | null, last_name: string }> }> | null };
+export type ListRecentPublicationsQuery = { __typename?: 'Query', listRecentPublications?: Array<{ __typename?: 'Publication', id: string, doi?: string | null, title: string, abstract: string, journal: string, pub_date?: string | null, pages?: string | null, issue?: string | null, volume?: string | null, authors: Array<{ __typename?: 'Author', initials?: string | null, last_name: string }> }> | null };
 
 export type ListPublicationsWithGeneQueryVariables = Exact<{
   gene: Scalars['String']['input'];
 }>;
 
 
-export type ListPublicationsWithGeneQuery = { __typename?: 'Query', listPublicationsWithGene: Array<{ __typename?: 'PublicationWithGene', id: string, doi?: string | null, title: string, journal: string, pub_date?: any | null, volume?: string | null, pages?: string | null, pub_type: string, source: string, issue?: string | null, related_genes: Array<{ __typename?: 'Gene', id: string, name: string }>, authors: Array<{ __typename?: 'Author', last_name: string, rank?: string | null }> }> };
+export type ListPublicationsWithGeneQuery = { __typename?: 'Query', listPublicationsWithGene: Array<{ __typename?: 'PublicationWithGene', id: string, doi?: string | null, title: string, journal: string, pub_date?: string | null, volume?: string | null, pages?: string | null, pub_type: string, source: string, issue?: string | null, related_genes: Array<{ __typename?: 'Gene', id: string, name: string }>, authors: Array<{ __typename?: 'Author', last_name: string, rank?: string | null }> }> };
 
 export type StrainListQueryVariables = Exact<{
   cursor: Scalars['Int']['input'];
@@ -1064,7 +1237,7 @@ export type ListStrainsWithPhenotypeQueryVariables = Exact<{
 }>;
 
 
-export type ListStrainsWithPhenotypeQuery = { __typename?: 'Query', listStrainsWithAnnotation?: { __typename?: 'StrainListWithCursor', totalCount: number, nextCursor: number, strains: Array<{ __typename?: 'Strain', id: string, label: string, genes?: Array<{ __typename?: 'Gene', name: string }> | null, publications?: Array<{ __typename?: 'Publication', id: string, pub_date?: any | null, title: string, journal: string, volume?: string | null, pages?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> }> | null }> } | null };
+export type ListStrainsWithPhenotypeQuery = { __typename?: 'Query', listStrainsWithAnnotation?: { __typename?: 'StrainListWithCursor', totalCount: number, nextCursor: number, strains: Array<{ __typename?: 'Strain', id: string, label: string, genes?: Array<{ __typename?: 'Gene', name: string }> | null, publications?: Array<{ __typename?: 'Publication', id: string, pub_date?: string | null, title: string, journal: string, volume?: string | null, pages?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> }> | null }> } | null };
 
 export type ListBacterialStrainsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1090,7 +1263,7 @@ export type ListPlasmidsInventoryQuery = { __typename?: 'Query', listPlasmidsWit
 export type PlasmidListFilterQueryVariables = Exact<{
   cursor: Scalars['Int']['input'];
   limit: Scalars['Int']['input'];
-  filter: Scalars['String']['input'];
+  filter?: InputMaybe<PlasmidListFilter>;
 }>;
 
 
@@ -1101,28 +1274,49 @@ export type PlasmidQueryVariables = Exact<{
 }>;
 
 
-export type PlasmidQuery = { __typename?: 'Query', plasmid?: { __typename?: 'Plasmid', id: string, name: string, summary?: string | null, dbxrefs?: Array<string> | null, image_map?: string | null, sequence?: string | null, keywords?: Array<string> | null, genbank_accession?: string | null, in_stock: boolean, depositor: { __typename?: 'User', first_name: string, last_name: string }, publications?: Array<{ __typename?: 'Publication', id: string, pub_date?: any | null, title: string, journal: string, volume?: string | null, pages?: string | null, doi?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> }> | null, genes?: Array<{ __typename?: 'Gene', name: string }> | null } | null };
+export type PlasmidQuery = { __typename?: 'Query', plasmid?: { __typename?: 'Plasmid', id: string, name: string, summary?: string | null, dbxrefs?: Array<string> | null, image_map?: string | null, sequence?: string | null, keywords?: Array<string> | null, genbank_accession?: string | null, in_stock: boolean, depositor: { __typename?: 'User', first_name: string, last_name: string }, publications?: Array<{ __typename?: 'Publication', id: string, pub_date?: string | null, title: string, journal: string, volume?: string | null, pages?: string | null, doi?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> }> | null, genes?: Array<{ __typename?: 'Gene', name: string }> | null } | null };
 
 export type StrainQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type StrainQuery = { __typename?: 'Query', strain?: { __typename?: 'Strain', id: string, label: string, summary?: string | null, species: string, plasmid?: string | null, dbxrefs?: Array<string> | null, in_stock: boolean, systematic_name: string, genotypes?: Array<string> | null, mutagenesis_method?: string | null, genetic_modification?: string | null, names?: Array<string> | null, characteristics?: Array<string> | null, parent?: { __typename?: 'Strain', id: string, label: string } | null, depositor: { __typename?: 'User', first_name: string, last_name: string }, publications?: Array<{ __typename?: 'Publication', id: string, pub_date?: any | null, title: string, journal: string, volume?: string | null, pages?: string | null, doi?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> }> | null, genes?: Array<{ __typename?: 'Gene', name: string }> | null, phenotypes?: Array<{ __typename?: 'Phenotype', phenotype: string, note?: string | null, assay?: string | null, environment?: string | null, publication?: { __typename?: 'Publication', id: string, pub_date?: any | null, title: string, journal: string, volume?: string | null, pages?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> } | null }> | null } | null };
+export type StrainQuery = { __typename?: 'Query', strain?: { __typename?: 'Strain', id: string, label: string, summary?: string | null, species: string, plasmid?: string | null, dbxrefs?: Array<string> | null, in_stock: boolean, systematic_name: string, genotypes?: Array<string> | null, mutagenesis_method?: string | null, genetic_modification?: string | null, names?: Array<string> | null, characteristics?: Array<string> | null, parent?: { __typename?: 'Strain', id: string, label: string } | null, depositor: { __typename?: 'User', first_name: string, last_name: string }, publications?: Array<{ __typename?: 'Publication', id: string, pub_date?: string | null, title: string, journal: string, volume?: string | null, pages?: string | null, doi?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> }> | null, genes?: Array<{ __typename?: 'Gene', name: string }> | null, phenotypes?: Array<{ __typename?: 'Phenotype', phenotype: string, note?: string | null, assay?: string | null, environment?: string | null, publication?: { __typename?: 'Publication', id: string, pub_date?: string | null, title: string, journal: string, volume?: string | null, pages?: string | null, authors: Array<{ __typename?: 'Author', last_name: string }> } | null }> | null } | null };
 
 export type ListRecentPlasmidsQueryVariables = Exact<{
   limit?: Scalars['Int']['input'];
 }>;
 
 
-export type ListRecentPlasmidsQuery = { __typename?: 'Query', listRecentPlasmids?: Array<{ __typename?: 'Plasmid', id: string, created_at: any, name: string }> | null };
+export type ListRecentPlasmidsQuery = { __typename?: 'Query', listRecentPlasmids?: Array<{ __typename?: 'Plasmid', id: string, created_at: string, name: string }> | null };
 
 export type ListRecentStrainsQueryVariables = Exact<{
   limit?: Scalars['Int']['input'];
 }>;
 
 
-export type ListRecentStrainsQuery = { __typename?: 'Query', listRecentStrains?: Array<{ __typename?: 'Strain', id: string, created_at: any, systematic_name: string }> | null };
+export type ListRecentStrainsQuery = { __typename?: 'Query', listRecentStrains?: Array<{ __typename?: 'Strain', id: string, created_at: string, systematic_name: string }> | null };
+
+export type ListPhenotypesQueryVariables = Exact<{
+  search: Scalars['String']['input'];
+}>;
+
+
+export type ListPhenotypesQuery = { __typename?: 'Query', listPhenotypes: Array<string> };
+
+export type ListPhenotypeEnvironmentsQueryVariables = Exact<{
+  search: Scalars['String']['input'];
+}>;
+
+
+export type ListPhenotypeEnvironmentsQuery = { __typename?: 'Query', listPhenotypeEnvironments: Array<string> };
+
+export type ListPhenotypeAssaysQueryVariables = Exact<{
+  search: Scalars['String']['input'];
+}>;
+
+
+export type ListPhenotypeAssaysQuery = { __typename?: 'Query', listPhenotypeAssays: Array<string> };
 
 export type UserByEmailQueryVariables = Exact<{
   email: Scalars['String']['input'];
@@ -1321,6 +1515,80 @@ export function useDeleteContentMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteContentMutationHookResult = ReturnType<typeof useDeleteContentMutation>;
 export type DeleteContentMutationResult = Apollo.MutationResult<DeleteContentMutation>;
 export type DeleteContentMutationOptions = Apollo.BaseMutationOptions<DeleteContentMutation, DeleteContentMutationVariables>;
+export const CreateGeneGeneralInfoDocument = gql`
+    mutation CreateGeneGeneralInfo($id: ID!, $input: CreateGeneGeneralInfoInput!) {
+  createGeneGeneralInfo(id: $id, input: $input) {
+    id
+    created_by {
+      id
+    }
+  }
+}
+    `;
+export type CreateGeneGeneralInfoMutationFn = Apollo.MutationFunction<CreateGeneGeneralInfoMutation, CreateGeneGeneralInfoMutationVariables>;
+
+/**
+ * __useCreateGeneGeneralInfoMutation__
+ *
+ * To run a mutation, you first call `useCreateGeneGeneralInfoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateGeneGeneralInfoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createGeneGeneralInfoMutation, { data, loading, error }] = useCreateGeneGeneralInfoMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateGeneGeneralInfoMutation(baseOptions?: Apollo.MutationHookOptions<CreateGeneGeneralInfoMutation, CreateGeneGeneralInfoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateGeneGeneralInfoMutation, CreateGeneGeneralInfoMutationVariables>(CreateGeneGeneralInfoDocument, options);
+      }
+export type CreateGeneGeneralInfoMutationHookResult = ReturnType<typeof useCreateGeneGeneralInfoMutation>;
+export type CreateGeneGeneralInfoMutationResult = Apollo.MutationResult<CreateGeneGeneralInfoMutation>;
+export type CreateGeneGeneralInfoMutationOptions = Apollo.BaseMutationOptions<CreateGeneGeneralInfoMutation, CreateGeneGeneralInfoMutationVariables>;
+export const UpdateGeneGeneralInfoDocument = gql`
+    mutation UpdateGeneGeneralInfo($id: ID!, $input: UpdateGeneGeneralInfoInput!) {
+  updateGeneGeneralInfo(id: $id, input: $input) {
+    id
+    updated_by {
+      id
+    }
+  }
+}
+    `;
+export type UpdateGeneGeneralInfoMutationFn = Apollo.MutationFunction<UpdateGeneGeneralInfoMutation, UpdateGeneGeneralInfoMutationVariables>;
+
+/**
+ * __useUpdateGeneGeneralInfoMutation__
+ *
+ * To run a mutation, you first call `useUpdateGeneGeneralInfoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGeneGeneralInfoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGeneGeneralInfoMutation, { data, loading, error }] = useUpdateGeneGeneralInfoMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateGeneGeneralInfoMutation(baseOptions?: Apollo.MutationHookOptions<UpdateGeneGeneralInfoMutation, UpdateGeneGeneralInfoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateGeneGeneralInfoMutation, UpdateGeneGeneralInfoMutationVariables>(UpdateGeneGeneralInfoDocument, options);
+      }
+export type UpdateGeneGeneralInfoMutationHookResult = ReturnType<typeof useUpdateGeneGeneralInfoMutation>;
+export type UpdateGeneGeneralInfoMutationResult = Apollo.MutationResult<UpdateGeneGeneralInfoMutation>;
+export type UpdateGeneGeneralInfoMutationOptions = Apollo.BaseMutationOptions<UpdateGeneGeneralInfoMutation, UpdateGeneGeneralInfoMutationVariables>;
 export const CreateOrderDocument = gql`
     mutation CreateOrder($input: CreateOrderInput!) {
   createOrder(input: $input) {
@@ -1354,6 +1622,111 @@ export function useCreateOrderMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
 export type CreateOrderMutationResult = Apollo.MutationResult<CreateOrderMutation>;
 export type CreateOrderMutationOptions = Apollo.BaseMutationOptions<CreateOrderMutation, CreateOrderMutationVariables>;
+export const AddStrainPhenotypeDocument = gql`
+    mutation AddStrainPhenotype($strainId: ID!, $input: AddStrainPhenotypeInput!) {
+  addStrainPhenotype(strainId: $strainId, input: $input) {
+    id
+    label
+    phenotypes {
+      phenotype
+      note
+      assay
+      environment
+      publication {
+        id
+        pub_date
+        title
+        journal
+        volume
+        pages
+        authors {
+          last_name
+        }
+      }
+    }
+  }
+}
+    `;
+export type AddStrainPhenotypeMutationFn = Apollo.MutationFunction<AddStrainPhenotypeMutation, AddStrainPhenotypeMutationVariables>;
+
+/**
+ * __useAddStrainPhenotypeMutation__
+ *
+ * To run a mutation, you first call `useAddStrainPhenotypeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddStrainPhenotypeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addStrainPhenotypeMutation, { data, loading, error }] = useAddStrainPhenotypeMutation({
+ *   variables: {
+ *      strainId: // value for 'strainId'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAddStrainPhenotypeMutation(baseOptions?: Apollo.MutationHookOptions<AddStrainPhenotypeMutation, AddStrainPhenotypeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddStrainPhenotypeMutation, AddStrainPhenotypeMutationVariables>(AddStrainPhenotypeDocument, options);
+      }
+export type AddStrainPhenotypeMutationHookResult = ReturnType<typeof useAddStrainPhenotypeMutation>;
+export type AddStrainPhenotypeMutationResult = Apollo.MutationResult<AddStrainPhenotypeMutation>;
+export type AddStrainPhenotypeMutationOptions = Apollo.BaseMutationOptions<AddStrainPhenotypeMutation, AddStrainPhenotypeMutationVariables>;
+export const UpdateStrainPhenotypeDocument = gql`
+    mutation UpdateStrainPhenotype($strainId: ID!, $target: UpdateStrainPhenotypeTargetInput!, $payload: UpdateStrainPhenotypePayloadInput!) {
+  updateStrainPhenotype(strainId: $strainId, target: $target, payload: $payload) {
+    id
+    label
+    phenotypes {
+      phenotype
+      environment
+      assay
+      note
+      publication {
+        id
+        pub_date
+        title
+        journal
+        volume
+        pages
+        authors {
+          last_name
+        }
+      }
+    }
+  }
+}
+    `;
+export type UpdateStrainPhenotypeMutationFn = Apollo.MutationFunction<UpdateStrainPhenotypeMutation, UpdateStrainPhenotypeMutationVariables>;
+
+/**
+ * __useUpdateStrainPhenotypeMutation__
+ *
+ * To run a mutation, you first call `useUpdateStrainPhenotypeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateStrainPhenotypeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateStrainPhenotypeMutation, { data, loading, error }] = useUpdateStrainPhenotypeMutation({
+ *   variables: {
+ *      strainId: // value for 'strainId'
+ *      target: // value for 'target'
+ *      payload: // value for 'payload'
+ *   },
+ * });
+ */
+export function useUpdateStrainPhenotypeMutation(baseOptions?: Apollo.MutationHookOptions<UpdateStrainPhenotypeMutation, UpdateStrainPhenotypeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateStrainPhenotypeMutation, UpdateStrainPhenotypeMutationVariables>(UpdateStrainPhenotypeDocument, options);
+      }
+export type UpdateStrainPhenotypeMutationHookResult = ReturnType<typeof useUpdateStrainPhenotypeMutation>;
+export type UpdateStrainPhenotypeMutationResult = Apollo.MutationResult<UpdateStrainPhenotypeMutation>;
+export type UpdateStrainPhenotypeMutationOptions = Apollo.BaseMutationOptions<UpdateStrainPhenotypeMutation, UpdateStrainPhenotypeMutationVariables>;
 export const UploadFileDocument = gql`
     mutation UploadFile($file: Upload!) {
   uploadFile(file: $file) {
@@ -1659,8 +2032,8 @@ export function useListOrganismsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ListOrganismsQueryHookResult = ReturnType<typeof useListOrganismsQuery>;
 export type ListOrganismsLazyQueryHookResult = ReturnType<typeof useListOrganismsLazyQuery>;
 export type ListOrganismsQueryResult = Apollo.QueryResult<ListOrganismsQuery, ListOrganismsQueryVariables>;
-export const GeneSummaryDocument = gql`
-    query GeneSummary($gene: String!) {
+export const GeneGeneralInformationSummaryDocument = gql`
+    query GeneGeneralInformationSummary($gene: String!) {
   geneGeneralInformation(gene: $gene) {
     id
     name_description
@@ -1668,6 +2041,38 @@ export const GeneSummaryDocument = gql`
     synonyms
     description
   }
+}
+    `;
+
+/**
+ * __useGeneGeneralInformationSummaryQuery__
+ *
+ * To run a query within a React component, call `useGeneGeneralInformationSummaryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGeneGeneralInformationSummaryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGeneGeneralInformationSummaryQuery({
+ *   variables: {
+ *      gene: // value for 'gene'
+ *   },
+ * });
+ */
+export function useGeneGeneralInformationSummaryQuery(baseOptions: Apollo.QueryHookOptions<GeneGeneralInformationSummaryQuery, GeneGeneralInformationSummaryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GeneGeneralInformationSummaryQuery, GeneGeneralInformationSummaryQueryVariables>(GeneGeneralInformationSummaryDocument, options);
+      }
+export function useGeneGeneralInformationSummaryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GeneGeneralInformationSummaryQuery, GeneGeneralInformationSummaryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GeneGeneralInformationSummaryQuery, GeneGeneralInformationSummaryQueryVariables>(GeneGeneralInformationSummaryDocument, options);
+        }
+export type GeneGeneralInformationSummaryQueryHookResult = ReturnType<typeof useGeneGeneralInformationSummaryQuery>;
+export type GeneGeneralInformationSummaryLazyQueryHookResult = ReturnType<typeof useGeneGeneralInformationSummaryLazyQuery>;
+export type GeneGeneralInformationSummaryQueryResult = Apollo.QueryResult<GeneGeneralInformationSummaryQuery, GeneGeneralInformationSummaryQueryVariables>;
+export const GeneOntologyAnnotationSummaryDocument = gql`
+    query GeneOntologyAnnotationSummary($gene: String!) {
   geneOntologyAnnotation(gene: $gene) {
     id
     type
@@ -1686,6 +2091,38 @@ export const GeneSummaryDocument = gql`
       name
     }
   }
+}
+    `;
+
+/**
+ * __useGeneOntologyAnnotationSummaryQuery__
+ *
+ * To run a query within a React component, call `useGeneOntologyAnnotationSummaryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGeneOntologyAnnotationSummaryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGeneOntologyAnnotationSummaryQuery({
+ *   variables: {
+ *      gene: // value for 'gene'
+ *   },
+ * });
+ */
+export function useGeneOntologyAnnotationSummaryQuery(baseOptions: Apollo.QueryHookOptions<GeneOntologyAnnotationSummaryQuery, GeneOntologyAnnotationSummaryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GeneOntologyAnnotationSummaryQuery, GeneOntologyAnnotationSummaryQueryVariables>(GeneOntologyAnnotationSummaryDocument, options);
+      }
+export function useGeneOntologyAnnotationSummaryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GeneOntologyAnnotationSummaryQuery, GeneOntologyAnnotationSummaryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GeneOntologyAnnotationSummaryQuery, GeneOntologyAnnotationSummaryQueryVariables>(GeneOntologyAnnotationSummaryDocument, options);
+        }
+export type GeneOntologyAnnotationSummaryQueryHookResult = ReturnType<typeof useGeneOntologyAnnotationSummaryQuery>;
+export type GeneOntologyAnnotationSummaryLazyQueryHookResult = ReturnType<typeof useGeneOntologyAnnotationSummaryLazyQuery>;
+export type GeneOntologyAnnotationSummaryQueryResult = Apollo.QueryResult<GeneOntologyAnnotationSummaryQuery, GeneOntologyAnnotationSummaryQueryVariables>;
+export const ListPublicationsWithGeneSummaryDocument = gql`
+    query ListPublicationsWithGeneSummary($gene: String!) {
   listPublicationsWithGene(gene: $gene) {
     id
     title
@@ -1700,32 +2137,32 @@ export const GeneSummaryDocument = gql`
     `;
 
 /**
- * __useGeneSummaryQuery__
+ * __useListPublicationsWithGeneSummaryQuery__
  *
- * To run a query within a React component, call `useGeneSummaryQuery` and pass it any options that fit your needs.
- * When your component renders, `useGeneSummaryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useListPublicationsWithGeneSummaryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListPublicationsWithGeneSummaryQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGeneSummaryQuery({
+ * const { data, loading, error } = useListPublicationsWithGeneSummaryQuery({
  *   variables: {
  *      gene: // value for 'gene'
  *   },
  * });
  */
-export function useGeneSummaryQuery(baseOptions: Apollo.QueryHookOptions<GeneSummaryQuery, GeneSummaryQueryVariables>) {
+export function useListPublicationsWithGeneSummaryQuery(baseOptions: Apollo.QueryHookOptions<ListPublicationsWithGeneSummaryQuery, ListPublicationsWithGeneSummaryQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GeneSummaryQuery, GeneSummaryQueryVariables>(GeneSummaryDocument, options);
+        return Apollo.useQuery<ListPublicationsWithGeneSummaryQuery, ListPublicationsWithGeneSummaryQueryVariables>(ListPublicationsWithGeneSummaryDocument, options);
       }
-export function useGeneSummaryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GeneSummaryQuery, GeneSummaryQueryVariables>) {
+export function useListPublicationsWithGeneSummaryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListPublicationsWithGeneSummaryQuery, ListPublicationsWithGeneSummaryQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GeneSummaryQuery, GeneSummaryQueryVariables>(GeneSummaryDocument, options);
+          return Apollo.useLazyQuery<ListPublicationsWithGeneSummaryQuery, ListPublicationsWithGeneSummaryQueryVariables>(ListPublicationsWithGeneSummaryDocument, options);
         }
-export type GeneSummaryQueryHookResult = ReturnType<typeof useGeneSummaryQuery>;
-export type GeneSummaryLazyQueryHookResult = ReturnType<typeof useGeneSummaryLazyQuery>;
-export type GeneSummaryQueryResult = Apollo.QueryResult<GeneSummaryQuery, GeneSummaryQueryVariables>;
+export type ListPublicationsWithGeneSummaryQueryHookResult = ReturnType<typeof useListPublicationsWithGeneSummaryQuery>;
+export type ListPublicationsWithGeneSummaryLazyQueryHookResult = ReturnType<typeof useListPublicationsWithGeneSummaryLazyQuery>;
+export type ListPublicationsWithGeneSummaryQueryResult = Apollo.QueryResult<ListPublicationsWithGeneSummaryQuery, ListPublicationsWithGeneSummaryQueryVariables>;
 export const GeneOntologyAnnotationDocument = gql`
     query GeneOntologyAnnotation($gene: String!) {
   geneOntologyAnnotation(gene: $gene) {
@@ -2242,7 +2679,7 @@ export type ListPlasmidsInventoryQueryHookResult = ReturnType<typeof useListPlas
 export type ListPlasmidsInventoryLazyQueryHookResult = ReturnType<typeof useListPlasmidsInventoryLazyQuery>;
 export type ListPlasmidsInventoryQueryResult = Apollo.QueryResult<ListPlasmidsInventoryQuery, ListPlasmidsInventoryQueryVariables>;
 export const PlasmidListFilterDocument = gql`
-    query PlasmidListFilter($cursor: Int!, $limit: Int!, $filter: String!) {
+    query PlasmidListFilter($cursor: Int!, $limit: Int!, $filter: PlasmidListFilter) {
   listPlasmids(cursor: $cursor, limit: $limit, filter: $filter) {
     nextCursor
     totalCount
@@ -2508,6 +2945,105 @@ export function useListRecentStrainsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type ListRecentStrainsQueryHookResult = ReturnType<typeof useListRecentStrainsQuery>;
 export type ListRecentStrainsLazyQueryHookResult = ReturnType<typeof useListRecentStrainsLazyQuery>;
 export type ListRecentStrainsQueryResult = Apollo.QueryResult<ListRecentStrainsQuery, ListRecentStrainsQueryVariables>;
+export const ListPhenotypesDocument = gql`
+    query ListPhenotypes($search: String!) {
+  listPhenotypes(search: $search)
+}
+    `;
+
+/**
+ * __useListPhenotypesQuery__
+ *
+ * To run a query within a React component, call `useListPhenotypesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListPhenotypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListPhenotypesQuery({
+ *   variables: {
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useListPhenotypesQuery(baseOptions: Apollo.QueryHookOptions<ListPhenotypesQuery, ListPhenotypesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListPhenotypesQuery, ListPhenotypesQueryVariables>(ListPhenotypesDocument, options);
+      }
+export function useListPhenotypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListPhenotypesQuery, ListPhenotypesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListPhenotypesQuery, ListPhenotypesQueryVariables>(ListPhenotypesDocument, options);
+        }
+export type ListPhenotypesQueryHookResult = ReturnType<typeof useListPhenotypesQuery>;
+export type ListPhenotypesLazyQueryHookResult = ReturnType<typeof useListPhenotypesLazyQuery>;
+export type ListPhenotypesQueryResult = Apollo.QueryResult<ListPhenotypesQuery, ListPhenotypesQueryVariables>;
+export const ListPhenotypeEnvironmentsDocument = gql`
+    query ListPhenotypeEnvironments($search: String!) {
+  listPhenotypeEnvironments(search: $search)
+}
+    `;
+
+/**
+ * __useListPhenotypeEnvironmentsQuery__
+ *
+ * To run a query within a React component, call `useListPhenotypeEnvironmentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListPhenotypeEnvironmentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListPhenotypeEnvironmentsQuery({
+ *   variables: {
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useListPhenotypeEnvironmentsQuery(baseOptions: Apollo.QueryHookOptions<ListPhenotypeEnvironmentsQuery, ListPhenotypeEnvironmentsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListPhenotypeEnvironmentsQuery, ListPhenotypeEnvironmentsQueryVariables>(ListPhenotypeEnvironmentsDocument, options);
+      }
+export function useListPhenotypeEnvironmentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListPhenotypeEnvironmentsQuery, ListPhenotypeEnvironmentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListPhenotypeEnvironmentsQuery, ListPhenotypeEnvironmentsQueryVariables>(ListPhenotypeEnvironmentsDocument, options);
+        }
+export type ListPhenotypeEnvironmentsQueryHookResult = ReturnType<typeof useListPhenotypeEnvironmentsQuery>;
+export type ListPhenotypeEnvironmentsLazyQueryHookResult = ReturnType<typeof useListPhenotypeEnvironmentsLazyQuery>;
+export type ListPhenotypeEnvironmentsQueryResult = Apollo.QueryResult<ListPhenotypeEnvironmentsQuery, ListPhenotypeEnvironmentsQueryVariables>;
+export const ListPhenotypeAssaysDocument = gql`
+    query ListPhenotypeAssays($search: String!) {
+  listPhenotypeAssays(search: $search)
+}
+    `;
+
+/**
+ * __useListPhenotypeAssaysQuery__
+ *
+ * To run a query within a React component, call `useListPhenotypeAssaysQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListPhenotypeAssaysQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListPhenotypeAssaysQuery({
+ *   variables: {
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useListPhenotypeAssaysQuery(baseOptions: Apollo.QueryHookOptions<ListPhenotypeAssaysQuery, ListPhenotypeAssaysQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListPhenotypeAssaysQuery, ListPhenotypeAssaysQueryVariables>(ListPhenotypeAssaysDocument, options);
+      }
+export function useListPhenotypeAssaysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListPhenotypeAssaysQuery, ListPhenotypeAssaysQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListPhenotypeAssaysQuery, ListPhenotypeAssaysQueryVariables>(ListPhenotypeAssaysDocument, options);
+        }
+export type ListPhenotypeAssaysQueryHookResult = ReturnType<typeof useListPhenotypeAssaysQuery>;
+export type ListPhenotypeAssaysLazyQueryHookResult = ReturnType<typeof useListPhenotypeAssaysLazyQuery>;
+export type ListPhenotypeAssaysQueryResult = Apollo.QueryResult<ListPhenotypeAssaysQuery, ListPhenotypeAssaysQueryVariables>;
 export const UserByEmailDocument = gql`
     query UserByEmail($email: String!) {
   userByEmail(email: $email) {

@@ -142,7 +142,7 @@ func mockStrainList() *stock.StrainList {
 	return &stock.StrainList{Data: strains}
 }
 
-func mockPlasmidCollection() *stock.PlasmidCollection {
+func MockPlasmidCollection() *stock.PlasmidCollection {
 	var plasmids []*stock.PlasmidCollection_Data
 	plasmids = append(
 		plasmids,
@@ -234,7 +234,7 @@ func MockedStockClient() *clients.StockServiceClient {
 			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.StockParameters"),
 		).
-		Return(mockPlasmidCollection(), nil).
+		Return(MockPlasmidCollection(), nil).
 		On("CreateStrain",
 			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.NewStrain"),

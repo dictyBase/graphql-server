@@ -2,7 +2,6 @@ package redis
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
@@ -59,28 +58,35 @@ func NewTestRedisFromEnv() (*TestRedis, error) {
 }
 
 func TestMain(m *testing.M) {
-	_, err := NewTestRedisFromEnv()
-	if err != nil {
-		log.Fatalf("unable to construct new TestRedisFromEnv instance %s", err)
-	}
 	os.Exit(m.Run())
+}
+
+func newTestCache(t *testing.T) *RedisStorage {
+	t.Helper()
+	repo, err := NewCache(redisAddr)
+	if err != nil {
+		t.Skipf("redis unavailable: %v", err)
+	}
+	redisStorage, ok := repo.(*RedisStorage)
+	if !ok {
+		t.Fatalf("expected *RedisStorage, got %T", repo)
+	}
+	return redisStorage
 }
 
 func TestSet(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
-	repo, err := NewCache(redisAddr)
-	assert.NoError(err, "error connecting to redis")
-	err = repo.Set("art", "vandelay")
+	repo := newTestCache(t)
+	err := repo.Set("art", "vandelay")
 	assert.NoError(err, "error in setting key")
 }
 
 func TestGet(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
-	repo, err := NewCache(redisAddr)
-	assert.NoError(err, "error connecting to redis")
-	err = repo.Set("art", "vandelay")
+	repo := newTestCache(t)
+	err := repo.Set("art", "vandelay")
 	assert.NoError(err, "error in setting key")
 	key, err := repo.Get("art")
 	assert.NoError(err, "error getting key")
@@ -92,9 +98,8 @@ func TestGet(t *testing.T) {
 func TestExists(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
-	repo, err := NewCache(redisAddr)
-	assert.NoError(err, "error connecting to redis")
-	err = repo.Set("art", "vandelay")
+	repo := newTestCache(t)
+	err := repo.Set("art", "vandelay")
 	assert.NoError(err, "error in setting key")
 	lookup, err := repo.Exists("art")
 	assert.NoError(err, "error finding key")
@@ -107,18 +112,16 @@ func TestExists(t *testing.T) {
 func TestHSet(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
-	repo, err := NewCache(redisAddr)
-	assert.NoError(err, "error connecting to redis")
-	err = repo.HSet(testHash, "art", "vandelay")
+	repo := newTestCache(t)
+	err := repo.HSet(testHash, "art", "vandelay")
 	assert.NoError(err, "error in setting key")
 }
 
 func TestHGet(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
-	repo, err := NewCache(redisAddr)
-	assert.NoError(err, "error connecting to redis")
-	err = repo.HSet(testHash, "art", "vandelay")
+	repo := newTestCache(t)
+	err := repo.HSet(testHash, "art", "vandelay")
 	assert.NoError(err, "error in setting key")
 	key, err := repo.HGet(testHash, "art")
 	assert.NoError(err, "error getting key")
@@ -130,9 +133,8 @@ func TestHGet(t *testing.T) {
 func TestHExists(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
-	repo, err := NewCache(redisAddr)
-	assert.NoError(err, "error connecting to redis")
-	err = repo.HSet(testHash, "art", "vandelay")
+	repo := newTestCache(t)
+	err := repo.HSet(testHash, "art", "vandelay")
 	assert.NoError(err, "error in setting key")
 	lookup, err := repo.HExists(testHash, "art")
 	assert.NoError(err, "error finding key")

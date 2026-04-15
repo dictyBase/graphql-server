@@ -1,9 +1,16 @@
+// Package resolver contains the GraphQL resolvers for the stock service. This
+// includesolvers for strains and plasmids, as well as any related types. The resolvers
+// in this package are responsible for handling GraphQL queries and mutations related to
+// stocks, and they interact with the stock service to perform the necessary operations.
 package resolver
 
 import (
 	"context"
 	"fmt"
 
+	E "github.com/IBM/fp-go/v2/either"
+	F "github.com/IBM/fp-go/v2/function"
+	IOE "github.com/IBM/fp-go/v2/ioeither"
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
@@ -47,9 +54,9 @@ func (mrs *MutationResolver) CreateStrain(
 
 func normalizeCreateStrainAttr(
 	attr *models.CreateStrainInput,
-) map[string]interface{} {
+) map[string]any {
 	fields := structs.Fields(attr)
-	newAttr := make(map[string]interface{})
+	newAttr := make(map[string]any)
 	for _, k := range fields {
 		if !k.IsZero() {
 			newAttr[k.Name()] = k.Value()
@@ -108,9 +115,9 @@ func (mrs *MutationResolver) CreatePlasmid(
 
 func normalizeCreatePlasmidAttr(
 	attr *models.CreatePlasmidInput,
-) map[string]interface{} {
+) map[string]any {
 	fields := structs.Fields(attr)
-	newAttr := make(map[string]interface{})
+	newAttr := make(map[string]any)
 	for _, k := range fields {
 		if !k.IsZero() {
 			newAttr[k.Name()] = k.Value()
@@ -172,9 +179,9 @@ func (mrs *MutationResolver) UpdateStrain(
 
 func normalizeUpdateStrainAttr(
 	attr *models.UpdateStrainInput,
-) map[string]interface{} {
+) map[string]any {
 	fields := structs.Fields(attr)
-	newAttr := make(map[string]interface{})
+	newAttr := make(map[string]any)
 	for _, k := range fields {
 		if !k.IsZero() {
 			newAttr[k.Name()] = k.Value()
@@ -223,9 +230,9 @@ func (mrs *MutationResolver) UpdatePlasmid(
 
 func normalizeUpdatePlasmidAttr(
 	attr *models.UpdatePlasmidInput,
-) map[string]interface{} {
+) map[string]any {
 	fields := structs.Fields(attr)
-	newAttr := make(map[string]interface{})
+	newAttr := make(map[string]any)
 	for _, k := range fields {
 		if !k.IsZero() {
 			newAttr[k.Name()] = k.Value()
@@ -311,39 +318,35 @@ func (qrs *QueryResolver) ListPlasmids(
 	ctx context.Context,
 	cursor *int,
 	limit *int,
-	filter *string,
+	filter *models.PlasmidListFilter,
 ) (*models.PlasmidListWithCursor, error) {
-	c := resolverutils.GetCursor(cursor)
-	list, err := qrs.GetStockClient(registry.STOCK).
-		ListPlasmids(ctx, &pb.StockParameters{
-			Cursor: c,
-			Limit:  resolverutils.GetLimit(limit),
-			Filter: resolverutils.GetFilter(filter),
-		})
-	if err != nil {
-		errorutils.AddGQLError(ctx, err)
-		qrs.Logger.Error(err)
-		return &models.PlasmidListWithCursor{}, err
+	result := F.Pipe6(
+		IOE.Of[error](listPlasmidsContext{
+			client: qrs.GetStockClient(registry.STOCK),
+			gctx:   ctx,
+			cursor: cursor,
+			limit:  limit,
+			filter: filter,
+		}),
+		IOE.Let[error](setListPlasmidParams, computeListPlasmidParams),
+		IOE.Bind(setListPlasmidFilter, buildListPlasmidFilterQuery),
+		IOE.Bind(setListPlasmidCollection, fetchListPlasmidCollection),
+		IOE.Map[error](extractListPlasmidResult),
+		toEither[error, *models.PlasmidListWithCursor],
+		E.Fold(onPlasmidListError, onPlasmidListSuccess),
+	)
+
+	if result.F1 != nil {
+		errorutils.AddGQLError(ctx, result.F1)
+		qrs.Logger.Error(result.F1)
+		return result.F2, result.F1
 	}
-	plasmids := []*models.Plasmid{}
-	for _, n := range list.Data {
-		attr := n.Attributes
-		item := stock.ConvertToPlasmidModel(n.Id, attr)
-		plasmids = append(plasmids, item)
-	}
+
 	qrs.Logger.Debugf(
 		"successfully retrieved list of %v plasmids",
-		list.Meta.Total,
+		result.F2.TotalCount,
 	)
-	return &models.PlasmidListWithCursor{
-		Limit: func(i int64) *int { lm := int(i); return &lm }(
-			list.Meta.Limit,
-		),
-		NextCursor:     int(list.Meta.NextCursor),
-		TotalCount:     int(list.Meta.Total),
-		PreviousCursor: int(c),
-		Plasmids:       plasmids,
-	}, nil
+	return result.F2, nil
 }
 
 //nolint:dupl
@@ -554,4 +557,66 @@ func (qrs *QueryResolver) ListStrainsWithGene(
 		)
 	}
 	return smodelList, nil
+}
+
+func (mrs *MutationResolver) CreateGeneGeneralInfo(
+	ctx context.Context,
+	id string,
+	input models.CreateGeneGeneralInfoInput,
+) (*models.GeneGeneralInfo, error) {
+	return &models.GeneGeneralInfo{}, fmt.Errorf("CreateGeneGeneralInfo is not yet implemented")
+}
+
+func (mrs *MutationResolver) UpdateGeneGeneralInfo(
+	ctx context.Context,
+	id string,
+	input models.UpdateGeneGeneralInfoInput,
+) (*models.GeneGeneralInfo, error) {
+	return &models.GeneGeneralInfo{}, fmt.Errorf("UpdateGeneGeneralInfo is not yet implemented")
+}
+
+func (mrs *MutationResolver) UpdateStrainPhenotype(
+	ctx context.Context,
+	strainID string,
+	target models.UpdateStrainPhenotypeTargetInput,
+	payload models.UpdateStrainPhenotypePayloadInput,
+) (*models.Strain, error) {
+	return &models.Strain{}, fmt.Errorf("UpdateStrainPhenotype is not yet implemented")
+}
+
+func (mrs *MutationResolver) DeleteStrainPhenotype(
+	ctx context.Context,
+	strainID string,
+	input models.DeleteStrainPhenotypeInput,
+) (*models.DeleteStrainPhenotype, error) {
+	return &models.DeleteStrainPhenotype{}, fmt.Errorf("DeleteStrainPhenotype is not yet implemented")
+}
+
+func (mrs *MutationResolver) AddStrainPhenotype(
+	ctx context.Context,
+	strainID string,
+	input models.AddStrainPhenotypeInput,
+) (*models.Strain, error) {
+	return &models.Strain{}, fmt.Errorf("AddStrainPhenotype is not yet implemented")
+}
+
+func (qrs *QueryResolver) ListPhenotypeAssays(
+	ctx context.Context,
+	search string,
+) ([]string, error) {
+	return []string{}, fmt.Errorf("ListPhenotypeAssays is not yet implemented")
+}
+
+func (qrs *QueryResolver) ListPhenotypeEnvironments(
+	ctx context.Context,
+	search string,
+) ([]string, error) {
+	return []string{}, fmt.Errorf("ListPhenotypeEnvironments is not yet implemented")
+}
+
+func (qrs *QueryResolver) ListPhenotypes(
+	ctx context.Context,
+	search string,
+) ([]string, error) {
+	return []string{}, fmt.Errorf("ListPhenotypes is not yet implemented")
 }

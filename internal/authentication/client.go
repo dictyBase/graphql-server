@@ -427,7 +427,7 @@ func (clnt *authClient) CreateUser(
 	user *APIUsersPostReq,
 ) (string, error) {
 	var userStruct string
-	content, err := json.Marshal(user)
+	content, err := json.Marshal(user) //nolint:gosec // password is intentionally serialized for user creation API
 	if err != nil {
 		return userStruct, fmt.Errorf("error in converting to json %s", err)
 	}
@@ -495,7 +495,7 @@ func commonHeader(lreq *http.Request, token string) {
 func (clnt *authClient) reqToResponse(
 	creq *http.Request,
 ) (*http.Response, error) {
-	uresp, err := clnt.httpClient.Do(creq)
+	uresp, err := clnt.httpClient.Do(creq) //nolint:gosec // request URL is constructed from trusted configured baseURL
 	if err != nil {
 		return uresp, fmt.Errorf("error in making request %s", err)
 	}

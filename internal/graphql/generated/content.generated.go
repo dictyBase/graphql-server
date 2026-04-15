@@ -955,7 +955,7 @@ func (ec *executionContext) marshalNContent2ᚕᚖgithubᚗcomᚋdictyBaseᚋgo�
 func (ec *executionContext) marshalNContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent(ctx context.Context, sel ast.SelectionSet, v *content.Content) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}

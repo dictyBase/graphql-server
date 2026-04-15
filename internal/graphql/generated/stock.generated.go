@@ -92,6 +92,35 @@ func (ec *executionContext) fieldContext_DeleteStock_success(_ context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _DeleteStrainPhenotype_success(ctx context.Context, field graphql.CollectedField, obj *models.DeleteStrainPhenotype) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DeleteStrainPhenotype_success,
+		func(ctx context.Context) (any, error) {
+			return obj.Success, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DeleteStrainPhenotype_success(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteStrainPhenotype",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Phenotype_phenotype(ctx context.Context, field graphql.CollectedField, obj *models.Phenotype) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -2153,6 +2182,61 @@ func (ec *executionContext) fieldContext_StrainListWithCursor_totalCount(_ conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputAddStrainPhenotypeInput(ctx context.Context, obj any) (models.AddStrainPhenotypeInput, error) {
+	var it models.AddStrainPhenotypeInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"phenotype", "environment", "assay", "publication", "notes"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "phenotype":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phenotype"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Phenotype = data
+		case "environment":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("environment"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Environment = data
+		case "assay":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assay"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Assay = data
+		case "publication":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publication"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Publication = data
+		case "notes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("notes"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Notes = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context, obj any) (models.CreatePlasmidInput, error) {
 	var it models.CreatePlasmidInput
 	asMap := map[string]any{}
@@ -2425,6 +2509,116 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 				return it, err
 			}
 			it.Genotypes = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputDeleteStrainPhenotypeInput(ctx context.Context, obj any) (models.DeleteStrainPhenotypeInput, error) {
+	var it models.DeleteStrainPhenotypeInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"phenotype", "environment", "assay", "publication", "notes"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "phenotype":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phenotype"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Phenotype = data
+		case "environment":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("environment"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Environment = data
+		case "assay":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assay"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Assay = data
+		case "publication":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publication"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Publication = data
+		case "notes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("notes"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Notes = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPlasmidListFilter(ctx context.Context, obj any) (models.PlasmidListFilter, error) {
+	var it models.PlasmidListFilter
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "summary", "id", "in_stock", "plasmid_type"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "summary":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Summary = data
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "in_stock":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in_stock"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InStock = data
+		case "plasmid_type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("plasmid_type"))
+			data, err := ec.unmarshalNPlasmidType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PlasmidType = data
 		}
 	}
 
@@ -2750,6 +2944,116 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateStrainPhenotypePayloadInput(ctx context.Context, obj any) (models.UpdateStrainPhenotypePayloadInput, error) {
+	var it models.UpdateStrainPhenotypePayloadInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"phenotype", "environment", "assay", "publication", "notes"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "phenotype":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phenotype"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Phenotype = data
+		case "environment":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("environment"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Environment = data
+		case "assay":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assay"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Assay = data
+		case "publication":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publication"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Publication = data
+		case "notes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("notes"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Notes = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateStrainPhenotypeTargetInput(ctx context.Context, obj any) (models.UpdateStrainPhenotypeTargetInput, error) {
+	var it models.UpdateStrainPhenotypeTargetInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"phenotype", "environment", "assay", "publication", "notes"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "phenotype":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phenotype"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Phenotype = data
+		case "environment":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("environment"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Environment = data
+		case "assay":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assay"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Assay = data
+		case "publication":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publication"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Publication = data
+		case "notes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("notes"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Notes = data
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -2773,7 +3077,11 @@ func (ec *executionContext) _Stock(ctx context.Context, sel ast.SelectionSet, ob
 		}
 		return ec._Plasmid(ctx, sel, obj)
 	default:
-		panic(fmt.Errorf("unexpected type %T", obj))
+		if typedObj, ok := obj.(graphql.Marshaler); ok {
+			return typedObj
+		} else {
+			panic(fmt.Errorf("unexpected type %T; non-generated variants of Stock must implement graphql.Marshaler", obj))
+		}
 	}
 }
 
@@ -2794,6 +3102,45 @@ func (ec *executionContext) _DeleteStock(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = graphql.MarshalString("DeleteStock")
 		case "success":
 			out.Values[i] = ec._DeleteStock_success(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var deleteStrainPhenotypeImplementors = []string{"DeleteStrainPhenotype"}
+
+func (ec *executionContext) _DeleteStrainPhenotype(ctx context.Context, sel ast.SelectionSet, obj *models.DeleteStrainPhenotype) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deleteStrainPhenotypeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeleteStrainPhenotype")
+		case "success":
+			out.Values[i] = ec._DeleteStrainPhenotype_success(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -3867,10 +4214,34 @@ func (ec *executionContext) _StrainListWithCursor(ctx context.Context, sel ast.S
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) unmarshalNAddStrainPhenotypeInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐAddStrainPhenotypeInput(ctx context.Context, v any) (models.AddStrainPhenotypeInput, error) {
+	res, err := ec.unmarshalInputAddStrainPhenotypeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDeleteStrainPhenotype2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStrainPhenotype(ctx context.Context, sel ast.SelectionSet, v models.DeleteStrainPhenotype) graphql.Marshaler {
+	return ec._DeleteStrainPhenotype(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDeleteStrainPhenotype2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStrainPhenotype(ctx context.Context, sel ast.SelectionSet, v *models.DeleteStrainPhenotype) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DeleteStrainPhenotype(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNDeleteStrainPhenotypeInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStrainPhenotypeInput(ctx context.Context, v any) (models.DeleteStrainPhenotypeInput, error) {
+	res, err := ec.unmarshalInputDeleteStrainPhenotypeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNPhenotype2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPhenotype(ctx context.Context, sel ast.SelectionSet, v *models.Phenotype) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -3924,17 +4295,27 @@ func (ec *executionContext) marshalNPlasmid2ᚕᚖgithubᚗcomᚋdictyBaseᚋgra
 func (ec *executionContext) marshalNPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid(ctx context.Context, sel ast.SelectionSet, v *models.Plasmid) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
 	return ec._Plasmid(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNPlasmidType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidType(ctx context.Context, v any) (models.PlasmidType, error) {
+	var res models.PlasmidType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPlasmidType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidType(ctx context.Context, sel ast.SelectionSet, v models.PlasmidType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNStock2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStock(ctx context.Context, sel ast.SelectionSet, v models.Stock) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -3988,7 +4369,7 @@ func (ec *executionContext) marshalNStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgrap
 func (ec *executionContext) marshalNStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx context.Context, sel ast.SelectionSet, v *models.Strain) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -4003,6 +4384,16 @@ func (ec *executionContext) unmarshalNStrainType2githubᚗcomᚋdictyBaseᚋgrap
 
 func (ec *executionContext) marshalNStrainType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainType(ctx context.Context, sel ast.SelectionSet, v models.StrainType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) unmarshalNUpdateStrainPhenotypePayloadInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainPhenotypePayloadInput(ctx context.Context, v any) (models.UpdateStrainPhenotypePayloadInput, error) {
+	res, err := ec.unmarshalInputUpdateStrainPhenotypePayloadInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateStrainPhenotypeTargetInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainPhenotypeTargetInput(ctx context.Context, v any) (models.UpdateStrainPhenotypeTargetInput, error) {
+	res, err := ec.unmarshalInputUpdateStrainPhenotypeTargetInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOCreatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreatePlasmidInput(ctx context.Context, v any) (*models.CreatePlasmidInput, error) {
@@ -4127,6 +4518,14 @@ func (ec *executionContext) marshalOPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphq
 		return graphql.Null
 	}
 	return ec._Plasmid(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPlasmidListFilter2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidListFilter(ctx context.Context, v any) (*models.PlasmidListFilter, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputPlasmidListFilter(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOPlasmidListWithCursor2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidListWithCursor(ctx context.Context, sel ast.SelectionSet, v *models.PlasmidListWithCursor) graphql.Marshaler {

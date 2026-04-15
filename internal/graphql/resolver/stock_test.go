@@ -4,12 +4,29 @@ import (
 	"context"
 	"testing"
 
+	"github.com/99designs/gqlgen/graphql"
+
+	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
+	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
+
+// stockClientRegistry returns a fixed stock client for resolver tests
+// that need to verify exact parameters passed to ListPlasmids.
+type stockClientRegistry struct {
+	*mocks.MockRegistry
+	stockClient pb.StockServiceClient
+}
+
+func (r *stockClientRegistry) GetStockClient(key string) pb.StockServiceClient {
+	return r.stockClient
+}
 
 func TestPlasmid(t *testing.T) {
 	t.Parallel()
@@ -157,9 +174,11 @@ func TestListPlasmids(t *testing.T) {
 	}
 	cursor := 0
 	limit := 10
-	filter := "type===plasmid"
-	p, err := q.ListPlasmids(context.Background(), &cursor, &limit, &filter)
-	assert.NoError(err, "expect no error from getting list of strains")
+	filter := &models.PlasmidListFilter{
+		PlasmidType: models.PlasmidTypeAll,
+	}
+	p, err := q.ListPlasmids(context.Background(), &cursor, &limit, filter)
+	assert.NoError(err, "expect no error from getting list of plasmids")
 	assert.Equal(p.Limit, &limit, "should match limit")
 	assert.Equal(p.PreviousCursor, cursor, "should match previous cursor")
 	assert.Equal(
@@ -502,4 +521,150 @@ func sliceConverter(s []string) []*string {
 		c = append(c, &s[i])
 	}
 	return c
+}
+
+func TestListPlasmidsPassesExpectedFilter(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"ListPlasmids",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(params *pb.StockParameters) bool {
+			return params.Cursor == 0 &&
+				params.Limit == 10 &&
+				params.Filter == "summary=~GoldenBraid"
+		}),
+	).Return(mocks.MockPlasmidCollection(), nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	cursor := 0
+	limit := 10
+	summary := "GoldenBraid"
+
+	result, err := resolver.ListPlasmids(context.Background(), &cursor, &limit, &models.PlasmidListFilter{
+		Summary:     &summary,
+		PlasmidType: models.PlasmidTypeAll,
+	})
+	require.NoError(err)
+	require.Len(result.Plasmids, 3)
+	mockedStockClient.AssertExpectations(t)
+}
+
+func TestListPlasmidsNilFilter(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"ListPlasmids",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(params *pb.StockParameters) bool {
+			return params.Cursor == 0 &&
+				params.Limit == 10 &&
+				params.Filter == ""
+		}),
+	).Return(mocks.MockPlasmidCollection(), nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	cursor := 0
+	limit := 10
+
+	result, err := resolver.ListPlasmids(context.Background(), &cursor, &limit, nil)
+	require.NoError(err)
+	require.Len(result.Plasmids, 3)
+	mockedStockClient.AssertExpectations(t)
+}
+
+func TestListPlasmidsUnsupportedInStockFilter(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	resolver := &QueryResolver{
+		Registry: &mocks.MockRegistry{},
+		Logger:   mocks.TestLogger(),
+	}
+	cursor := 0
+	limit := 10
+	inStock := true
+
+	ctx := graphql.WithResponseContext(context.Background(), graphql.DefaultErrorPresenter, graphql.DefaultRecover)
+	result, err := resolver.ListPlasmids(ctx, &cursor, &limit, &models.PlasmidListFilter{
+		InStock:     &inStock,
+		PlasmidType: models.PlasmidTypeAll,
+	})
+	require.Error(err)
+	require.Contains(err.Error(), "in_stock filter is not yet supported")
+	require.Empty(result.Plasmids)
+}
+
+func TestListPlasmidsUnsupportedIDFilter(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	resolver := &QueryResolver{
+		Registry: &mocks.MockRegistry{},
+		Logger:   mocks.TestLogger(),
+	}
+	cursor := 0
+	limit := 10
+	id := "DBP123456"
+
+	ctx := graphql.WithResponseContext(context.Background(), graphql.DefaultErrorPresenter, graphql.DefaultRecover)
+	result, err := resolver.ListPlasmids(ctx, &cursor, &limit, &models.PlasmidListFilter{
+		ID:          &id,
+		PlasmidType: models.PlasmidTypeAll,
+	})
+	require.Error(err)
+	require.Contains(err.Error(), "id filter is not yet supported")
+	require.Empty(result.Plasmids)
+}
+
+func TestListPlasmidsUnverifiedRegularTypeFilter(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	resolver := &QueryResolver{
+		Registry: &mocks.MockRegistry{},
+		Logger:   mocks.TestLogger(),
+	}
+	cursor := 0
+	limit := 10
+
+	ctx := graphql.WithResponseContext(context.Background(), graphql.DefaultErrorPresenter, graphql.DefaultRecover)
+	result, err := resolver.ListPlasmids(ctx, &cursor, &limit, &models.PlasmidListFilter{
+		PlasmidType: models.PlasmidTypeRegular,
+	})
+	require.Error(err)
+	require.Contains(err.Error(), "plasmid_type filter is not yet verified")
+	require.Empty(result.Plasmids)
+}
+
+func TestListPlasmidsUnverifiedGoldenBraidTypeFilter(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	resolver := &QueryResolver{
+		Registry: &mocks.MockRegistry{},
+		Logger:   mocks.TestLogger(),
+	}
+	cursor := 0
+	limit := 10
+
+	ctx := graphql.WithResponseContext(context.Background(), graphql.DefaultErrorPresenter, graphql.DefaultRecover)
+	result, err := resolver.ListPlasmids(ctx, &cursor, &limit, &models.PlasmidListFilter{
+		PlasmidType: models.PlasmidTypeGoldenBraid,
+	})
+	require.Error(err)
+	require.Contains(err.Error(), "plasmid_type filter is not yet verified")
+	require.Empty(result.Plasmids)
 }

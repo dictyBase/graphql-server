@@ -641,7 +641,7 @@ func (ec *executionContext) marshalNIdentity2githubᚗcomᚋdictyBaseᚋgraphql�
 func (ec *executionContext) marshalNIdentity2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐIdentity(ctx context.Context, sel ast.SelectionSet, v *models.Identity) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}

@@ -1,28 +1,9 @@
-issues:
-  exclude-dirs:
-    - internal/graphql/generated
-    - internal/graphql/genresolver
+version: "2"
 run:
-  tests: false
-  timeout: 5m
   allow-parallel-runners: true
-  # golangci-lint config
-linters-settings:
-   funlen:
-     lines: 80
-   depguard:
-     rules:
-       main:
-         deny:
-           - pkg: io/ioutil
-             desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
-   revive:
-      rules:
-        - name: var-naming
-          arguments: [["ID"]]
+  tests: false
 linters:
-  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
-  disable-all: true
+  default: none
   enable:
     - bodyclose
     - depguard
@@ -33,24 +14,47 @@ linters:
     - goconst
     - gocritic
     - gocyclo
-    - gofmt
-    - goimports
     - gosec
-    - gosimple
     - govet
     - ineffassign
     - lll
     - misspell
     - nakedret
+    - revive
     - staticcheck
-    - stylecheck
-    - typecheck
     - unconvert
     - unparam
     - unused
     - whitespace
-  # don't enable:
-  # - godox
-  # - maligned,prealloc
-  # - gochecknoglobals
-  # - golint
+  settings:
+    funlen:
+      lines: 80
+    depguard:
+      rules:
+        main:
+          deny:
+            - pkg: io/ioutil
+              desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
+    revive:
+      rules:
+        - name: var-naming
+          arguments: [["ID"]]
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - internal/graphql/generated
+      - internal/graphql/genresolver
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - internal/graphql/generated
+      - internal/graphql/genresolver

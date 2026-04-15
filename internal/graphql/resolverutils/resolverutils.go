@@ -5,25 +5,33 @@ import (
 	"strings"
 	"time"
 
+	F "github.com/IBM/fp-go/v2/function"
+	O "github.com/IBM/fp-go/v2/option"
 	"github.com/dictyBase/aphgrpc"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func GetCursor(c *int) int64 {
-	if c == nil {
-		return int64(0)
-	}
-	return int64(*c)
+func GetCursorFP(cursor *int) int64 {
+	return F.Pipe2(
+		O.FromNillable(cursor),
+		O.Map(func(ptr *int) int64 { return int64(*ptr) }),
+		O.GetOrElse(F.Constant(int64(0))),
+	)
 }
 
-func GetLimit(l *int) int64 {
-	if l == nil {
-		return int64(10)
-	}
-	return int64(*l)
+func GetLimitFP(limit *int) int64 {
+	return F.Pipe2(
+		O.FromNillable(limit),
+		O.Map(func(ptr *int) int64 { return int64(*ptr) }),
+		O.GetOrElse(F.Constant(int64(10))),
+	)
 }
+
+func GetCursor(c *int) int64 { return GetCursorFP(c) }
+
+func GetLimit(l *int) int64 { return GetLimitFP(l) }
 
 func GetFilter(f *string) string {
 	if f == nil {
@@ -71,13 +79,13 @@ func strainFieldsQuery(filter *models.StrainListFilter) string {
 		if query.Len() > 0 {
 			query.WriteString(";")
 		}
-		query.WriteString(fmt.Sprintf("label=~%s", *filter.Label))
+		fmt.Fprintf(&query, "label=~%s", *filter.Label)
 	}
 	if filter.Summary != nil {
 		if query.Len() > 0 {
 			query.WriteString(";")
 		}
-		query.WriteString(fmt.Sprintf("summary=~%s", *filter.Summary))
+		fmt.Fprintf(&query, "summary=~%s", *filter.Summary)
 	}
 
 	return query.String()

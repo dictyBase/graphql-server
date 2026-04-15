@@ -30,8 +30,13 @@ type MutationResolver interface {
 	CreateStrain(ctx context.Context, input *models.CreateStrainInput) (*models.Strain, error)
 	CreatePlasmid(ctx context.Context, input *models.CreatePlasmidInput) (*models.Plasmid, error)
 	UpdateStrain(ctx context.Context, id string, input *models.UpdateStrainInput) (*models.Strain, error)
+	AddStrainPhenotype(ctx context.Context, strainID string, input models.AddStrainPhenotypeInput) (*models.Strain, error)
+	UpdateStrainPhenotype(ctx context.Context, strainID string, target models.UpdateStrainPhenotypeTargetInput, payload models.UpdateStrainPhenotypePayloadInput) (*models.Strain, error)
+	DeleteStrainPhenotype(ctx context.Context, strainID string, input models.DeleteStrainPhenotypeInput) (*models.DeleteStrainPhenotype, error)
 	UpdatePlasmid(ctx context.Context, id string, input *models.UpdatePlasmidInput) (*models.Plasmid, error)
 	DeleteStock(ctx context.Context, id string) (*models.DeleteStock, error)
+	CreateGeneGeneralInfo(ctx context.Context, id string, input models.CreateGeneGeneralInfoInput) (*models.GeneGeneralInfo, error)
+	UpdateGeneGeneralInfo(ctx context.Context, id string, input models.UpdateGeneGeneralInfoInput) (*models.GeneGeneralInfo, error)
 	CreateUser(ctx context.Context, input *models.CreateUserInput) (*user.User, error)
 	CreateUserRoleRelationship(ctx context.Context, userID string, roleID string) (*user.User, error)
 	UpdateUser(ctx context.Context, id string, input *models.UpdateUserInput) (*user.User, error)
@@ -50,6 +55,22 @@ type MutationResolver interface {
 
 // region    ***************************** args.gotpl *****************************
 
+func (ec *executionContext) field_Mutation_addStrainPhenotype_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "strainId", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
+	}
+	args["strainId"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNAddStrainPhenotypeInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐAddStrainPhenotypeInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createContent_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -58,6 +79,22 @@ func (ec *executionContext) field_Mutation_createContent_args(ctx context.Contex
 		return nil, err
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createGeneGeneralInfo_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateGeneGeneralInfoInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateGeneGeneralInfoInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -203,6 +240,22 @@ func (ec *executionContext) field_Mutation_deleteStock_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteStrainPhenotype_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "strainId", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
+	}
+	args["strainId"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteStrainPhenotypeInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStrainPhenotypeInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -233,6 +286,22 @@ func (ec *executionContext) field_Mutation_updateContent_args(ctx context.Contex
 		return nil, err
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateGeneGeneralInfo_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateGeneGeneralInfoInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateGeneGeneralInfoInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -297,6 +366,27 @@ func (ec *executionContext) field_Mutation_updateRole_args(ctx context.Context, 
 		return nil, err
 	}
 	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateStrainPhenotype_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "strainId", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
+	}
+	args["strainId"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "target", ec.unmarshalNUpdateStrainPhenotypeTargetInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainPhenotypeTargetInput)
+	if err != nil {
+		return nil, err
+	}
+	args["target"] = arg1
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "payload", ec.unmarshalNUpdateStrainPhenotypePayloadInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainPhenotypePayloadInput)
+	if err != nil {
+		return nil, err
+	}
+	args["payload"] = arg2
 	return args, nil
 }
 
@@ -993,6 +1083,229 @@ func (ec *executionContext) fieldContext_Mutation_updateStrain(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_addStrainPhenotype(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_addStrainPhenotype,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().AddStrainPhenotype(ctx, fc.Args["strainId"].(string), fc.Args["input"].(models.AddStrainPhenotypeInput))
+		},
+		nil,
+		ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_addStrainPhenotype(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Strain_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Strain_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Strain_updated_at(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Strain_created_by(ctx, field)
+			case "updated_by":
+				return ec.fieldContext_Strain_updated_by(ctx, field)
+			case "summary":
+				return ec.fieldContext_Strain_summary(ctx, field)
+			case "editable_summary":
+				return ec.fieldContext_Strain_editable_summary(ctx, field)
+			case "depositor":
+				return ec.fieldContext_Strain_depositor(ctx, field)
+			case "genes":
+				return ec.fieldContext_Strain_genes(ctx, field)
+			case "dbxrefs":
+				return ec.fieldContext_Strain_dbxrefs(ctx, field)
+			case "publications":
+				return ec.fieldContext_Strain_publications(ctx, field)
+			case "systematic_name":
+				return ec.fieldContext_Strain_systematic_name(ctx, field)
+			case "label":
+				return ec.fieldContext_Strain_label(ctx, field)
+			case "species":
+				return ec.fieldContext_Strain_species(ctx, field)
+			case "plasmid":
+				return ec.fieldContext_Strain_plasmid(ctx, field)
+			case "parent":
+				return ec.fieldContext_Strain_parent(ctx, field)
+			case "names":
+				return ec.fieldContext_Strain_names(ctx, field)
+			case "in_stock":
+				return ec.fieldContext_Strain_in_stock(ctx, field)
+			case "phenotypes":
+				return ec.fieldContext_Strain_phenotypes(ctx, field)
+			case "genetic_modification":
+				return ec.fieldContext_Strain_genetic_modification(ctx, field)
+			case "mutagenesis_method":
+				return ec.fieldContext_Strain_mutagenesis_method(ctx, field)
+			case "characteristics":
+				return ec.fieldContext_Strain_characteristics(ctx, field)
+			case "genotypes":
+				return ec.fieldContext_Strain_genotypes(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Strain", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_addStrainPhenotype_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateStrainPhenotype(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updateStrainPhenotype,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateStrainPhenotype(ctx, fc.Args["strainId"].(string), fc.Args["target"].(models.UpdateStrainPhenotypeTargetInput), fc.Args["payload"].(models.UpdateStrainPhenotypePayloadInput))
+		},
+		nil,
+		ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateStrainPhenotype(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Strain_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Strain_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Strain_updated_at(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Strain_created_by(ctx, field)
+			case "updated_by":
+				return ec.fieldContext_Strain_updated_by(ctx, field)
+			case "summary":
+				return ec.fieldContext_Strain_summary(ctx, field)
+			case "editable_summary":
+				return ec.fieldContext_Strain_editable_summary(ctx, field)
+			case "depositor":
+				return ec.fieldContext_Strain_depositor(ctx, field)
+			case "genes":
+				return ec.fieldContext_Strain_genes(ctx, field)
+			case "dbxrefs":
+				return ec.fieldContext_Strain_dbxrefs(ctx, field)
+			case "publications":
+				return ec.fieldContext_Strain_publications(ctx, field)
+			case "systematic_name":
+				return ec.fieldContext_Strain_systematic_name(ctx, field)
+			case "label":
+				return ec.fieldContext_Strain_label(ctx, field)
+			case "species":
+				return ec.fieldContext_Strain_species(ctx, field)
+			case "plasmid":
+				return ec.fieldContext_Strain_plasmid(ctx, field)
+			case "parent":
+				return ec.fieldContext_Strain_parent(ctx, field)
+			case "names":
+				return ec.fieldContext_Strain_names(ctx, field)
+			case "in_stock":
+				return ec.fieldContext_Strain_in_stock(ctx, field)
+			case "phenotypes":
+				return ec.fieldContext_Strain_phenotypes(ctx, field)
+			case "genetic_modification":
+				return ec.fieldContext_Strain_genetic_modification(ctx, field)
+			case "mutagenesis_method":
+				return ec.fieldContext_Strain_mutagenesis_method(ctx, field)
+			case "characteristics":
+				return ec.fieldContext_Strain_characteristics(ctx, field)
+			case "genotypes":
+				return ec.fieldContext_Strain_genotypes(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Strain", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateStrainPhenotype_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteStrainPhenotype(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_deleteStrainPhenotype,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().DeleteStrainPhenotype(ctx, fc.Args["strainId"].(string), fc.Args["input"].(models.DeleteStrainPhenotypeInput))
+		},
+		nil,
+		ec.marshalNDeleteStrainPhenotype2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStrainPhenotype,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteStrainPhenotype(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "success":
+				return ec.fieldContext_DeleteStrainPhenotype_success(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DeleteStrainPhenotype", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteStrainPhenotype_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_updatePlasmid(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -1109,6 +1422,128 @@ func (ec *executionContext) fieldContext_Mutation_deleteStock(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteStock_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createGeneGeneralInfo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createGeneGeneralInfo,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateGeneGeneralInfo(ctx, fc.Args["id"].(string), fc.Args["input"].(models.CreateGeneGeneralInfoInput))
+		},
+		nil,
+		ec.marshalOGeneGeneralInfo2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneGeneralInfo,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createGeneGeneralInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GeneGeneralInfo_id(ctx, field)
+			case "name_description":
+				return ec.fieldContext_GeneGeneralInfo_name_description(ctx, field)
+			case "gene_product":
+				return ec.fieldContext_GeneGeneralInfo_gene_product(ctx, field)
+			case "synonyms":
+				return ec.fieldContext_GeneGeneralInfo_synonyms(ctx, field)
+			case "description":
+				return ec.fieldContext_GeneGeneralInfo_description(ctx, field)
+			case "created_at":
+				return ec.fieldContext_GeneGeneralInfo_created_at(ctx, field)
+			case "created_by":
+				return ec.fieldContext_GeneGeneralInfo_created_by(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_GeneGeneralInfo_updated_at(ctx, field)
+			case "updated_by":
+				return ec.fieldContext_GeneGeneralInfo_updated_by(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GeneGeneralInfo", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createGeneGeneralInfo_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateGeneGeneralInfo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updateGeneGeneralInfo,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateGeneGeneralInfo(ctx, fc.Args["id"].(string), fc.Args["input"].(models.UpdateGeneGeneralInfoInput))
+		},
+		nil,
+		ec.marshalOGeneGeneralInfo2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneGeneralInfo,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateGeneGeneralInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GeneGeneralInfo_id(ctx, field)
+			case "name_description":
+				return ec.fieldContext_GeneGeneralInfo_name_description(ctx, field)
+			case "gene_product":
+				return ec.fieldContext_GeneGeneralInfo_gene_product(ctx, field)
+			case "synonyms":
+				return ec.fieldContext_GeneGeneralInfo_synonyms(ctx, field)
+			case "description":
+				return ec.fieldContext_GeneGeneralInfo_description(ctx, field)
+			case "created_at":
+				return ec.fieldContext_GeneGeneralInfo_created_at(ctx, field)
+			case "created_by":
+				return ec.fieldContext_GeneGeneralInfo_created_by(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_GeneGeneralInfo_updated_at(ctx, field)
+			case "updated_by":
+				return ec.fieldContext_GeneGeneralInfo_updated_by(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GeneGeneralInfo", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateGeneGeneralInfo_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -1872,6 +2307,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateStrain(ctx, field)
 			})
+		case "addStrainPhenotype":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_addStrainPhenotype(ctx, field)
+			})
+		case "updateStrainPhenotype":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateStrainPhenotype(ctx, field)
+			})
+		case "deleteStrainPhenotype":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteStrainPhenotype(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "updatePlasmid":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updatePlasmid(ctx, field)
@@ -1879,6 +2329,14 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteStock":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteStock(ctx, field)
+			})
+		case "createGeneGeneralInfo":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createGeneGeneralInfo(ctx, field)
+			})
+		case "updateGeneGeneralInfo":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateGeneGeneralInfo(ctx, field)
 			})
 		case "createUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {

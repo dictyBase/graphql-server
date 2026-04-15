@@ -88,7 +88,7 @@ func (qrs *QueryResolver) Publication(
 ) (*models.Publication, error) {
 	pub, err := fetch.FetchPublication(
 		ctx, qrs.GetRedisRepository(cache.RedisKey),
-		qrs.Registry.GetAPIEndpoint(registry.PUBLICATION), id,
+		qrs.GetAPIEndpoint(registry.PUBLICATION), id,
 	)
 	if err != nil {
 		errorutils.AddGQLError(ctx, err)
@@ -327,7 +327,7 @@ func fetchPublicationDetails(
 ) (*models.PublicationWithGene, error) {
 	pub, err := fetch.FetchPublication(
 		params.Ctx, params.Qrs.GetRedisRepository(cache.RedisKey),
-		params.Qrs.Registry.GetAPIEndpoint(registry.PUBLICATION), params.PubID,
+		params.Qrs.GetAPIEndpoint(registry.PUBLICATION), params.PubID,
 	)
 	if err != nil {
 		// Error already logged by FetchPublication if needed, just wrap and return

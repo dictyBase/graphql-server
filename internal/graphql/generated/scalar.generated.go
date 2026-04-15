@@ -51,7 +51,7 @@ func (ec *executionContext) marshalNTimestamp2timeᚐTime(ctx context.Context, s
 	res := models.MarshalTimestamp(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 	}
 	return res
@@ -65,7 +65,7 @@ func (ec *executionContext) unmarshalNTimestamp2ᚖtimeᚐTime(ctx context.Conte
 func (ec *executionContext) marshalNTimestamp2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -73,7 +73,7 @@ func (ec *executionContext) marshalNTimestamp2ᚖtimeᚐTime(ctx context.Context
 	res := models.MarshalTimestamp(*v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 	}
 	return res

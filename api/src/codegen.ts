@@ -11,14 +11,23 @@ const config: CodegenConfig = {
         "typescript-operations",
         "typescript-react-apollo",
       ],
-      config: { withHooks: true },
+      config: {
+        withHooks: true,
+        scalars: {
+          StringSet: "Set<string>",
+          Upload: "File",
+          Timestamp: "string",
+        },
+      },
     },
-    "./types/mocks.ts" : {
-      plugins: [
-        "typescript",
-        "typescript-operations",
-        "typescript-msw",
-      ],
+    "./types/mocks.ts": {
+      plugins: ["typescript", "typescript-operations", "typescript-msw"],
+      config: {
+        scalars: {
+          StringSet: "Set<string>",
+          Upload: "File",
+        },
+      },
     },
     "./types/fragment.ts": {
       plugins: ["fragment-matcher"],

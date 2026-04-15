@@ -31,14 +31,14 @@ func (mrs *MutationResolver) UploadFile(
 		errorutils.AddGQLError(ctx, iderr)
 		return nil, err
 	}
-	bucket := mrs.Registry.GetRecord(registry.S3Bucket)
+	bucket := mrs.GetRecord(registry.S3Bucket)
 	fileInBucket := fmt.Sprintf(
 		"%s/%s/%s",
-		mrs.Registry.GetRecord(registry.S3BucketPath),
+		mrs.GetRecord(registry.S3BucketPath),
 		time.Now().Format(time.DateOnly),
 		rndID.String(),
 	)
-	uploadInfo, err := mrs.Registry.GetS3Client(registry.S3CLIENT).PutObject(
+	uploadInfo, err := mrs.GetS3Client(registry.S3CLIENT).PutObject(
 		ctx, bucket, fileInBucket, file.File, file.Size, minio.PutObjectOptions{},
 	)
 	if err != nil {
@@ -50,7 +50,7 @@ func (mrs *MutationResolver) UploadFile(
 	return &models.ImageFile{
 		URL: fmt.Sprintf(
 			"%s/%s/%s",
-			mrs.Registry.GetAPIEndpoint(registry.S3STORAGE),
+			mrs.GetAPIEndpoint(registry.S3STORAGE),
 			bucket,
 			fileInBucket,
 		),
