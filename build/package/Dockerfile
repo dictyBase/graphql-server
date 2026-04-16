@@ -1,11 +1,11 @@
-FROM golang:1.25-bookworm
+FROM golang:1.25-trixie
 LABEL maintainer="Siddhartha Basu <siddhartha-basu@northwestern.edu>"
 ENV GOPROXY https://proxy.golang.org
 ENV CGO_ENABLED=0 \
     GOOS=linux \
     GOARCH=amd64
 RUN apt-get -qq update \
-    && apt-get -yqq install upx
+    && apt-get -yqq install upx-ucl
 RUN mkdir -p /graphql-server
 WORKDIR /graphql-server
 COPY go.mod ./
