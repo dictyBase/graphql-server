@@ -127,23 +127,9 @@ func computeListPlasmidParams(
 }
 
 func buildListPlasmidFilterQuery(ctx withListPlasmidParams) IOE.IOEither[error, string] {
-	return F.Pipe2(
-		ctx.filter,
-		func(filter *models.PlasmidListFilter) E.Either[error, string] {
-			if filter == nil {
-				return E.Right[error]("")
-			}
-			return F.Pipe5(
-				filter,
-				resolverutils.CheckIDField,
-				E.Chain(resolverutils.CheckInStockField),
-				E.Chain(resolverutils.CheckUnverifiedPlasmidType),
-				E.Chain(resolverutils.CheckValidPlasmidType),
-				E.Map[error](resolverutils.BuildPlasmidFieldQuery),
-			)
-		},
-		IOE.FromEither[error, string],
-	)
+	return IOE.TryCatchError(func() (string, error) {
+		return resolverutils.PlasmidFilterToQuery(ctx.filter)
+	})
 }
 
 func fetchListPlasmidCollection(

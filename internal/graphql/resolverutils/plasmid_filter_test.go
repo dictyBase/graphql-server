@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/stretchr/testify/require"
 )
 
@@ -58,22 +59,45 @@ func TestPlasmidFilterToQueryPlasmidTypeAllOnly(t *testing.T) {
 	require.Equal(t, "", query)
 }
 
-func TestPlasmidFilterToQueryPlasmidTypeRegularUnverified(t *testing.T) {
+func TestPlasmidFilterToQueryPlasmidTypeRegularOnly(t *testing.T) {
 	t.Parallel()
-	_, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
+	query, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
 		PlasmidType: models.PlasmidTypeRegular,
 	})
-	require.Error(t, err)
-	require.Contains(t, err.Error(), "plasmid_type filter is not yet verified")
+	require.NoError(t, err)
+	require.Equal(
+		t,
+		"ontology=="+registry.DictyPlasmidPropOntology+";tag=="+registry.RegularPlasmidTag,
+		query,
+	)
 }
 
-func TestPlasmidFilterToQueryPlasmidTypeGoldenBraidUnverified(t *testing.T) {
+func TestPlasmidFilterToQueryPlasmidTypeGoldenBraidOnly(t *testing.T) {
 	t.Parallel()
-	_, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
+	query, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
 		PlasmidType: models.PlasmidTypeGoldenBraid,
 	})
-	require.Error(t, err)
-	require.Contains(t, err.Error(), "plasmid_type filter is not yet verified")
+	require.NoError(t, err)
+	require.Equal(
+		t,
+		"ontology=="+registry.DictyPlasmidPropOntology+";tag=="+registry.GoldenBraidPlasmidTag,
+		query,
+	)
+}
+
+func TestPlasmidFilterToQueryCombinedSummaryAndRegularType(t *testing.T) {
+	t.Parallel()
+	summary := "test"
+	query, err := PlasmidFilterToQuery(&models.PlasmidListFilter{
+		Summary:     &summary,
+		PlasmidType: models.PlasmidTypeRegular,
+	})
+	require.NoError(t, err)
+	require.Equal(
+		t,
+		"summary=~test;ontology=="+registry.DictyPlasmidPropOntology+";tag=="+registry.RegularPlasmidTag,
+		query,
+	)
 }
 
 func TestPlasmidFilterToQueryInvalidPlasmidType(t *testing.T) {

@@ -629,42 +629,64 @@ func TestListPlasmidsUnsupportedIDFilter(t *testing.T) {
 	require.Empty(result.Plasmids)
 }
 
-func TestListPlasmidsUnverifiedRegularTypeFilter(t *testing.T) {
+func TestListPlasmidsRegularTypeFilter(t *testing.T) {
 	t.Parallel()
 	require := require.New(t)
 
-	resolver := &QueryResolver{
-		Registry: &mocks.MockRegistry{},
-		Logger:   mocks.TestLogger(),
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"ListPlasmids",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(params *pb.StockParameters) bool {
+			return params.Cursor == 0 &&
+				params.Limit == 10 &&
+				params.Filter == "ontology==dicty_plasmid_keyword;tag==vector"
+		}),
+	).Return(mocks.MockPlasmidCollection(), nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
 	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
 	cursor := 0
 	limit := 10
 
-	ctx := graphql.WithResponseContext(context.Background(), graphql.DefaultErrorPresenter, graphql.DefaultRecover)
-	result, err := resolver.ListPlasmids(ctx, &cursor, &limit, &models.PlasmidListFilter{
+	result, err := resolver.ListPlasmids(context.Background(), &cursor, &limit, &models.PlasmidListFilter{
 		PlasmidType: models.PlasmidTypeRegular,
 	})
-	require.Error(err)
-	require.Contains(err.Error(), "plasmid_type filter is not yet verified")
-	require.Empty(result.Plasmids)
+	require.NoError(err)
+	require.Len(result.Plasmids, 3)
+	mockedStockClient.AssertExpectations(t)
 }
 
-func TestListPlasmidsUnverifiedGoldenBraidTypeFilter(t *testing.T) {
+func TestListPlasmidsGoldenBraidTypeFilter(t *testing.T) {
 	t.Parallel()
 	require := require.New(t)
 
-	resolver := &QueryResolver{
-		Registry: &mocks.MockRegistry{},
-		Logger:   mocks.TestLogger(),
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"ListPlasmids",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(params *pb.StockParameters) bool {
+			return params.Cursor == 0 &&
+				params.Limit == 10 &&
+				params.Filter == "ontology==dicty_plasmid_keyword;tag==GB vector"
+		}),
+	).Return(mocks.MockPlasmidCollection(), nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
 	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
 	cursor := 0
 	limit := 10
 
-	ctx := graphql.WithResponseContext(context.Background(), graphql.DefaultErrorPresenter, graphql.DefaultRecover)
-	result, err := resolver.ListPlasmids(ctx, &cursor, &limit, &models.PlasmidListFilter{
+	result, err := resolver.ListPlasmids(context.Background(), &cursor, &limit, &models.PlasmidListFilter{
 		PlasmidType: models.PlasmidTypeGoldenBraid,
 	})
-	require.Error(err)
-	require.Contains(err.Error(), "plasmid_type filter is not yet verified")
-	require.Empty(result.Plasmids)
+	require.NoError(err)
+	require.Len(result.Plasmids, 3)
+	mockedStockClient.AssertExpectations(t)
 }

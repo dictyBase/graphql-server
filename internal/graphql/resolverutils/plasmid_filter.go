@@ -5,21 +5,19 @@ package resolverutils
 
 import (
 	"fmt"
+	"strings"
 
 	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
-	eq "github.com/IBM/fp-go/v2/eq"
 	F "github.com/IBM/fp-go/v2/function"
 	O "github.com/IBM/fp-go/v2/option"
 	P "github.com/IBM/fp-go/v2/predicate"
 	S "github.com/IBM/fp-go/v2/string"
-
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
 var (
-	plasmidTypeEq = eq.FromStrictEquals[models.PlasmidType]()
-
 	isNilID = F.Pipe1(
 		P.IsZero[*string](),
 		P.ContraMap(func(f *models.PlasmidListFilter) *string {
@@ -51,56 +49,55 @@ var (
 			)
 		},
 	)
-
-	isRegularPlasmidType     = eq.Equals(plasmidTypeEq)(models.PlasmidTypeRegular)
-	isGoldenBraidPlasmidType = eq.Equals(plasmidTypeEq)(models.PlasmidTypeGoldenBraid)
-	isUnverifiedPlasmidType  = F.Pipe2(
-		isRegularPlasmidType,
-		P.Or(isGoldenBraidPlasmidType),
-		P.ContraMap(func(f *models.PlasmidListFilter) models.PlasmidType {
-			return f.PlasmidType
-		}),
-	)
-	CheckUnverifiedPlasmidType = E.FromPredicate(
-		P.Not(isUnverifiedPlasmidType),
-		func(filter *models.PlasmidListFilter) error {
-			return fmt.Errorf(
-				"plasmid list filter %v: plasmid_type filter is not yet verified for stock query conversion",
-				filter,
-			)
-		},
-	)
-
-	isAllPlasmidType = F.Pipe1(
-		eq.Equals(plasmidTypeEq)(models.PlasmidTypeAll),
-		P.ContraMap(func(f *models.PlasmidListFilter) models.PlasmidType {
-			return f.PlasmidType
-		}),
-	)
-	CheckValidPlasmidType = E.FromPredicate(
-		isAllPlasmidType,
-		func(f *models.PlasmidListFilter) error {
-			return fmt.Errorf("invalid plasmid type %s", f.PlasmidType.String())
-		},
-	)
-
-	validateFilterPipeline = F.Flow5(
-		CheckIDField,
-		E.Chain(CheckInStockField),
-		E.Chain(CheckUnverifiedPlasmidType),
-		E.Chain(CheckValidPlasmidType),
-		E.Map[error](BuildPlasmidFieldQuery),
-	)
 )
 
 func PlasmidFilterToQuery(filter *models.PlasmidListFilter) (string, error) {
-	return E.UnwrapError(F.Pipe1(
-		O.FromNillable(filter),
-		O.Fold(
-			F.Constant(E.Right[error]("")),
-			validateFilterPipeline,
-		),
-	))
+	if filter == nil {
+		return "", nil
+	}
+
+	if _, err := E.UnwrapError(F.Pipe2(
+		filter,
+		CheckIDField,
+		E.Chain(CheckInStockField),
+	)); err != nil {
+		return "", err
+	}
+
+	fieldQuery := BuildPlasmidFieldQuery(filter)
+	typeQuery, err := plasmidTypeQuery(filter)
+	if err != nil {
+		return fieldQuery, err
+	}
+	if fieldQuery == "" {
+		return typeQuery, nil
+	}
+	if typeQuery == "" {
+		return fieldQuery, nil
+	}
+
+	return strings.Join([]string{fieldQuery, typeQuery}, ";"), nil
+}
+
+func plasmidTypeQuery(filter *models.PlasmidListFilter) (string, error) {
+	switch filter.PlasmidType {
+	case models.PlasmidTypeAll:
+		return "", nil
+	case models.PlasmidTypeRegular:
+		return fmt.Sprintf(
+			"ontology==%s;tag==%s",
+			registry.DictyPlasmidPropOntology,
+			registry.RegularPlasmidTag,
+		), nil
+	case models.PlasmidTypeGoldenBraid:
+		return fmt.Sprintf(
+			"ontology==%s;tag==%s",
+			registry.DictyPlasmidPropOntology,
+			registry.GoldenBraidPlasmidTag,
+		), nil
+	default:
+		return "", fmt.Errorf("invalid plasmid type %s", filter.PlasmidType.String())
+	}
 }
 
 func BuildPlasmidFieldQuery(filter *models.PlasmidListFilter) string {
