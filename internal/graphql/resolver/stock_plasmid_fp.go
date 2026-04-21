@@ -61,22 +61,22 @@ var (
 
 	isNilPlasmidIDFilter = F.Pipe1(
 		P.IsZero[*string](),
-		P.ContraMap(func(filter *models.PlasmidListFilter) *string {
-			return filter.ID
+		P.ContraMap(func(pair filterValidationPair) *string {
+			return Pa.Tail(pair).ID
 		}),
 	)
 
 	checkNilPlasmidInStockFilter = E.FromPredicate(
 		F.Pipe1(
 			P.IsZero[*bool](),
-			P.ContraMap(func(filter *models.PlasmidListFilter) *bool {
-				return filter.InStock
+			P.ContraMap(func(pair filterValidationPair) *bool {
+				return Pa.Tail(pair).InStock
 			}),
 		),
-		func(filter *models.PlasmidListFilter) error {
+		func(pair filterValidationPair) error {
 			return fmt.Errorf(
 				"plasmid list filter %v: in_stock filter is not yet supported in stock query conversion",
-				filter,
+				Pa.Tail(pair),
 			)
 		},
 	)
