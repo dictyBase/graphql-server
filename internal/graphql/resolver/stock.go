@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 
-	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
@@ -19,6 +18,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/fatih/structs"
 	"github.com/mitchellh/mapstructure"
+	E "github.com/IBM/fp-go/v2/either"
 )
 
 func (mrs *MutationResolver) CreateStrain(
@@ -319,18 +319,23 @@ func (qrs *QueryResolver) ListPlasmids(
 	limit *int,
 	filter *models.PlasmidListFilter,
 ) (*models.PlasmidListWithCursor, error) {
-	return F.Pipe4(
-		IOE.Of[error](computeListPlasmidParams(listPlasmidsContext{
-			client: qrs.GetStockClient(registry.STOCK),
-			gctx:   ctx,
-			cursor: cursor,
-			limit:  limit,
-			filter: filter,
-		})),
-		IOE.Chain(buildListPlasmidFilterQuery),
-		IOE.Chain(fetchListPlasmidCollection),
-		IOE.Map[error](extractListPlasmidResult),
+	ioe := IOE.Of[error](computeListPlasmidParams(listPlasmidsContext{
+		client: qrs.GetStockClient(registry.STOCK),
+		gctx:   ctx,
+		cursor: cursor,
+		limit:  limit,
+		filter: filter,
+	}))
+	res := IOE.Map[error](extractListPlasmidResult)(
+		IOE.Chain(fetchListPlasmidCollection)(
+			IOE.Chain(buildListPlasmidFilterQuery)(ioe),
+		),
 	)()
+	if E.IsLeft(res) {
+		return &models.PlasmidListWithCursor{}, E.ToError(res)
+	}
+	val, _ := E.Unwrap(res)
+	return val, nil
 }
 
 //nolint:dupl

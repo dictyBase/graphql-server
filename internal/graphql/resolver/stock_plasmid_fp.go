@@ -41,7 +41,6 @@ type filterValidationPair = Pa.Pair[listPlasmidsContext, *models.PlasmidListFilt
 type (
 	cursor      = int64
 	limit       = int64
-	total       = int64
 	filterQuery = string
 )
 
@@ -148,22 +147,6 @@ func buildListPlasmidFilterQuery(
 		E.Chain(validateAndBuildPlasmidFilter),
 		IOE.FromEither[error, listPlasmidsContext],
 	)
-}
-
-func toEither[ERR, A any](ioe IOE.IOEither[ERR, A]) E.Either[ERR, A] {
-	return ioe()
-}
-
-func onPlasmidListError(
-	err error,
-) (error, *models.PlasmidListWithCursor) {
-	return err, &models.PlasmidListWithCursor{}
-}
-
-func onPlasmidListSuccess(
-	data *models.PlasmidListWithCursor,
-) (error, *models.PlasmidListWithCursor) {
-	return nil, data
 }
 
 func computeListPlasmidParams(
