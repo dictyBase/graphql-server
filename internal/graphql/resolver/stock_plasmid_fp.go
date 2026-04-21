@@ -59,11 +59,19 @@ var (
 		O.Some[string],
 	))
 
-	isNilPlasmidIDFilter = F.Pipe1(
-		P.IsZero[*string](),
-		P.ContraMap(func(pair filterValidationPair) *string {
-			return Pa.Tail(pair).ID
-		}),
+	checkNilPlasmidIDFilter = E.FromPredicate(
+		F.Pipe1(
+			P.IsZero[*string](),
+			P.ContraMap(func(pair filterValidationPair) *string {
+				return Pa.Tail(pair).ID
+			}),
+		),
+		func(pair filterValidationPair) error {
+			return fmt.Errorf(
+				"plasmid list filter %v: id filter is not yet supported in stock query conversion",
+				Pa.Tail(pair),
+			)
+		},
 	)
 
 	checkNilPlasmidInStockFilter = E.FromPredicate(
@@ -142,7 +150,7 @@ func onPlasmidListSuccess(
 func buildListPlasmidFilterQuery(
 	ctx listPlasmidsContext,
 ) IOE.IOEither[error, listPlasmidsContext] {
-	return F.Pipe7(
+	return F.Pipe8(
 		ctx.filter,
 		O.FromNillable[models.PlasmidListFilter],
 		O.Map(func(filter *models.PlasmidListFilter) filterValidationPair {
@@ -151,12 +159,8 @@ func buildListPlasmidFilterQuery(
 		O.GetOrElse(F.Constant(Pa.MakePair(ctx, &models.PlasmidListFilter{
 			PlasmidType: models.PlasmidTypeAll,
 		}))),
-		E.FromPredicate(isNilPlasmidIDFilter, func(pair filterValidationPair) error {
-			return fmt.Errorf(
-				"plasmid list filter %v: id filter is not yet supported in stock query conversion",
-				Pa.Tail(pair),
-			)
-		}),
+		E.Of[error, filterValidationPair],
+		E.Chain(checkNilPlasmidIDFilter),
 		E.Chain(checkNilPlasmidInStockFilter),
 		E.Chain(validateAndBuildPlasmidFilter),
 		IOE.FromEither[error, listPlasmidsContext],
