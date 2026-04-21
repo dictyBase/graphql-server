@@ -109,27 +109,29 @@ var (
 			},
 		}
 	}
-
-	validateAndBuildPlasmidFilter = func(pair filterValidationPair) E.Either[error, listPlasmidsContext] {
-		filter := Pa.Tail(pair)
-		ctx := Pa.Head(pair)
-		return F.Pipe2(
-			filter.PlasmidType,
-			E.FromPredicate(
-				func(plasmidType models.PlasmidType) bool {
-					return plasmidType.IsValid()
-				},
-				func(plasmidType models.PlasmidType) error {
-					return fmt.Errorf("invalid plasmid type %s", plasmidType.String())
-				},
-			),
-			E.Map[error](func(plasmidType models.PlasmidType) listPlasmidsContext {
-				ctx.filterQuery = buildFilterQuery(filter, plasmidType)
-				return ctx
-			}),
-		)
-	}
 )
+
+func validateAndBuildPlasmidFilter(
+	pair filterValidationPair,
+) E.Either[error, listPlasmidsContext] {
+	filter := Pa.Tail(pair)
+	ctx := Pa.Head(pair)
+	return F.Pipe2(
+		filter.PlasmidType,
+		E.FromPredicate(
+			func(plasmidType models.PlasmidType) bool {
+				return plasmidType.IsValid()
+			},
+			func(plasmidType models.PlasmidType) error {
+				return fmt.Errorf("invalid plasmid type %s", plasmidType.String())
+			},
+		),
+		E.Map[error](func(plasmidType models.PlasmidType) listPlasmidsContext {
+			ctx.filterQuery = buildFilterQuery(filter, plasmidType)
+			return ctx
+		}),
+	)
+}
 
 func toEither[ERR, A any](ioe IOE.IOEither[ERR, A]) E.Either[ERR, A] {
 	return ioe()
@@ -226,13 +228,11 @@ func buildFilterQuery(
 			),
 			R.Lookup[string](plasmidType)(map[models.PlasmidType]string{
 				models.PlasmidTypeRegular: fmt.Sprintf(
-					"ontology==%s;tag==%s",
-					registry.DictyPlasmidPropOntology,
+					"tag===%s",
 					registry.RegularPlasmidTag,
 				),
 				models.PlasmidTypeGoldenBraid: fmt.Sprintf(
-					"ontology==%s;tag==%s",
-					registry.DictyPlasmidPropOntology,
+					"tag===%s",
 					registry.GoldenBraidPlasmidTag,
 				),
 			}),
