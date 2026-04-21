@@ -640,7 +640,7 @@ func TestListPlasmidsRegularTypeFilter(t *testing.T) {
 		mock.MatchedBy(func(params *pb.StockParameters) bool {
 			return params.Cursor == 0 &&
 				params.Limit == 10 &&
-				params.Filter == "ontology===dicty_plasmid_keyword;tag===vector"
+				params.Filter == "tag===vector"
 		}),
 	).Return(mocks.MockPlasmidCollection(), nil)
 
@@ -671,7 +671,7 @@ func TestListPlasmidsGoldenBraidTypeFilter(t *testing.T) {
 		mock.MatchedBy(func(params *pb.StockParameters) bool {
 			return params.Cursor == 0 &&
 				params.Limit == 10 &&
-				params.Filter == "ontology===dicty_plasmid_keyword;tag===GB vector"
+				params.Filter == "tag===GB vector"
 		}),
 	).Return(mocks.MockPlasmidCollection(), nil)
 
