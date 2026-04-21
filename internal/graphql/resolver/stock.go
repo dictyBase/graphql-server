@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 
-	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
@@ -320,33 +319,18 @@ func (qrs *QueryResolver) ListPlasmids(
 	limit *int,
 	filter *models.PlasmidListFilter,
 ) (*models.PlasmidListWithCursor, error) {
-	result := F.Pipe6(
-		IOE.Of[error](listPlasmidsContext{
+	return F.Pipe4(
+		IOE.Of[error](computeListPlasmidParams(listPlasmidsContext{
 			client: qrs.GetStockClient(registry.STOCK),
 			gctx:   ctx,
 			cursor: cursor,
 			limit:  limit,
 			filter: filter,
-		}),
-		IOE.Map[error](computeListPlasmidParams),
+		})),
 		IOE.Chain(buildListPlasmidFilterQuery),
 		IOE.Chain(fetchListPlasmidCollection),
 		IOE.Map[error](extractListPlasmidResult),
-		toEither[error, *models.PlasmidListWithCursor],
-		E.Fold(onPlasmidListError, onPlasmidListSuccess),
-	)
-
-	if result.F1 != nil {
-		errorutils.AddGQLError(ctx, result.F1)
-		qrs.Logger.Error(result.F1)
-		return result.F2, result.F1
-	}
-
-	qrs.Logger.Debugf(
-		"successfully retrieved list of %v plasmids",
-		result.F2.TotalCount,
-	)
-	return result.F2, nil
+	)()
 }
 
 //nolint:dupl
