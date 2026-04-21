@@ -11,8 +11,8 @@ import (
 	O "github.com/IBM/fp-go/v2/option"
 	P "github.com/IBM/fp-go/v2/predicate"
 	R "github.com/IBM/fp-go/v2/record"
+	Pa "github.com/IBM/fp-go/v2/pair"
 	S "github.com/IBM/fp-go/v2/string"
-	T "github.com/IBM/fp-go/v2/tuple"
 	"github.com/dictyBase/aphgrpc"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
@@ -20,41 +20,29 @@ import (
 	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
-type plasmidResultContext struct {
-	limit      limit
-	nextCursor cursor
-	total      total
-	cursor     cursor
-}
-
-type plasmidResultTuple = T.Tuple2[[]*models.Plasmid, plasmidResultContext]
-
 type listPlasmidsContext struct {
+	// inputs (set by caller)
 	client pb.StockServiceClient
 	gctx   context.Context
 	cursor *int
 	limit  *int
 	filter *models.PlasmidListFilter
+	// computed by pipeline steps
+	resolvedCursor cursor
+	resolvedLimit  limit
+	filterQuery    filterQuery
+	collection     *pb.PlasmidCollection
 }
+
+// filterValidationPair threads the stable context alongside the evolving filter
+// through the inner validation sub-pipe, keeping all validators univariate.
+type filterValidationPair = Pa.Pair[listPlasmidsContext, *models.PlasmidListFilter]
 
 type (
 	cursor      = int64
 	limit       = int64
 	total       = int64
 	filterQuery = string
-)
-
-type (
-	listPlasmidParamsTuple      = T.Tuple3[listPlasmidsContext, cursor, limit]
-	listPlasmidFilterBuildTuple = T.Tuple5[
-		listPlasmidsContext,
-		cursor,
-		limit,
-		*models.PlasmidListFilter,
-		models.PlasmidType,
-	]
-	listPlasmidFilterTuple     = T.Tuple4[listPlasmidsContext, cursor, limit, filterQuery]
-	listPlasmidCollectionTuple = T.Tuple5[listPlasmidsContext, cursor, limit, filterQuery, *pb.PlasmidCollection]
 )
 
 var (
