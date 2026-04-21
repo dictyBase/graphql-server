@@ -9,10 +9,11 @@ import (
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
 	O "github.com/IBM/fp-go/v2/option"
+	Pa "github.com/IBM/fp-go/v2/pair"
 	P "github.com/IBM/fp-go/v2/predicate"
 	R "github.com/IBM/fp-go/v2/record"
-	Pa "github.com/IBM/fp-go/v2/pair"
 	S "github.com/IBM/fp-go/v2/string"
+	T "github.com/IBM/fp-go/v2/tuple"
 	"github.com/dictyBase/aphgrpc"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
@@ -122,27 +123,40 @@ var (
 	}
 )
 
+func toEither[ERR, A any](ioe IOE.IOEither[ERR, A]) E.Either[ERR, A] {
+	return ioe()
+}
+
+func onPlasmidListError(
+	err error,
+) T.Tuple2[error, *models.PlasmidListWithCursor] {
+	return T.MakeTuple2(err, &models.PlasmidListWithCursor{})
+}
+
+func onPlasmidListSuccess(
+	data *models.PlasmidListWithCursor,
+) T.Tuple2[error, *models.PlasmidListWithCursor] {
+	return T.MakeTuple2[error](nil, data)
+}
+
 func buildListPlasmidFilterQuery(
 	ctx listPlasmidsContext,
 ) IOE.IOEither[error, listPlasmidsContext] {
-	resolvedFilter := F.Pipe2(
+	return F.Pipe7(
 		ctx.filter,
 		O.FromNillable[models.PlasmidListFilter],
-		O.GetOrElse(F.Constant(&models.PlasmidListFilter{
+		O.Map(func(filter *models.PlasmidListFilter) filterValidationPair {
+			return Pa.MakePair(ctx, filter)
+		}),
+		O.GetOrElse(F.Constant(Pa.MakePair(ctx, &models.PlasmidListFilter{
 			PlasmidType: models.PlasmidTypeAll,
-		})),
-	)
-	return F.Pipe4(
-		Pa.MakePair(ctx, resolvedFilter),
-		E.FromPredicate(
-			isNilPlasmidIDFilter,
-			func(pair filterValidationPair) error {
-				return fmt.Errorf(
-					"plasmid list filter %v: id filter is not yet supported in stock query conversion",
-					Pa.Tail(pair),
-				)
-			},
-		),
+		}))),
+		E.FromPredicate(isNilPlasmidIDFilter, func(pair filterValidationPair) error {
+			return fmt.Errorf(
+				"plasmid list filter %v: id filter is not yet supported in stock query conversion",
+				Pa.Tail(pair),
+			)
+		}),
 		E.Chain(checkNilPlasmidInStockFilter),
 		E.Chain(validateAndBuildPlasmidFilter),
 		IOE.FromEither[error, listPlasmidsContext],
