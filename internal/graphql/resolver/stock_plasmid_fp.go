@@ -106,6 +106,26 @@ var (
 			},
 		}
 	}
+
+	validateAndBuildPlasmidFilter = F.Curry2(
+		func(state listPlasmidParamsTuple, filter *models.PlasmidListFilter) E.Either[error, listPlasmidFilterTuple] {
+			return F.Pipe3(
+				filter.PlasmidType,
+				E.FromPredicate(
+					func(plasmidType models.PlasmidType) bool {
+						return plasmidType.IsValid()
+					},
+					func(plasmidType models.PlasmidType) error {
+						return fmt.Errorf("invalid plasmid type %s", plasmidType.String())
+					},
+				),
+				E.Map[error](func(plasmidType models.PlasmidType) listPlasmidFilterBuildTuple {
+					return T.MakeTuple5(state.F1, state.F2, state.F3, filter, plasmidType)
+				}),
+				E.Map[error](buildListPlasmidFilterTuple),
+			)
+		},
+	)
 )
 
 func toEither[ERR, A any](ioe IOE.IOEither[ERR, A]) E.Either[ERR, A] {
@@ -153,23 +173,7 @@ func buildListPlasmidFilterQuery(
 			},
 		),
 		E.Chain(checkNilPlasmidInStockFilter),
-		E.Chain(func(filter *models.PlasmidListFilter) E.Either[error, listPlasmidFilterTuple] {
-			return F.Pipe3(
-				filter.PlasmidType,
-				E.FromPredicate(
-					func(plasmidType models.PlasmidType) bool {
-						return plasmidType.IsValid()
-					},
-					func(plasmidType models.PlasmidType) error {
-						return fmt.Errorf("invalid plasmid type %s", plasmidType.String())
-					},
-				),
-				E.Map[error](func(plasmidType models.PlasmidType) listPlasmidFilterBuildTuple {
-					return T.MakeTuple5(state.F1, state.F2, state.F3, filter, plasmidType)
-				}),
-				E.Map[error](buildListPlasmidFilterTuple),
-			)
-		}),
+		E.Chain(validateAndBuildPlasmidFilter(state)),
 		IOE.FromEither[error, listPlasmidFilterTuple],
 	)
 }
