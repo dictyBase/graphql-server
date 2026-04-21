@@ -228,12 +228,12 @@ func buildFilterQuery(
 			),
 			R.Lookup[string](plasmidType)(map[models.PlasmidType]string{
 				models.PlasmidTypeRegular: fmt.Sprintf(
-					"ontology==%s;tag==%s",
+					"ontology===%s;tag===%s",
 					registry.DictyPlasmidPropOntology,
 					registry.RegularPlasmidTag,
 				),
 				models.PlasmidTypeGoldenBraid: fmt.Sprintf(
-					"ontology==%s;tag==%s",
+					"ontology===%s;tag===%s",
 					registry.DictyPlasmidPropOntology,
 					registry.GoldenBraidPlasmidTag,
 				),
