@@ -102,25 +102,25 @@ var (
 		}
 	}
 
-	validateAndBuildPlasmidFilter = F.Curry2(
-		func(state listPlasmidParamsTuple, filter *models.PlasmidListFilter) E.Either[error, listPlasmidFilterTuple] {
-			return F.Pipe3(
-				filter.PlasmidType,
-				E.FromPredicate(
-					func(plasmidType models.PlasmidType) bool {
-						return plasmidType.IsValid()
-					},
-					func(plasmidType models.PlasmidType) error {
-						return fmt.Errorf("invalid plasmid type %s", plasmidType.String())
-					},
-				),
-				E.Map[error](func(plasmidType models.PlasmidType) listPlasmidFilterBuildTuple {
-					return T.MakeTuple5(state.F1, state.F2, state.F3, filter, plasmidType)
-				}),
-				E.Map[error](buildListPlasmidFilterTuple),
-			)
-		},
-	)
+	validateAndBuildPlasmidFilter = func(pair filterValidationPair) E.Either[error, listPlasmidsContext] {
+		filter := Pa.Tail(pair)
+		ctx := Pa.Head(pair)
+		return F.Pipe2(
+			filter.PlasmidType,
+			E.FromPredicate(
+				func(plasmidType models.PlasmidType) bool {
+					return plasmidType.IsValid()
+				},
+				func(plasmidType models.PlasmidType) error {
+					return fmt.Errorf("invalid plasmid type %s", plasmidType.String())
+				},
+			),
+			E.Map[error](func(plasmidType models.PlasmidType) listPlasmidsContext {
+				ctx.filterQuery = buildFilterQuery(filter, plasmidType)
+				return ctx
+			}),
+		)
+	}
 )
 
 func toEither[ERR, A any](ioe IOE.IOEither[ERR, A]) E.Either[ERR, A] {
@@ -220,36 +220,34 @@ func extractListPlasmidResult(
 	)
 }
 
-func buildListPlasmidFilterTuple(ctx listPlasmidFilterBuildTuple) listPlasmidFilterTuple {
-	return T.MakeTuple4(
-		ctx.F1,
-		ctx.F2,
-		ctx.F3,
-		F.Pipe2(
-			[]O.Option[string]{
-				F.Pipe1(
-					O.FromNillable(ctx.F4.Summary),
-					O.Map(formatPlasmidFieldQuery("summary=~%s")),
+func buildFilterQuery(
+	filter *models.PlasmidListFilter,
+	plasmidType models.PlasmidType,
+) filterQuery {
+	return F.Pipe2(
+		[]O.Option[string]{
+			F.Pipe1(
+				O.FromNillable(filter.Summary),
+				O.Map(formatPlasmidFieldQuery("summary=~%s")),
+			),
+			F.Pipe1(
+				O.FromNillable(filter.Name),
+				O.Map(formatPlasmidFieldQuery("plasmid_name===%s")),
+			),
+			R.Lookup[string](plasmidType)(map[models.PlasmidType]string{
+				models.PlasmidTypeRegular: fmt.Sprintf(
+					"ontology==%s;tag==%s",
+					registry.DictyPlasmidPropOntology,
+					registry.RegularPlasmidTag,
 				),
-				F.Pipe1(
-					O.FromNillable(ctx.F4.Name),
-					O.Map(formatPlasmidFieldQuery("plasmid_name===%s")),
+				models.PlasmidTypeGoldenBraid: fmt.Sprintf(
+					"ontology==%s;tag==%s",
+					registry.DictyPlasmidPropOntology,
+					registry.GoldenBraidPlasmidTag,
 				),
-				R.Lookup[string](ctx.F5)(map[models.PlasmidType]string{
-					models.PlasmidTypeRegular: fmt.Sprintf(
-						"ontology==%s;tag==%s",
-						registry.DictyPlasmidPropOntology,
-						registry.RegularPlasmidTag,
-					),
-					models.PlasmidTypeGoldenBraid: fmt.Sprintf(
-						"ontology==%s;tag==%s",
-						registry.DictyPlasmidPropOntology,
-						registry.GoldenBraidPlasmidTag,
-					),
-				}),
-			},
-			compactOptionStrings,
-			A.Intercalate(S.Monoid)(";"),
-		),
+			}),
+		},
+		compactOptionStrings,
+		A.Intercalate(S.Monoid)(";"),
 	)
 }
