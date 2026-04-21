@@ -2,17 +2,22 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
+	O "github.com/IBM/fp-go/v2/option"
+	P "github.com/IBM/fp-go/v2/predicate"
+	R "github.com/IBM/fp-go/v2/record"
+	S "github.com/IBM/fp-go/v2/string"
 	T "github.com/IBM/fp-go/v2/tuple"
 	"github.com/dictyBase/aphgrpc"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
-
 	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
+	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
 type plasmidResultContext struct {
@@ -32,52 +37,54 @@ type listPlasmidsContext struct {
 	filter *models.PlasmidListFilter
 }
 
-type withListPlasmidParams struct {
-	listPlasmidsContext
-	cus int64
-	lmt int64
-}
-
-type withListPlasmidFilter struct {
-	withListPlasmidParams
-	filterQuery string
-}
-
-type withListPlasmidCollection struct {
-	withListPlasmidFilter
-	collection *pb.PlasmidCollection
-}
+type (
+	listPlasmidParamsTuple      = T.Tuple3[listPlasmidsContext, int64, int64]
+	listPlasmidFilterBuildTuple = T.Tuple5[
+		listPlasmidsContext,
+		int64,
+		int64,
+		*models.PlasmidListFilter,
+		models.PlasmidType,
+	]
+	listPlasmidFilterTuple     = T.Tuple4[listPlasmidsContext, int64, int64, string]
+	listPlasmidCollectionTuple = T.Tuple5[listPlasmidsContext, int64, int64, string, *pb.PlasmidCollection]
+)
 
 var (
-	setListPlasmidParams = F.Curry2(
-		func(params T.Tuple2[int64, int64], ctx listPlasmidsContext) withListPlasmidParams {
-			return withListPlasmidParams{
-				listPlasmidsContext: ctx,
-				cus:                 params.F1,
-				lmt:                 params.F2,
-			}
-		},
-	)
-
-	setListPlasmidFilter = F.Curry2(
-		func(query string, ctx withListPlasmidParams) withListPlasmidFilter {
-			return withListPlasmidFilter{
-				withListPlasmidParams: ctx,
-				filterQuery:           query,
-			}
-		},
-	)
-
-	setListPlasmidCollection = F.Curry2(
-		func(coll *pb.PlasmidCollection, ctx withListPlasmidFilter) withListPlasmidCollection {
-			return withListPlasmidCollection{
-				withListPlasmidFilter: ctx,
-				collection:            coll,
-			}
-		},
-	)
-
 	ptrString = func(s string) *string { return &s }
+
+	formatPlasmidFieldQuery = F.Curry2(
+		func(format string, value *string) string {
+			return S.Format[string](format)(*value)
+		},
+	)
+
+	compactOptionStrings = A.FilterMap(O.Fold(
+		F.Constant(O.None[string]()),
+		O.Some[string],
+	))
+
+	isNilPlasmidIDFilter = F.Pipe1(
+		P.IsZero[*string](),
+		P.ContraMap(func(filter *models.PlasmidListFilter) *string {
+			return filter.ID
+		}),
+	)
+
+	checkNilPlasmidInStockFilter = E.FromPredicate(
+		F.Pipe1(
+			P.IsZero[*bool](),
+			P.ContraMap(func(filter *models.PlasmidListFilter) *bool {
+				return filter.InStock
+			}),
+		),
+		func(filter *models.PlasmidListFilter) error {
+			return fmt.Errorf(
+				"plasmid list filter %v: in_stock filter is not yet supported in stock query conversion",
+				filter,
+			)
+		},
+	)
 
 	convertPlasmidDataItem = func(item *pb.PlasmidCollection_Data) *models.Plasmid {
 		return &models.Plasmid{
@@ -119,44 +126,85 @@ func onPlasmidListSuccess(
 
 func computeListPlasmidParams(
 	ctx listPlasmidsContext,
-) T.Tuple2[int64, int64] {
-	return T.MakeTuple2(
+) listPlasmidParamsTuple {
+	return T.MakeTuple3(
+		ctx,
 		resolverutils.GetCursorFP(ctx.cursor),
 		resolverutils.GetLimitFP(ctx.limit),
 	)
 }
 
-func buildListPlasmidFilterQuery(ctx withListPlasmidParams) IOE.IOEither[error, string] {
-	return IOE.TryCatchError(func() (string, error) {
-		return resolverutils.PlasmidFilterToQuery(ctx.filter)
-	})
+func buildListPlasmidFilterQuery(
+	state listPlasmidParamsTuple,
+) IOE.IOEither[error, listPlasmidFilterTuple] {
+	return F.Pipe6(
+		state.F1.filter,
+		O.FromNillable[models.PlasmidListFilter],
+		O.GetOrElse(F.Constant(&models.PlasmidListFilter{
+			PlasmidType: models.PlasmidTypeAll,
+		})),
+		E.FromPredicate(
+			isNilPlasmidIDFilter,
+			func(filter *models.PlasmidListFilter) error {
+				return fmt.Errorf(
+					"plasmid list filter %v: id filter is not yet supported in stock query conversion",
+					filter,
+				)
+			},
+		),
+		E.Chain(checkNilPlasmidInStockFilter),
+		E.Chain(func(filter *models.PlasmidListFilter) E.Either[error, listPlasmidFilterTuple] {
+			return F.Pipe3(
+				filter.PlasmidType,
+				E.FromPredicate(
+					func(plasmidType models.PlasmidType) bool {
+						return plasmidType.IsValid()
+					},
+					func(plasmidType models.PlasmidType) error {
+						return fmt.Errorf("invalid plasmid type %s", plasmidType.String())
+					},
+				),
+				E.Map[error](func(plasmidType models.PlasmidType) listPlasmidFilterBuildTuple {
+					return T.MakeTuple5(state.F1, state.F2, state.F3, filter, plasmidType)
+				}),
+				E.Map[error](buildListPlasmidFilterTuple),
+			)
+		}),
+		IOE.FromEither[error, listPlasmidFilterTuple],
+	)
 }
 
 func fetchListPlasmidCollection(
-	ctx withListPlasmidFilter,
-) IOE.IOEither[error, *pb.PlasmidCollection] {
-	return IOE.TryCatchError(func() (*pb.PlasmidCollection, error) {
-		return ctx.client.ListPlasmids(
-			ctx.gctx,
-			&pb.StockParameters{
-				Cursor: ctx.cus,
-				Limit:  ctx.lmt,
-				Filter: ctx.filterQuery,
-			})
-	})
+	state listPlasmidFilterTuple,
+) IOE.IOEither[error, listPlasmidCollectionTuple] {
+	return F.Pipe1(
+		IOE.TryCatchError(func() (*pb.PlasmidCollection, error) {
+			return state.F1.client.ListPlasmids(
+				state.F1.gctx,
+				&pb.StockParameters{
+					Cursor: state.F2,
+					Limit:  state.F3,
+					Filter: state.F4,
+				},
+			)
+		}),
+		IOE.Map[error](func(coll *pb.PlasmidCollection) listPlasmidCollectionTuple {
+			return T.MakeTuple5(state.F1, state.F2, state.F3, state.F4, coll)
+		}),
+	)
 }
 
 func extractListPlasmidResult(
-	ctx withListPlasmidCollection,
+	state listPlasmidCollectionTuple,
 ) *models.PlasmidListWithCursor {
 	return F.Pipe2(
 		T.MakeTuple2(
-			ctx.collection.Data,
+			state.F5.Data,
 			plasmidResultContext{
-				limit:      ctx.collection.Meta.Limit,
-				nextCursor: ctx.collection.Meta.NextCursor,
-				total:      ctx.collection.Meta.Total,
-				cursor:     ctx.cus,
+				limit:      state.F5.Meta.Limit,
+				nextCursor: state.F5.Meta.NextCursor,
+				total:      state.F5.Meta.Total,
+				cursor:     state.F2,
 			},
 		),
 		T.Map2(A.Map(convertPlasmidDataItem), F.Identity[plasmidResultContext]),
@@ -170,5 +218,39 @@ func extractListPlasmidResult(
 				TotalCount:     int(tuple.F2.total),
 			}
 		},
+	)
+}
+
+func buildListPlasmidFilterTuple(ctx listPlasmidFilterBuildTuple) listPlasmidFilterTuple {
+	return T.MakeTuple4(
+		ctx.F1,
+		ctx.F2,
+		ctx.F3,
+		F.Pipe2(
+			[]O.Option[string]{
+				F.Pipe1(
+					O.FromNillable(ctx.F4.Summary),
+					O.Map(formatPlasmidFieldQuery("summary=~%s")),
+				),
+				F.Pipe1(
+					O.FromNillable(ctx.F4.Name),
+					O.Map(formatPlasmidFieldQuery("plasmid_name===%s")),
+				),
+				R.Lookup[string](ctx.F5)(map[models.PlasmidType]string{
+					models.PlasmidTypeRegular: fmt.Sprintf(
+						"ontology==%s;tag==%s",
+						registry.DictyPlasmidPropOntology,
+						registry.RegularPlasmidTag,
+					),
+					models.PlasmidTypeGoldenBraid: fmt.Sprintf(
+						"ontology==%s;tag==%s",
+						registry.DictyPlasmidPropOntology,
+						registry.GoldenBraidPlasmidTag,
+					),
+				}),
+			},
+			compactOptionStrings,
+			A.Intercalate(S.Monoid)(";"),
+		),
 	)
 }
