@@ -150,26 +150,29 @@ func computeListPlasmidParams(
 }
 
 func buildListPlasmidFilterQuery(
-	state listPlasmidParamsTuple,
-) IOE.IOEither[error, listPlasmidFilterTuple] {
-	return F.Pipe6(
-		state.F1.filter,
+	ctx listPlasmidsContext,
+) IOE.IOEither[error, listPlasmidsContext] {
+	resolvedFilter := F.Pipe2(
+		ctx.filter,
 		O.FromNillable[models.PlasmidListFilter],
 		O.GetOrElse(F.Constant(&models.PlasmidListFilter{
 			PlasmidType: models.PlasmidTypeAll,
 		})),
+	)
+	return F.Pipe4(
+		Pa.MakePair(ctx, resolvedFilter),
 		E.FromPredicate(
 			isNilPlasmidIDFilter,
-			func(filter *models.PlasmidListFilter) error {
+			func(pair filterValidationPair) error {
 				return fmt.Errorf(
 					"plasmid list filter %v: id filter is not yet supported in stock query conversion",
-					filter,
+					Pa.Tail(pair),
 				)
 			},
 		),
 		E.Chain(checkNilPlasmidInStockFilter),
-		E.Chain(validateAndBuildPlasmidFilter(state)),
-		IOE.FromEither[error, listPlasmidFilterTuple],
+		E.Chain(validateAndBuildPlasmidFilter),
+		IOE.FromEither[error, listPlasmidsContext],
 	)
 }
 
