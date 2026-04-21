@@ -123,32 +123,6 @@ var (
 	}
 )
 
-func toEither[ERR, A any](ioe IOE.IOEither[ERR, A]) E.Either[ERR, A] {
-	return ioe()
-}
-
-func onPlasmidListError(
-	err error,
-) T.Tuple2[error, *models.PlasmidListWithCursor] {
-	return T.MakeTuple2(err, &models.PlasmidListWithCursor{})
-}
-
-func onPlasmidListSuccess(
-	data *models.PlasmidListWithCursor,
-) T.Tuple2[error, *models.PlasmidListWithCursor] {
-	return T.MakeTuple2[error](nil, data)
-}
-
-func computeListPlasmidParams(
-	ctx listPlasmidsContext,
-) listPlasmidParamsTuple {
-	return T.MakeTuple3(
-		ctx,
-		resolverutils.GetCursorFP(ctx.cursor),
-		resolverutils.GetLimitFP(ctx.limit),
-	)
-}
-
 func buildListPlasmidFilterQuery(
 	ctx listPlasmidsContext,
 ) IOE.IOEither[error, listPlasmidsContext] {
@@ -176,51 +150,63 @@ func buildListPlasmidFilterQuery(
 	)
 }
 
+func toEither[ERR, A any](ioe IOE.IOEither[ERR, A]) E.Either[ERR, A] {
+	return ioe()
+}
+
+func onPlasmidListError(
+	err error,
+) (error, *models.PlasmidListWithCursor) {
+	return err, &models.PlasmidListWithCursor{}
+}
+
+func onPlasmidListSuccess(
+	data *models.PlasmidListWithCursor,
+) (error, *models.PlasmidListWithCursor) {
+	return nil, data
+}
+
+func computeListPlasmidParams(
+	ctx listPlasmidsContext,
+) listPlasmidsContext {
+	ctx.resolvedCursor = resolverutils.GetCursorFP(ctx.cursor)
+	ctx.resolvedLimit = resolverutils.GetLimitFP(ctx.limit)
+	return ctx
+}
+
 func fetchListPlasmidCollection(
-	state listPlasmidFilterTuple,
-) IOE.IOEither[error, listPlasmidCollectionTuple] {
+	ctx listPlasmidsContext,
+) IOE.IOEither[error, listPlasmidsContext] {
 	return F.Pipe1(
 		IOE.TryCatchError(func() (*pb.PlasmidCollection, error) {
-			return state.F1.client.ListPlasmids(
-				state.F1.gctx,
+			return ctx.client.ListPlasmids(
+				ctx.gctx,
 				&pb.StockParameters{
-					Cursor: state.F2,
-					Limit:  state.F3,
-					Filter: state.F4,
+					Cursor: ctx.resolvedCursor,
+					Limit:  ctx.resolvedLimit,
+					Filter: ctx.filterQuery,
 				},
 			)
 		}),
-		IOE.Map[error](func(coll *pb.PlasmidCollection) listPlasmidCollectionTuple {
-			return T.MakeTuple5(state.F1, state.F2, state.F3, state.F4, coll)
+		IOE.Map[error](func(coll *pb.PlasmidCollection) listPlasmidsContext {
+			ctx.collection = coll
+			return ctx
 		}),
 	)
 }
 
 func extractListPlasmidResult(
-	state listPlasmidCollectionTuple,
+	ctx listPlasmidsContext,
 ) *models.PlasmidListWithCursor {
-	return F.Pipe2(
-		T.MakeTuple2(
-			state.F5.Data,
-			plasmidResultContext{
-				limit:      state.F5.Meta.Limit,
-				nextCursor: state.F5.Meta.NextCursor,
-				total:      state.F5.Meta.Total,
-				cursor:     state.F2,
-			},
-		),
-		T.Map2(A.Map(convertPlasmidDataItem), F.Identity[plasmidResultContext]),
-		func(tuple plasmidResultTuple) *models.PlasmidListWithCursor {
-			lmt := int(tuple.F2.limit)
-			return &models.PlasmidListWithCursor{
-				Plasmids:       tuple.F1,
-				NextCursor:     int(tuple.F2.nextCursor),
-				PreviousCursor: int(tuple.F2.cursor),
-				Limit:          &lmt,
-				TotalCount:     int(tuple.F2.total),
-			}
-		},
-	)
+	meta := ctx.collection.Meta
+	lmt := int(meta.Limit)
+	return &models.PlasmidListWithCursor{
+		Plasmids:       A.Map(convertPlasmidDataItem)(ctx.collection.Data),
+		NextCursor:     int(meta.NextCursor),
+		PreviousCursor: int(ctx.resolvedCursor),
+		Limit:          &lmt,
+		TotalCount:     int(meta.Total),
+	}
 }
 
 func buildFilterQuery(
