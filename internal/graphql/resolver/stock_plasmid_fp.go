@@ -21,10 +21,10 @@ import (
 )
 
 type plasmidResultContext struct {
-	limit      int64
-	nextCursor int64
-	total      int64
-	cursor     int64
+	limit      limit
+	nextCursor cursor
+	total      total
+	cursor     cursor
 }
 
 type plasmidResultTuple = T.Tuple2[[]*models.Plasmid, plasmidResultContext]
@@ -38,16 +38,23 @@ type listPlasmidsContext struct {
 }
 
 type (
-	listPlasmidParamsTuple      = T.Tuple3[listPlasmidsContext, int64, int64]
+	cursor      = int64
+	limit       = int64
+	total       = int64
+	filterQuery = string
+)
+
+type (
+	listPlasmidParamsTuple      = T.Tuple3[listPlasmidsContext, cursor, limit]
 	listPlasmidFilterBuildTuple = T.Tuple5[
 		listPlasmidsContext,
-		int64,
-		int64,
+		cursor,
+		limit,
 		*models.PlasmidListFilter,
 		models.PlasmidType,
 	]
-	listPlasmidFilterTuple     = T.Tuple4[listPlasmidsContext, int64, int64, string]
-	listPlasmidCollectionTuple = T.Tuple5[listPlasmidsContext, int64, int64, string, *pb.PlasmidCollection]
+	listPlasmidFilterTuple     = T.Tuple4[listPlasmidsContext, cursor, limit, filterQuery]
+	listPlasmidCollectionTuple = T.Tuple5[listPlasmidsContext, cursor, limit, filterQuery, *pb.PlasmidCollection]
 )
 
 var (
