@@ -44,16 +44,17 @@ func strainTypeQuery(filter *models.StrainListFilter) (string, error) {
 	switch filter.StrainType {
 	case models.StrainTypeAll:
 		return fmt.Sprintf(
-			"ontology==%s;tag==%s,tag==%s,tag==%s",
+			"ontology==%s;tag==%s,tag==%s,ontology==%s;tag==%s",
 			registry.DictyStrainPropOntology,
 			registry.GeneralStrainTag,
 			registry.GwdiStrainTag,
+			registry.StrainCharOnto,
 			registry.BacterialStrainTag,
 		), nil
 	case models.StrainTypeBacterial:
 		return fmt.Sprintf(
 			"ontology==%s;tag==%s",
-			registry.DictyStrainPropOntology,
+			registry.StrainCharOnto,
 			registry.BacterialStrainTag,
 		), nil
 	case models.StrainTypeRegular:
