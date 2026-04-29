@@ -116,7 +116,7 @@ var mockPlasmidList = &stock.PlasmidCollection_Data{
 	Attributes: MockPlasmidAttributes,
 }
 
-func mockStrainCollection() *stock.StrainCollection {
+func MockStrainCollection() *stock.StrainCollection {
 	var strains []*stock.StrainCollection_Data
 	for i := 0; i < 3; i++ {
 		strains = append(strains, mockStrainData)
@@ -130,16 +130,13 @@ func mockStrainCollection() *stock.StrainCollection {
 	}
 }
 
-func mockStrainList() *stock.StrainList {
-	strains := make([]*stock.StrainList_Data, 0)
-	for i := 10; i < 10; i++ {
-		strains = append(strains, &stock.StrainList_Data{
-			Type:       "strain",
-			Id:         "DBS987654",
-			Attributes: MockStrainAttributes,
-		})
+func MockStrainList() *stock.StrainList {
+	return &stock.StrainList{
+		Data: []*stock.StrainList_Data{
+			{Type: "strain", Id: "DBS000001", Attributes: MockStrainAttributes},
+			{Type: "strain", Id: "DBS000002", Attributes: MockStrainAttributes},
+		},
 	}
-	return &stock.StrainList{Data: strains}
 }
 
 func MockPlasmidCollection() *stock.PlasmidCollection {
@@ -229,7 +226,7 @@ func MockedStockClient() *clients.StockServiceClient {
 		On("ListStrains",
 			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.StockParameters"),
-		).Return(mockStrainCollection(), nil).
+		).Return(MockStrainCollection(), nil).
 		On("ListPlasmids",
 			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.StockParameters"),
@@ -259,6 +256,6 @@ func MockedStockClient() *clients.StockServiceClient {
 			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.StockIdList"),
 		).
-		Return(mockStrainList(), nil)
+		Return(MockStrainList(), nil)
 	return mockedStockClient
 }
