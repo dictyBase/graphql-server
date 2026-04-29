@@ -703,11 +703,15 @@ type bacterialStrainRegistry struct {
 
 func (r *bacterialStrainRegistry) GetAnnotationClient(
 	_ string,
-) anno.TaggedAnnotationServiceClient { return r.annoClient }
+) anno.TaggedAnnotationServiceClient {
+	return r.annoClient
+}
 
 func (r *bacterialStrainRegistry) GetStockClient(
 	_ string,
-) pb.StockServiceClient { return r.stockClient }
+) pb.StockServiceClient {
+	return r.stockClient
+}
 
 // TestListStrainsBacterialRoutesToAnnotationService verifies that
 // StrainTypeBACTERIAL calls ListAnnotations with the bacterial food source
