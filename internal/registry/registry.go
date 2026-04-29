@@ -33,6 +33,7 @@ const (
 	GwdiStrainTag            = "REMI-seq"
 	GeneralStrainTag         = "general strain"
 	BacterialStrainTag       = "bacterial strain"
+	BacterialFoodSourceTag   = "bacterial food source"
 	LiteratureTag            = "pubmed id"
 	NoteTag                  = "public note"
 	SysnameTag               = "systematic name"
