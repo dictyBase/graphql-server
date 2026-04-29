@@ -477,69 +477,6 @@ func (qrs *QueryResolver) ListRecentStrains(
 	return []*models.Strain{}, nil
 }
 
-func (qrs *QueryResolver) listStrainsWithoutFilter(
-	ctx context.Context,
-	cus int64,
-	lmt int64,
-) (*models.StrainListWithCursor, error) {
-	strainList, err := qrs.GetStockClient(registry.STOCK).
-		ListStrains(ctx, &pb.StockParameters{Cursor: cus, Limit: lmt})
-	if err != nil {
-		errorutils.AddGQLError(ctx, err)
-		qrs.Logger.Error(err)
-		return &models.StrainListWithCursor{}, err
-	}
-	strains := make([]*models.Strain, 0)
-	for _, sdata := range strainList.Data {
-		strains = append(
-			strains,
-			stock.ConvertToStrainModel(sdata.Id, sdata.Attributes),
-		)
-	}
-	qrs.Logger.Debugf(
-		"successfully retrieved list of %d strains",
-		strainList.Meta.Total,
-	)
-	limit := int(lmt)
-	return &models.StrainListWithCursor{
-		Limit:          &limit,
-		NextCursor:     int(strainList.Meta.NextCursor),
-		TotalCount:     int(strainList.Meta.Total),
-		PreviousCursor: int(cus),
-		Strains:        strains,
-	}, nil
-}
-
-func (qrs *QueryResolver) toStrainModelList(
-	strainList *pb.StrainCollection, limit int64, cursor int64,
-) *models.StrainListWithCursor {
-	smodelList := make([]*models.Strain, 0)
-	for _, strain := range strainList.Data {
-		smodelList = append(
-			smodelList,
-			stock.ConvertToStrainModel(strain.Id, strain.Attributes),
-		)
-	}
-
-	lmt := int(limit)
-	return &models.StrainListWithCursor{
-		Strains:        smodelList,
-		Limit:          &lmt,
-		PreviousCursor: int(cursor),
-		NextCursor:     int(strainList.Meta.NextCursor),
-		TotalCount:     int(strainList.Meta.Total),
-	}
-}
-
-func (qrs *QueryResolver) reportStrainListError(
-	ctx context.Context,
-	err error,
-) (*models.StrainListWithCursor, error) {
-	errorutils.AddGQLError(ctx, err)
-	qrs.Logger.Error(err)
-	return &models.StrainListWithCursor{}, err
-}
-
 // ListStrainsWithGene is the resolver for the listStrainsWithGene field.
 func (qrs *QueryResolver) ListStrainsWithGene(
 	ctx context.Context,
