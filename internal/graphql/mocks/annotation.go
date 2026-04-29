@@ -195,6 +195,37 @@ func MockPhenotypeListAnno() *annotation.TaggedAnnotationCollection {
 	}
 }
 
+// MockBacterialAnnoEntry creates one "bacterial food source" annotation entry.
+func MockBacterialAnnoEntry(id string) *annotation.TaggedAnnotationCollection_Data {
+	return &annotation.TaggedAnnotationCollection_Data{
+		Type: "annotation",
+		Id:   "77777777",
+		Attributes: &annotation.TaggedAnnotationAttributes{
+			Version:   1,
+			EntryId:   id,
+			CreatedBy: "dsc@dictybase.org",
+			CreatedAt: timestamppb.Now(),
+			Ontology:  registry.StrainCharOnto,
+			Tag:       registry.BacterialFoodSourceTag,
+			Value:     registry.EmptyValue,
+		},
+	}
+}
+
+// MockBacterialStrainListAnno returns two distinct IDs plus one duplicate
+// to exercise deduplication in the bacterial pipeline.
+// After deduplication: [DBS000001, DBS000002]
+func MockBacterialStrainListAnno() *annotation.TaggedAnnotationCollection {
+	return &annotation.TaggedAnnotationCollection{
+		Data: []*annotation.TaggedAnnotationCollection_Data{
+			MockBacterialAnnoEntry("DBS000001"),
+			MockBacterialAnnoEntry("DBS000002"),
+			MockBacterialAnnoEntry("DBS000001"), // duplicate
+		},
+		Meta: &annotation.Meta{Limit: 10, NextCursor: 0},
+	}
+}
+
 var (
 	MockSysNameAnno   = MockTagAnno("DBS0236922", registry.SysnameTag)
 	MockGenModAnno    = MockTagAnno("exogenous mutation", registry.MuttypeTag)

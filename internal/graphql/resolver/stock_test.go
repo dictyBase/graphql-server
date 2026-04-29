@@ -2,10 +2,12 @@ package resolver
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"github.com/99designs/gqlgen/graphql"
 
+	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
@@ -689,4 +691,103 @@ func TestListPlasmidsGoldenBraidTypeFilter(t *testing.T) {
 	require.NoError(err)
 	require.Len(result.Plasmids, 3)
 	mockedStockClient.AssertExpectations(t)
+}
+
+// bacterialStrainRegistry injects both annotation and stock clients for
+// tests that exercise the bacterial annotation pipeline.
+type bacterialStrainRegistry struct {
+	*mocks.MockRegistry
+	annoClient  anno.TaggedAnnotationServiceClient
+	stockClient pb.StockServiceClient
+}
+
+func (r *bacterialStrainRegistry) GetAnnotationClient(
+	_ string,
+) anno.TaggedAnnotationServiceClient { return r.annoClient }
+
+func (r *bacterialStrainRegistry) GetStockClient(
+	_ string,
+) pb.StockServiceClient { return r.stockClient }
+
+// TestListStrainsBacterialRoutesToAnnotationService verifies that
+// StrainTypeBACTERIAL calls ListAnnotations with the bacterial food source
+// filter, deduplicates IDs, then calls ListStrainsByIds.
+func TestListStrainsBacterialRoutesToAnnotationService(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedAnno := new(clients.TaggedAnnotationServiceClient)
+	mockedAnno.On(
+		"ListAnnotations",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(p *anno.ListParameters) bool {
+			return p.Filter == resolverutils.BacterialAnnotationFilter()
+		}),
+	).Return(mocks.MockBacterialStrainListAnno(), nil)
+
+	mockedStock := new(clients.StockServiceClient)
+	mockedStock.On(
+		"ListStrainsByIds",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		// 3 annotations deduplicate to 2 unique IDs
+		mock.MatchedBy(func(ids *pb.StockIdList) bool { return len(ids.Id) == 2 }),
+	).Return(mocks.MockStrainList(), nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		annoClient:   mockedAnno,
+		stockClient:  mockedStock,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	cursor, limit := 0, 10
+
+	result, err := resolver.ListStrains(
+		context.Background(), &cursor, &limit,
+		&models.StrainListFilter{StrainType: models.StrainTypeBacterial},
+	)
+
+	require.NoError(err)
+	require.Len(result.Strains, 2)
+	require.Equal(2, result.TotalCount)
+	mockedAnno.AssertExpectations(t)
+	mockedStock.AssertExpectations(t)
+	mockedStock.AssertNotCalled(t, "ListStrains")
+}
+
+// TestListStrainsAllExcludesBacterial verifies that StrainTypeAll filter DSL
+// does not contain any bacterial tag and the annotation service is never called.
+func TestListStrainsAllExcludesBacterial(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStock := new(clients.StockServiceClient)
+	mockedStock.On(
+		"ListStrains",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(p *pb.StockParameters) bool {
+			return !strings.Contains(p.Filter, registry.BacterialStrainTag) &&
+				!strings.Contains(p.Filter, registry.BacterialFoodSourceTag) &&
+				strings.Contains(p.Filter, registry.GeneralStrainTag) &&
+				strings.Contains(p.Filter, registry.GwdiStrainTag)
+		}),
+	).Return(mocks.MockStrainCollection(), nil)
+
+	mockedAnno := new(clients.TaggedAnnotationServiceClient)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStock,
+		annoClient:   mockedAnno,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	cursor, limit := 0, 10
+
+	result, err := resolver.ListStrains(
+		context.Background(), &cursor, &limit,
+		&models.StrainListFilter{StrainType: models.StrainTypeAll},
+	)
+	require.NoError(err)
+	require.Len(result.Strains, 3)
+	mockedStock.AssertExpectations(t)
+	mockedAnno.AssertNotCalled(t, "ListAnnotations")
 }
