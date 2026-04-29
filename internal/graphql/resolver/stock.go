@@ -288,30 +288,36 @@ func (qrs *QueryResolver) Strain(
 	return stock.ConvertToStrainModel(strainID, n.Data.Attributes), nil
 }
 
-func (qrs *QueryResolver) ListStrains(ctx context.Context, cursor *int,
-	limit *int, filter *models.StrainListFilter,
+func (qrs *QueryResolver) ListStrains(
+	ctx context.Context,
+	cursor *int,
+	limit *int,
+	filter *models.StrainListFilter,
 ) (*models.StrainListWithCursor, error) {
-	cus := resolverutils.GetCursor(cursor)
-	lmt := resolverutils.GetLimit(limit)
-	// no filter , get a limited set of strain
-	if filter == nil {
-		return qrs.listStrainsWithoutFilter(ctx, cus, lmt)
-	}
-	stypeQuery, err := resolverutils.StrainFilterToQuery(filter)
-	if err != nil {
-		return qrs.reportStrainListError(ctx, err)
-	}
-	strainList, err := qrs.GetStockClient(registry.STOCK).
-		ListStrains(ctx, &pb.StockParameters{
-			Cursor: cus,
-			Limit:  lmt,
-			Filter: stypeQuery,
-		})
-	if err != nil {
-		return qrs.reportStrainListError(ctx, err)
+	result := F.Pipe2(
+		routeStrainListQuery(listStrainsInput{
+			stockClient: qrs.GetStockClient(registry.STOCK),
+			annoClient:  qrs.GetAnnotationClient(registry.ANNOTATION),
+			gctx:        ctx,
+			cursor:      cursor,
+			limit:       limit,
+			filter:      filter,
+		}),
+		toEither[error, *models.StrainListWithCursor],
+		E.Fold(onStrainListError, onStrainListSuccess),
+	)
+
+	if result.F1 != nil {
+		errorutils.AddGQLError(ctx, result.F1)
+		qrs.Logger.Error(result.F1)
+		return result.F2, result.F1
 	}
 
-	return qrs.toStrainModelList(strainList, lmt, cus), nil
+	qrs.Logger.Debugf(
+		"successfully retrieved list of %d strains",
+		result.F2.TotalCount,
+	)
+	return result.F2, nil
 }
 
 func (qrs *QueryResolver) ListPlasmids(
