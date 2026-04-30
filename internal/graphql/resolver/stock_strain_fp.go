@@ -4,10 +4,12 @@ import (
 	"context"
 
 	A "github.com/IBM/fp-go/v2/array"
+	Eq "github.com/IBM/fp-go/v2/eq"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
 	O "github.com/IBM/fp-go/v2/option"
 	Pa "github.com/IBM/fp-go/v2/pair"
+	P "github.com/IBM/fp-go/v2/predicate"
 	R "github.com/IBM/fp-go/v2/record"
 	S "github.com/IBM/fp-go/v2/string"
 	T "github.com/IBM/fp-go/v2/tuple"
@@ -66,18 +68,57 @@ func onStrainListSuccess(
 
 // ── predicate: is this a bacterial request? ──────────────────────────────────
 
-var isBacterialFilter = func(input listStrainsInput) bool {
-	return F.Pipe2(
-		input.filter,
-		O.FromNillable[models.StrainListFilter],
-		O.Fold(
-			F.Constant(false),
-			func(f *models.StrainListFilter) bool {
-				return f.StrainType == models.StrainTypeBacterial
-			},
-		),
-	)
+// filterStrainTypeEq is a strict equality instance for models.StrainType.
+// Centralising the comparison here ensures all strain-type checks use the
+// same semantics and avoids scattered bare == comparisons.
+var filterStrainTypeEq = Eq.FromStrictEquals[models.StrainType]()
+
+// isBacterialStrainType returns true when st equals models.StrainTypeBacterial.
+// It is the innermost predicate in the chain; all other predicates below are
+// built by contrammapping this one outward toward listStrainsInput.
+func isBacterialStrainType(st models.StrainType) bool {
+	return filterStrainTypeEq.Equals(st, models.StrainTypeBacterial)
 }
+
+// strainTypeFromFilter extracts the StrainType field from a StrainListFilter.
+// It is the contramap function that lifts isBacterialStrainType from
+// Predicate[StrainType] to Predicate[*StrainListFilter].
+func strainTypeFromFilter(f *models.StrainListFilter) models.StrainType {
+	return f.StrainType
+}
+
+// filterFromInput extracts the filter pointer from a listStrainsInput.
+// It is the contramap function that lifts isBacterialListFilter from
+// Predicate[*StrainListFilter] to Predicate[listStrainsInput].
+func filterFromInput(input listStrainsInput) *models.StrainListFilter {
+	return input.filter
+}
+
+// isBacterialListFilter is a Predicate[*models.StrainListFilter] that checks
+// whether the filter's StrainType is bacterial. Built by contrammapping
+// isBacterialStrainType through strainTypeFromFilter.
+// Note: this predicate is only safe to call on a non-nil pointer; nil safety
+// is enforced by isBacterialFilter via P.IsNonZero and short-circuit &&.
+var isBacterialListFilter = F.Pipe1(
+	isBacterialStrainType,
+	P.ContraMap(strainTypeFromFilter),
+)
+
+// isBacterialFilter is a Predicate[listStrainsInput] that returns true when
+// the input carries a non-nil filter whose StrainType is bacterial.
+//
+// Pipeline:
+//   - P.IsNonZero guards against a nil filter pointer; Go's short-circuit &&
+//     inside P.And ensures isBacterialListFilter is never called on nil.
+//   - P.And(isBacterialListFilter) applies the strain-type check only when
+//     the pointer is confirmed non-nil.
+//   - P.ContraMap(filterFromInput) lifts the whole predicate from
+//     Predicate[*StrainListFilter] to Predicate[listStrainsInput].
+var isBacterialFilter = F.Pipe2(
+	P.IsNonZero[*models.StrainListFilter](),
+	P.And(isBacterialListFilter),
+	P.ContraMap(filterFromInput),
+)
 
 // ── stock-service pipeline ───────────────────────────────────────────────────
 
@@ -227,7 +268,7 @@ var deduplicateBacterialIDs = func(
 	ctx bacterialStrainsContext,
 ) bacterialStrainsContext {
 	ctx.uniqueIDs = F.Pipe2(
-		R.FromEntries[string, struct{}](
+		R.FromEntries(
 			A.Map(func(d *anno.TaggedAnnotationCollection_Data) R.Entry[string, struct{}] {
 				return Pa.MakePair(d.Attributes.EntryId, struct{}{})
 			})(ctx.annotations.Data),
