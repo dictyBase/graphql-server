@@ -288,6 +288,22 @@ func (qrs *QueryResolver) Strain(
 	return stock.ConvertToStrainModel(strainID, n.Data.Attributes), nil
 }
 
+// ListStrains resolves the listStrains GraphQL query. It returns a
+// cursor-paginated list of strains, applying any supplied StrainListFilter.
+//
+// # Deduplication and pagination contract
+//
+// The resolver deduplicates strain records after retrieving them from the
+// backing store. Consequently, the number of items in a single response page
+// may be strictly less than the requested limit, even when additional pages
+// are available. Callers MUST NOT infer end-of-list from receiving fewer
+// items than requested.
+//
+// Pagination MUST be driven exclusively by the NextCursor field of the
+// returned StrainListWithCursor value:
+//   - NextCursor != 0 — a subsequent page exists; supply its value as the
+//     cursor argument on the next request.
+//   - NextCursor == 0 — all pages have been consumed; iteration must stop.
 func (qrs *QueryResolver) ListStrains(
 	ctx context.Context,
 	cursor *int,
