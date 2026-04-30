@@ -208,14 +208,26 @@ func runBacterialPipeline(
 // shortCircuitOrFetchStrains returns an empty StrainListWithCursor immediately
 // when uniqueIDs is empty, bypassing the gRPC call entirely. For non-empty ID
 // lists it delegates to fetchAndBuildBacterialResult.
+var isEmptyBacterialIDs = F.Pipe2(
+	P.IsNonZero[int](),
+	P.Not,
+	P.ContraMap(func(c bacterialStrainsContext) int {
+		return len(c.uniqueIDs)
+	}),
+)
+
+func emptyBacterialResult(
+	_ bacterialStrainsContext,
+) IOE.IOEither[error, *models.StrainListWithCursor] {
+	return IOE.Of[error](&models.StrainListWithCursor{})
+}
+
 var shortCircuitOrFetchStrains = func(
 	ctx bacterialStrainsContext,
 ) IOE.IOEither[error, *models.StrainListWithCursor] {
 	return F.Ternary(
-		func(c bacterialStrainsContext) bool { return len(c.uniqueIDs) == 0 },
-		func(c bacterialStrainsContext) IOE.IOEither[error, *models.StrainListWithCursor] {
-			return IOE.Of[error](&models.StrainListWithCursor{})
-		},
+		isEmptyBacterialIDs,
+		emptyBacterialResult,
 		fetchAndBuildBacterialResult,
 	)(ctx)
 }
