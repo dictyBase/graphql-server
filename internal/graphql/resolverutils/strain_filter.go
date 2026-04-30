@@ -141,25 +141,6 @@ func assembleStrainFilterQuery(p strainFilterQueryPair) string {
 	)
 }
 
-// applyStrainFilter validates the filter's unsupported fields and builds the
-// annotation-service filter DSL query string.
-func applyStrainFilter(f *models.StrainListFilter) E.Either[error, string] {
-	return F.Pipe7(
-		f,
-		E.Of[error, *models.StrainListFilter],
-		E.Chain(CheckStrainIDField),
-		E.Chain(CheckStrainInStockField),
-		E.Map[error](func(f *models.StrainListFilter) models.StrainType {
-			return f.StrainType
-		}),
-		E.Chain(strainTypeIsValid),
-		E.Map[error](func(st models.StrainType) strainFilterQueryPair {
-			return T.MakeTuple2(f, st)
-		}),
-		E.Map[error](assembleStrainFilterQuery),
-	)
-}
-
 // StrainFilterToQueryFP is the fp-go v2 refactoring of StrainFilterToQuery.
 // Returns an IOEither that resolves to an empty string for a nil filter.
 // Validates unsupported fields via Either chains before building the DSL string.
@@ -176,7 +157,22 @@ func StrainFilterToQueryFP(filter *models.StrainListFilter) IOE.IOEither[error, 
 		O.FromNillable[models.StrainListFilter],
 		O.Fold(
 			F.Constant(E.Right[error]("")),
-			applyStrainFilter,
+			func(f *models.StrainListFilter) E.Either[error, string] {
+				return F.Pipe7(
+					f,
+					E.Of[error, *models.StrainListFilter],
+					E.Chain(CheckStrainIDField),
+					E.Chain(CheckStrainInStockField),
+					E.Map[error](func(f *models.StrainListFilter) models.StrainType {
+						return f.StrainType
+					}),
+					E.Chain(strainTypeIsValid),
+					E.Map[error](func(st models.StrainType) strainFilterQueryPair {
+						return T.MakeTuple2(f, st)
+					}),
+					E.Map[error](assembleStrainFilterQuery),
+				)
+			},
 		),
 		IOE.FromEither[error, string],
 	)
