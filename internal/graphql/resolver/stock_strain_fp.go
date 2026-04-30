@@ -9,6 +9,7 @@ import (
 	O "github.com/IBM/fp-go/v2/option"
 	Pa "github.com/IBM/fp-go/v2/pair"
 	R "github.com/IBM/fp-go/v2/record"
+	S "github.com/IBM/fp-go/v2/string"
 	T "github.com/IBM/fp-go/v2/tuple"
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
@@ -171,12 +172,35 @@ var buildStockStrainResult = func(ctx stockStrainsContext) *models.StrainListWit
 func runBacterialPipeline(
 	input listStrainsInput,
 ) IOE.IOEither[error, *models.StrainListWithCursor] {
-	return F.Pipe5(
+	return F.Pipe4(
 		IOE.Of[error](bacterialStrainsContext{input: input}),
 		IOE.Map[error](computeBacterialParams),
 		IOE.Chain(fetchBacterialAnnotations),
 		IOE.Map[error](deduplicateBacterialIDs),
-		IOE.Chain(fetchStrainsByIDs),
+		IOE.Chain(shortCircuitOrFetchStrains),
+	)
+}
+
+// shortCircuitOrFetchStrains returns an empty StrainListWithCursor immediately
+// when uniqueIDs is empty, bypassing the gRPC call entirely. For non-empty ID
+// lists it delegates to fetchAndBuildBacterialResult.
+var shortCircuitOrFetchStrains = func(
+	ctx bacterialStrainsContext,
+) IOE.IOEither[error, *models.StrainListWithCursor] {
+	return F.Ternary(
+		func(c bacterialStrainsContext) bool { return len(c.uniqueIDs) == 0 },
+		func(c bacterialStrainsContext) IOE.IOEither[error, *models.StrainListWithCursor] {
+			return IOE.Of[error](&models.StrainListWithCursor{})
+		},
+		fetchAndBuildBacterialResult,
+	)(ctx)
+}
+
+func fetchAndBuildBacterialResult(
+	ctx bacterialStrainsContext,
+) IOE.IOEither[error, *models.StrainListWithCursor] {
+	return F.Pipe1(
+		fetchStrainsByIDs(ctx),
 		IOE.Map[error](buildBacterialStrainResult),
 	)
 }
@@ -212,17 +236,19 @@ func fetchBacterialAnnotations(
 
 // deduplicateBacterialIDs extracts unique strain IDs from annotation data using
 // R.FromEntries (builds map[string]struct{} keyed on EntryId) then R.Keys.
-// No imperative set/loop — purely functional.
+// The resulting slice is alphabetically sorted with A.Sort(S.Ord) for
+// deterministic ordering. No imperative set/loop — purely functional.
 var deduplicateBacterialIDs = func(
 	ctx bacterialStrainsContext,
 ) bacterialStrainsContext {
-	ctx.uniqueIDs = F.Pipe1(
+	ctx.uniqueIDs = F.Pipe2(
 		R.FromEntries[string, struct{}](
 			A.Map(func(d *anno.TaggedAnnotationCollection_Data) R.Entry[string, struct{}] {
 				return Pa.MakePair(d.Attributes.EntryId, struct{}{})
 			})(ctx.annotations.Data),
 		),
 		R.Keys[string, struct{}],
+		A.Sort(S.Ord),
 	)
 	return ctx
 }
