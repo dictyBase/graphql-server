@@ -229,9 +229,36 @@ func emptyBacterialResult(
 func fetchAndBuildBacterialResult(
 	ctx bacterialStrainsContext,
 ) IOE.IOEither[error, *models.StrainListWithCursor] {
-	return F.Pipe1(
-		fetchStrainsByIDs(ctx),
-		IOE.Map[error](buildBacterialStrainResult),
+	return F.Pipe2(
+		IOE.TryCatchError(func() (*pb.StrainList, error) {
+			return ctx.input.stockClient.ListStrainsByIds(
+				ctx.input.gctx,
+				&pb.StockIdList{Id: ctx.uniqueIDs},
+			)
+		}),
+		IOE.Map[error](func(sl *pb.StrainList) bacterialStrainsContext {
+			ctx.strainList = sl
+			return ctx
+		}),
+		IOE.Map[error](func(c bacterialStrainsContext) *models.StrainListWithCursor {
+			lmt := int(c.resolvedLimit)
+			nextCursor := int(F.Pipe1(
+				O.FromNillable(c.annotations.Meta),
+				O.Fold(
+					F.Constant[int64](0),
+					func(m *anno.Meta) int64 { return m.NextCursor },
+				),
+			))
+			return &models.StrainListWithCursor{
+				Strains: A.Map(func(item *pb.StrainList_Data) *models.Strain {
+					return stock.ConvertToStrainModel(item.Id, item.Attributes)
+				})(c.strainList.Data),
+				NextCursor:     nextCursor,
+				PreviousCursor: int(c.resolvedCursor),
+				Limit:          &lmt,
+				TotalCount:     len(c.strainList.Data),
+			}
+		}),
 	)
 }
 
@@ -282,45 +309,4 @@ func deduplicateBacterialIDs(
 		A.Sort(S.Ord),
 	)
 	return ctx
-}
-
-func fetchStrainsByIDs(
-	ctx bacterialStrainsContext,
-) IOE.IOEither[error, bacterialStrainsContext] {
-	return F.Pipe1(
-		IOE.TryCatchError(func() (*pb.StrainList, error) {
-			return ctx.input.stockClient.ListStrainsByIds(
-				ctx.input.gctx,
-				&pb.StockIdList{Id: ctx.uniqueIDs},
-			)
-		}),
-		IOE.Map[error](func(sl *pb.StrainList) bacterialStrainsContext {
-			ctx.strainList = sl
-			return ctx
-		}),
-	)
-}
-
-var convertStrainListItem = func(item *pb.StrainList_Data) *models.Strain {
-	return stock.ConvertToStrainModel(item.Id, item.Attributes)
-}
-
-var buildBacterialStrainResult = func(
-	ctx bacterialStrainsContext,
-) *models.StrainListWithCursor {
-	lmt := int(ctx.resolvedLimit)
-	nextCursor := int(F.Pipe1(
-		O.FromNillable(ctx.annotations.Meta),
-		O.Fold(
-			F.Constant[int64](0),
-			func(m *anno.Meta) int64 { return m.NextCursor },
-		),
-	))
-	return &models.StrainListWithCursor{
-		Strains:        A.Map(convertStrainListItem)(ctx.strainList.Data),
-		NextCursor:     nextCursor,
-		PreviousCursor: int(ctx.resolvedCursor),
-		Limit:          &lmt,
-		TotalCount:     len(ctx.strainList.Data),
-	}
 }
