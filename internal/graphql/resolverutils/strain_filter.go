@@ -11,9 +11,14 @@ import (
 	P "github.com/IBM/fp-go/v2/predicate"
 	R "github.com/IBM/fp-go/v2/record"
 	S "github.com/IBM/fp-go/v2/string"
+	T "github.com/IBM/fp-go/v2/tuple"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
 )
+
+// strainFilterQueryPair carries both the original filter and its validated
+// strain type through the assembly pipeline.
+type strainFilterQueryPair = T.Tuple2[*models.StrainListFilter, models.StrainType]
 
 // ── validation predicates ────────────────────────────────────────────────────
 
@@ -109,7 +114,9 @@ func BacterialAnnotationFilter() string {
 
 // assembleStrainFilterQuery assembles the annotation-service filter DSL query
 // string from the filter's label, summary, and strain type fields.
-func assembleStrainFilterQuery(f *models.StrainListFilter, st models.StrainType) string {
+func assembleStrainFilterQuery(p strainFilterQueryPair) string {
+	f := p.F1
+	st := p.F2
 	return F.Pipe2(
 		[]O.Option[string]{
 			F.Pipe1(
@@ -137,7 +144,7 @@ func assembleStrainFilterQuery(f *models.StrainListFilter, st models.StrainType)
 // applyStrainFilter validates the filter's unsupported fields and builds the
 // annotation-service filter DSL query string.
 func applyStrainFilter(f *models.StrainListFilter) E.Either[error, string] {
-	return F.Pipe6(
+	return F.Pipe7(
 		f,
 		E.Of[error, *models.StrainListFilter],
 		E.Chain(CheckStrainIDField),
@@ -146,7 +153,10 @@ func applyStrainFilter(f *models.StrainListFilter) E.Either[error, string] {
 			return f.StrainType
 		}),
 		E.Chain(strainTypeIsValid),
-		E.Map[error](F.Bind1st(assembleStrainFilterQuery, f)),
+		E.Map[error](func(st models.StrainType) strainFilterQueryPair {
+			return T.MakeTuple2(f, st)
+		}),
+		E.Map[error](assembleStrainFilterQuery),
 	)
 }
 
