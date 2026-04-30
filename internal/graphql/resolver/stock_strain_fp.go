@@ -226,6 +226,16 @@ func emptyBacterialResult(
 	return IOE.Of[error](&models.StrainListWithCursor{})
 }
 
+var extractNextCursor = func(m *anno.Meta) int {
+	return int(F.Pipe1(
+		O.FromNillable(m),
+		O.Fold(
+			F.Constant[int64](0),
+			func(meta *anno.Meta) int64 { return meta.NextCursor },
+		),
+	))
+}
+
 func fetchAndBuildBacterialResult(
 	ctx bacterialStrainsContext,
 ) IOE.IOEither[error, *models.StrainListWithCursor] {
@@ -242,20 +252,13 @@ func fetchAndBuildBacterialResult(
 		}),
 		IOE.Map[error](func(c bacterialStrainsContext) *models.StrainListWithCursor {
 			lmt := int(c.resolvedLimit)
-			nextCursor := int(F.Pipe1(
-				O.FromNillable(c.annotations.Meta),
-				O.Fold(
-					F.Constant[int64](0),
-					func(m *anno.Meta) int64 { return m.NextCursor },
-				),
-			))
 			return &models.StrainListWithCursor{
+				Limit: &lmt,
 				Strains: A.Map(func(item *pb.StrainList_Data) *models.Strain {
 					return stock.ConvertToStrainModel(item.Id, item.Attributes)
 				})(c.strainList.Data),
-				NextCursor:     nextCursor,
+				NextCursor:     extractNextCursor(c.annotations.Meta),
 				PreviousCursor: int(c.resolvedCursor),
-				Limit:          &lmt,
 				TotalCount:     len(c.strainList.Data),
 			}
 		}),
