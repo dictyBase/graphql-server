@@ -8,9 +8,7 @@ import (
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
 	O "github.com/IBM/fp-go/v2/option"
-	Pa "github.com/IBM/fp-go/v2/pair"
 	P "github.com/IBM/fp-go/v2/predicate"
-	R "github.com/IBM/fp-go/v2/record"
 	S "github.com/IBM/fp-go/v2/string"
 	T "github.com/IBM/fp-go/v2/tuple"
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
@@ -231,7 +229,7 @@ func fetchAndBuildBacterialResult(
 	)
 }
 
-var computeBacterialParams = func(
+func computeBacterialParams(
 	ctx bacterialStrainsContext,
 ) bacterialStrainsContext {
 	ctx.resolvedCursor = resolverutils.GetCursorFP(ctx.input.cursor)
@@ -253,27 +251,28 @@ func fetchBacterialAnnotations(
 				},
 			)
 		}),
-		IOE.Map[error](func(coll *anno.TaggedAnnotationCollection) bacterialStrainsContext {
+		IOE.Map[error](func(
+			coll *anno.TaggedAnnotationCollection,
+		) bacterialStrainsContext {
 			ctx.annotations = coll
 			return ctx
 		}),
 	)
 }
 
-// deduplicateBacterialIDs extracts unique strain IDs from annotation data using
-// R.FromEntries (builds map[string]struct{} keyed on EntryId) then R.Keys.
-// The resulting slice is alphabetically sorted with A.Sort(S.Ord) for
-// deterministic ordering. No imperative set/loop — purely functional.
-var deduplicateBacterialIDs = func(
+// deduplicateBacterialIDs extracts the EntryId from each annotation, removes
+// duplicates, and sorts the resulting list. This ensures we only query the
+// stock service once per unique strain ID and that the IDs are in a consistent
+// order for testing and caching.
+func deduplicateBacterialIDs(
 	ctx bacterialStrainsContext,
 ) bacterialStrainsContext {
-	ctx.uniqueIDs = F.Pipe2(
-		R.FromEntries(
-			A.Map(func(d *anno.TaggedAnnotationCollection_Data) R.Entry[string, struct{}] {
-				return Pa.MakePair(d.Attributes.EntryId, struct{}{})
-			})(ctx.annotations.Data),
-		),
-		R.Keys[string, struct{}],
+	ctx.uniqueIDs = F.Pipe3(
+		ctx.annotations.Data,
+		A.Map(func(d *anno.TaggedAnnotationCollection_Data) string {
+			return d.Attributes.EntryId
+		}),
+		A.StrictUniq[string],
 		A.Sort(S.Ord),
 	)
 	return ctx
