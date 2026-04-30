@@ -57,23 +57,23 @@ var (
 // ALL intentionally excludes bacterial strains (separate category).
 var strainTypeQueryMap = map[models.StrainType]string{
 	models.StrainTypeAll: fmt.Sprintf(
-		"ontology==%s;tag==%s,tag==%s",
+		"ontology===%s;tag===%s,tag===%s",
 		registry.DictyStrainPropOntology,
 		registry.GeneralStrainTag,
 		registry.GwdiStrainTag,
 	),
 	models.StrainTypeRegular: fmt.Sprintf(
-		"ontology==%s;tag==%s",
+		"ontology===%s;tag===%s",
 		registry.DictyStrainPropOntology,
 		registry.GeneralStrainTag,
 	),
 	models.StrainTypeGwdi: fmt.Sprintf(
-		"ontology==%s;tag==%s",
+		"ontology===%s;tag===%s",
 		registry.DictyStrainPropOntology,
 		registry.GwdiStrainTag,
 	),
 	models.StrainTypeBacterial: fmt.Sprintf(
-		"ontology==%s;tag==%s",
+		"ontology===%s;tag===%s",
 		registry.StrainCharOnto,
 		registry.BacterialFoodSourceTag,
 	),
@@ -106,7 +106,7 @@ var compactStrainOptionStrings = A.FilterMap(O.Fold(
 // dicty_strain_characteristics — the sole criterion for bacterial strains.
 func BacterialAnnotationFilter() string {
 	return fmt.Sprintf(
-		"ontology==%s;tag==%s",
+		"ontology===%s;tag===%s",
 		registry.StrainCharOnto,
 		registry.BacterialFoodSourceTag,
 	)
