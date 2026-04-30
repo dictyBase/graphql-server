@@ -6,6 +6,7 @@ import (
 	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
+	IOE "github.com/IBM/fp-go/v2/ioeither"
 	O "github.com/IBM/fp-go/v2/option"
 	P "github.com/IBM/fp-go/v2/predicate"
 	R "github.com/IBM/fp-go/v2/record"
@@ -107,50 +108,60 @@ func BacterialAnnotationFilter() string {
 }
 
 // StrainFilterToQueryFP is the fp-go v2 refactoring of StrainFilterToQuery.
-// Returns an empty string for a nil filter. Validates unsupported fields via
-// Either chains before building the DSL string.
+// Returns an IOEither that resolves to an empty string for a nil filter.
+// Validates unsupported fields via Either chains before building the DSL string.
+//
+// Modeled after buildListPlasmidFilterQuery: nil filter → default (empty),
+// validations chain through Either, query is built purely functionally.
 //
 // Callers (the ListStrains resolver) must check for StrainTypeBacterial
 // BEFORE calling this function and route to the annotation-service path;
 // this function is not called for the BACTERIAL branch.
-func StrainFilterToQueryFP(filter *models.StrainListFilter) (string, error) {
-	if filter == nil {
-		return "", nil
-	}
-	return E.UnwrapError(F.Pipe4(
+func StrainFilterToQueryFP(filter *models.StrainListFilter) IOE.IOEither[error, string] {
+	return F.Pipe3(
 		filter,
-		E.Of[error, *models.StrainListFilter],
-		E.Chain(CheckStrainIDField),
-		E.Chain(CheckStrainInStockField),
-		E.Chain(func(f *models.StrainListFilter) E.Either[error, string] {
-			return F.Pipe2(
-				f.StrainType,
-				strainTypeIsValid,
-				E.Map[error](func(st models.StrainType) string {
-					return F.Pipe2(
-						[]O.Option[string]{
-							F.Pipe1(
-								O.FromNillable(f.Label),
-								O.Map(formatStrainFieldQuery("label=~%s")),
-							),
-							F.Pipe1(
-								O.FromNillable(f.Summary),
-								O.Map(formatStrainFieldQuery("summary=~%s")),
-							),
-							F.Pipe1(
-								R.Lookup[string](st)(strainTypeQueryMap),
-								O.Chain(func(s string) O.Option[string] {
-									return O.FromPredicate(
-										func(v string) bool { return len(v) > 0 },
-									)(s)
-								}),
-							),
-						},
-						compactStrainOptionStrings,
-						A.Intercalate(S.Monoid)(";"),
-					)
-				}),
-			)
-		}),
-	))
+		O.FromNillable[models.StrainListFilter],
+		O.Fold(
+			F.Constant(E.Right[error]("")),
+			func(f *models.StrainListFilter) E.Either[error, string] {
+				return F.Pipe4(
+					f,
+					E.Of[error, *models.StrainListFilter],
+					E.Chain(CheckStrainIDField),
+					E.Chain(CheckStrainInStockField),
+					E.Chain(func(f *models.StrainListFilter) E.Either[error, string] {
+						return F.Pipe2(
+							f.StrainType,
+							strainTypeIsValid,
+							E.Map[error](func(st models.StrainType) string {
+								return F.Pipe2(
+									[]O.Option[string]{
+										F.Pipe1(
+											O.FromNillable(f.Label),
+											O.Map(formatStrainFieldQuery("label=~%s")),
+										),
+										F.Pipe1(
+											O.FromNillable(f.Summary),
+											O.Map(formatStrainFieldQuery("summary=~%s")),
+										),
+										F.Pipe1(
+											R.Lookup[string](st)(strainTypeQueryMap),
+											O.Chain(func(s string) O.Option[string] {
+												return O.FromPredicate(
+													func(v string) bool { return len(v) > 0 },
+												)(s)
+											}),
+										),
+									},
+									compactStrainOptionStrings,
+									A.Intercalate(S.Monoid)(";"),
+								)
+							}),
+						)
+					}),
+				)
+			},
+		),
+		IOE.FromEither[error, string],
+	)
 }
