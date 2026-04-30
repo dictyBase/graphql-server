@@ -310,15 +310,16 @@ func (qrs *QueryResolver) ListStrains(
 	limit *int,
 	filter *models.StrainListFilter,
 ) (*models.StrainListWithCursor, error) {
-	result := F.Pipe2(
-		routeStrainListQuery(listStrainsInput{
+	result := F.Pipe3(
+		listStrainsInput{
 			stockClient: qrs.GetStockClient(registry.STOCK),
 			annoClient:  qrs.GetAnnotationClient(registry.ANNOTATION),
 			gctx:        ctx,
 			cursor:      cursor,
 			limit:       limit,
 			filter:      filter,
-		}),
+		},
+		F.Ternary(isBacterialFilter, runBacterialPipeline, runStockPipeline),
 		toEither[error, *models.StrainListWithCursor],
 		E.Fold(onStrainListError, onStrainListSuccess),
 	)

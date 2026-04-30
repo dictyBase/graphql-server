@@ -79,21 +79,6 @@ var isBacterialFilter = func(input listStrainsInput) bool {
 	)
 }
 
-// ── entry point: dispatch on filter type ─────────────────────────────────────
-
-// routeStrainListQuery dispatches to the stock-service pipeline for all
-// non-BACTERIAL types and to the annotation-service pipeline for BACTERIAL,
-// using F.Ternary so there is no imperative branching.
-func routeStrainListQuery(
-	input listStrainsInput,
-) IOE.IOEither[error, *models.StrainListWithCursor] {
-	return F.Ternary(
-		isBacterialFilter,
-		runBacterialPipeline,
-		runStockPipeline,
-	)(input)
-}
-
 // ── stock-service pipeline ───────────────────────────────────────────────────
 
 func runStockPipeline(
