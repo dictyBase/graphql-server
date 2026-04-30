@@ -11,10 +11,10 @@ import (
 	P "github.com/IBM/fp-go/v2/predicate"
 	S "github.com/IBM/fp-go/v2/string"
 	T "github.com/IBM/fp-go/v2/tuple"
+	"github.com/dictyBase/aphgrpc"
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
-	"github.com/dictyBase/graphql-server/internal/graphql/resolver/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 )
 
@@ -176,7 +176,60 @@ func fetchStrainCollection(
 }
 
 var convertStrainCollectionItem = func(item *pb.StrainCollection_Data) *models.Strain {
-	return stock.ConvertToStrainModel(item.Id, item.Attributes)
+	attr := item.Attributes
+	return &models.Strain{
+		ID:              item.Id,
+		CreatedAt:       aphgrpc.ProtoTimeStamp(attr.CreatedAt),
+		UpdatedAt:       aphgrpc.ProtoTimeStamp(attr.UpdatedAt),
+		Label:           attr.Label,
+		Species:         attr.Species,
+		Summary:         &attr.Summary,
+		EditableSummary: &attr.EditableSummary,
+		Plasmid:         &attr.Plasmid,
+		Parent:          &attr.Parent,
+		Dbxrefs:         attr.Dbxrefs,
+		Names:           attr.Names,
+		LazyStock: models.LazyStock{
+			CreatedBy:    attr.CreatedBy,
+			UpdatedBy:    attr.UpdatedBy,
+			Depositor:    attr.Depositor,
+			Genes:        attr.Genes,
+			Publications: attr.Publications,
+		},
+	}
+}
+
+// convertStrainListData maps a slice of StrainList_Data to Strain models.
+// It inlines the ConvertToStrainModel logic so the function can be used
+// point-free with F.Pipe. This is the bacterial-strain-specific variant
+// (operates on StrainList_Data instead of StrainCollection_Data).
+func convertStrainListData(data []*pb.StrainList_Data) []*models.Strain {
+	return F.Pipe1(
+		data,
+		A.Map(func(item *pb.StrainList_Data) *models.Strain {
+			attr := item.Attributes
+			return &models.Strain{
+				ID:              item.Id,
+				CreatedAt:       aphgrpc.ProtoTimeStamp(attr.CreatedAt),
+				UpdatedAt:       aphgrpc.ProtoTimeStamp(attr.UpdatedAt),
+				Label:           attr.Label,
+				Species:         attr.Species,
+				Summary:         &attr.Summary,
+				EditableSummary: &attr.EditableSummary,
+				Plasmid:         &attr.Plasmid,
+				Parent:          &attr.Parent,
+				Dbxrefs:         attr.Dbxrefs,
+				Names:           attr.Names,
+				LazyStock: models.LazyStock{
+					CreatedBy:    attr.CreatedBy,
+					UpdatedBy:    attr.UpdatedBy,
+					Depositor:    attr.Depositor,
+					Genes:        attr.Genes,
+					Publications: attr.Publications,
+				},
+			}
+		}),
+	)
 }
 
 var buildStockStrainResult = func(ctx stockStrainsContext) *models.StrainListWithCursor {
@@ -253,13 +306,14 @@ func fetchAndBuildBacterialResult(
 		IOE.Map[error](func(c bacterialStrainsContext) *models.StrainListWithCursor {
 			lmt := int(c.resolvedLimit)
 			return &models.StrainListWithCursor{
-				Limit: &lmt,
-				Strains: A.Map(func(item *pb.StrainList_Data) *models.Strain {
-					return stock.ConvertToStrainModel(item.Id, item.Attributes)
-				})(c.strainList.Data),
+				Limit:          &lmt,
 				NextCursor:     extractNextCursor(c.annotations.Meta),
 				PreviousCursor: int(c.resolvedCursor),
 				TotalCount:     len(c.strainList.Data),
+				Strains: F.Pipe1(
+					c.strainList.Data,
+					convertStrainListData,
+				),
 			}
 		}),
 	)
