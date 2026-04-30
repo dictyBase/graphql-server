@@ -3,6 +3,7 @@ package resolverutils
 import (
 	"testing"
 
+	E "github.com/IBM/fp-go/v2/either"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/stretchr/testify/require"
@@ -19,7 +20,7 @@ func TestBacterialAnnotationFilter(t *testing.T) {
 
 func TestStrainFilterToQueryFP_NilFilter(t *testing.T) {
 	t.Parallel()
-	q, err := StrainFilterToQueryFP(nil)
+	q, err := E.UnwrapError(StrainFilterToQueryFP(nil)())
 	require.NoError(t, err)
 	require.Empty(t, q)
 }
@@ -57,7 +58,7 @@ func TestStrainFilterToQueryFP_AllStrainTypes(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			q, err := StrainFilterToQueryFP(&tt.filter)
+			q, err := E.UnwrapError(StrainFilterToQueryFP(&tt.filter)())
 			require.NoError(t, err)
 			require.Equal(t, tt.expected, q)
 		})
@@ -66,9 +67,9 @@ func TestStrainFilterToQueryFP_AllStrainTypes(t *testing.T) {
 
 func TestStrainFilterToQueryFP_AllExcludesBacterial(t *testing.T) {
 	t.Parallel()
-	q, err := StrainFilterToQueryFP(&models.StrainListFilter{
+	q, err := E.UnwrapError(StrainFilterToQueryFP(&models.StrainListFilter{
 		StrainType: models.StrainTypeAll,
-	})
+	})())
 	require.NoError(t, err)
 	require.Contains(t, q, registry.GeneralStrainTag)
 	require.Contains(t, q, registry.GwdiStrainTag)
@@ -124,7 +125,7 @@ func TestStrainFilterToQueryFP_WithLabelAndSummary(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			q, err := StrainFilterToQueryFP(&tt.filter)
+			q, err := E.UnwrapError(StrainFilterToQueryFP(&tt.filter)())
 			require.NoError(t, err)
 			for _, c := range tt.contains {
 				require.Contains(t, q, c)
@@ -171,7 +172,7 @@ func TestStrainFilterToQueryFP_UnsupportedFields(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			_, err := StrainFilterToQueryFP(&tt.filter)
+			_, err := E.UnwrapError(StrainFilterToQueryFP(&tt.filter)())
 			require.Error(t, err)
 			require.Contains(t, err.Error(), tt.errContains)
 		})
@@ -180,9 +181,9 @@ func TestStrainFilterToQueryFP_UnsupportedFields(t *testing.T) {
 
 func TestStrainFilterToQueryFP_InvalidStrainType(t *testing.T) {
 	t.Parallel()
-	_, err := StrainFilterToQueryFP(&models.StrainListFilter{
+	_, err := E.UnwrapError(StrainFilterToQueryFP(&models.StrainListFilter{
 		StrainType: models.StrainType("INVALID"),
-	})
+	})())
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "invalid strain type")
 }

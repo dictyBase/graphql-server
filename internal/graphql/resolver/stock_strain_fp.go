@@ -138,15 +138,13 @@ var computeStockParams = func(ctx stockStrainsContext) stockStrainsContext {
 	return ctx
 }
 
-// buildStockFilterQuery lifts StrainFilterToQueryFP (which returns (string,error))
-// into IOEither and attaches the result to the context.
+// buildStockFilterQuery invokes StrainFilterToQueryFP (which returns IOEither)
+// and attaches the resulting query string to the context.
 func buildStockFilterQuery(
 	ctx stockStrainsContext,
 ) IOE.IOEither[error, stockStrainsContext] {
 	return F.Pipe1(
-		IOE.TryCatchError(func() (string, error) {
-			return resolverutils.StrainFilterToQueryFP(ctx.input.filter)
-		}),
+		resolverutils.StrainFilterToQueryFP(ctx.input.filter),
 		IOE.Map[error](func(q string) stockStrainsContext {
 			ctx.filterQuery = q
 			return ctx
