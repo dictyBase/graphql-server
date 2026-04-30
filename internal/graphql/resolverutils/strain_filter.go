@@ -141,16 +141,13 @@ func assembleStrainFilterQuery(p strainFilterQueryPair) string {
 	)
 }
 
-// StrainFilterToQueryFP is the fp-go v2 refactoring of StrainFilterToQuery.
-// Returns an IOEither that resolves to an empty string for a nil filter.
-// Validates unsupported fields via Either chains before building the DSL string.
-//
-// Modeled after buildListPlasmidFilterQuery: nil filter → default (empty),
-// validations chain through Either, query is built purely functionally.
-//
-// Callers (the ListStrains resolver) must check for StrainTypeBacterial
-// BEFORE calling this function and route to the annotation-service path;
-// this function is not called for the BACTERIAL branch.
+// StrainFilterToQueryFP converts a StrainListFilter to an annotation-service
+// internal query string, validating the filter's fields and returning an error
+// if any are invalid or unsupported. The filter's label and summary fields are
+// converted to regex queries, and the strain type is used to look up the
+// appropriate query string from the strainTypeQueryMap. The filter's id and
+// in_stocking fields are not yet supported and will cause an error if
+// present.
 func StrainFilterToQueryFP(filter *models.StrainListFilter) IOE.IOEither[error, string] {
 	return F.Pipe3(
 		filter,
