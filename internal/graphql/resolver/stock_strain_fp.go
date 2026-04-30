@@ -278,9 +278,16 @@ var buildBacterialStrainResult = func(
 	ctx bacterialStrainsContext,
 ) *models.StrainListWithCursor {
 	lmt := int(ctx.resolvedLimit)
+	nextCursor := int(F.Pipe1(
+		O.FromNillable(ctx.annotations.Meta),
+		O.Fold(
+			F.Constant[int64](0),
+			func(m *anno.Meta) int64 { return m.NextCursor },
+		),
+	))
 	return &models.StrainListWithCursor{
 		Strains:        A.Map(convertStrainListItem)(ctx.strainList.Data),
-		NextCursor:     int(ctx.annotations.Meta.NextCursor),
+		NextCursor:     nextCursor,
 		PreviousCursor: int(ctx.resolvedCursor),
 		Limit:          &lmt,
 		TotalCount:     len(ctx.strainList.Data),
