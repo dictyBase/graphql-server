@@ -36,22 +36,22 @@ func TestStrainFilterToQueryFP_AllStrainTypes(t *testing.T) {
 		{
 			name:     "StrainTypeAll",
 			filter:   models.StrainListFilter{StrainType: models.StrainTypeAll},
-			expected: "ontology==" + registry.DictyStrainPropOntology + ";tag==" + registry.GeneralStrainTag + ",tag==" + registry.GwdiStrainTag,
+			expected: "ontology===" + registry.DictyStrainPropOntology + ";tag===" + registry.GeneralStrainTag + ",tag===" + registry.GwdiStrainTag,
 		},
 		{
 			name:     "StrainTypeRegular",
 			filter:   models.StrainListFilter{StrainType: models.StrainTypeRegular},
-			expected: "ontology==" + registry.DictyStrainPropOntology + ";tag==" + registry.GeneralStrainTag,
+			expected: "ontology===" + registry.DictyStrainPropOntology + ";tag===" + registry.GeneralStrainTag,
 		},
 		{
 			name:     "StrainTypeGwdi",
 			filter:   models.StrainListFilter{StrainType: models.StrainTypeGwdi},
-			expected: "ontology==" + registry.DictyStrainPropOntology + ";tag==" + registry.GwdiStrainTag,
+			expected: "ontology===" + registry.DictyStrainPropOntology + ";tag===" + registry.GwdiStrainTag,
 		},
 		{
 			name:     "StrainTypeBacterial",
 			filter:   models.StrainListFilter{StrainType: models.StrainTypeBacterial},
-			expected: "ontology==" + registry.StrainCharOnto + ";tag==" + registry.BacterialFoodSourceTag,
+			expected: "ontology===" + registry.StrainCharOnto + ";tag===" + registry.BacterialFoodSourceTag,
 		},
 	}
 
@@ -192,22 +192,4 @@ func strPtr(s string) *string { return &s }
 
 func boolPtr(b bool) *bool { return &b }
 
-func Test_applyStrainFilter(t *testing.T) {
-	tests := []struct {
-		name string // description of this test case
-		// Named input parameters for target function.
-		f    *models.StrainListFilter
-		want E.Either[error, string]
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := applyStrainFilter(tt.f)
-			// TODO: update the condition below to compare got with tt.want.
-			if true {
-				t.Errorf("applyStrainFilter() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+
