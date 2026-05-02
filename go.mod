@@ -1,7 +1,7 @@
 module github.com/dictyBase/graphql-server
 
 require (
-	github.com/99designs/gqlgen v0.17.89
+	github.com/99designs/gqlgen v0.17.90
 	github.com/IBM/fp-go/v2 v2.2.73
 	github.com/Jeffail/gabs/v2 v2.7.0
 	github.com/dictyBase/aphgrpc v1.4.2
@@ -64,12 +64,12 @@ require (
 	github.com/tinylib/msgp v1.6.1 // indirect
 	github.com/urfave/cli/v3 v3.8.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.48.0 // indirect
+	golang.org/x/crypto v0.49.0 // indirect
 	golang.org/x/mod v0.33.0 // indirect
-	golang.org/x/net v0.51.0 // indirect
+	golang.org/x/net v0.52.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.42.0 // indirect
-	golang.org/x/text v0.34.0 // indirect
+	golang.org/x/text v0.35.0 // indirect
 	golang.org/x/tools v0.42.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260120221211-b8f7ae30c516 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
