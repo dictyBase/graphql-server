@@ -5,8 +5,8 @@ github.com/99designs/gqlgen v0.17.90 h1:wSv6blm/PoplU6QoNw83EcQpNtC0HX3/+44vITJO
 github.com/99designs/gqlgen v0.17.90/go.mod h1:GqYrEwYsqCG8VaOsq2kJUCUKwAE1T+u2i+Nj7NtXiVI=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/toml v1.5.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
-github.com/IBM/fp-go/v2 v2.3.5 h1:SkcSY/KvsHmfN2Qi5JN27iLk9MRW1yWy1AIXBpa42dA=
-github.com/IBM/fp-go/v2 v2.3.5/go.mod h1:31fvaJMCf6hnuysAj8QLZmVaqsSK2Zaua1aBU7EQuHQ=
+github.com/IBM/fp-go/v2 v2.3.11 h1:2qLp1LQtfQ5fN9JjU0dSKHz5Hng7OuJw+4SoyV7wSE8=
+github.com/IBM/fp-go/v2 v2.3.11/go.mod h1:31fvaJMCf6hnuysAj8QLZmVaqsSK2Zaua1aBU7EQuHQ=
 github.com/Jeffail/gabs/v2 v2.7.0 h1:Y2edYaTcE8ZpRsR2AtmPu5xQdFDIthFG0jYhu5PY8kg=
 github.com/Jeffail/gabs/v2 v2.7.0/go.mod h1:dp5ocw1FvBBQYssgHsG7I1WYsiLRtkUaB1FEtSwvNUw=
 github.com/PuerkitoBio/goquery v1.12.0 h1:pAcL4g3WRXekcB9AU/y1mbKez2dbY2AajVhtkO8RIBo=
