@@ -24,7 +24,7 @@ require (
 	github.com/vektah/gqlparser/v2 v2.5.36
 	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678
 	google.golang.org/grpc v1.83.0
-	google.golang.org/protobuf v1.36.11
+	google.golang.org/protobuf v1.36.12
 )
 
 require (
