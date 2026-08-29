@@ -16,7 +16,7 @@ require (
 	github.com/lestrrat-go/jwx/v2 v2.1.7
 	github.com/minio/minio-go/v7 v7.3.0
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/sirupsen/logrus v1.10.1
+	github.com/sirupsen/logrus v1.10.2
 	github.com/stretchr/testify v1.12.1
 	github.com/urfave/cli v1.22.17
 	github.com/vektah/dataloaden v0.3.0
