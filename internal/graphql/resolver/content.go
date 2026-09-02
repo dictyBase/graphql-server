@@ -11,6 +11,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
 )
 
@@ -160,10 +161,12 @@ func (qrs *QueryResolver) ContentBySlug(
 func (qrs *QueryResolver) ListContentByNamespace(
 	ctx context.Context,
 	namespace string,
+	limit *int,
 ) ([]*pb.Content, error) {
+	lmt := resolverutils.GetLimit(limit)
 	contentColl, err := qrs.GetContentClient(registry.CONTENT).
 		ListContents(ctx, &pb.ListParameters{
-			Limit:  15,
+			Limit:  lmt,
 			Filter: fmt.Sprintf("namespace===%s", namespace),
 		})
 	if err != nil {
