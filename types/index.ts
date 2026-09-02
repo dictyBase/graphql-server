@@ -688,6 +688,7 @@ export type QueryGeneOntologyAnnotationArgs = {
 
 
 export type QueryListContentByNamespaceArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
   namespace: Scalars['String']['input'];
 };
 
@@ -1140,6 +1141,7 @@ export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typ
 
 export type ListContentByNamespaceQueryVariables = Exact<{
   namespace: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
@@ -1828,8 +1830,8 @@ export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutati
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
 export const ListContentByNamespaceDocument = gql`
-    query ListContentByNamespace($namespace: String!) {
-  listContentByNamespace(namespace: $namespace) {
+    query ListContentByNamespace($namespace: String!, $limit: Int) {
+  listContentByNamespace(namespace: $namespace, limit: $limit) {
     id
     content
     name
@@ -1865,6 +1867,7 @@ export const ListContentByNamespaceDocument = gql`
  * const { data, loading, error } = useListContentByNamespaceQuery({
  *   variables: {
  *      namespace: // value for 'namespace'
+ *      limit: // value for 'limit'
  *   },
  * });
  */

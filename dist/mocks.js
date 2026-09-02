@@ -249,7 +249,7 @@ exports.mockUpdateUserMutation = mockUpdateUserMutation;
  * @example
  * mockListContentByNamespaceQuery(
  *   ({ query, variables }) => {
- *     const { namespace } = variables;
+ *     const { namespace, limit } = variables;
  *     return HttpResponse.json({
  *       data: { listContentByNamespace }
  *     })
