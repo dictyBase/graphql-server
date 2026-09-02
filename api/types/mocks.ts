@@ -686,6 +686,7 @@ export type QueryGeneOntologyAnnotationArgs = {
 
 
 export type QueryListContentByNamespaceArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
   namespace: Scalars['String']['input'];
 };
 
@@ -1138,6 +1139,7 @@ export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typ
 
 export type ListContentByNamespaceQueryVariables = Exact<{
   namespace: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
@@ -1616,7 +1618,7 @@ export const mockUpdateUserMutation = (resolver: GraphQLResponseResolver<UpdateU
  * @example
  * mockListContentByNamespaceQuery(
  *   ({ query, variables }) => {
- *     const { namespace } = variables;
+ *     const { namespace, limit } = variables;
  *     return HttpResponse.json({
  *       data: { listContentByNamespace }
  *     })
