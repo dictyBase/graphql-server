@@ -4,7 +4,7 @@ package generated
 
 import (
 	"context"
-	"fmt"
+	"math"
 	"strconv"
 	"sync/atomic"
 
@@ -58,12 +58,18 @@ type MutationResolver interface {
 func (ec *executionContext) field_Mutation_addStrainPhenotype_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "strainId", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "strainId",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["strainId"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNAddStrainPhenotypeInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐAddStrainPhenotypeInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (models.AddStrainPhenotypeInput, error) {
+			return ec.unmarshalNAddStrainPhenotypeInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐAddStrainPhenotypeInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +80,10 @@ func (ec *executionContext) field_Mutation_addStrainPhenotype_args(ctx context.C
 func (ec *executionContext) field_Mutation_createContent_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreateContentInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateContentInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.CreateContentInput, error) {
+			return ec.unmarshalOCreateContentInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateContentInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -85,12 +94,18 @@ func (ec *executionContext) field_Mutation_createContent_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_createGeneGeneralInfo_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateGeneGeneralInfoInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateGeneGeneralInfoInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (models.CreateGeneGeneralInfoInput, error) {
+			return ec.unmarshalNCreateGeneGeneralInfoInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateGeneGeneralInfoInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +116,10 @@ func (ec *executionContext) field_Mutation_createGeneGeneralInfo_args(ctx contex
 func (ec *executionContext) field_Mutation_createOrder_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateOrderInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.CreateOrderInput, error) {
+			return ec.unmarshalOCreateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateOrderInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +130,10 @@ func (ec *executionContext) field_Mutation_createOrder_args(ctx context.Context,
 func (ec *executionContext) field_Mutation_createPermission_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreatePermissionInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreatePermissionInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.CreatePermissionInput, error) {
+			return ec.unmarshalOCreatePermissionInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreatePermissionInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +144,10 @@ func (ec *executionContext) field_Mutation_createPermission_args(ctx context.Con
 func (ec *executionContext) field_Mutation_createPlasmid_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreatePlasmidInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.CreatePlasmidInput, error) {
+			return ec.unmarshalOCreatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreatePlasmidInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -134,12 +158,18 @@ func (ec *executionContext) field_Mutation_createPlasmid_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_createRolePermissionRelationship_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "roleId", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "roleId",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["roleId"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "permissionId", ec.unmarshalNID2string)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "permissionId",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +180,10 @@ func (ec *executionContext) field_Mutation_createRolePermissionRelationship_args
 func (ec *executionContext) field_Mutation_createRole_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreateRoleInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateRoleInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.CreateRoleInput, error) {
+			return ec.unmarshalOCreateRoleInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateRoleInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +194,10 @@ func (ec *executionContext) field_Mutation_createRole_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_createStrain_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateStrainInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.CreateStrainInput, error) {
+			return ec.unmarshalOCreateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateStrainInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -172,12 +208,18 @@ func (ec *executionContext) field_Mutation_createStrain_args(ctx context.Context
 func (ec *executionContext) field_Mutation_createUserRoleRelationship_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "userId", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "userId",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["userId"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "roleId", ec.unmarshalNID2string)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "roleId",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +230,10 @@ func (ec *executionContext) field_Mutation_createUserRoleRelationship_args(ctx c
 func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOCreateUserInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateUserInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.CreateUserInput, error) {
+			return ec.unmarshalOCreateUserInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐCreateUserInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +244,10 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_deleteContent_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +258,10 @@ func (ec *executionContext) field_Mutation_deleteContent_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_deletePermission_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -221,7 +272,10 @@ func (ec *executionContext) field_Mutation_deletePermission_args(ctx context.Con
 func (ec *executionContext) field_Mutation_deleteRole_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -232,7 +286,10 @@ func (ec *executionContext) field_Mutation_deleteRole_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_deleteStock_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -243,12 +300,18 @@ func (ec *executionContext) field_Mutation_deleteStock_args(ctx context.Context,
 func (ec *executionContext) field_Mutation_deleteStrainPhenotype_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "strainId", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "strainId",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["strainId"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteStrainPhenotypeInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStrainPhenotypeInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (models.DeleteStrainPhenotypeInput, error) {
+			return ec.unmarshalNDeleteStrainPhenotypeInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStrainPhenotypeInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -259,7 +322,10 @@ func (ec *executionContext) field_Mutation_deleteStrainPhenotype_args(ctx contex
 func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -270,7 +336,10 @@ func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOLoginInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐLoginInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.LoginInput, error) {
+			return ec.unmarshalOLoginInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐLoginInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -281,7 +350,10 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 func (ec *executionContext) field_Mutation_updateContent_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdateContentInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateContentInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.UpdateContentInput, error) {
+			return ec.unmarshalOUpdateContentInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateContentInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -292,12 +364,18 @@ func (ec *executionContext) field_Mutation_updateContent_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_updateGeneGeneralInfo_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateGeneGeneralInfoInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateGeneGeneralInfoInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (models.UpdateGeneGeneralInfoInput, error) {
+			return ec.unmarshalNUpdateGeneGeneralInfoInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateGeneGeneralInfoInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -308,12 +386,18 @@ func (ec *executionContext) field_Mutation_updateGeneGeneralInfo_args(ctx contex
 func (ec *executionContext) field_Mutation_updateOrder_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateOrderInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.UpdateOrderInput, error) {
+			return ec.unmarshalOUpdateOrderInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateOrderInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -324,12 +408,18 @@ func (ec *executionContext) field_Mutation_updateOrder_args(ctx context.Context,
 func (ec *executionContext) field_Mutation_updatePermission_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdatePermissionInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdatePermissionInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.UpdatePermissionInput, error) {
+			return ec.unmarshalOUpdatePermissionInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdatePermissionInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -340,12 +430,18 @@ func (ec *executionContext) field_Mutation_updatePermission_args(ctx context.Con
 func (ec *executionContext) field_Mutation_updatePlasmid_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdatePlasmidInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.UpdatePlasmidInput, error) {
+			return ec.unmarshalOUpdatePlasmidInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdatePlasmidInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -356,12 +452,18 @@ func (ec *executionContext) field_Mutation_updatePlasmid_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_updateRole_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdateRoleInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateRoleInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.UpdateRoleInput, error) {
+			return ec.unmarshalOUpdateRoleInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateRoleInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -372,17 +474,26 @@ func (ec *executionContext) field_Mutation_updateRole_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_updateStrainPhenotype_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "strainId", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "strainId",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["strainId"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "target", ec.unmarshalNUpdateStrainPhenotypeTargetInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainPhenotypeTargetInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "target",
+		func(ctx context.Context, v any) (models.UpdateStrainPhenotypeTargetInput, error) {
+			return ec.unmarshalNUpdateStrainPhenotypeTargetInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainPhenotypeTargetInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["target"] = arg1
-	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "payload", ec.unmarshalNUpdateStrainPhenotypePayloadInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainPhenotypePayloadInput)
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "payload",
+		func(ctx context.Context, v any) (models.UpdateStrainPhenotypePayloadInput, error) {
+			return ec.unmarshalNUpdateStrainPhenotypePayloadInput2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainPhenotypePayloadInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -393,12 +504,18 @@ func (ec *executionContext) field_Mutation_updateStrainPhenotype_args(ctx contex
 func (ec *executionContext) field_Mutation_updateStrain_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.UpdateStrainInput, error) {
+			return ec.unmarshalOUpdateStrainInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateStrainInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -409,12 +526,18 @@ func (ec *executionContext) field_Mutation_updateStrain_args(ctx context.Context
 func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalOUpdateUserInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateUserInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (*models.UpdateUserInput, error) {
+			return ec.unmarshalOUpdateUserInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUpdateUserInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -425,7 +548,10 @@ func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_uploadFile_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "file", ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "file",
+		func(ctx context.Context, v any) (graphql.Upload, error) {
+			return ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -435,10 +561,6 @@ func (ec *executionContext) field_Mutation_uploadFile_args(ctx context.Context, 
 
 // endregion ***************************** args.gotpl *****************************
 
-// region    ************************** directives.gotpl **************************
-
-// endregion ************************** directives.gotpl **************************
-
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -446,18 +568,21 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_login,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_login(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().Login(ctx, fc.Args["input"].(*models.LoginInput))
+			return ec.Resolvers.Mutation().Login(ctx, fc.Args["input"].(*models.LoginInput))
 		},
 		nil,
-		ec.marshalOAuth2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋauthᚐAuth,
+		func(ctx context.Context, selections ast.SelectionSet, v *auth.Auth) graphql.Marshaler {
+			return ec.marshalOAuth2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋauthᚐAuth(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -465,15 +590,7 @@ func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, fie
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "token":
-				return ec.fieldContext_Auth_token(ctx, field)
-			case "user":
-				return ec.fieldContext_Auth_user(ctx, field)
-			case "identity":
-				return ec.fieldContext_Auth_identity(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Auth", field.Name)
+			return ec.childFields_Auth(ctx, field)
 		},
 	}
 	defer func() {
@@ -495,17 +612,20 @@ func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_logout,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_logout(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Mutation().Logout(ctx)
+			return ec.Resolvers.Mutation().Logout(ctx)
 		},
 		nil,
-		ec.marshalOLogout2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐLogout,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.Logout) graphql.Marshaler {
+			return ec.marshalOLogout2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐLogout(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_logout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -513,11 +633,7 @@ func (ec *executionContext) fieldContext_Mutation_logout(_ context.Context, fiel
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "success":
-				return ec.fieldContext_Logout_success(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Logout", field.Name)
+			return ec.childFields_Logout(ctx, field)
 		},
 	}
 	return fc, nil
@@ -528,18 +644,21 @@ func (ec *executionContext) _Mutation_createContent(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_createContent,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createContent(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreateContent(ctx, fc.Args["input"].(*models.CreateContentInput))
+			return ec.Resolvers.Mutation().CreateContent(ctx, fc.Args["input"].(*models.CreateContentInput))
 		},
 		nil,
-		ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent,
+		func(ctx context.Context, selections ast.SelectionSet, v *content.Content) graphql.Marshaler {
+			return ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_createContent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -547,27 +666,7 @@ func (ec *executionContext) fieldContext_Mutation_createContent(ctx context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Content_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Content_name(ctx, field)
-			case "slug":
-				return ec.fieldContext_Content_slug(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Content_created_by(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_Content_updated_by(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Content_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Content_updated_at(ctx, field)
-			case "content":
-				return ec.fieldContext_Content_content(ctx, field)
-			case "namespace":
-				return ec.fieldContext_Content_namespace(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Content", field.Name)
+			return ec.childFields_Content(ctx, field)
 		},
 	}
 	defer func() {
@@ -589,18 +688,21 @@ func (ec *executionContext) _Mutation_updateContent(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_updateContent,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updateContent(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().UpdateContent(ctx, fc.Args["input"].(*models.UpdateContentInput))
+			return ec.Resolvers.Mutation().UpdateContent(ctx, fc.Args["input"].(*models.UpdateContentInput))
 		},
 		nil,
-		ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent,
+		func(ctx context.Context, selections ast.SelectionSet, v *content.Content) graphql.Marshaler {
+			return ec.marshalOContent2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋcontentᚐContent(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_updateContent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -608,27 +710,7 @@ func (ec *executionContext) fieldContext_Mutation_updateContent(ctx context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Content_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Content_name(ctx, field)
-			case "slug":
-				return ec.fieldContext_Content_slug(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Content_created_by(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_Content_updated_by(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Content_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Content_updated_at(ctx, field)
-			case "content":
-				return ec.fieldContext_Content_content(ctx, field)
-			case "namespace":
-				return ec.fieldContext_Content_namespace(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Content", field.Name)
+			return ec.childFields_Content(ctx, field)
 		},
 	}
 	defer func() {
@@ -650,18 +732,21 @@ func (ec *executionContext) _Mutation_deleteContent(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_deleteContent,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_deleteContent(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().DeleteContent(ctx, fc.Args["id"].(string))
+			return ec.Resolvers.Mutation().DeleteContent(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalODeleteContent2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteContent,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.DeleteContent) graphql.Marshaler {
+			return ec.marshalODeleteContent2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteContent(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_deleteContent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -669,11 +754,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteContent(ctx context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "success":
-				return ec.fieldContext_DeleteContent_success(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DeleteContent", field.Name)
+			return ec.childFields_DeleteContent(ctx, field)
 		},
 	}
 	defer func() {
@@ -695,18 +776,21 @@ func (ec *executionContext) _Mutation_createOrder(ctx context.Context, field gra
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_createOrder,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createOrder(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreateOrder(ctx, fc.Args["input"].(*models.CreateOrderInput))
+			return ec.Resolvers.Mutation().CreateOrder(ctx, fc.Args["input"].(*models.CreateOrderInput))
 		},
 		nil,
-		ec.marshalOOrder2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrder,
+		func(ctx context.Context, selections ast.SelectionSet, v *order.Order) graphql.Marshaler {
+			return ec.marshalOOrder2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrder(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_createOrder(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -714,35 +798,7 @@ func (ec *executionContext) fieldContext_Mutation_createOrder(ctx context.Contex
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Order_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Order_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Order_updated_at(ctx, field)
-			case "courier":
-				return ec.fieldContext_Order_courier(ctx, field)
-			case "courier_account":
-				return ec.fieldContext_Order_courier_account(ctx, field)
-			case "comments":
-				return ec.fieldContext_Order_comments(ctx, field)
-			case "payment":
-				return ec.fieldContext_Order_payment(ctx, field)
-			case "purchase_order_num":
-				return ec.fieldContext_Order_purchase_order_num(ctx, field)
-			case "status":
-				return ec.fieldContext_Order_status(ctx, field)
-			case "consumer":
-				return ec.fieldContext_Order_consumer(ctx, field)
-			case "payer":
-				return ec.fieldContext_Order_payer(ctx, field)
-			case "purchaser":
-				return ec.fieldContext_Order_purchaser(ctx, field)
-			case "items":
-				return ec.fieldContext_Order_items(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Order", field.Name)
+			return ec.childFields_Order(ctx, field)
 		},
 	}
 	defer func() {
@@ -764,18 +820,21 @@ func (ec *executionContext) _Mutation_updateOrder(ctx context.Context, field gra
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_updateOrder,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updateOrder(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().UpdateOrder(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateOrderInput))
+			return ec.Resolvers.Mutation().UpdateOrder(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateOrderInput))
 		},
 		nil,
-		ec.marshalOOrder2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrder,
+		func(ctx context.Context, selections ast.SelectionSet, v *order.Order) graphql.Marshaler {
+			return ec.marshalOOrder2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐOrder(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_updateOrder(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -783,35 +842,7 @@ func (ec *executionContext) fieldContext_Mutation_updateOrder(ctx context.Contex
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Order_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Order_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Order_updated_at(ctx, field)
-			case "courier":
-				return ec.fieldContext_Order_courier(ctx, field)
-			case "courier_account":
-				return ec.fieldContext_Order_courier_account(ctx, field)
-			case "comments":
-				return ec.fieldContext_Order_comments(ctx, field)
-			case "payment":
-				return ec.fieldContext_Order_payment(ctx, field)
-			case "purchase_order_num":
-				return ec.fieldContext_Order_purchase_order_num(ctx, field)
-			case "status":
-				return ec.fieldContext_Order_status(ctx, field)
-			case "consumer":
-				return ec.fieldContext_Order_consumer(ctx, field)
-			case "payer":
-				return ec.fieldContext_Order_payer(ctx, field)
-			case "purchaser":
-				return ec.fieldContext_Order_purchaser(ctx, field)
-			case "items":
-				return ec.fieldContext_Order_items(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Order", field.Name)
+			return ec.childFields_Order(ctx, field)
 		},
 	}
 	defer func() {
@@ -833,18 +864,21 @@ func (ec *executionContext) _Mutation_createStrain(ctx context.Context, field gr
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_createStrain,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createStrain(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreateStrain(ctx, fc.Args["input"].(*models.CreateStrainInput))
+			return ec.Resolvers.Mutation().CreateStrain(ctx, fc.Args["input"].(*models.CreateStrainInput))
 		},
 		nil,
-		ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.Strain) graphql.Marshaler {
+			return ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_createStrain(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -852,55 +886,7 @@ func (ec *executionContext) fieldContext_Mutation_createStrain(ctx context.Conte
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Strain_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Strain_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Strain_updated_at(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Strain_created_by(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_Strain_updated_by(ctx, field)
-			case "summary":
-				return ec.fieldContext_Strain_summary(ctx, field)
-			case "editable_summary":
-				return ec.fieldContext_Strain_editable_summary(ctx, field)
-			case "depositor":
-				return ec.fieldContext_Strain_depositor(ctx, field)
-			case "genes":
-				return ec.fieldContext_Strain_genes(ctx, field)
-			case "dbxrefs":
-				return ec.fieldContext_Strain_dbxrefs(ctx, field)
-			case "publications":
-				return ec.fieldContext_Strain_publications(ctx, field)
-			case "systematic_name":
-				return ec.fieldContext_Strain_systematic_name(ctx, field)
-			case "label":
-				return ec.fieldContext_Strain_label(ctx, field)
-			case "species":
-				return ec.fieldContext_Strain_species(ctx, field)
-			case "plasmid":
-				return ec.fieldContext_Strain_plasmid(ctx, field)
-			case "parent":
-				return ec.fieldContext_Strain_parent(ctx, field)
-			case "names":
-				return ec.fieldContext_Strain_names(ctx, field)
-			case "in_stock":
-				return ec.fieldContext_Strain_in_stock(ctx, field)
-			case "phenotypes":
-				return ec.fieldContext_Strain_phenotypes(ctx, field)
-			case "genetic_modification":
-				return ec.fieldContext_Strain_genetic_modification(ctx, field)
-			case "mutagenesis_method":
-				return ec.fieldContext_Strain_mutagenesis_method(ctx, field)
-			case "characteristics":
-				return ec.fieldContext_Strain_characteristics(ctx, field)
-			case "genotypes":
-				return ec.fieldContext_Strain_genotypes(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Strain", field.Name)
+			return ec.childFields_Strain(ctx, field)
 		},
 	}
 	defer func() {
@@ -922,18 +908,21 @@ func (ec *executionContext) _Mutation_createPlasmid(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_createPlasmid,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createPlasmid(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreatePlasmid(ctx, fc.Args["input"].(*models.CreatePlasmidInput))
+			return ec.Resolvers.Mutation().CreatePlasmid(ctx, fc.Args["input"].(*models.CreatePlasmidInput))
 		},
 		nil,
-		ec.marshalOPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.Plasmid) graphql.Marshaler {
+			return ec.marshalOPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_createPlasmid(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -941,43 +930,7 @@ func (ec *executionContext) fieldContext_Mutation_createPlasmid(ctx context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Plasmid_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Plasmid_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Plasmid_updated_at(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Plasmid_created_by(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_Plasmid_updated_by(ctx, field)
-			case "summary":
-				return ec.fieldContext_Plasmid_summary(ctx, field)
-			case "editable_summary":
-				return ec.fieldContext_Plasmid_editable_summary(ctx, field)
-			case "depositor":
-				return ec.fieldContext_Plasmid_depositor(ctx, field)
-			case "genes":
-				return ec.fieldContext_Plasmid_genes(ctx, field)
-			case "dbxrefs":
-				return ec.fieldContext_Plasmid_dbxrefs(ctx, field)
-			case "publications":
-				return ec.fieldContext_Plasmid_publications(ctx, field)
-			case "name":
-				return ec.fieldContext_Plasmid_name(ctx, field)
-			case "image_map":
-				return ec.fieldContext_Plasmid_image_map(ctx, field)
-			case "sequence":
-				return ec.fieldContext_Plasmid_sequence(ctx, field)
-			case "in_stock":
-				return ec.fieldContext_Plasmid_in_stock(ctx, field)
-			case "keywords":
-				return ec.fieldContext_Plasmid_keywords(ctx, field)
-			case "genbank_accession":
-				return ec.fieldContext_Plasmid_genbank_accession(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Plasmid", field.Name)
+			return ec.childFields_Plasmid(ctx, field)
 		},
 	}
 	defer func() {
@@ -999,18 +952,21 @@ func (ec *executionContext) _Mutation_updateStrain(ctx context.Context, field gr
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_updateStrain,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updateStrain(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().UpdateStrain(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateStrainInput))
+			return ec.Resolvers.Mutation().UpdateStrain(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateStrainInput))
 		},
 		nil,
-		ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.Strain) graphql.Marshaler {
+			return ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_updateStrain(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1018,55 +974,7 @@ func (ec *executionContext) fieldContext_Mutation_updateStrain(ctx context.Conte
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Strain_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Strain_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Strain_updated_at(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Strain_created_by(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_Strain_updated_by(ctx, field)
-			case "summary":
-				return ec.fieldContext_Strain_summary(ctx, field)
-			case "editable_summary":
-				return ec.fieldContext_Strain_editable_summary(ctx, field)
-			case "depositor":
-				return ec.fieldContext_Strain_depositor(ctx, field)
-			case "genes":
-				return ec.fieldContext_Strain_genes(ctx, field)
-			case "dbxrefs":
-				return ec.fieldContext_Strain_dbxrefs(ctx, field)
-			case "publications":
-				return ec.fieldContext_Strain_publications(ctx, field)
-			case "systematic_name":
-				return ec.fieldContext_Strain_systematic_name(ctx, field)
-			case "label":
-				return ec.fieldContext_Strain_label(ctx, field)
-			case "species":
-				return ec.fieldContext_Strain_species(ctx, field)
-			case "plasmid":
-				return ec.fieldContext_Strain_plasmid(ctx, field)
-			case "parent":
-				return ec.fieldContext_Strain_parent(ctx, field)
-			case "names":
-				return ec.fieldContext_Strain_names(ctx, field)
-			case "in_stock":
-				return ec.fieldContext_Strain_in_stock(ctx, field)
-			case "phenotypes":
-				return ec.fieldContext_Strain_phenotypes(ctx, field)
-			case "genetic_modification":
-				return ec.fieldContext_Strain_genetic_modification(ctx, field)
-			case "mutagenesis_method":
-				return ec.fieldContext_Strain_mutagenesis_method(ctx, field)
-			case "characteristics":
-				return ec.fieldContext_Strain_characteristics(ctx, field)
-			case "genotypes":
-				return ec.fieldContext_Strain_genotypes(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Strain", field.Name)
+			return ec.childFields_Strain(ctx, field)
 		},
 	}
 	defer func() {
@@ -1088,18 +996,21 @@ func (ec *executionContext) _Mutation_addStrainPhenotype(ctx context.Context, fi
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_addStrainPhenotype,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_addStrainPhenotype(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().AddStrainPhenotype(ctx, fc.Args["strainId"].(string), fc.Args["input"].(models.AddStrainPhenotypeInput))
+			return ec.Resolvers.Mutation().AddStrainPhenotype(ctx, fc.Args["strainId"].(string), fc.Args["input"].(models.AddStrainPhenotypeInput))
 		},
 		nil,
-		ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.Strain) graphql.Marshaler {
+			return ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_addStrainPhenotype(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1107,55 +1018,7 @@ func (ec *executionContext) fieldContext_Mutation_addStrainPhenotype(ctx context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Strain_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Strain_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Strain_updated_at(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Strain_created_by(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_Strain_updated_by(ctx, field)
-			case "summary":
-				return ec.fieldContext_Strain_summary(ctx, field)
-			case "editable_summary":
-				return ec.fieldContext_Strain_editable_summary(ctx, field)
-			case "depositor":
-				return ec.fieldContext_Strain_depositor(ctx, field)
-			case "genes":
-				return ec.fieldContext_Strain_genes(ctx, field)
-			case "dbxrefs":
-				return ec.fieldContext_Strain_dbxrefs(ctx, field)
-			case "publications":
-				return ec.fieldContext_Strain_publications(ctx, field)
-			case "systematic_name":
-				return ec.fieldContext_Strain_systematic_name(ctx, field)
-			case "label":
-				return ec.fieldContext_Strain_label(ctx, field)
-			case "species":
-				return ec.fieldContext_Strain_species(ctx, field)
-			case "plasmid":
-				return ec.fieldContext_Strain_plasmid(ctx, field)
-			case "parent":
-				return ec.fieldContext_Strain_parent(ctx, field)
-			case "names":
-				return ec.fieldContext_Strain_names(ctx, field)
-			case "in_stock":
-				return ec.fieldContext_Strain_in_stock(ctx, field)
-			case "phenotypes":
-				return ec.fieldContext_Strain_phenotypes(ctx, field)
-			case "genetic_modification":
-				return ec.fieldContext_Strain_genetic_modification(ctx, field)
-			case "mutagenesis_method":
-				return ec.fieldContext_Strain_mutagenesis_method(ctx, field)
-			case "characteristics":
-				return ec.fieldContext_Strain_characteristics(ctx, field)
-			case "genotypes":
-				return ec.fieldContext_Strain_genotypes(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Strain", field.Name)
+			return ec.childFields_Strain(ctx, field)
 		},
 	}
 	defer func() {
@@ -1177,18 +1040,21 @@ func (ec *executionContext) _Mutation_updateStrainPhenotype(ctx context.Context,
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_updateStrainPhenotype,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updateStrainPhenotype(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().UpdateStrainPhenotype(ctx, fc.Args["strainId"].(string), fc.Args["target"].(models.UpdateStrainPhenotypeTargetInput), fc.Args["payload"].(models.UpdateStrainPhenotypePayloadInput))
+			return ec.Resolvers.Mutation().UpdateStrainPhenotype(ctx, fc.Args["strainId"].(string), fc.Args["target"].(models.UpdateStrainPhenotypeTargetInput), fc.Args["payload"].(models.UpdateStrainPhenotypePayloadInput))
 		},
 		nil,
-		ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.Strain) graphql.Marshaler {
+			return ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_updateStrainPhenotype(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1196,55 +1062,7 @@ func (ec *executionContext) fieldContext_Mutation_updateStrainPhenotype(ctx cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Strain_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Strain_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Strain_updated_at(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Strain_created_by(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_Strain_updated_by(ctx, field)
-			case "summary":
-				return ec.fieldContext_Strain_summary(ctx, field)
-			case "editable_summary":
-				return ec.fieldContext_Strain_editable_summary(ctx, field)
-			case "depositor":
-				return ec.fieldContext_Strain_depositor(ctx, field)
-			case "genes":
-				return ec.fieldContext_Strain_genes(ctx, field)
-			case "dbxrefs":
-				return ec.fieldContext_Strain_dbxrefs(ctx, field)
-			case "publications":
-				return ec.fieldContext_Strain_publications(ctx, field)
-			case "systematic_name":
-				return ec.fieldContext_Strain_systematic_name(ctx, field)
-			case "label":
-				return ec.fieldContext_Strain_label(ctx, field)
-			case "species":
-				return ec.fieldContext_Strain_species(ctx, field)
-			case "plasmid":
-				return ec.fieldContext_Strain_plasmid(ctx, field)
-			case "parent":
-				return ec.fieldContext_Strain_parent(ctx, field)
-			case "names":
-				return ec.fieldContext_Strain_names(ctx, field)
-			case "in_stock":
-				return ec.fieldContext_Strain_in_stock(ctx, field)
-			case "phenotypes":
-				return ec.fieldContext_Strain_phenotypes(ctx, field)
-			case "genetic_modification":
-				return ec.fieldContext_Strain_genetic_modification(ctx, field)
-			case "mutagenesis_method":
-				return ec.fieldContext_Strain_mutagenesis_method(ctx, field)
-			case "characteristics":
-				return ec.fieldContext_Strain_characteristics(ctx, field)
-			case "genotypes":
-				return ec.fieldContext_Strain_genotypes(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Strain", field.Name)
+			return ec.childFields_Strain(ctx, field)
 		},
 	}
 	defer func() {
@@ -1266,18 +1084,21 @@ func (ec *executionContext) _Mutation_deleteStrainPhenotype(ctx context.Context,
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_deleteStrainPhenotype,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_deleteStrainPhenotype(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().DeleteStrainPhenotype(ctx, fc.Args["strainId"].(string), fc.Args["input"].(models.DeleteStrainPhenotypeInput))
+			return ec.Resolvers.Mutation().DeleteStrainPhenotype(ctx, fc.Args["strainId"].(string), fc.Args["input"].(models.DeleteStrainPhenotypeInput))
 		},
 		nil,
-		ec.marshalNDeleteStrainPhenotype2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStrainPhenotype,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.DeleteStrainPhenotype) graphql.Marshaler {
+			return ec.marshalNDeleteStrainPhenotype2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStrainPhenotype(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_deleteStrainPhenotype(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1285,11 +1106,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteStrainPhenotype(ctx cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "success":
-				return ec.fieldContext_DeleteStrainPhenotype_success(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DeleteStrainPhenotype", field.Name)
+			return ec.childFields_DeleteStrainPhenotype(ctx, field)
 		},
 	}
 	defer func() {
@@ -1311,18 +1128,21 @@ func (ec *executionContext) _Mutation_updatePlasmid(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_updatePlasmid,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updatePlasmid(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().UpdatePlasmid(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdatePlasmidInput))
+			return ec.Resolvers.Mutation().UpdatePlasmid(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdatePlasmidInput))
 		},
 		nil,
-		ec.marshalOPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.Plasmid) graphql.Marshaler {
+			return ec.marshalOPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_updatePlasmid(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1330,43 +1150,7 @@ func (ec *executionContext) fieldContext_Mutation_updatePlasmid(ctx context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Plasmid_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Plasmid_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Plasmid_updated_at(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Plasmid_created_by(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_Plasmid_updated_by(ctx, field)
-			case "summary":
-				return ec.fieldContext_Plasmid_summary(ctx, field)
-			case "editable_summary":
-				return ec.fieldContext_Plasmid_editable_summary(ctx, field)
-			case "depositor":
-				return ec.fieldContext_Plasmid_depositor(ctx, field)
-			case "genes":
-				return ec.fieldContext_Plasmid_genes(ctx, field)
-			case "dbxrefs":
-				return ec.fieldContext_Plasmid_dbxrefs(ctx, field)
-			case "publications":
-				return ec.fieldContext_Plasmid_publications(ctx, field)
-			case "name":
-				return ec.fieldContext_Plasmid_name(ctx, field)
-			case "image_map":
-				return ec.fieldContext_Plasmid_image_map(ctx, field)
-			case "sequence":
-				return ec.fieldContext_Plasmid_sequence(ctx, field)
-			case "in_stock":
-				return ec.fieldContext_Plasmid_in_stock(ctx, field)
-			case "keywords":
-				return ec.fieldContext_Plasmid_keywords(ctx, field)
-			case "genbank_accession":
-				return ec.fieldContext_Plasmid_genbank_accession(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Plasmid", field.Name)
+			return ec.childFields_Plasmid(ctx, field)
 		},
 	}
 	defer func() {
@@ -1388,18 +1172,21 @@ func (ec *executionContext) _Mutation_deleteStock(ctx context.Context, field gra
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_deleteStock,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_deleteStock(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().DeleteStock(ctx, fc.Args["id"].(string))
+			return ec.Resolvers.Mutation().DeleteStock(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalODeleteStock2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStock,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.DeleteStock) graphql.Marshaler {
+			return ec.marshalODeleteStock2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteStock(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_deleteStock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1407,11 +1194,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteStock(ctx context.Contex
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "success":
-				return ec.fieldContext_DeleteStock_success(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DeleteStock", field.Name)
+			return ec.childFields_DeleteStock(ctx, field)
 		},
 	}
 	defer func() {
@@ -1433,18 +1216,21 @@ func (ec *executionContext) _Mutation_createGeneGeneralInfo(ctx context.Context,
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_createGeneGeneralInfo,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createGeneGeneralInfo(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreateGeneGeneralInfo(ctx, fc.Args["id"].(string), fc.Args["input"].(models.CreateGeneGeneralInfoInput))
+			return ec.Resolvers.Mutation().CreateGeneGeneralInfo(ctx, fc.Args["id"].(string), fc.Args["input"].(models.CreateGeneGeneralInfoInput))
 		},
 		nil,
-		ec.marshalOGeneGeneralInfo2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneGeneralInfo,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.GeneGeneralInfo) graphql.Marshaler {
+			return ec.marshalOGeneGeneralInfo2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneGeneralInfo(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_createGeneGeneralInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1452,27 +1238,7 @@ func (ec *executionContext) fieldContext_Mutation_createGeneGeneralInfo(ctx cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_GeneGeneralInfo_id(ctx, field)
-			case "name_description":
-				return ec.fieldContext_GeneGeneralInfo_name_description(ctx, field)
-			case "gene_product":
-				return ec.fieldContext_GeneGeneralInfo_gene_product(ctx, field)
-			case "synonyms":
-				return ec.fieldContext_GeneGeneralInfo_synonyms(ctx, field)
-			case "description":
-				return ec.fieldContext_GeneGeneralInfo_description(ctx, field)
-			case "created_at":
-				return ec.fieldContext_GeneGeneralInfo_created_at(ctx, field)
-			case "created_by":
-				return ec.fieldContext_GeneGeneralInfo_created_by(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_GeneGeneralInfo_updated_at(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_GeneGeneralInfo_updated_by(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type GeneGeneralInfo", field.Name)
+			return ec.childFields_GeneGeneralInfo(ctx, field)
 		},
 	}
 	defer func() {
@@ -1494,18 +1260,21 @@ func (ec *executionContext) _Mutation_updateGeneGeneralInfo(ctx context.Context,
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_updateGeneGeneralInfo,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updateGeneGeneralInfo(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().UpdateGeneGeneralInfo(ctx, fc.Args["id"].(string), fc.Args["input"].(models.UpdateGeneGeneralInfoInput))
+			return ec.Resolvers.Mutation().UpdateGeneGeneralInfo(ctx, fc.Args["id"].(string), fc.Args["input"].(models.UpdateGeneGeneralInfoInput))
 		},
 		nil,
-		ec.marshalOGeneGeneralInfo2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneGeneralInfo,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.GeneGeneralInfo) graphql.Marshaler {
+			return ec.marshalOGeneGeneralInfo2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneGeneralInfo(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_updateGeneGeneralInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1513,27 +1282,7 @@ func (ec *executionContext) fieldContext_Mutation_updateGeneGeneralInfo(ctx cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_GeneGeneralInfo_id(ctx, field)
-			case "name_description":
-				return ec.fieldContext_GeneGeneralInfo_name_description(ctx, field)
-			case "gene_product":
-				return ec.fieldContext_GeneGeneralInfo_gene_product(ctx, field)
-			case "synonyms":
-				return ec.fieldContext_GeneGeneralInfo_synonyms(ctx, field)
-			case "description":
-				return ec.fieldContext_GeneGeneralInfo_description(ctx, field)
-			case "created_at":
-				return ec.fieldContext_GeneGeneralInfo_created_at(ctx, field)
-			case "created_by":
-				return ec.fieldContext_GeneGeneralInfo_created_by(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_GeneGeneralInfo_updated_at(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_GeneGeneralInfo_updated_by(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type GeneGeneralInfo", field.Name)
+			return ec.childFields_GeneGeneralInfo(ctx, field)
 		},
 	}
 	defer func() {
@@ -1555,18 +1304,21 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_createUser,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createUser(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreateUser(ctx, fc.Args["input"].(*models.CreateUserInput))
+			return ec.Resolvers.Mutation().CreateUser(ctx, fc.Args["input"].(*models.CreateUserInput))
 		},
 		nil,
-		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.User) graphql.Marshaler {
+			return ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1574,43 +1326,7 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "organization":
-				return ec.fieldContext_User_organization(ctx, field)
-			case "group_name":
-				return ec.fieldContext_User_group_name(ctx, field)
-			case "first_address":
-				return ec.fieldContext_User_first_address(ctx, field)
-			case "second_address":
-				return ec.fieldContext_User_second_address(ctx, field)
-			case "city":
-				return ec.fieldContext_User_city(ctx, field)
-			case "state":
-				return ec.fieldContext_User_state(ctx, field)
-			case "zipcode":
-				return ec.fieldContext_User_zipcode(ctx, field)
-			case "country":
-				return ec.fieldContext_User_country(ctx, field)
-			case "phone":
-				return ec.fieldContext_User_phone(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "roles":
-				return ec.fieldContext_User_roles(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return ec.childFields_User(ctx, field)
 		},
 	}
 	defer func() {
@@ -1632,18 +1348,21 @@ func (ec *executionContext) _Mutation_createUserRoleRelationship(ctx context.Con
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_createUserRoleRelationship,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createUserRoleRelationship(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreateUserRoleRelationship(ctx, fc.Args["userId"].(string), fc.Args["roleId"].(string))
+			return ec.Resolvers.Mutation().CreateUserRoleRelationship(ctx, fc.Args["userId"].(string), fc.Args["roleId"].(string))
 		},
 		nil,
-		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.User) graphql.Marshaler {
+			return ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_createUserRoleRelationship(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1651,43 +1370,7 @@ func (ec *executionContext) fieldContext_Mutation_createUserRoleRelationship(ctx
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "organization":
-				return ec.fieldContext_User_organization(ctx, field)
-			case "group_name":
-				return ec.fieldContext_User_group_name(ctx, field)
-			case "first_address":
-				return ec.fieldContext_User_first_address(ctx, field)
-			case "second_address":
-				return ec.fieldContext_User_second_address(ctx, field)
-			case "city":
-				return ec.fieldContext_User_city(ctx, field)
-			case "state":
-				return ec.fieldContext_User_state(ctx, field)
-			case "zipcode":
-				return ec.fieldContext_User_zipcode(ctx, field)
-			case "country":
-				return ec.fieldContext_User_country(ctx, field)
-			case "phone":
-				return ec.fieldContext_User_phone(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "roles":
-				return ec.fieldContext_User_roles(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return ec.childFields_User(ctx, field)
 		},
 	}
 	defer func() {
@@ -1709,18 +1392,21 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_updateUser,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updateUser(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().UpdateUser(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateUserInput))
+			return ec.Resolvers.Mutation().UpdateUser(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateUserInput))
 		},
 		nil,
-		ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.User) graphql.Marshaler {
+			return ec.marshalOUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1728,43 +1414,7 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "organization":
-				return ec.fieldContext_User_organization(ctx, field)
-			case "group_name":
-				return ec.fieldContext_User_group_name(ctx, field)
-			case "first_address":
-				return ec.fieldContext_User_first_address(ctx, field)
-			case "second_address":
-				return ec.fieldContext_User_second_address(ctx, field)
-			case "city":
-				return ec.fieldContext_User_city(ctx, field)
-			case "state":
-				return ec.fieldContext_User_state(ctx, field)
-			case "zipcode":
-				return ec.fieldContext_User_zipcode(ctx, field)
-			case "country":
-				return ec.fieldContext_User_country(ctx, field)
-			case "phone":
-				return ec.fieldContext_User_phone(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "roles":
-				return ec.fieldContext_User_roles(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return ec.childFields_User(ctx, field)
 		},
 	}
 	defer func() {
@@ -1786,18 +1436,21 @@ func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_deleteUser,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_deleteUser(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().DeleteUser(ctx, fc.Args["id"].(string))
+			return ec.Resolvers.Mutation().DeleteUser(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalODeleteUser2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteUser,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.DeleteUser) graphql.Marshaler {
+			return ec.marshalODeleteUser2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteUser(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1805,11 +1458,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "success":
-				return ec.fieldContext_DeleteUser_success(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DeleteUser", field.Name)
+			return ec.childFields_DeleteUser(ctx, field)
 		},
 	}
 	defer func() {
@@ -1831,18 +1480,21 @@ func (ec *executionContext) _Mutation_createRole(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_createRole,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createRole(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreateRole(ctx, fc.Args["input"].(*models.CreateRoleInput))
+			return ec.Resolvers.Mutation().CreateRole(ctx, fc.Args["input"].(*models.CreateRoleInput))
 		},
 		nil,
-		ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.Role) graphql.Marshaler {
+			return ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_createRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1850,21 +1502,7 @@ func (ec *executionContext) fieldContext_Mutation_createRole(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Role_id(ctx, field)
-			case "role":
-				return ec.fieldContext_Role_role(ctx, field)
-			case "description":
-				return ec.fieldContext_Role_description(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Role_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Role_updated_at(ctx, field)
-			case "permissions":
-				return ec.fieldContext_Role_permissions(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
+			return ec.childFields_Role(ctx, field)
 		},
 	}
 	defer func() {
@@ -1886,18 +1524,21 @@ func (ec *executionContext) _Mutation_createRolePermissionRelationship(ctx conte
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_createRolePermissionRelationship,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createRolePermissionRelationship(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreateRolePermissionRelationship(ctx, fc.Args["roleId"].(string), fc.Args["permissionId"].(string))
+			return ec.Resolvers.Mutation().CreateRolePermissionRelationship(ctx, fc.Args["roleId"].(string), fc.Args["permissionId"].(string))
 		},
 		nil,
-		ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.Role) graphql.Marshaler {
+			return ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_createRolePermissionRelationship(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1905,21 +1546,7 @@ func (ec *executionContext) fieldContext_Mutation_createRolePermissionRelationsh
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Role_id(ctx, field)
-			case "role":
-				return ec.fieldContext_Role_role(ctx, field)
-			case "description":
-				return ec.fieldContext_Role_description(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Role_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Role_updated_at(ctx, field)
-			case "permissions":
-				return ec.fieldContext_Role_permissions(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
+			return ec.childFields_Role(ctx, field)
 		},
 	}
 	defer func() {
@@ -1941,18 +1568,21 @@ func (ec *executionContext) _Mutation_updateRole(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_updateRole,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updateRole(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().UpdateRole(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateRoleInput))
+			return ec.Resolvers.Mutation().UpdateRole(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdateRoleInput))
 		},
 		nil,
-		ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.Role) graphql.Marshaler {
+			return ec.marshalORole2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐRole(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_updateRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -1960,21 +1590,7 @@ func (ec *executionContext) fieldContext_Mutation_updateRole(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Role_id(ctx, field)
-			case "role":
-				return ec.fieldContext_Role_role(ctx, field)
-			case "description":
-				return ec.fieldContext_Role_description(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Role_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Role_updated_at(ctx, field)
-			case "permissions":
-				return ec.fieldContext_Role_permissions(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
+			return ec.childFields_Role(ctx, field)
 		},
 	}
 	defer func() {
@@ -1996,18 +1612,21 @@ func (ec *executionContext) _Mutation_deleteRole(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_deleteRole,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_deleteRole(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().DeleteRole(ctx, fc.Args["id"].(string))
+			return ec.Resolvers.Mutation().DeleteRole(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalODeleteRole2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteRole,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.DeleteRole) graphql.Marshaler {
+			return ec.marshalODeleteRole2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeleteRole(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_deleteRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -2015,11 +1634,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteRole(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "success":
-				return ec.fieldContext_DeleteRole_success(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DeleteRole", field.Name)
+			return ec.childFields_DeleteRole(ctx, field)
 		},
 	}
 	defer func() {
@@ -2041,18 +1656,21 @@ func (ec *executionContext) _Mutation_createPermission(ctx context.Context, fiel
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_createPermission,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createPermission(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreatePermission(ctx, fc.Args["input"].(*models.CreatePermissionInput))
+			return ec.Resolvers.Mutation().CreatePermission(ctx, fc.Args["input"].(*models.CreatePermissionInput))
 		},
 		nil,
-		ec.marshalOPermission2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermission,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.Permission) graphql.Marshaler {
+			return ec.marshalOPermission2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermission(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_createPermission(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -2060,21 +1678,7 @@ func (ec *executionContext) fieldContext_Mutation_createPermission(ctx context.C
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Permission_id(ctx, field)
-			case "permission":
-				return ec.fieldContext_Permission_permission(ctx, field)
-			case "description":
-				return ec.fieldContext_Permission_description(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Permission_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Permission_updated_at(ctx, field)
-			case "resource":
-				return ec.fieldContext_Permission_resource(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Permission", field.Name)
+			return ec.childFields_Permission(ctx, field)
 		},
 	}
 	defer func() {
@@ -2096,18 +1700,21 @@ func (ec *executionContext) _Mutation_updatePermission(ctx context.Context, fiel
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_updatePermission,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updatePermission(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().UpdatePermission(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdatePermissionInput))
+			return ec.Resolvers.Mutation().UpdatePermission(ctx, fc.Args["id"].(string), fc.Args["input"].(*models.UpdatePermissionInput))
 		},
 		nil,
-		ec.marshalOPermission2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermission,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.Permission) graphql.Marshaler {
+			return ec.marshalOPermission2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐPermission(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_updatePermission(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -2115,21 +1722,7 @@ func (ec *executionContext) fieldContext_Mutation_updatePermission(ctx context.C
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Permission_id(ctx, field)
-			case "permission":
-				return ec.fieldContext_Permission_permission(ctx, field)
-			case "description":
-				return ec.fieldContext_Permission_description(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Permission_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Permission_updated_at(ctx, field)
-			case "resource":
-				return ec.fieldContext_Permission_resource(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Permission", field.Name)
+			return ec.childFields_Permission(ctx, field)
 		},
 	}
 	defer func() {
@@ -2151,18 +1744,21 @@ func (ec *executionContext) _Mutation_deletePermission(ctx context.Context, fiel
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_deletePermission,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_deletePermission(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().DeletePermission(ctx, fc.Args["id"].(string))
+			return ec.Resolvers.Mutation().DeletePermission(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalODeletePermission2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeletePermission,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.DeletePermission) graphql.Marshaler {
+			return ec.marshalODeletePermission2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐDeletePermission(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_deletePermission(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -2170,11 +1766,7 @@ func (ec *executionContext) fieldContext_Mutation_deletePermission(ctx context.C
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "success":
-				return ec.fieldContext_DeletePermission_success(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DeletePermission", field.Name)
+			return ec.childFields_DeletePermission(ctx, field)
 		},
 	}
 	defer func() {
@@ -2196,18 +1788,21 @@ func (ec *executionContext) _Mutation_uploadFile(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_uploadFile,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_uploadFile(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().UploadFile(ctx, fc.Args["file"].(graphql.Upload))
+			return ec.Resolvers.Mutation().UploadFile(ctx, fc.Args["file"].(graphql.Upload))
 		},
 		nil,
-		ec.marshalNImageFile2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐImageFile,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.ImageFile) graphql.Marshaler {
+			return ec.marshalNImageFile2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐImageFile(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_uploadFile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -2215,11 +1810,7 @@ func (ec *executionContext) fieldContext_Mutation_uploadFile(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "url":
-				return ec.fieldContext_ImageFile_url(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ImageFile", field.Name)
+			return ec.childFields_ImageFile(ctx, field)
 		},
 	}
 	defer func() {
@@ -2271,50 +1862,86 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_login(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "logout":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_logout(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "createContent":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createContent(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "updateContent":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateContent(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "deleteContent":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteContent(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "createOrder":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createOrder(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "updateOrder":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateOrder(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "createStrain":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createStrain(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "createPlasmid":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createPlasmid(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "updateStrain":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateStrain(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "addStrainPhenotype":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_addStrainPhenotype(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "updateStrainPhenotype":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateStrainPhenotype(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "deleteStrainPhenotype":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteStrainPhenotype(ctx, field)
@@ -2326,62 +1953,107 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updatePlasmid(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "deleteStock":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteStock(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "createGeneGeneralInfo":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createGeneGeneralInfo(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "updateGeneGeneralInfo":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateGeneGeneralInfo(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "createUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createUser(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "createUserRoleRelationship":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createUserRoleRelationship(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "updateUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateUser(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "deleteUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteUser(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "createRole":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createRole(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "createRolePermissionRelationship":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createRolePermissionRelationship(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "updateRole":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateRole(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "deleteRole":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteRole(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "createPermission":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createPermission(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "updatePermission":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updatePermission(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "deletePermission":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deletePermission(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "uploadFile":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_uploadFile(ctx, field)
@@ -2398,10 +2070,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,

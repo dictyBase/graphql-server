@@ -6,9 +6,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
-	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/dictyBase/go-genproto/dictybaseapis/publication"
@@ -28,10 +29,6 @@ type AuthorResolver interface {
 
 // endregion ***************************** args.gotpl *****************************
 
-// region    ************************** directives.gotpl **************************
-
-// endregion ************************** directives.gotpl **************************
-
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _Author_last_name(ctx context.Context, field graphql.CollectedField, obj *publication.Author) (ret graphql.Marshaler) {
@@ -39,28 +36,22 @@ func (ec *executionContext) _Author_last_name(ctx context.Context, field graphql
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Author_last_name,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Author_last_name(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.LastName, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Author_last_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Author",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Author", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Author_first_name(ctx context.Context, field graphql.CollectedField, obj *publication.Author) (ret graphql.Marshaler) {
@@ -68,28 +59,22 @@ func (ec *executionContext) _Author_first_name(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Author_first_name,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Author_first_name(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.FirstName, nil
 		},
 		nil,
-		ec.marshalOString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Author_first_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Author",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Author", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Author_initials(ctx context.Context, field graphql.CollectedField, obj *publication.Author) (ret graphql.Marshaler) {
@@ -97,28 +82,22 @@ func (ec *executionContext) _Author_initials(ctx context.Context, field graphql.
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Author_initials,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Author_initials(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Initials, nil
 		},
 		nil,
-		ec.marshalOString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Author_initials(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Author",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Author", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Author_rank(ctx context.Context, field graphql.CollectedField, obj *publication.Author) (ret graphql.Marshaler) {
@@ -126,28 +105,22 @@ func (ec *executionContext) _Author_rank(ctx context.Context, field graphql.Coll
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Author_rank,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Author_rank(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Author().Rank(ctx, obj)
+			return ec.Resolvers.Author().Rank(ctx, obj)
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Author_rank(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Author",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Author", field, true, true, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _NumberOfPublicationsWithGene_num_pubs(ctx context.Context, field graphql.CollectedField, obj *models.NumberOfPublicationsWithGene) (ret graphql.Marshaler) {
@@ -155,28 +128,22 @@ func (ec *executionContext) _NumberOfPublicationsWithGene_num_pubs(ctx context.C
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_NumberOfPublicationsWithGene_num_pubs,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_NumberOfPublicationsWithGene_num_pubs(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.NumPubs, nil
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_NumberOfPublicationsWithGene_num_pubs(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "NumberOfPublicationsWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("NumberOfPublicationsWithGene", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _NumberOfPublicationsWithGene_publications(ctx context.Context, field graphql.CollectedField, obj *models.NumberOfPublicationsWithGene) (ret graphql.Marshaler) {
@@ -184,17 +151,20 @@ func (ec *executionContext) _NumberOfPublicationsWithGene_publications(ctx conte
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_NumberOfPublicationsWithGene_publications,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_NumberOfPublicationsWithGene_publications(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Publications, nil
 		},
 		nil,
-		ec.marshalNPublicationWithGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationWithGeneᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*models.PublicationWithGene) graphql.Marshaler {
+			return ec.marshalNPublicationWithGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationWithGeneᚄ(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_NumberOfPublicationsWithGene_publications(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "NumberOfPublicationsWithGene",
@@ -202,39 +172,7 @@ func (ec *executionContext) fieldContext_NumberOfPublicationsWithGene_publicatio
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "related_genes":
-				return ec.fieldContext_PublicationWithGene_related_genes(ctx, field)
-			case "id":
-				return ec.fieldContext_PublicationWithGene_id(ctx, field)
-			case "doi":
-				return ec.fieldContext_PublicationWithGene_doi(ctx, field)
-			case "title":
-				return ec.fieldContext_PublicationWithGene_title(ctx, field)
-			case "abstract":
-				return ec.fieldContext_PublicationWithGene_abstract(ctx, field)
-			case "journal":
-				return ec.fieldContext_PublicationWithGene_journal(ctx, field)
-			case "pub_date":
-				return ec.fieldContext_PublicationWithGene_pub_date(ctx, field)
-			case "volume":
-				return ec.fieldContext_PublicationWithGene_volume(ctx, field)
-			case "pages":
-				return ec.fieldContext_PublicationWithGene_pages(ctx, field)
-			case "issn":
-				return ec.fieldContext_PublicationWithGene_issn(ctx, field)
-			case "pub_type":
-				return ec.fieldContext_PublicationWithGene_pub_type(ctx, field)
-			case "source":
-				return ec.fieldContext_PublicationWithGene_source(ctx, field)
-			case "issue":
-				return ec.fieldContext_PublicationWithGene_issue(ctx, field)
-			case "status":
-				return ec.fieldContext_PublicationWithGene_status(ctx, field)
-			case "authors":
-				return ec.fieldContext_PublicationWithGene_authors(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PublicationWithGene", field.Name)
+			return ec.childFields_PublicationWithGene(ctx, field)
 		},
 	}
 	return fc, nil
@@ -245,28 +183,22 @@ func (ec *executionContext) _Publication_id(ctx context.Context, field graphql.C
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_id,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_id(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.ID, nil
 		},
 		nil,
-		ec.marshalNID2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type ID does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_doi(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -274,28 +206,22 @@ func (ec *executionContext) _Publication_doi(ctx context.Context, field graphql.
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_doi,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_doi(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Doi, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_doi(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_title(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -303,28 +229,22 @@ func (ec *executionContext) _Publication_title(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_title,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_title(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Title, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_abstract(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -332,28 +252,22 @@ func (ec *executionContext) _Publication_abstract(ctx context.Context, field gra
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_abstract,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_abstract(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Abstract, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_abstract(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_journal(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -361,28 +275,22 @@ func (ec *executionContext) _Publication_journal(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_journal,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_journal(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Journal, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_journal(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_pub_date(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -390,28 +298,22 @@ func (ec *executionContext) _Publication_pub_date(ctx context.Context, field gra
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_pub_date,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_pub_date(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.PubDate, nil
 		},
 		nil,
-		ec.marshalOTimestamp2ᚖtimeᚐTime,
+		func(ctx context.Context, selections ast.SelectionSet, v *time.Time) graphql.Marshaler {
+			return ec.marshalOTimestamp2ᚖtimeᚐTime(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_pub_date(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Timestamp does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type Timestamp does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_volume(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -419,28 +321,22 @@ func (ec *executionContext) _Publication_volume(ctx context.Context, field graph
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_volume,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_volume(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Volume, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_volume(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_pages(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -448,28 +344,22 @@ func (ec *executionContext) _Publication_pages(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_pages,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_pages(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Pages, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_pages(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_issn(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -477,28 +367,22 @@ func (ec *executionContext) _Publication_issn(ctx context.Context, field graphql
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_issn,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_issn(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Issn, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_issn(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_pub_type(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -506,28 +390,22 @@ func (ec *executionContext) _Publication_pub_type(ctx context.Context, field gra
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_pub_type,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_pub_type(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.PubType, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_pub_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_source(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -535,28 +413,22 @@ func (ec *executionContext) _Publication_source(ctx context.Context, field graph
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_source,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_source(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Source, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_issue(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -564,28 +436,22 @@ func (ec *executionContext) _Publication_issue(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_issue,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_issue(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Issue, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_issue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_status(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -593,28 +459,22 @@ func (ec *executionContext) _Publication_status(ctx context.Context, field graph
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_status,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_status(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Status, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Publication",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Publication", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Publication_authors(ctx context.Context, field graphql.CollectedField, obj *models.Publication) (ret graphql.Marshaler) {
@@ -622,17 +482,20 @@ func (ec *executionContext) _Publication_authors(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Publication_authors,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Publication_authors(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Authors, nil
 		},
 		nil,
-		ec.marshalNAuthor2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthorᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*publication.Author) graphql.Marshaler {
+			return ec.marshalNAuthor2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthorᚄ(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Publication_authors(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Publication",
@@ -640,17 +503,7 @@ func (ec *executionContext) fieldContext_Publication_authors(_ context.Context, 
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "last_name":
-				return ec.fieldContext_Author_last_name(ctx, field)
-			case "first_name":
-				return ec.fieldContext_Author_first_name(ctx, field)
-			case "initials":
-				return ec.fieldContext_Author_initials(ctx, field)
-			case "rank":
-				return ec.fieldContext_Author_rank(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Author", field.Name)
+			return ec.childFields_Author(ctx, field)
 		},
 	}
 	return fc, nil
@@ -661,17 +514,20 @@ func (ec *executionContext) _PublicationWithGene_related_genes(ctx context.Conte
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_related_genes,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_related_genes(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.RelatedGenes, nil
 		},
 		nil,
-		ec.marshalNGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*models.Gene) graphql.Marshaler {
+			return ec.marshalNGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_related_genes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
@@ -679,13 +535,7 @@ func (ec *executionContext) fieldContext_PublicationWithGene_related_genes(_ con
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Gene_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Gene_name(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Gene", field.Name)
+			return ec.childFields_Gene(ctx, field)
 		},
 	}
 	return fc, nil
@@ -696,28 +546,22 @@ func (ec *executionContext) _PublicationWithGene_id(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_id,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_id(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.ID, nil
 		},
 		nil,
-		ec.marshalNID2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type ID does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_doi(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -725,28 +569,22 @@ func (ec *executionContext) _PublicationWithGene_doi(ctx context.Context, field 
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_doi,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_doi(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Doi, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_doi(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_title(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -754,28 +592,22 @@ func (ec *executionContext) _PublicationWithGene_title(ctx context.Context, fiel
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_title,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_title(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Title, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_abstract(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -783,28 +615,22 @@ func (ec *executionContext) _PublicationWithGene_abstract(ctx context.Context, f
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_abstract,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_abstract(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Abstract, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_abstract(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_journal(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -812,28 +638,22 @@ func (ec *executionContext) _PublicationWithGene_journal(ctx context.Context, fi
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_journal,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_journal(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Journal, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_journal(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_pub_date(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -841,28 +661,22 @@ func (ec *executionContext) _PublicationWithGene_pub_date(ctx context.Context, f
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_pub_date,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_pub_date(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.PubDate, nil
 		},
 		nil,
-		ec.marshalOTimestamp2ᚖtimeᚐTime,
+		func(ctx context.Context, selections ast.SelectionSet, v *time.Time) graphql.Marshaler {
+			return ec.marshalOTimestamp2ᚖtimeᚐTime(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_pub_date(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Timestamp does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type Timestamp does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_volume(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -870,28 +684,22 @@ func (ec *executionContext) _PublicationWithGene_volume(ctx context.Context, fie
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_volume,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_volume(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Volume, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_volume(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_pages(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -899,28 +707,22 @@ func (ec *executionContext) _PublicationWithGene_pages(ctx context.Context, fiel
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_pages,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_pages(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Pages, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_pages(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_issn(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -928,28 +730,22 @@ func (ec *executionContext) _PublicationWithGene_issn(ctx context.Context, field
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_issn,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_issn(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Issn, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_issn(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_pub_type(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -957,28 +753,22 @@ func (ec *executionContext) _PublicationWithGene_pub_type(ctx context.Context, f
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_pub_type,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_pub_type(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.PubType, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_pub_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_source(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -986,28 +776,22 @@ func (ec *executionContext) _PublicationWithGene_source(ctx context.Context, fie
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_source,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_source(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Source, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_issue(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -1015,28 +799,22 @@ func (ec *executionContext) _PublicationWithGene_issue(ctx context.Context, fiel
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_issue,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_issue(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Issue, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_issue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_status(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -1044,28 +822,22 @@ func (ec *executionContext) _PublicationWithGene_status(ctx context.Context, fie
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_status,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_status(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Status, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PublicationWithGene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PublicationWithGene", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PublicationWithGene_authors(ctx context.Context, field graphql.CollectedField, obj *models.PublicationWithGene) (ret graphql.Marshaler) {
@@ -1073,17 +845,20 @@ func (ec *executionContext) _PublicationWithGene_authors(ctx context.Context, fi
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PublicationWithGene_authors,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PublicationWithGene_authors(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Authors, nil
 		},
 		nil,
-		ec.marshalNAuthor2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthorᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*publication.Author) graphql.Marshaler {
+			return ec.marshalNAuthor2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthorᚄ(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PublicationWithGene_authors(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PublicationWithGene",
@@ -1091,17 +866,7 @@ func (ec *executionContext) fieldContext_PublicationWithGene_authors(_ context.C
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "last_name":
-				return ec.fieldContext_Author_last_name(ctx, field)
-			case "first_name":
-				return ec.fieldContext_Author_first_name(ctx, field)
-			case "initials":
-				return ec.fieldContext_Author_initials(ctx, field)
-			case "rank":
-				return ec.fieldContext_Author_rank(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Author", field.Name)
+			return ec.childFields_Author(ctx, field)
 		},
 	}
 	return fc, nil
@@ -1164,18 +929,27 @@ func (ec *executionContext) _Author(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "first_name":
 			out.Values[i] = ec._Author_first_name(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "initials":
 			out.Values[i] = ec._Author_initials(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "rank":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Author_rank(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -1208,10 +982,10 @@ func (ec *executionContext) _Author(ctx context.Context, sel ast.SelectionSet, o
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -1252,10 +1026,10 @@ func (ec *executionContext) _NumberOfPublicationsWithGene(ctx context.Context, s
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -1284,6 +1058,9 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 			}
 		case "doi":
 			out.Values[i] = ec._Publication_doi(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "title":
 			out.Values[i] = ec._Publication_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -1301,12 +1078,24 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 			}
 		case "pub_date":
 			out.Values[i] = ec._Publication_pub_date(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "volume":
 			out.Values[i] = ec._Publication_volume(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "pages":
 			out.Values[i] = ec._Publication_pages(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "issn":
 			out.Values[i] = ec._Publication_issn(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "pub_type":
 			out.Values[i] = ec._Publication_pub_type(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -1319,8 +1108,14 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 			}
 		case "issue":
 			out.Values[i] = ec._Publication_issue(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "status":
 			out.Values[i] = ec._Publication_status(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "authors":
 			out.Values[i] = ec._Publication_authors(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -1335,10 +1130,10 @@ func (ec *executionContext) _Publication(ctx context.Context, sel ast.SelectionS
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -1372,6 +1167,9 @@ func (ec *executionContext) _PublicationWithGene(ctx context.Context, sel ast.Se
 			}
 		case "doi":
 			out.Values[i] = ec._PublicationWithGene_doi(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "title":
 			out.Values[i] = ec._PublicationWithGene_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -1389,12 +1187,24 @@ func (ec *executionContext) _PublicationWithGene(ctx context.Context, sel ast.Se
 			}
 		case "pub_date":
 			out.Values[i] = ec._PublicationWithGene_pub_date(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "volume":
 			out.Values[i] = ec._PublicationWithGene_volume(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "pages":
 			out.Values[i] = ec._PublicationWithGene_pages(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "issn":
 			out.Values[i] = ec._PublicationWithGene_issn(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "pub_type":
 			out.Values[i] = ec._PublicationWithGene_pub_type(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -1407,8 +1217,14 @@ func (ec *executionContext) _PublicationWithGene(ctx context.Context, sel ast.Se
 			}
 		case "issue":
 			out.Values[i] = ec._PublicationWithGene_issue(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "status":
 			out.Values[i] = ec._PublicationWithGene_status(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "authors":
 			out.Values[i] = ec._PublicationWithGene_authors(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -1423,10 +1239,10 @@ func (ec *executionContext) _PublicationWithGene(ctx context.Context, sel ast.Se
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -1442,39 +1258,11 @@ func (ec *executionContext) _PublicationWithGene(ctx context.Context, sel ast.Se
 // region    ***************************** type.gotpl *****************************
 
 func (ec *executionContext) marshalNAuthor2ᚕᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthorᚄ(ctx context.Context, sel ast.SelectionSet, v []*publication.Author) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNAuthor2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthor(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNAuthor2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋpublicationᚐAuthor(ctx, sel, v[i])
+	})
 
 	for _, e := range ret {
 		if e == graphql.Null {
@@ -1506,39 +1294,11 @@ func (ec *executionContext) marshalNPublication2ᚖgithubᚗcomᚋdictyBaseᚋgr
 }
 
 func (ec *executionContext) marshalNPublicationWithGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationWithGeneᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.PublicationWithGene) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNPublicationWithGene2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationWithGene(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNPublicationWithGene2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationWithGene(ctx, sel, v[i])
+	})
 
 	for _, e := range ret {
 		if e == graphql.Null {
@@ -1563,39 +1323,11 @@ func (ec *executionContext) marshalOPublication2ᚕᚖgithubᚗcomᚋdictyBase�
 	if v == nil {
 		return graphql.Null
 	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNPublication2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublication(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNPublication2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublication(ctx, sel, v[i])
+	})
 
 	for _, e := range ret {
 		if e == graphql.Null {
