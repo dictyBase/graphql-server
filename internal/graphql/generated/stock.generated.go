@@ -6,9 +6,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
-	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
@@ -57,10 +58,6 @@ type StrainResolver interface {
 
 // endregion ***************************** args.gotpl *****************************
 
-// region    ************************** directives.gotpl **************************
-
-// endregion ************************** directives.gotpl **************************
-
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _DeleteStock_success(ctx context.Context, field graphql.CollectedField, obj *models.DeleteStock) (ret graphql.Marshaler) {
@@ -68,28 +65,22 @@ func (ec *executionContext) _DeleteStock_success(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DeleteStock_success,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DeleteStock_success(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Success, nil
 		},
 		nil,
-		ec.marshalNBoolean2bool,
+		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
+			return ec.marshalNBoolean2bool(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_DeleteStock_success(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DeleteStock",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("DeleteStock", field, false, false, errors.New("field of type Boolean does not have child fields"))
 }
 
 func (ec *executionContext) _DeleteStrainPhenotype_success(ctx context.Context, field graphql.CollectedField, obj *models.DeleteStrainPhenotype) (ret graphql.Marshaler) {
@@ -97,28 +88,22 @@ func (ec *executionContext) _DeleteStrainPhenotype_success(ctx context.Context, 
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DeleteStrainPhenotype_success,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DeleteStrainPhenotype_success(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Success, nil
 		},
 		nil,
-		ec.marshalNBoolean2bool,
+		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
+			return ec.marshalNBoolean2bool(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_DeleteStrainPhenotype_success(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DeleteStrainPhenotype",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("DeleteStrainPhenotype", field, false, false, errors.New("field of type Boolean does not have child fields"))
 }
 
 func (ec *executionContext) _Phenotype_phenotype(ctx context.Context, field graphql.CollectedField, obj *models.Phenotype) (ret graphql.Marshaler) {
@@ -126,28 +111,22 @@ func (ec *executionContext) _Phenotype_phenotype(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Phenotype_phenotype,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Phenotype_phenotype(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Phenotype, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Phenotype_phenotype(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Phenotype",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Phenotype", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Phenotype_note(ctx context.Context, field graphql.CollectedField, obj *models.Phenotype) (ret graphql.Marshaler) {
@@ -155,28 +134,22 @@ func (ec *executionContext) _Phenotype_note(ctx context.Context, field graphql.C
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Phenotype_note,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Phenotype_note(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Note, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Phenotype_note(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Phenotype",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Phenotype", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Phenotype_assay(ctx context.Context, field graphql.CollectedField, obj *models.Phenotype) (ret graphql.Marshaler) {
@@ -184,28 +157,22 @@ func (ec *executionContext) _Phenotype_assay(ctx context.Context, field graphql.
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Phenotype_assay,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Phenotype_assay(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Assay, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Phenotype_assay(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Phenotype",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Phenotype", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Phenotype_environment(ctx context.Context, field graphql.CollectedField, obj *models.Phenotype) (ret graphql.Marshaler) {
@@ -213,28 +180,22 @@ func (ec *executionContext) _Phenotype_environment(ctx context.Context, field gr
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Phenotype_environment,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Phenotype_environment(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Environment, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Phenotype_environment(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Phenotype",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Phenotype", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Phenotype_publication(ctx context.Context, field graphql.CollectedField, obj *models.Phenotype) (ret graphql.Marshaler) {
@@ -242,17 +203,20 @@ func (ec *executionContext) _Phenotype_publication(ctx context.Context, field gr
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Phenotype_publication,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Phenotype_publication(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Publication, nil
 		},
 		nil,
-		ec.marshalOPublication2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublication,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.Publication) graphql.Marshaler {
+			return ec.marshalOPublication2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublication(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Phenotype_publication(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Phenotype",
@@ -260,37 +224,7 @@ func (ec *executionContext) fieldContext_Phenotype_publication(_ context.Context
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Publication_id(ctx, field)
-			case "doi":
-				return ec.fieldContext_Publication_doi(ctx, field)
-			case "title":
-				return ec.fieldContext_Publication_title(ctx, field)
-			case "abstract":
-				return ec.fieldContext_Publication_abstract(ctx, field)
-			case "journal":
-				return ec.fieldContext_Publication_journal(ctx, field)
-			case "pub_date":
-				return ec.fieldContext_Publication_pub_date(ctx, field)
-			case "volume":
-				return ec.fieldContext_Publication_volume(ctx, field)
-			case "pages":
-				return ec.fieldContext_Publication_pages(ctx, field)
-			case "issn":
-				return ec.fieldContext_Publication_issn(ctx, field)
-			case "pub_type":
-				return ec.fieldContext_Publication_pub_type(ctx, field)
-			case "source":
-				return ec.fieldContext_Publication_source(ctx, field)
-			case "issue":
-				return ec.fieldContext_Publication_issue(ctx, field)
-			case "status":
-				return ec.fieldContext_Publication_status(ctx, field)
-			case "authors":
-				return ec.fieldContext_Publication_authors(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Publication", field.Name)
+			return ec.childFields_Publication(ctx, field)
 		},
 	}
 	return fc, nil
@@ -301,28 +235,22 @@ func (ec *executionContext) _Plasmid_id(ctx context.Context, field graphql.Colle
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_id,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_id(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.ID, nil
 		},
 		nil,
-		ec.marshalNID2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, false, false, errors.New("field of type ID does not have child fields"))
 }
 
 func (ec *executionContext) _Plasmid_created_at(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
@@ -330,28 +258,22 @@ func (ec *executionContext) _Plasmid_created_at(ctx context.Context, field graph
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_created_at,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_created_at(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.CreatedAt, nil
 		},
 		nil,
-		ec.marshalNTimestamp2timeᚐTime,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTimestamp2timeᚐTime(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Timestamp does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, false, false, errors.New("field of type Timestamp does not have child fields"))
 }
 
 func (ec *executionContext) _Plasmid_updated_at(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
@@ -359,28 +281,22 @@ func (ec *executionContext) _Plasmid_updated_at(ctx context.Context, field graph
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_updated_at,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_updated_at(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.UpdatedAt, nil
 		},
 		nil,
-		ec.marshalNTimestamp2timeᚐTime,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTimestamp2timeᚐTime(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Timestamp does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, false, false, errors.New("field of type Timestamp does not have child fields"))
 }
 
 func (ec *executionContext) _Plasmid_created_by(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
@@ -388,17 +304,20 @@ func (ec *executionContext) _Plasmid_created_by(ctx context.Context, field graph
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_created_by,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_created_by(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Plasmid().CreatedBy(ctx, obj)
+			return ec.Resolvers.Plasmid().CreatedBy(ctx, obj)
 		},
 		nil,
-		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.User) graphql.Marshaler {
+			return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_created_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
@@ -406,43 +325,7 @@ func (ec *executionContext) fieldContext_Plasmid_created_by(_ context.Context, f
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "organization":
-				return ec.fieldContext_User_organization(ctx, field)
-			case "group_name":
-				return ec.fieldContext_User_group_name(ctx, field)
-			case "first_address":
-				return ec.fieldContext_User_first_address(ctx, field)
-			case "second_address":
-				return ec.fieldContext_User_second_address(ctx, field)
-			case "city":
-				return ec.fieldContext_User_city(ctx, field)
-			case "state":
-				return ec.fieldContext_User_state(ctx, field)
-			case "zipcode":
-				return ec.fieldContext_User_zipcode(ctx, field)
-			case "country":
-				return ec.fieldContext_User_country(ctx, field)
-			case "phone":
-				return ec.fieldContext_User_phone(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "roles":
-				return ec.fieldContext_User_roles(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return ec.childFields_User(ctx, field)
 		},
 	}
 	return fc, nil
@@ -453,17 +336,20 @@ func (ec *executionContext) _Plasmid_updated_by(ctx context.Context, field graph
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_updated_by,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_updated_by(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Plasmid().UpdatedBy(ctx, obj)
+			return ec.Resolvers.Plasmid().UpdatedBy(ctx, obj)
 		},
 		nil,
-		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.User) graphql.Marshaler {
+			return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_updated_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
@@ -471,43 +357,7 @@ func (ec *executionContext) fieldContext_Plasmid_updated_by(_ context.Context, f
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "organization":
-				return ec.fieldContext_User_organization(ctx, field)
-			case "group_name":
-				return ec.fieldContext_User_group_name(ctx, field)
-			case "first_address":
-				return ec.fieldContext_User_first_address(ctx, field)
-			case "second_address":
-				return ec.fieldContext_User_second_address(ctx, field)
-			case "city":
-				return ec.fieldContext_User_city(ctx, field)
-			case "state":
-				return ec.fieldContext_User_state(ctx, field)
-			case "zipcode":
-				return ec.fieldContext_User_zipcode(ctx, field)
-			case "country":
-				return ec.fieldContext_User_country(ctx, field)
-			case "phone":
-				return ec.fieldContext_User_phone(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "roles":
-				return ec.fieldContext_User_roles(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return ec.childFields_User(ctx, field)
 		},
 	}
 	return fc, nil
@@ -518,28 +368,22 @@ func (ec *executionContext) _Plasmid_summary(ctx context.Context, field graphql.
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_summary,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_summary(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Summary, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_summary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Plasmid_editable_summary(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
@@ -547,28 +391,22 @@ func (ec *executionContext) _Plasmid_editable_summary(ctx context.Context, field
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_editable_summary,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_editable_summary(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.EditableSummary, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_editable_summary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Plasmid_depositor(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
@@ -576,17 +414,20 @@ func (ec *executionContext) _Plasmid_depositor(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_depositor,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_depositor(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Plasmid().Depositor(ctx, obj)
+			return ec.Resolvers.Plasmid().Depositor(ctx, obj)
 		},
 		nil,
-		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.User) graphql.Marshaler {
+			return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_depositor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
@@ -594,43 +435,7 @@ func (ec *executionContext) fieldContext_Plasmid_depositor(_ context.Context, fi
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "organization":
-				return ec.fieldContext_User_organization(ctx, field)
-			case "group_name":
-				return ec.fieldContext_User_group_name(ctx, field)
-			case "first_address":
-				return ec.fieldContext_User_first_address(ctx, field)
-			case "second_address":
-				return ec.fieldContext_User_second_address(ctx, field)
-			case "city":
-				return ec.fieldContext_User_city(ctx, field)
-			case "state":
-				return ec.fieldContext_User_state(ctx, field)
-			case "zipcode":
-				return ec.fieldContext_User_zipcode(ctx, field)
-			case "country":
-				return ec.fieldContext_User_country(ctx, field)
-			case "phone":
-				return ec.fieldContext_User_phone(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "roles":
-				return ec.fieldContext_User_roles(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return ec.childFields_User(ctx, field)
 		},
 	}
 	return fc, nil
@@ -641,17 +446,20 @@ func (ec *executionContext) _Plasmid_genes(ctx context.Context, field graphql.Co
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_genes,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_genes(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Plasmid().Genes(ctx, obj)
+			return ec.Resolvers.Plasmid().Genes(ctx, obj)
 		},
 		nil,
-		ec.marshalOGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*models.Gene) graphql.Marshaler {
+			return ec.marshalOGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_genes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
@@ -659,13 +467,7 @@ func (ec *executionContext) fieldContext_Plasmid_genes(_ context.Context, field 
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Gene_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Gene_name(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Gene", field.Name)
+			return ec.childFields_Gene(ctx, field)
 		},
 	}
 	return fc, nil
@@ -676,28 +478,22 @@ func (ec *executionContext) _Plasmid_dbxrefs(ctx context.Context, field graphql.
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_dbxrefs,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_dbxrefs(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Dbxrefs, nil
 		},
 		nil,
-		ec.marshalOString2ᚕᚖstringᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*string) graphql.Marshaler {
+			return ec.marshalOString2ᚕᚖstringᚄ(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_dbxrefs(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Plasmid_publications(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
@@ -705,17 +501,20 @@ func (ec *executionContext) _Plasmid_publications(ctx context.Context, field gra
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_publications,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_publications(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Plasmid().Publications(ctx, obj)
+			return ec.Resolvers.Plasmid().Publications(ctx, obj)
 		},
 		nil,
-		ec.marshalOPublication2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*models.Publication) graphql.Marshaler {
+			return ec.marshalOPublication2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationᚄ(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_publications(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Plasmid",
@@ -723,37 +522,7 @@ func (ec *executionContext) fieldContext_Plasmid_publications(_ context.Context,
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Publication_id(ctx, field)
-			case "doi":
-				return ec.fieldContext_Publication_doi(ctx, field)
-			case "title":
-				return ec.fieldContext_Publication_title(ctx, field)
-			case "abstract":
-				return ec.fieldContext_Publication_abstract(ctx, field)
-			case "journal":
-				return ec.fieldContext_Publication_journal(ctx, field)
-			case "pub_date":
-				return ec.fieldContext_Publication_pub_date(ctx, field)
-			case "volume":
-				return ec.fieldContext_Publication_volume(ctx, field)
-			case "pages":
-				return ec.fieldContext_Publication_pages(ctx, field)
-			case "issn":
-				return ec.fieldContext_Publication_issn(ctx, field)
-			case "pub_type":
-				return ec.fieldContext_Publication_pub_type(ctx, field)
-			case "source":
-				return ec.fieldContext_Publication_source(ctx, field)
-			case "issue":
-				return ec.fieldContext_Publication_issue(ctx, field)
-			case "status":
-				return ec.fieldContext_Publication_status(ctx, field)
-			case "authors":
-				return ec.fieldContext_Publication_authors(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Publication", field.Name)
+			return ec.childFields_Publication(ctx, field)
 		},
 	}
 	return fc, nil
@@ -764,28 +533,22 @@ func (ec *executionContext) _Plasmid_name(ctx context.Context, field graphql.Col
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_name,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_name(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Name, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Plasmid_image_map(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
@@ -793,28 +556,22 @@ func (ec *executionContext) _Plasmid_image_map(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_image_map,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_image_map(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.ImageMap, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_image_map(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Plasmid_sequence(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
@@ -822,28 +579,22 @@ func (ec *executionContext) _Plasmid_sequence(ctx context.Context, field graphql
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_sequence,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_sequence(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Sequence, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_sequence(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Plasmid_in_stock(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
@@ -851,28 +602,22 @@ func (ec *executionContext) _Plasmid_in_stock(ctx context.Context, field graphql
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_in_stock,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_in_stock(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Plasmid().InStock(ctx, obj)
+			return ec.Resolvers.Plasmid().InStock(ctx, obj)
 		},
 		nil,
-		ec.marshalNBoolean2bool,
+		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
+			return ec.marshalNBoolean2bool(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_in_stock(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, true, true, errors.New("field of type Boolean does not have child fields"))
 }
 
 func (ec *executionContext) _Plasmid_keywords(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
@@ -880,28 +625,22 @@ func (ec *executionContext) _Plasmid_keywords(ctx context.Context, field graphql
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_keywords,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_keywords(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Plasmid().Keywords(ctx, obj)
+			return ec.Resolvers.Plasmid().Keywords(ctx, obj)
 		},
 		nil,
-		ec.marshalOString2ᚕstringᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []string) graphql.Marshaler {
+			return ec.marshalOString2ᚕstringᚄ(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_keywords(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, true, true, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Plasmid_genbank_accession(ctx context.Context, field graphql.CollectedField, obj *models.Plasmid) (ret graphql.Marshaler) {
@@ -909,28 +648,22 @@ func (ec *executionContext) _Plasmid_genbank_accession(ctx context.Context, fiel
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Plasmid_genbank_accession,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Plasmid_genbank_accession(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Plasmid().GenbankAccession(ctx, obj)
+			return ec.Resolvers.Plasmid().GenbankAccession(ctx, obj)
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Plasmid_genbank_accession(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Plasmid",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Plasmid", field, true, true, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _PlasmidListWithCursor_plasmids(ctx context.Context, field graphql.CollectedField, obj *models.PlasmidListWithCursor) (ret graphql.Marshaler) {
@@ -938,17 +671,20 @@ func (ec *executionContext) _PlasmidListWithCursor_plasmids(ctx context.Context,
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PlasmidListWithCursor_plasmids,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PlasmidListWithCursor_plasmids(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Plasmids, nil
 		},
 		nil,
-		ec.marshalNPlasmid2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*models.Plasmid) graphql.Marshaler {
+			return ec.marshalNPlasmid2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidᚄ(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PlasmidListWithCursor_plasmids(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PlasmidListWithCursor",
@@ -956,43 +692,7 @@ func (ec *executionContext) fieldContext_PlasmidListWithCursor_plasmids(_ contex
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Plasmid_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Plasmid_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Plasmid_updated_at(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Plasmid_created_by(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_Plasmid_updated_by(ctx, field)
-			case "summary":
-				return ec.fieldContext_Plasmid_summary(ctx, field)
-			case "editable_summary":
-				return ec.fieldContext_Plasmid_editable_summary(ctx, field)
-			case "depositor":
-				return ec.fieldContext_Plasmid_depositor(ctx, field)
-			case "genes":
-				return ec.fieldContext_Plasmid_genes(ctx, field)
-			case "dbxrefs":
-				return ec.fieldContext_Plasmid_dbxrefs(ctx, field)
-			case "publications":
-				return ec.fieldContext_Plasmid_publications(ctx, field)
-			case "name":
-				return ec.fieldContext_Plasmid_name(ctx, field)
-			case "image_map":
-				return ec.fieldContext_Plasmid_image_map(ctx, field)
-			case "sequence":
-				return ec.fieldContext_Plasmid_sequence(ctx, field)
-			case "in_stock":
-				return ec.fieldContext_Plasmid_in_stock(ctx, field)
-			case "keywords":
-				return ec.fieldContext_Plasmid_keywords(ctx, field)
-			case "genbank_accession":
-				return ec.fieldContext_Plasmid_genbank_accession(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Plasmid", field.Name)
+			return ec.childFields_Plasmid(ctx, field)
 		},
 	}
 	return fc, nil
@@ -1003,28 +703,22 @@ func (ec *executionContext) _PlasmidListWithCursor_nextCursor(ctx context.Contex
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PlasmidListWithCursor_nextCursor,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PlasmidListWithCursor_nextCursor(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.NextCursor, nil
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PlasmidListWithCursor_nextCursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PlasmidListWithCursor",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PlasmidListWithCursor", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _PlasmidListWithCursor_previousCursor(ctx context.Context, field graphql.CollectedField, obj *models.PlasmidListWithCursor) (ret graphql.Marshaler) {
@@ -1032,28 +726,22 @@ func (ec *executionContext) _PlasmidListWithCursor_previousCursor(ctx context.Co
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PlasmidListWithCursor_previousCursor,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PlasmidListWithCursor_previousCursor(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.PreviousCursor, nil
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PlasmidListWithCursor_previousCursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PlasmidListWithCursor",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PlasmidListWithCursor", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _PlasmidListWithCursor_limit(ctx context.Context, field graphql.CollectedField, obj *models.PlasmidListWithCursor) (ret graphql.Marshaler) {
@@ -1061,28 +749,22 @@ func (ec *executionContext) _PlasmidListWithCursor_limit(ctx context.Context, fi
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PlasmidListWithCursor_limit,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PlasmidListWithCursor_limit(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Limit, nil
 		},
 		nil,
-		ec.marshalOInt2ᚖint,
+		func(ctx context.Context, selections ast.SelectionSet, v *int) graphql.Marshaler {
+			return ec.marshalOInt2ᚖint(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_PlasmidListWithCursor_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PlasmidListWithCursor",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PlasmidListWithCursor", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _PlasmidListWithCursor_totalCount(ctx context.Context, field graphql.CollectedField, obj *models.PlasmidListWithCursor) (ret graphql.Marshaler) {
@@ -1090,28 +772,22 @@ func (ec *executionContext) _PlasmidListWithCursor_totalCount(ctx context.Contex
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PlasmidListWithCursor_totalCount,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_PlasmidListWithCursor_totalCount(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.TotalCount, nil
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_PlasmidListWithCursor_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PlasmidListWithCursor",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("PlasmidListWithCursor", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_id(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1119,28 +795,22 @@ func (ec *executionContext) _Strain_id(ctx context.Context, field graphql.Collec
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_id,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_id(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.ID, nil
 		},
 		nil,
-		ec.marshalNID2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, false, false, errors.New("field of type ID does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_created_at(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1148,28 +818,22 @@ func (ec *executionContext) _Strain_created_at(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_created_at,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_created_at(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.CreatedAt, nil
 		},
 		nil,
-		ec.marshalNTimestamp2timeᚐTime,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTimestamp2timeᚐTime(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Timestamp does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, false, false, errors.New("field of type Timestamp does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_updated_at(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1177,28 +841,22 @@ func (ec *executionContext) _Strain_updated_at(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_updated_at,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_updated_at(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.UpdatedAt, nil
 		},
 		nil,
-		ec.marshalNTimestamp2timeᚐTime,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTimestamp2timeᚐTime(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Timestamp does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, false, false, errors.New("field of type Timestamp does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_created_by(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1206,17 +864,20 @@ func (ec *executionContext) _Strain_created_by(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_created_by,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_created_by(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().CreatedBy(ctx, obj)
+			return ec.Resolvers.Strain().CreatedBy(ctx, obj)
 		},
 		nil,
-		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.User) graphql.Marshaler {
+			return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_created_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
@@ -1224,43 +885,7 @@ func (ec *executionContext) fieldContext_Strain_created_by(_ context.Context, fi
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "organization":
-				return ec.fieldContext_User_organization(ctx, field)
-			case "group_name":
-				return ec.fieldContext_User_group_name(ctx, field)
-			case "first_address":
-				return ec.fieldContext_User_first_address(ctx, field)
-			case "second_address":
-				return ec.fieldContext_User_second_address(ctx, field)
-			case "city":
-				return ec.fieldContext_User_city(ctx, field)
-			case "state":
-				return ec.fieldContext_User_state(ctx, field)
-			case "zipcode":
-				return ec.fieldContext_User_zipcode(ctx, field)
-			case "country":
-				return ec.fieldContext_User_country(ctx, field)
-			case "phone":
-				return ec.fieldContext_User_phone(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "roles":
-				return ec.fieldContext_User_roles(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return ec.childFields_User(ctx, field)
 		},
 	}
 	return fc, nil
@@ -1271,17 +896,20 @@ func (ec *executionContext) _Strain_updated_by(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_updated_by,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_updated_by(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().UpdatedBy(ctx, obj)
+			return ec.Resolvers.Strain().UpdatedBy(ctx, obj)
 		},
 		nil,
-		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.User) graphql.Marshaler {
+			return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_updated_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
@@ -1289,43 +917,7 @@ func (ec *executionContext) fieldContext_Strain_updated_by(_ context.Context, fi
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "organization":
-				return ec.fieldContext_User_organization(ctx, field)
-			case "group_name":
-				return ec.fieldContext_User_group_name(ctx, field)
-			case "first_address":
-				return ec.fieldContext_User_first_address(ctx, field)
-			case "second_address":
-				return ec.fieldContext_User_second_address(ctx, field)
-			case "city":
-				return ec.fieldContext_User_city(ctx, field)
-			case "state":
-				return ec.fieldContext_User_state(ctx, field)
-			case "zipcode":
-				return ec.fieldContext_User_zipcode(ctx, field)
-			case "country":
-				return ec.fieldContext_User_country(ctx, field)
-			case "phone":
-				return ec.fieldContext_User_phone(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "roles":
-				return ec.fieldContext_User_roles(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return ec.childFields_User(ctx, field)
 		},
 	}
 	return fc, nil
@@ -1336,28 +928,22 @@ func (ec *executionContext) _Strain_summary(ctx context.Context, field graphql.C
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_summary,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_summary(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Summary, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_summary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_editable_summary(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1365,28 +951,22 @@ func (ec *executionContext) _Strain_editable_summary(ctx context.Context, field 
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_editable_summary,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_editable_summary(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.EditableSummary, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_editable_summary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_depositor(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1394,17 +974,20 @@ func (ec *executionContext) _Strain_depositor(ctx context.Context, field graphql
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_depositor,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_depositor(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().Depositor(ctx, obj)
+			return ec.Resolvers.Strain().Depositor(ctx, obj)
 		},
 		nil,
-		ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser,
+		func(ctx context.Context, selections ast.SelectionSet, v *user.User) graphql.Marshaler {
+			return ec.marshalNUser2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋuserᚐUser(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_depositor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
@@ -1412,43 +995,7 @@ func (ec *executionContext) fieldContext_Strain_depositor(_ context.Context, fie
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "organization":
-				return ec.fieldContext_User_organization(ctx, field)
-			case "group_name":
-				return ec.fieldContext_User_group_name(ctx, field)
-			case "first_address":
-				return ec.fieldContext_User_first_address(ctx, field)
-			case "second_address":
-				return ec.fieldContext_User_second_address(ctx, field)
-			case "city":
-				return ec.fieldContext_User_city(ctx, field)
-			case "state":
-				return ec.fieldContext_User_state(ctx, field)
-			case "zipcode":
-				return ec.fieldContext_User_zipcode(ctx, field)
-			case "country":
-				return ec.fieldContext_User_country(ctx, field)
-			case "phone":
-				return ec.fieldContext_User_phone(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "roles":
-				return ec.fieldContext_User_roles(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return ec.childFields_User(ctx, field)
 		},
 	}
 	return fc, nil
@@ -1459,17 +1006,20 @@ func (ec *executionContext) _Strain_genes(ctx context.Context, field graphql.Col
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_genes,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_genes(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().Genes(ctx, obj)
+			return ec.Resolvers.Strain().Genes(ctx, obj)
 		},
 		nil,
-		ec.marshalOGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*models.Gene) graphql.Marshaler {
+			return ec.marshalOGene2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐGeneᚄ(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_genes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
@@ -1477,13 +1027,7 @@ func (ec *executionContext) fieldContext_Strain_genes(_ context.Context, field g
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Gene_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Gene_name(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Gene", field.Name)
+			return ec.childFields_Gene(ctx, field)
 		},
 	}
 	return fc, nil
@@ -1494,28 +1038,22 @@ func (ec *executionContext) _Strain_dbxrefs(ctx context.Context, field graphql.C
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_dbxrefs,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_dbxrefs(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Dbxrefs, nil
 		},
 		nil,
-		ec.marshalOString2ᚕstringᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []string) graphql.Marshaler {
+			return ec.marshalOString2ᚕstringᚄ(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_dbxrefs(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_publications(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1523,17 +1061,20 @@ func (ec *executionContext) _Strain_publications(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_publications,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_publications(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().Publications(ctx, obj)
+			return ec.Resolvers.Strain().Publications(ctx, obj)
 		},
 		nil,
-		ec.marshalOPublication2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*models.Publication) graphql.Marshaler {
+			return ec.marshalOPublication2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPublicationᚄ(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_publications(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
@@ -1541,37 +1082,7 @@ func (ec *executionContext) fieldContext_Strain_publications(_ context.Context, 
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Publication_id(ctx, field)
-			case "doi":
-				return ec.fieldContext_Publication_doi(ctx, field)
-			case "title":
-				return ec.fieldContext_Publication_title(ctx, field)
-			case "abstract":
-				return ec.fieldContext_Publication_abstract(ctx, field)
-			case "journal":
-				return ec.fieldContext_Publication_journal(ctx, field)
-			case "pub_date":
-				return ec.fieldContext_Publication_pub_date(ctx, field)
-			case "volume":
-				return ec.fieldContext_Publication_volume(ctx, field)
-			case "pages":
-				return ec.fieldContext_Publication_pages(ctx, field)
-			case "issn":
-				return ec.fieldContext_Publication_issn(ctx, field)
-			case "pub_type":
-				return ec.fieldContext_Publication_pub_type(ctx, field)
-			case "source":
-				return ec.fieldContext_Publication_source(ctx, field)
-			case "issue":
-				return ec.fieldContext_Publication_issue(ctx, field)
-			case "status":
-				return ec.fieldContext_Publication_status(ctx, field)
-			case "authors":
-				return ec.fieldContext_Publication_authors(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Publication", field.Name)
+			return ec.childFields_Publication(ctx, field)
 		},
 	}
 	return fc, nil
@@ -1582,28 +1093,22 @@ func (ec *executionContext) _Strain_systematic_name(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_systematic_name,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_systematic_name(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().SystematicName(ctx, obj)
+			return ec.Resolvers.Strain().SystematicName(ctx, obj)
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_systematic_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, true, true, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_label(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1611,28 +1116,22 @@ func (ec *executionContext) _Strain_label(ctx context.Context, field graphql.Col
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_label,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_label(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Label, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_label(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_species(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1640,28 +1139,22 @@ func (ec *executionContext) _Strain_species(ctx context.Context, field graphql.C
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_species,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_species(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Species, nil
 		},
 		nil,
-		ec.marshalNString2string,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_species(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_plasmid(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1669,28 +1162,22 @@ func (ec *executionContext) _Strain_plasmid(ctx context.Context, field graphql.C
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_plasmid,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_plasmid(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Plasmid, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_plasmid(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_parent(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1698,17 +1185,20 @@ func (ec *executionContext) _Strain_parent(ctx context.Context, field graphql.Co
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_parent,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_parent(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().Parent(ctx, obj)
+			return ec.Resolvers.Strain().Parent(ctx, obj)
 		},
 		nil,
-		ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain,
+		func(ctx context.Context, selections ast.SelectionSet, v *models.Strain) graphql.Marshaler {
+			return ec.marshalOStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_parent(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
@@ -1716,55 +1206,7 @@ func (ec *executionContext) fieldContext_Strain_parent(_ context.Context, field 
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Strain_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Strain_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Strain_updated_at(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Strain_created_by(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_Strain_updated_by(ctx, field)
-			case "summary":
-				return ec.fieldContext_Strain_summary(ctx, field)
-			case "editable_summary":
-				return ec.fieldContext_Strain_editable_summary(ctx, field)
-			case "depositor":
-				return ec.fieldContext_Strain_depositor(ctx, field)
-			case "genes":
-				return ec.fieldContext_Strain_genes(ctx, field)
-			case "dbxrefs":
-				return ec.fieldContext_Strain_dbxrefs(ctx, field)
-			case "publications":
-				return ec.fieldContext_Strain_publications(ctx, field)
-			case "systematic_name":
-				return ec.fieldContext_Strain_systematic_name(ctx, field)
-			case "label":
-				return ec.fieldContext_Strain_label(ctx, field)
-			case "species":
-				return ec.fieldContext_Strain_species(ctx, field)
-			case "plasmid":
-				return ec.fieldContext_Strain_plasmid(ctx, field)
-			case "parent":
-				return ec.fieldContext_Strain_parent(ctx, field)
-			case "names":
-				return ec.fieldContext_Strain_names(ctx, field)
-			case "in_stock":
-				return ec.fieldContext_Strain_in_stock(ctx, field)
-			case "phenotypes":
-				return ec.fieldContext_Strain_phenotypes(ctx, field)
-			case "genetic_modification":
-				return ec.fieldContext_Strain_genetic_modification(ctx, field)
-			case "mutagenesis_method":
-				return ec.fieldContext_Strain_mutagenesis_method(ctx, field)
-			case "characteristics":
-				return ec.fieldContext_Strain_characteristics(ctx, field)
-			case "genotypes":
-				return ec.fieldContext_Strain_genotypes(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Strain", field.Name)
+			return ec.childFields_Strain(ctx, field)
 		},
 	}
 	return fc, nil
@@ -1775,28 +1217,22 @@ func (ec *executionContext) _Strain_names(ctx context.Context, field graphql.Col
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_names,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_names(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().Names(ctx, obj)
+			return ec.Resolvers.Strain().Names(ctx, obj)
 		},
 		nil,
-		ec.marshalOString2ᚕstringᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []string) graphql.Marshaler {
+			return ec.marshalOString2ᚕstringᚄ(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_names(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, true, true, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_in_stock(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1804,28 +1240,22 @@ func (ec *executionContext) _Strain_in_stock(ctx context.Context, field graphql.
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_in_stock,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_in_stock(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().InStock(ctx, obj)
+			return ec.Resolvers.Strain().InStock(ctx, obj)
 		},
 		nil,
-		ec.marshalNBoolean2bool,
+		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
+			return ec.marshalNBoolean2bool(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_in_stock(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, true, true, errors.New("field of type Boolean does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_phenotypes(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1833,17 +1263,20 @@ func (ec *executionContext) _Strain_phenotypes(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_phenotypes,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_phenotypes(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().Phenotypes(ctx, obj)
+			return ec.Resolvers.Strain().Phenotypes(ctx, obj)
 		},
 		nil,
-		ec.marshalOPhenotype2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPhenotypeᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*models.Phenotype) graphql.Marshaler {
+			return ec.marshalOPhenotype2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPhenotypeᚄ(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_phenotypes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Strain",
@@ -1851,19 +1284,7 @@ func (ec *executionContext) fieldContext_Strain_phenotypes(_ context.Context, fi
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "phenotype":
-				return ec.fieldContext_Phenotype_phenotype(ctx, field)
-			case "note":
-				return ec.fieldContext_Phenotype_note(ctx, field)
-			case "assay":
-				return ec.fieldContext_Phenotype_assay(ctx, field)
-			case "environment":
-				return ec.fieldContext_Phenotype_environment(ctx, field)
-			case "publication":
-				return ec.fieldContext_Phenotype_publication(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Phenotype", field.Name)
+			return ec.childFields_Phenotype(ctx, field)
 		},
 	}
 	return fc, nil
@@ -1874,28 +1295,22 @@ func (ec *executionContext) _Strain_genetic_modification(ctx context.Context, fi
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_genetic_modification,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_genetic_modification(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().GeneticModification(ctx, obj)
+			return ec.Resolvers.Strain().GeneticModification(ctx, obj)
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_genetic_modification(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, true, true, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_mutagenesis_method(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1903,28 +1318,22 @@ func (ec *executionContext) _Strain_mutagenesis_method(ctx context.Context, fiel
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_mutagenesis_method,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_mutagenesis_method(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().MutagenesisMethod(ctx, obj)
+			return ec.Resolvers.Strain().MutagenesisMethod(ctx, obj)
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_mutagenesis_method(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, true, true, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_characteristics(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1932,28 +1341,22 @@ func (ec *executionContext) _Strain_characteristics(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_characteristics,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_characteristics(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().Characteristics(ctx, obj)
+			return ec.Resolvers.Strain().Characteristics(ctx, obj)
 		},
 		nil,
-		ec.marshalOString2ᚕstringᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []string) graphql.Marshaler {
+			return ec.marshalOString2ᚕstringᚄ(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_characteristics(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, true, true, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _Strain_genotypes(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
@@ -1961,28 +1364,22 @@ func (ec *executionContext) _Strain_genotypes(ctx context.Context, field graphql
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Strain_genotypes,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Strain_genotypes(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Strain().Genotypes(ctx, obj)
+			return ec.Resolvers.Strain().Genotypes(ctx, obj)
 		},
 		nil,
-		ec.marshalOString2ᚕstringᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []string) graphql.Marshaler {
+			return ec.marshalOString2ᚕstringᚄ(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Strain_genotypes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Strain",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("Strain", field, true, true, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _StrainListWithCursor_strains(ctx context.Context, field graphql.CollectedField, obj *models.StrainListWithCursor) (ret graphql.Marshaler) {
@@ -1990,17 +1387,20 @@ func (ec *executionContext) _StrainListWithCursor_strains(ctx context.Context, f
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_StrainListWithCursor_strains,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StrainListWithCursor_strains(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Strains, nil
 		},
 		nil,
-		ec.marshalNStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*models.Strain) graphql.Marshaler {
+			return ec.marshalNStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_StrainListWithCursor_strains(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "StrainListWithCursor",
@@ -2008,55 +1408,7 @@ func (ec *executionContext) fieldContext_StrainListWithCursor_strains(_ context.
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Strain_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Strain_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Strain_updated_at(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Strain_created_by(ctx, field)
-			case "updated_by":
-				return ec.fieldContext_Strain_updated_by(ctx, field)
-			case "summary":
-				return ec.fieldContext_Strain_summary(ctx, field)
-			case "editable_summary":
-				return ec.fieldContext_Strain_editable_summary(ctx, field)
-			case "depositor":
-				return ec.fieldContext_Strain_depositor(ctx, field)
-			case "genes":
-				return ec.fieldContext_Strain_genes(ctx, field)
-			case "dbxrefs":
-				return ec.fieldContext_Strain_dbxrefs(ctx, field)
-			case "publications":
-				return ec.fieldContext_Strain_publications(ctx, field)
-			case "systematic_name":
-				return ec.fieldContext_Strain_systematic_name(ctx, field)
-			case "label":
-				return ec.fieldContext_Strain_label(ctx, field)
-			case "species":
-				return ec.fieldContext_Strain_species(ctx, field)
-			case "plasmid":
-				return ec.fieldContext_Strain_plasmid(ctx, field)
-			case "parent":
-				return ec.fieldContext_Strain_parent(ctx, field)
-			case "names":
-				return ec.fieldContext_Strain_names(ctx, field)
-			case "in_stock":
-				return ec.fieldContext_Strain_in_stock(ctx, field)
-			case "phenotypes":
-				return ec.fieldContext_Strain_phenotypes(ctx, field)
-			case "genetic_modification":
-				return ec.fieldContext_Strain_genetic_modification(ctx, field)
-			case "mutagenesis_method":
-				return ec.fieldContext_Strain_mutagenesis_method(ctx, field)
-			case "characteristics":
-				return ec.fieldContext_Strain_characteristics(ctx, field)
-			case "genotypes":
-				return ec.fieldContext_Strain_genotypes(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Strain", field.Name)
+			return ec.childFields_Strain(ctx, field)
 		},
 	}
 	return fc, nil
@@ -2067,28 +1419,22 @@ func (ec *executionContext) _StrainListWithCursor_nextCursor(ctx context.Context
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_StrainListWithCursor_nextCursor,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StrainListWithCursor_nextCursor(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.NextCursor, nil
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_StrainListWithCursor_nextCursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StrainListWithCursor",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("StrainListWithCursor", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _StrainListWithCursor_previousCursor(ctx context.Context, field graphql.CollectedField, obj *models.StrainListWithCursor) (ret graphql.Marshaler) {
@@ -2096,28 +1442,22 @@ func (ec *executionContext) _StrainListWithCursor_previousCursor(ctx context.Con
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_StrainListWithCursor_previousCursor,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StrainListWithCursor_previousCursor(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.PreviousCursor, nil
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_StrainListWithCursor_previousCursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StrainListWithCursor",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("StrainListWithCursor", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _StrainListWithCursor_limit(ctx context.Context, field graphql.CollectedField, obj *models.StrainListWithCursor) (ret graphql.Marshaler) {
@@ -2125,28 +1465,22 @@ func (ec *executionContext) _StrainListWithCursor_limit(ctx context.Context, fie
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_StrainListWithCursor_limit,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StrainListWithCursor_limit(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Limit, nil
 		},
 		nil,
-		ec.marshalOInt2ᚖint,
+		func(ctx context.Context, selections ast.SelectionSet, v *int) graphql.Marshaler {
+			return ec.marshalOInt2ᚖint(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_StrainListWithCursor_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StrainListWithCursor",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("StrainListWithCursor", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _StrainListWithCursor_totalCount(ctx context.Context, field graphql.CollectedField, obj *models.StrainListWithCursor) (ret graphql.Marshaler) {
@@ -2154,28 +1488,22 @@ func (ec *executionContext) _StrainListWithCursor_totalCount(ctx context.Context
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_StrainListWithCursor_totalCount,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StrainListWithCursor_totalCount(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.TotalCount, nil
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_StrainListWithCursor_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StrainListWithCursor",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("StrainListWithCursor", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 // endregion **************************** field.gotpl *****************************
@@ -2184,6 +1512,10 @@ func (ec *executionContext) fieldContext_StrainListWithCursor_totalCount(_ conte
 
 func (ec *executionContext) unmarshalInputAddStrainPhenotypeInput(ctx context.Context, obj any) (models.AddStrainPhenotypeInput, error) {
 	var it models.AddStrainPhenotypeInput
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -2233,12 +1565,15 @@ func (ec *executionContext) unmarshalInputAddStrainPhenotypeInput(ctx context.Co
 			it.Notes = data
 		}
 	}
-
 	return it, nil
 }
 
 func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context, obj any) (models.CreatePlasmidInput, error) {
 	var it models.CreatePlasmidInput
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -2351,12 +1686,15 @@ func (ec *executionContext) unmarshalInputCreatePlasmidInput(ctx context.Context
 			it.GenbankAccession = data
 		}
 	}
-
 	return it, nil
 }
 
 func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context, obj any) (models.CreateStrainInput, error) {
 	var it models.CreateStrainInput
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -2511,12 +1849,15 @@ func (ec *executionContext) unmarshalInputCreateStrainInput(ctx context.Context,
 			it.Genotypes = data
 		}
 	}
-
 	return it, nil
 }
 
 func (ec *executionContext) unmarshalInputDeleteStrainPhenotypeInput(ctx context.Context, obj any) (models.DeleteStrainPhenotypeInput, error) {
 	var it models.DeleteStrainPhenotypeInput
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -2566,12 +1907,15 @@ func (ec *executionContext) unmarshalInputDeleteStrainPhenotypeInput(ctx context
 			it.Notes = data
 		}
 	}
-
 	return it, nil
 }
 
 func (ec *executionContext) unmarshalInputPlasmidListFilter(ctx context.Context, obj any) (models.PlasmidListFilter, error) {
 	var it models.PlasmidListFilter
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -2621,12 +1965,15 @@ func (ec *executionContext) unmarshalInputPlasmidListFilter(ctx context.Context,
 			it.PlasmidType = data
 		}
 	}
-
 	return it, nil
 }
 
 func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, obj any) (models.StrainListFilter, error) {
 	var it models.StrainListFilter
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -2676,12 +2023,15 @@ func (ec *executionContext) unmarshalInputStrainListFilter(ctx context.Context, 
 			it.StrainType = data
 		}
 	}
-
 	return it, nil
 }
 
 func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context, obj any) (models.UpdatePlasmidInput, error) {
 	var it models.UpdatePlasmidInput
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -2787,12 +2137,15 @@ func (ec *executionContext) unmarshalInputUpdatePlasmidInput(ctx context.Context
 			it.GenbankAccession = data
 		}
 	}
-
 	return it, nil
 }
 
 func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context, obj any) (models.UpdateStrainInput, error) {
 	var it models.UpdateStrainInput
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -2940,12 +2293,15 @@ func (ec *executionContext) unmarshalInputUpdateStrainInput(ctx context.Context,
 			it.Genotypes = data
 		}
 	}
-
 	return it, nil
 }
 
 func (ec *executionContext) unmarshalInputUpdateStrainPhenotypePayloadInput(ctx context.Context, obj any) (models.UpdateStrainPhenotypePayloadInput, error) {
 	var it models.UpdateStrainPhenotypePayloadInput
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -2995,12 +2351,15 @@ func (ec *executionContext) unmarshalInputUpdateStrainPhenotypePayloadInput(ctx 
 			it.Notes = data
 		}
 	}
-
 	return it, nil
 }
 
 func (ec *executionContext) unmarshalInputUpdateStrainPhenotypeTargetInput(ctx context.Context, obj any) (models.UpdateStrainPhenotypeTargetInput, error) {
 	var it models.UpdateStrainPhenotypeTargetInput
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -3050,7 +2409,6 @@ func (ec *executionContext) unmarshalInputUpdateStrainPhenotypeTargetInput(ctx c
 			it.Notes = data
 		}
 	}
-
 	return it, nil
 }
 
@@ -3114,10 +2472,10 @@ func (ec *executionContext) _DeleteStock(ctx context.Context, sel ast.SelectionS
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -3153,10 +2511,10 @@ func (ec *executionContext) _DeleteStrainPhenotype(ctx context.Context, sel ast.
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -3185,12 +2543,24 @@ func (ec *executionContext) _Phenotype(ctx context.Context, sel ast.SelectionSet
 			}
 		case "note":
 			out.Values[i] = ec._Phenotype_note(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "assay":
 			out.Values[i] = ec._Phenotype_assay(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "environment":
 			out.Values[i] = ec._Phenotype_environment(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "publication":
 			out.Values[i] = ec._Phenotype_publication(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3200,10 +2570,10 @@ func (ec *executionContext) _Phenotype(ctx context.Context, sel ast.SelectionSet
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -3314,8 +2684,14 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "summary":
 			out.Values[i] = ec._Plasmid_summary(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "editable_summary":
 			out.Values[i] = ec._Plasmid_editable_summary(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "depositor":
 			field := field
 
@@ -3355,13 +2731,16 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 		case "genes":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Plasmid_genes(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -3387,16 +2766,22 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "dbxrefs":
 			out.Values[i] = ec._Plasmid_dbxrefs(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "publications":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Plasmid_publications(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -3427,8 +2812,14 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "image_map":
 			out.Values[i] = ec._Plasmid_image_map(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "sequence":
 			out.Values[i] = ec._Plasmid_sequence(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "in_stock":
 			field := field
 
@@ -3468,13 +2859,16 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 		case "keywords":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Plasmid_keywords(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -3501,13 +2895,16 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 		case "genbank_accession":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Plasmid_genbank_accession(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -3540,10 +2937,10 @@ func (ec *executionContext) _Plasmid(ctx context.Context, sel ast.SelectionSet, 
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -3582,6 +2979,9 @@ func (ec *executionContext) _PlasmidListWithCursor(ctx context.Context, sel ast.
 			}
 		case "limit":
 			out.Values[i] = ec._PlasmidListWithCursor_limit(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "totalCount":
 			out.Values[i] = ec._PlasmidListWithCursor_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -3596,10 +2996,10 @@ func (ec *executionContext) _PlasmidListWithCursor(ctx context.Context, sel ast.
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -3710,8 +3110,14 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "summary":
 			out.Values[i] = ec._Strain_summary(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "editable_summary":
 			out.Values[i] = ec._Strain_editable_summary(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "depositor":
 			field := field
 
@@ -3751,13 +3157,16 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 		case "genes":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Strain_genes(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -3783,16 +3192,22 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "dbxrefs":
 			out.Values[i] = ec._Strain_dbxrefs(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "publications":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Strain_publications(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -3864,16 +3279,22 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "plasmid":
 			out.Values[i] = ec._Strain_plasmid(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "parent":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Strain_parent(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -3900,13 +3321,16 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 		case "names":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Strain_names(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -3969,13 +3393,16 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 		case "phenotypes":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Strain_phenotypes(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -4002,13 +3429,16 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 		case "genetic_modification":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Strain_genetic_modification(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -4035,13 +3465,16 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 		case "mutagenesis_method":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Strain_mutagenesis_method(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -4068,13 +3501,16 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 		case "characteristics":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Strain_characteristics(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -4101,13 +3537,16 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 		case "genotypes":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Strain_genotypes(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -4140,10 +3579,10 @@ func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, o
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -4182,6 +3621,9 @@ func (ec *executionContext) _StrainListWithCursor(ctx context.Context, sel ast.S
 			}
 		case "limit":
 			out.Values[i] = ec._StrainListWithCursor_limit(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "totalCount":
 			out.Values[i] = ec._StrainListWithCursor_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -4196,10 +3638,10 @@ func (ec *executionContext) _StrainListWithCursor(ctx context.Context, sel ast.S
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -4249,39 +3691,11 @@ func (ec *executionContext) marshalNPhenotype2ᚖgithubᚗcomᚋdictyBaseᚋgrap
 }
 
 func (ec *executionContext) marshalNPlasmid2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.Plasmid) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid(ctx, sel, v[i])
+	})
 
 	for _, e := range ret {
 		if e == graphql.Null {
@@ -4323,39 +3737,11 @@ func (ec *executionContext) marshalNStock2githubᚗcomᚋdictyBaseᚋgraphqlᚑs
 }
 
 func (ec *executionContext) marshalNStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.Strain) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, sel, v[i])
+	})
 
 	for _, e := range ret {
 		if e == graphql.Null {
@@ -4423,39 +3809,11 @@ func (ec *executionContext) marshalOPhenotype2ᚕᚖgithubᚗcomᚋdictyBaseᚋg
 	if v == nil {
 		return graphql.Null
 	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNPhenotype2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPhenotype(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNPhenotype2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPhenotype(ctx, sel, v[i])
+	})
 
 	for _, e := range ret {
 		if e == graphql.Null {
@@ -4470,39 +3828,11 @@ func (ec *executionContext) marshalOPlasmid2ᚕᚖgithubᚗcomᚋdictyBaseᚋgra
 	if v == nil {
 		return graphql.Null
 	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNPlasmid2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmid(ctx, sel, v[i])
+	})
 
 	for _, e := range ret {
 		if e == graphql.Null {
@@ -4539,39 +3869,11 @@ func (ec *executionContext) marshalOStock2ᚕgithubᚗcomᚋdictyBaseᚋgraphql�
 	if v == nil {
 		return graphql.Null
 	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNStock2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStock(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNStock2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStock(ctx, sel, v[i])
+	})
 
 	for _, e := range ret {
 		if e == graphql.Null {
@@ -4586,39 +3888,11 @@ func (ec *executionContext) marshalOStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgrap
 	if v == nil {
 		return graphql.Null
 	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNStrain2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrain(ctx, sel, v[i])
+	})
 
 	for _, e := range ret {
 		if e == graphql.Null {

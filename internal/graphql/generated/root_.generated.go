@@ -5,11 +5,10 @@ package generated
 import (
 	"bytes"
 	"context"
-	"errors"
+	"fmt"
 	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -17,20 +16,10 @@ import (
 
 // NewExecutableSchema creates an ExecutableSchema from the ResolverRoot interface.
 func NewExecutableSchema(cfg Config) graphql.ExecutableSchema {
-	return &executableSchema{
-		schema:     cfg.Schema,
-		resolvers:  cfg.Resolvers,
-		directives: cfg.Directives,
-		complexity: cfg.Complexity,
-	}
+	return &executableSchema{SchemaData: cfg.Schema, Resolvers: cfg.Resolvers, Directives: cfg.Directives, ComplexityRoot: cfg.Complexity}
 }
 
-type Config struct {
-	Schema     *ast.Schema
-	Resolvers  ResolverRoot
-	Directives DirectiveRoot
-	Complexity ComplexityRoot
-}
+type Config = graphql.Config[ResolverRoot, DirectiveRoot, ComplexityRoot]
 
 type ResolverRoot interface {
 	Auth() AuthResolver
@@ -324,7 +313,7 @@ type ComplexityRoot struct {
 		ContentBySlug              func(childComplexity int, slug string) int
 		GeneGeneralInformation     func(childComplexity int, gene string) int
 		GeneOntologyAnnotation     func(childComplexity int, gene string) int
-		ListContentByNamespace     func(childComplexity int, namespace string) int
+		ListContentByNamespace     func(childComplexity int, namespace string, limit *int) int
 		ListOrders                 func(childComplexity int, cursor *int, limit *int, filter *string) int
 		ListOrganisms              func(childComplexity int) int
 		ListPermissions            func(childComplexity int) int
@@ -430,468 +419,419 @@ type ComplexityRoot struct {
 	}
 }
 
-type executableSchema struct {
-	schema     *ast.Schema
-	resolvers  ResolverRoot
-	directives DirectiveRoot
-	complexity ComplexityRoot
-}
+type executableSchema graphql.ExecutableSchemaState[ResolverRoot, DirectiveRoot, ComplexityRoot]
 
 func (e *executableSchema) Schema() *ast.Schema {
-	if e.schema != nil {
-		return e.schema
+	if e.SchemaData != nil {
+		return e.SchemaData
 	}
 	return parsedSchema
 }
 
 func (e *executableSchema) Complexity(ctx context.Context, typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
-	ec := executionContext{nil, e, 0, 0, nil}
+	ec := newExecutionContext(nil, e, nil)
 	_ = ec
 	switch typeName + "." + field {
 
 	case "Auth.identity":
-		if e.complexity.Auth.Identity == nil {
+		if e.ComplexityRoot.Auth.Identity == nil {
 			break
 		}
 
-		return e.complexity.Auth.Identity(childComplexity), true
-
+		return e.ComplexityRoot.Auth.Identity(childComplexity), true
 	case "Auth.token":
-		if e.complexity.Auth.Token == nil {
+		if e.ComplexityRoot.Auth.Token == nil {
 			break
 		}
 
-		return e.complexity.Auth.Token(childComplexity), true
-
+		return e.ComplexityRoot.Auth.Token(childComplexity), true
 	case "Auth.user":
-		if e.complexity.Auth.User == nil {
+		if e.ComplexityRoot.Auth.User == nil {
 			break
 		}
 
-		return e.complexity.Auth.User(childComplexity), true
+		return e.ComplexityRoot.Auth.User(childComplexity), true
 
 	case "Author.first_name":
-		if e.complexity.Author.FirstName == nil {
+		if e.ComplexityRoot.Author.FirstName == nil {
 			break
 		}
 
-		return e.complexity.Author.FirstName(childComplexity), true
-
+		return e.ComplexityRoot.Author.FirstName(childComplexity), true
 	case "Author.initials":
-		if e.complexity.Author.Initials == nil {
+		if e.ComplexityRoot.Author.Initials == nil {
 			break
 		}
 
-		return e.complexity.Author.Initials(childComplexity), true
-
+		return e.ComplexityRoot.Author.Initials(childComplexity), true
 	case "Author.last_name":
-		if e.complexity.Author.LastName == nil {
+		if e.ComplexityRoot.Author.LastName == nil {
 			break
 		}
 
-		return e.complexity.Author.LastName(childComplexity), true
-
+		return e.ComplexityRoot.Author.LastName(childComplexity), true
 	case "Author.rank":
-		if e.complexity.Author.Rank == nil {
+		if e.ComplexityRoot.Author.Rank == nil {
 			break
 		}
 
-		return e.complexity.Author.Rank(childComplexity), true
+		return e.ComplexityRoot.Author.Rank(childComplexity), true
 
 	case "Citation.authors":
-		if e.complexity.Citation.Authors == nil {
+		if e.ComplexityRoot.Citation.Authors == nil {
 			break
 		}
 
-		return e.complexity.Citation.Authors(childComplexity), true
-
+		return e.ComplexityRoot.Citation.Authors(childComplexity), true
 	case "Citation.journal":
-		if e.complexity.Citation.Journal == nil {
+		if e.ComplexityRoot.Citation.Journal == nil {
 			break
 		}
 
-		return e.complexity.Citation.Journal(childComplexity), true
-
+		return e.ComplexityRoot.Citation.Journal(childComplexity), true
 	case "Citation.pubmed_id":
-		if e.complexity.Citation.PubmedID == nil {
+		if e.ComplexityRoot.Citation.PubmedID == nil {
 			break
 		}
 
-		return e.complexity.Citation.PubmedID(childComplexity), true
-
+		return e.ComplexityRoot.Citation.PubmedID(childComplexity), true
 	case "Citation.title":
-		if e.complexity.Citation.Title == nil {
+		if e.ComplexityRoot.Citation.Title == nil {
 			break
 		}
 
-		return e.complexity.Citation.Title(childComplexity), true
+		return e.ComplexityRoot.Citation.Title(childComplexity), true
 
 	case "Content.content":
-		if e.complexity.Content.Content == nil {
+		if e.ComplexityRoot.Content.Content == nil {
 			break
 		}
 
-		return e.complexity.Content.Content(childComplexity), true
-
+		return e.ComplexityRoot.Content.Content(childComplexity), true
 	case "Content.created_at":
-		if e.complexity.Content.CreatedAt == nil {
+		if e.ComplexityRoot.Content.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Content.CreatedAt(childComplexity), true
-
+		return e.ComplexityRoot.Content.CreatedAt(childComplexity), true
 	case "Content.created_by":
-		if e.complexity.Content.CreatedBy == nil {
+		if e.ComplexityRoot.Content.CreatedBy == nil {
 			break
 		}
 
-		return e.complexity.Content.CreatedBy(childComplexity), true
-
+		return e.ComplexityRoot.Content.CreatedBy(childComplexity), true
 	case "Content.id":
-		if e.complexity.Content.ID == nil {
+		if e.ComplexityRoot.Content.ID == nil {
 			break
 		}
 
-		return e.complexity.Content.ID(childComplexity), true
-
+		return e.ComplexityRoot.Content.ID(childComplexity), true
 	case "Content.name":
-		if e.complexity.Content.Name == nil {
+		if e.ComplexityRoot.Content.Name == nil {
 			break
 		}
 
-		return e.complexity.Content.Name(childComplexity), true
-
+		return e.ComplexityRoot.Content.Name(childComplexity), true
 	case "Content.namespace":
-		if e.complexity.Content.Namespace == nil {
+		if e.ComplexityRoot.Content.Namespace == nil {
 			break
 		}
 
-		return e.complexity.Content.Namespace(childComplexity), true
-
+		return e.ComplexityRoot.Content.Namespace(childComplexity), true
 	case "Content.slug":
-		if e.complexity.Content.Slug == nil {
+		if e.ComplexityRoot.Content.Slug == nil {
 			break
 		}
 
-		return e.complexity.Content.Slug(childComplexity), true
-
+		return e.ComplexityRoot.Content.Slug(childComplexity), true
 	case "Content.updated_at":
-		if e.complexity.Content.UpdatedAt == nil {
+		if e.ComplexityRoot.Content.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.Content.UpdatedAt(childComplexity), true
-
+		return e.ComplexityRoot.Content.UpdatedAt(childComplexity), true
 	case "Content.updated_by":
-		if e.complexity.Content.UpdatedBy == nil {
+		if e.ComplexityRoot.Content.UpdatedBy == nil {
 			break
 		}
 
-		return e.complexity.Content.UpdatedBy(childComplexity), true
+		return e.ComplexityRoot.Content.UpdatedBy(childComplexity), true
 
 	case "DeleteContent.success":
-		if e.complexity.DeleteContent.Success == nil {
+		if e.ComplexityRoot.DeleteContent.Success == nil {
 			break
 		}
 
-		return e.complexity.DeleteContent.Success(childComplexity), true
+		return e.ComplexityRoot.DeleteContent.Success(childComplexity), true
 
 	case "DeletePermission.success":
-		if e.complexity.DeletePermission.Success == nil {
+		if e.ComplexityRoot.DeletePermission.Success == nil {
 			break
 		}
 
-		return e.complexity.DeletePermission.Success(childComplexity), true
+		return e.ComplexityRoot.DeletePermission.Success(childComplexity), true
 
 	case "DeleteRole.success":
-		if e.complexity.DeleteRole.Success == nil {
+		if e.ComplexityRoot.DeleteRole.Success == nil {
 			break
 		}
 
-		return e.complexity.DeleteRole.Success(childComplexity), true
+		return e.ComplexityRoot.DeleteRole.Success(childComplexity), true
 
 	case "DeleteStock.success":
-		if e.complexity.DeleteStock.Success == nil {
+		if e.ComplexityRoot.DeleteStock.Success == nil {
 			break
 		}
 
-		return e.complexity.DeleteStock.Success(childComplexity), true
+		return e.ComplexityRoot.DeleteStock.Success(childComplexity), true
 
 	case "DeleteStrainPhenotype.success":
-		if e.complexity.DeleteStrainPhenotype.Success == nil {
+		if e.ComplexityRoot.DeleteStrainPhenotype.Success == nil {
 			break
 		}
 
-		return e.complexity.DeleteStrainPhenotype.Success(childComplexity), true
+		return e.ComplexityRoot.DeleteStrainPhenotype.Success(childComplexity), true
 
 	case "DeleteUser.success":
-		if e.complexity.DeleteUser.Success == nil {
+		if e.ComplexityRoot.DeleteUser.Success == nil {
 			break
 		}
 
-		return e.complexity.DeleteUser.Success(childComplexity), true
+		return e.ComplexityRoot.DeleteUser.Success(childComplexity), true
 
 	case "Download.items":
-		if e.complexity.Download.Items == nil {
+		if e.ComplexityRoot.Download.Items == nil {
 			break
 		}
 
-		return e.complexity.Download.Items(childComplexity), true
-
+		return e.ComplexityRoot.Download.Items(childComplexity), true
 	case "Download.title":
-		if e.complexity.Download.Title == nil {
+		if e.ComplexityRoot.Download.Title == nil {
 			break
 		}
 
-		return e.complexity.Download.Title(childComplexity), true
+		return e.ComplexityRoot.Download.Title(childComplexity), true
 
 	case "DownloadItem.title":
-		if e.complexity.DownloadItem.Title == nil {
+		if e.ComplexityRoot.DownloadItem.Title == nil {
 			break
 		}
 
-		return e.complexity.DownloadItem.Title(childComplexity), true
-
+		return e.ComplexityRoot.DownloadItem.Title(childComplexity), true
 	case "DownloadItem.url":
-		if e.complexity.DownloadItem.URL == nil {
+		if e.ComplexityRoot.DownloadItem.URL == nil {
 			break
 		}
 
-		return e.complexity.DownloadItem.URL(childComplexity), true
+		return e.ComplexityRoot.DownloadItem.URL(childComplexity), true
 
 	case "Extension.db":
-		if e.complexity.Extension.Db == nil {
+		if e.ComplexityRoot.Extension.Db == nil {
 			break
 		}
 
-		return e.complexity.Extension.Db(childComplexity), true
-
+		return e.ComplexityRoot.Extension.Db(childComplexity), true
 	case "Extension.id":
-		if e.complexity.Extension.ID == nil {
+		if e.ComplexityRoot.Extension.ID == nil {
 			break
 		}
 
-		return e.complexity.Extension.ID(childComplexity), true
-
+		return e.ComplexityRoot.Extension.ID(childComplexity), true
 	case "Extension.name":
-		if e.complexity.Extension.Name == nil {
+		if e.ComplexityRoot.Extension.Name == nil {
 			break
 		}
 
-		return e.complexity.Extension.Name(childComplexity), true
-
+		return e.ComplexityRoot.Extension.Name(childComplexity), true
 	case "Extension.relation":
-		if e.complexity.Extension.Relation == nil {
+		if e.ComplexityRoot.Extension.Relation == nil {
 			break
 		}
 
-		return e.complexity.Extension.Relation(childComplexity), true
+		return e.ComplexityRoot.Extension.Relation(childComplexity), true
 
 	case "GOAnnotation.assigned_by":
-		if e.complexity.GOAnnotation.AssignedBy == nil {
+		if e.ComplexityRoot.GOAnnotation.AssignedBy == nil {
 			break
 		}
 
-		return e.complexity.GOAnnotation.AssignedBy(childComplexity), true
-
+		return e.ComplexityRoot.GOAnnotation.AssignedBy(childComplexity), true
 	case "GOAnnotation.date":
-		if e.complexity.GOAnnotation.Date == nil {
+		if e.ComplexityRoot.GOAnnotation.Date == nil {
 			break
 		}
 
-		return e.complexity.GOAnnotation.Date(childComplexity), true
-
+		return e.ComplexityRoot.GOAnnotation.Date(childComplexity), true
 	case "GOAnnotation.evidence_code":
-		if e.complexity.GOAnnotation.EvidenceCode == nil {
+		if e.ComplexityRoot.GOAnnotation.EvidenceCode == nil {
 			break
 		}
 
-		return e.complexity.GOAnnotation.EvidenceCode(childComplexity), true
-
+		return e.ComplexityRoot.GOAnnotation.EvidenceCode(childComplexity), true
 	case "GOAnnotation.extensions":
-		if e.complexity.GOAnnotation.Extensions == nil {
+		if e.ComplexityRoot.GOAnnotation.Extensions == nil {
 			break
 		}
 
-		return e.complexity.GOAnnotation.Extensions(childComplexity), true
-
+		return e.ComplexityRoot.GOAnnotation.Extensions(childComplexity), true
 	case "GOAnnotation.go_term":
-		if e.complexity.GOAnnotation.GoTerm == nil {
+		if e.ComplexityRoot.GOAnnotation.GoTerm == nil {
 			break
 		}
 
-		return e.complexity.GOAnnotation.GoTerm(childComplexity), true
-
+		return e.ComplexityRoot.GOAnnotation.GoTerm(childComplexity), true
 	case "GOAnnotation.id":
-		if e.complexity.GOAnnotation.ID == nil {
+		if e.ComplexityRoot.GOAnnotation.ID == nil {
 			break
 		}
 
-		return e.complexity.GOAnnotation.ID(childComplexity), true
-
+		return e.ComplexityRoot.GOAnnotation.ID(childComplexity), true
 	case "GOAnnotation.publication":
-		if e.complexity.GOAnnotation.Publication == nil {
+		if e.ComplexityRoot.GOAnnotation.Publication == nil {
 			break
 		}
 
-		return e.complexity.GOAnnotation.Publication(childComplexity), true
-
+		return e.ComplexityRoot.GOAnnotation.Publication(childComplexity), true
 	case "GOAnnotation.qualifier":
-		if e.complexity.GOAnnotation.Qualifier == nil {
+		if e.ComplexityRoot.GOAnnotation.Qualifier == nil {
 			break
 		}
 
-		return e.complexity.GOAnnotation.Qualifier(childComplexity), true
-
+		return e.ComplexityRoot.GOAnnotation.Qualifier(childComplexity), true
 	case "GOAnnotation.type":
-		if e.complexity.GOAnnotation.Type == nil {
+		if e.ComplexityRoot.GOAnnotation.Type == nil {
 			break
 		}
 
-		return e.complexity.GOAnnotation.Type(childComplexity), true
-
+		return e.ComplexityRoot.GOAnnotation.Type(childComplexity), true
 	case "GOAnnotation.with":
-		if e.complexity.GOAnnotation.With == nil {
+		if e.ComplexityRoot.GOAnnotation.With == nil {
 			break
 		}
 
-		return e.complexity.GOAnnotation.With(childComplexity), true
+		return e.ComplexityRoot.GOAnnotation.With(childComplexity), true
 
 	case "Gene.id":
-		if e.complexity.Gene.ID == nil {
+		if e.ComplexityRoot.Gene.ID == nil {
 			break
 		}
 
-		return e.complexity.Gene.ID(childComplexity), true
-
+		return e.ComplexityRoot.Gene.ID(childComplexity), true
 	case "Gene.name":
-		if e.complexity.Gene.Name == nil {
+		if e.ComplexityRoot.Gene.Name == nil {
 			break
 		}
 
-		return e.complexity.Gene.Name(childComplexity), true
+		return e.ComplexityRoot.Gene.Name(childComplexity), true
 
 	case "GeneGeneralInfo.created_at":
-		if e.complexity.GeneGeneralInfo.CreatedAt == nil {
+		if e.ComplexityRoot.GeneGeneralInfo.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.GeneGeneralInfo.CreatedAt(childComplexity), true
-
+		return e.ComplexityRoot.GeneGeneralInfo.CreatedAt(childComplexity), true
 	case "GeneGeneralInfo.created_by":
-		if e.complexity.GeneGeneralInfo.CreatedBy == nil {
+		if e.ComplexityRoot.GeneGeneralInfo.CreatedBy == nil {
 			break
 		}
 
-		return e.complexity.GeneGeneralInfo.CreatedBy(childComplexity), true
-
+		return e.ComplexityRoot.GeneGeneralInfo.CreatedBy(childComplexity), true
 	case "GeneGeneralInfo.description":
-		if e.complexity.GeneGeneralInfo.Description == nil {
+		if e.ComplexityRoot.GeneGeneralInfo.Description == nil {
 			break
 		}
 
-		return e.complexity.GeneGeneralInfo.Description(childComplexity), true
-
+		return e.ComplexityRoot.GeneGeneralInfo.Description(childComplexity), true
 	case "GeneGeneralInfo.gene_product":
-		if e.complexity.GeneGeneralInfo.GeneProduct == nil {
+		if e.ComplexityRoot.GeneGeneralInfo.GeneProduct == nil {
 			break
 		}
 
-		return e.complexity.GeneGeneralInfo.GeneProduct(childComplexity), true
-
+		return e.ComplexityRoot.GeneGeneralInfo.GeneProduct(childComplexity), true
 	case "GeneGeneralInfo.id":
-		if e.complexity.GeneGeneralInfo.ID == nil {
+		if e.ComplexityRoot.GeneGeneralInfo.ID == nil {
 			break
 		}
 
-		return e.complexity.GeneGeneralInfo.ID(childComplexity), true
-
+		return e.ComplexityRoot.GeneGeneralInfo.ID(childComplexity), true
 	case "GeneGeneralInfo.name_description":
-		if e.complexity.GeneGeneralInfo.NameDescription == nil {
+		if e.ComplexityRoot.GeneGeneralInfo.NameDescription == nil {
 			break
 		}
 
-		return e.complexity.GeneGeneralInfo.NameDescription(childComplexity), true
-
+		return e.ComplexityRoot.GeneGeneralInfo.NameDescription(childComplexity), true
 	case "GeneGeneralInfo.synonyms":
-		if e.complexity.GeneGeneralInfo.Synonyms == nil {
+		if e.ComplexityRoot.GeneGeneralInfo.Synonyms == nil {
 			break
 		}
 
-		return e.complexity.GeneGeneralInfo.Synonyms(childComplexity), true
-
+		return e.ComplexityRoot.GeneGeneralInfo.Synonyms(childComplexity), true
 	case "GeneGeneralInfo.updated_at":
-		if e.complexity.GeneGeneralInfo.UpdatedAt == nil {
+		if e.ComplexityRoot.GeneGeneralInfo.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.GeneGeneralInfo.UpdatedAt(childComplexity), true
-
+		return e.ComplexityRoot.GeneGeneralInfo.UpdatedAt(childComplexity), true
 	case "GeneGeneralInfo.updated_by":
-		if e.complexity.GeneGeneralInfo.UpdatedBy == nil {
+		if e.ComplexityRoot.GeneGeneralInfo.UpdatedBy == nil {
 			break
 		}
 
-		return e.complexity.GeneGeneralInfo.UpdatedBy(childComplexity), true
+		return e.ComplexityRoot.GeneGeneralInfo.UpdatedBy(childComplexity), true
 
 	case "Identity.created_at":
-		if e.complexity.Identity.CreatedAt == nil {
+		if e.ComplexityRoot.Identity.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Identity.CreatedAt(childComplexity), true
-
+		return e.ComplexityRoot.Identity.CreatedAt(childComplexity), true
 	case "Identity.id":
-		if e.complexity.Identity.ID == nil {
+		if e.ComplexityRoot.Identity.ID == nil {
 			break
 		}
 
-		return e.complexity.Identity.ID(childComplexity), true
-
+		return e.ComplexityRoot.Identity.ID(childComplexity), true
 	case "Identity.identifier":
-		if e.complexity.Identity.Identifier == nil {
+		if e.ComplexityRoot.Identity.Identifier == nil {
 			break
 		}
 
-		return e.complexity.Identity.Identifier(childComplexity), true
-
+		return e.ComplexityRoot.Identity.Identifier(childComplexity), true
 	case "Identity.provider":
-		if e.complexity.Identity.Provider == nil {
+		if e.ComplexityRoot.Identity.Provider == nil {
 			break
 		}
 
-		return e.complexity.Identity.Provider(childComplexity), true
-
+		return e.ComplexityRoot.Identity.Provider(childComplexity), true
 	case "Identity.updated_at":
-		if e.complexity.Identity.UpdatedAt == nil {
+		if e.ComplexityRoot.Identity.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.Identity.UpdatedAt(childComplexity), true
-
+		return e.ComplexityRoot.Identity.UpdatedAt(childComplexity), true
 	case "Identity.user_id":
-		if e.complexity.Identity.UserID == nil {
+		if e.ComplexityRoot.Identity.UserID == nil {
 			break
 		}
 
-		return e.complexity.Identity.UserID(childComplexity), true
+		return e.ComplexityRoot.Identity.UserID(childComplexity), true
 
 	case "ImageFile.url":
-		if e.complexity.ImageFile.URL == nil {
+		if e.ComplexityRoot.ImageFile.URL == nil {
 			break
 		}
 
-		return e.complexity.ImageFile.URL(childComplexity), true
+		return e.ComplexityRoot.ImageFile.URL(childComplexity), true
 
 	case "Logout.success":
-		if e.complexity.Logout.Success == nil {
+		if e.ComplexityRoot.Logout.Success == nil {
 			break
 		}
 
-		return e.complexity.Logout.Success(childComplexity), true
+		return e.ComplexityRoot.Logout.Success(childComplexity), true
 
 	case "Mutation.addStrainPhenotype":
-		if e.complexity.Mutation.AddStrainPhenotype == nil {
+		if e.ComplexityRoot.Mutation.AddStrainPhenotype == nil {
 			break
 		}
 
@@ -900,10 +840,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddStrainPhenotype(childComplexity, args["strainId"].(string), args["input"].(models.AddStrainPhenotypeInput)), true
-
+		return e.ComplexityRoot.Mutation.AddStrainPhenotype(childComplexity, args["strainId"].(string), args["input"].(models.AddStrainPhenotypeInput)), true
 	case "Mutation.createContent":
-		if e.complexity.Mutation.CreateContent == nil {
+		if e.ComplexityRoot.Mutation.CreateContent == nil {
 			break
 		}
 
@@ -912,10 +851,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateContent(childComplexity, args["input"].(*models.CreateContentInput)), true
-
+		return e.ComplexityRoot.Mutation.CreateContent(childComplexity, args["input"].(*models.CreateContentInput)), true
 	case "Mutation.createGeneGeneralInfo":
-		if e.complexity.Mutation.CreateGeneGeneralInfo == nil {
+		if e.ComplexityRoot.Mutation.CreateGeneGeneralInfo == nil {
 			break
 		}
 
@@ -924,10 +862,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateGeneGeneralInfo(childComplexity, args["id"].(string), args["input"].(models.CreateGeneGeneralInfoInput)), true
-
+		return e.ComplexityRoot.Mutation.CreateGeneGeneralInfo(childComplexity, args["id"].(string), args["input"].(models.CreateGeneGeneralInfoInput)), true
 	case "Mutation.createOrder":
-		if e.complexity.Mutation.CreateOrder == nil {
+		if e.ComplexityRoot.Mutation.CreateOrder == nil {
 			break
 		}
 
@@ -936,10 +873,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateOrder(childComplexity, args["input"].(*models.CreateOrderInput)), true
-
+		return e.ComplexityRoot.Mutation.CreateOrder(childComplexity, args["input"].(*models.CreateOrderInput)), true
 	case "Mutation.createPermission":
-		if e.complexity.Mutation.CreatePermission == nil {
+		if e.ComplexityRoot.Mutation.CreatePermission == nil {
 			break
 		}
 
@@ -948,10 +884,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreatePermission(childComplexity, args["input"].(*models.CreatePermissionInput)), true
-
+		return e.ComplexityRoot.Mutation.CreatePermission(childComplexity, args["input"].(*models.CreatePermissionInput)), true
 	case "Mutation.createPlasmid":
-		if e.complexity.Mutation.CreatePlasmid == nil {
+		if e.ComplexityRoot.Mutation.CreatePlasmid == nil {
 			break
 		}
 
@@ -960,10 +895,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreatePlasmid(childComplexity, args["input"].(*models.CreatePlasmidInput)), true
-
+		return e.ComplexityRoot.Mutation.CreatePlasmid(childComplexity, args["input"].(*models.CreatePlasmidInput)), true
 	case "Mutation.createRole":
-		if e.complexity.Mutation.CreateRole == nil {
+		if e.ComplexityRoot.Mutation.CreateRole == nil {
 			break
 		}
 
@@ -972,10 +906,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateRole(childComplexity, args["input"].(*models.CreateRoleInput)), true
-
+		return e.ComplexityRoot.Mutation.CreateRole(childComplexity, args["input"].(*models.CreateRoleInput)), true
 	case "Mutation.createRolePermissionRelationship":
-		if e.complexity.Mutation.CreateRolePermissionRelationship == nil {
+		if e.ComplexityRoot.Mutation.CreateRolePermissionRelationship == nil {
 			break
 		}
 
@@ -984,10 +917,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateRolePermissionRelationship(childComplexity, args["roleId"].(string), args["permissionId"].(string)), true
-
+		return e.ComplexityRoot.Mutation.CreateRolePermissionRelationship(childComplexity, args["roleId"].(string), args["permissionId"].(string)), true
 	case "Mutation.createStrain":
-		if e.complexity.Mutation.CreateStrain == nil {
+		if e.ComplexityRoot.Mutation.CreateStrain == nil {
 			break
 		}
 
@@ -996,10 +928,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateStrain(childComplexity, args["input"].(*models.CreateStrainInput)), true
-
+		return e.ComplexityRoot.Mutation.CreateStrain(childComplexity, args["input"].(*models.CreateStrainInput)), true
 	case "Mutation.createUser":
-		if e.complexity.Mutation.CreateUser == nil {
+		if e.ComplexityRoot.Mutation.CreateUser == nil {
 			break
 		}
 
@@ -1008,10 +939,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(*models.CreateUserInput)), true
-
+		return e.ComplexityRoot.Mutation.CreateUser(childComplexity, args["input"].(*models.CreateUserInput)), true
 	case "Mutation.createUserRoleRelationship":
-		if e.complexity.Mutation.CreateUserRoleRelationship == nil {
+		if e.ComplexityRoot.Mutation.CreateUserRoleRelationship == nil {
 			break
 		}
 
@@ -1020,10 +950,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateUserRoleRelationship(childComplexity, args["userId"].(string), args["roleId"].(string)), true
-
+		return e.ComplexityRoot.Mutation.CreateUserRoleRelationship(childComplexity, args["userId"].(string), args["roleId"].(string)), true
 	case "Mutation.deleteContent":
-		if e.complexity.Mutation.DeleteContent == nil {
+		if e.ComplexityRoot.Mutation.DeleteContent == nil {
 			break
 		}
 
@@ -1032,10 +961,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteContent(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Mutation.DeleteContent(childComplexity, args["id"].(string)), true
 	case "Mutation.deletePermission":
-		if e.complexity.Mutation.DeletePermission == nil {
+		if e.ComplexityRoot.Mutation.DeletePermission == nil {
 			break
 		}
 
@@ -1044,10 +972,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeletePermission(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Mutation.DeletePermission(childComplexity, args["id"].(string)), true
 	case "Mutation.deleteRole":
-		if e.complexity.Mutation.DeleteRole == nil {
+		if e.ComplexityRoot.Mutation.DeleteRole == nil {
 			break
 		}
 
@@ -1056,10 +983,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteRole(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Mutation.DeleteRole(childComplexity, args["id"].(string)), true
 	case "Mutation.deleteStock":
-		if e.complexity.Mutation.DeleteStock == nil {
+		if e.ComplexityRoot.Mutation.DeleteStock == nil {
 			break
 		}
 
@@ -1068,10 +994,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteStock(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Mutation.DeleteStock(childComplexity, args["id"].(string)), true
 	case "Mutation.deleteStrainPhenotype":
-		if e.complexity.Mutation.DeleteStrainPhenotype == nil {
+		if e.ComplexityRoot.Mutation.DeleteStrainPhenotype == nil {
 			break
 		}
 
@@ -1080,10 +1005,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteStrainPhenotype(childComplexity, args["strainId"].(string), args["input"].(models.DeleteStrainPhenotypeInput)), true
-
+		return e.ComplexityRoot.Mutation.DeleteStrainPhenotype(childComplexity, args["strainId"].(string), args["input"].(models.DeleteStrainPhenotypeInput)), true
 	case "Mutation.deleteUser":
-		if e.complexity.Mutation.DeleteUser == nil {
+		if e.ComplexityRoot.Mutation.DeleteUser == nil {
 			break
 		}
 
@@ -1092,10 +1016,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteUser(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Mutation.DeleteUser(childComplexity, args["id"].(string)), true
 	case "Mutation.login":
-		if e.complexity.Mutation.Login == nil {
+		if e.ComplexityRoot.Mutation.Login == nil {
 			break
 		}
 
@@ -1104,17 +1027,15 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.Login(childComplexity, args["input"].(*models.LoginInput)), true
-
+		return e.ComplexityRoot.Mutation.Login(childComplexity, args["input"].(*models.LoginInput)), true
 	case "Mutation.logout":
-		if e.complexity.Mutation.Logout == nil {
+		if e.ComplexityRoot.Mutation.Logout == nil {
 			break
 		}
 
-		return e.complexity.Mutation.Logout(childComplexity), true
-
+		return e.ComplexityRoot.Mutation.Logout(childComplexity), true
 	case "Mutation.updateContent":
-		if e.complexity.Mutation.UpdateContent == nil {
+		if e.ComplexityRoot.Mutation.UpdateContent == nil {
 			break
 		}
 
@@ -1123,10 +1044,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateContent(childComplexity, args["input"].(*models.UpdateContentInput)), true
-
+		return e.ComplexityRoot.Mutation.UpdateContent(childComplexity, args["input"].(*models.UpdateContentInput)), true
 	case "Mutation.updateGeneGeneralInfo":
-		if e.complexity.Mutation.UpdateGeneGeneralInfo == nil {
+		if e.ComplexityRoot.Mutation.UpdateGeneGeneralInfo == nil {
 			break
 		}
 
@@ -1135,10 +1055,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateGeneGeneralInfo(childComplexity, args["id"].(string), args["input"].(models.UpdateGeneGeneralInfoInput)), true
-
+		return e.ComplexityRoot.Mutation.UpdateGeneGeneralInfo(childComplexity, args["id"].(string), args["input"].(models.UpdateGeneGeneralInfoInput)), true
 	case "Mutation.updateOrder":
-		if e.complexity.Mutation.UpdateOrder == nil {
+		if e.ComplexityRoot.Mutation.UpdateOrder == nil {
 			break
 		}
 
@@ -1147,10 +1066,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateOrder(childComplexity, args["id"].(string), args["input"].(*models.UpdateOrderInput)), true
-
+		return e.ComplexityRoot.Mutation.UpdateOrder(childComplexity, args["id"].(string), args["input"].(*models.UpdateOrderInput)), true
 	case "Mutation.updatePermission":
-		if e.complexity.Mutation.UpdatePermission == nil {
+		if e.ComplexityRoot.Mutation.UpdatePermission == nil {
 			break
 		}
 
@@ -1159,10 +1077,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdatePermission(childComplexity, args["id"].(string), args["input"].(*models.UpdatePermissionInput)), true
-
+		return e.ComplexityRoot.Mutation.UpdatePermission(childComplexity, args["id"].(string), args["input"].(*models.UpdatePermissionInput)), true
 	case "Mutation.updatePlasmid":
-		if e.complexity.Mutation.UpdatePlasmid == nil {
+		if e.ComplexityRoot.Mutation.UpdatePlasmid == nil {
 			break
 		}
 
@@ -1171,10 +1088,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdatePlasmid(childComplexity, args["id"].(string), args["input"].(*models.UpdatePlasmidInput)), true
-
+		return e.ComplexityRoot.Mutation.UpdatePlasmid(childComplexity, args["id"].(string), args["input"].(*models.UpdatePlasmidInput)), true
 	case "Mutation.updateRole":
-		if e.complexity.Mutation.UpdateRole == nil {
+		if e.ComplexityRoot.Mutation.UpdateRole == nil {
 			break
 		}
 
@@ -1183,10 +1099,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateRole(childComplexity, args["id"].(string), args["input"].(*models.UpdateRoleInput)), true
-
+		return e.ComplexityRoot.Mutation.UpdateRole(childComplexity, args["id"].(string), args["input"].(*models.UpdateRoleInput)), true
 	case "Mutation.updateStrain":
-		if e.complexity.Mutation.UpdateStrain == nil {
+		if e.ComplexityRoot.Mutation.UpdateStrain == nil {
 			break
 		}
 
@@ -1195,10 +1110,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateStrain(childComplexity, args["id"].(string), args["input"].(*models.UpdateStrainInput)), true
-
+		return e.ComplexityRoot.Mutation.UpdateStrain(childComplexity, args["id"].(string), args["input"].(*models.UpdateStrainInput)), true
 	case "Mutation.updateStrainPhenotype":
-		if e.complexity.Mutation.UpdateStrainPhenotype == nil {
+		if e.ComplexityRoot.Mutation.UpdateStrainPhenotype == nil {
 			break
 		}
 
@@ -1207,10 +1121,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateStrainPhenotype(childComplexity, args["strainId"].(string), args["target"].(models.UpdateStrainPhenotypeTargetInput), args["payload"].(models.UpdateStrainPhenotypePayloadInput)), true
-
+		return e.ComplexityRoot.Mutation.UpdateStrainPhenotype(childComplexity, args["strainId"].(string), args["target"].(models.UpdateStrainPhenotypeTargetInput), args["payload"].(models.UpdateStrainPhenotypePayloadInput)), true
 	case "Mutation.updateUser":
-		if e.complexity.Mutation.UpdateUser == nil {
+		if e.ComplexityRoot.Mutation.UpdateUser == nil {
 			break
 		}
 
@@ -1219,10 +1132,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(*models.UpdateUserInput)), true
-
+		return e.ComplexityRoot.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(*models.UpdateUserInput)), true
 	case "Mutation.uploadFile":
-		if e.complexity.Mutation.UploadFile == nil {
+		if e.ComplexityRoot.Mutation.UploadFile == nil {
 			break
 		}
 
@@ -1231,612 +1143,536 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UploadFile(childComplexity, args["file"].(graphql.Upload)), true
+		return e.ComplexityRoot.Mutation.UploadFile(childComplexity, args["file"].(graphql.Upload)), true
 
 	case "NumberOfPublicationsWithGene.num_pubs":
-		if e.complexity.NumberOfPublicationsWithGene.NumPubs == nil {
+		if e.ComplexityRoot.NumberOfPublicationsWithGene.NumPubs == nil {
 			break
 		}
 
-		return e.complexity.NumberOfPublicationsWithGene.NumPubs(childComplexity), true
-
+		return e.ComplexityRoot.NumberOfPublicationsWithGene.NumPubs(childComplexity), true
 	case "NumberOfPublicationsWithGene.publications":
-		if e.complexity.NumberOfPublicationsWithGene.Publications == nil {
+		if e.ComplexityRoot.NumberOfPublicationsWithGene.Publications == nil {
 			break
 		}
 
-		return e.complexity.NumberOfPublicationsWithGene.Publications(childComplexity), true
+		return e.ComplexityRoot.NumberOfPublicationsWithGene.Publications(childComplexity), true
 
 	case "Order.comments":
-		if e.complexity.Order.Comments == nil {
+		if e.ComplexityRoot.Order.Comments == nil {
 			break
 		}
 
-		return e.complexity.Order.Comments(childComplexity), true
-
+		return e.ComplexityRoot.Order.Comments(childComplexity), true
 	case "Order.consumer":
-		if e.complexity.Order.Consumer == nil {
+		if e.ComplexityRoot.Order.Consumer == nil {
 			break
 		}
 
-		return e.complexity.Order.Consumer(childComplexity), true
-
+		return e.ComplexityRoot.Order.Consumer(childComplexity), true
 	case "Order.courier":
-		if e.complexity.Order.Courier == nil {
+		if e.ComplexityRoot.Order.Courier == nil {
 			break
 		}
 
-		return e.complexity.Order.Courier(childComplexity), true
-
+		return e.ComplexityRoot.Order.Courier(childComplexity), true
 	case "Order.courier_account":
-		if e.complexity.Order.CourierAccount == nil {
+		if e.ComplexityRoot.Order.CourierAccount == nil {
 			break
 		}
 
-		return e.complexity.Order.CourierAccount(childComplexity), true
-
+		return e.ComplexityRoot.Order.CourierAccount(childComplexity), true
 	case "Order.created_at":
-		if e.complexity.Order.CreatedAt == nil {
+		if e.ComplexityRoot.Order.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Order.CreatedAt(childComplexity), true
-
+		return e.ComplexityRoot.Order.CreatedAt(childComplexity), true
 	case "Order.id":
-		if e.complexity.Order.ID == nil {
+		if e.ComplexityRoot.Order.ID == nil {
 			break
 		}
 
-		return e.complexity.Order.ID(childComplexity), true
-
+		return e.ComplexityRoot.Order.ID(childComplexity), true
 	case "Order.items":
-		if e.complexity.Order.Items == nil {
+		if e.ComplexityRoot.Order.Items == nil {
 			break
 		}
 
-		return e.complexity.Order.Items(childComplexity), true
-
+		return e.ComplexityRoot.Order.Items(childComplexity), true
 	case "Order.payer":
-		if e.complexity.Order.Payer == nil {
+		if e.ComplexityRoot.Order.Payer == nil {
 			break
 		}
 
-		return e.complexity.Order.Payer(childComplexity), true
-
+		return e.ComplexityRoot.Order.Payer(childComplexity), true
 	case "Order.payment":
-		if e.complexity.Order.Payment == nil {
+		if e.ComplexityRoot.Order.Payment == nil {
 			break
 		}
 
-		return e.complexity.Order.Payment(childComplexity), true
-
+		return e.ComplexityRoot.Order.Payment(childComplexity), true
 	case "Order.purchase_order_num":
-		if e.complexity.Order.PurchaseOrderNum == nil {
+		if e.ComplexityRoot.Order.PurchaseOrderNum == nil {
 			break
 		}
 
-		return e.complexity.Order.PurchaseOrderNum(childComplexity), true
-
+		return e.ComplexityRoot.Order.PurchaseOrderNum(childComplexity), true
 	case "Order.purchaser":
-		if e.complexity.Order.Purchaser == nil {
+		if e.ComplexityRoot.Order.Purchaser == nil {
 			break
 		}
 
-		return e.complexity.Order.Purchaser(childComplexity), true
-
+		return e.ComplexityRoot.Order.Purchaser(childComplexity), true
 	case "Order.status":
-		if e.complexity.Order.Status == nil {
+		if e.ComplexityRoot.Order.Status == nil {
 			break
 		}
 
-		return e.complexity.Order.Status(childComplexity), true
-
+		return e.ComplexityRoot.Order.Status(childComplexity), true
 	case "Order.updated_at":
-		if e.complexity.Order.UpdatedAt == nil {
+		if e.ComplexityRoot.Order.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.Order.UpdatedAt(childComplexity), true
+		return e.ComplexityRoot.Order.UpdatedAt(childComplexity), true
 
 	case "OrderListWithCursor.limit":
-		if e.complexity.OrderListWithCursor.Limit == nil {
+		if e.ComplexityRoot.OrderListWithCursor.Limit == nil {
 			break
 		}
 
-		return e.complexity.OrderListWithCursor.Limit(childComplexity), true
-
+		return e.ComplexityRoot.OrderListWithCursor.Limit(childComplexity), true
 	case "OrderListWithCursor.nextCursor":
-		if e.complexity.OrderListWithCursor.NextCursor == nil {
+		if e.ComplexityRoot.OrderListWithCursor.NextCursor == nil {
 			break
 		}
 
-		return e.complexity.OrderListWithCursor.NextCursor(childComplexity), true
-
+		return e.ComplexityRoot.OrderListWithCursor.NextCursor(childComplexity), true
 	case "OrderListWithCursor.orders":
-		if e.complexity.OrderListWithCursor.Orders == nil {
+		if e.ComplexityRoot.OrderListWithCursor.Orders == nil {
 			break
 		}
 
-		return e.complexity.OrderListWithCursor.Orders(childComplexity), true
-
+		return e.ComplexityRoot.OrderListWithCursor.Orders(childComplexity), true
 	case "OrderListWithCursor.previousCursor":
-		if e.complexity.OrderListWithCursor.PreviousCursor == nil {
+		if e.ComplexityRoot.OrderListWithCursor.PreviousCursor == nil {
 			break
 		}
 
-		return e.complexity.OrderListWithCursor.PreviousCursor(childComplexity), true
-
+		return e.ComplexityRoot.OrderListWithCursor.PreviousCursor(childComplexity), true
 	case "OrderListWithCursor.totalCount":
-		if e.complexity.OrderListWithCursor.TotalCount == nil {
+		if e.ComplexityRoot.OrderListWithCursor.TotalCount == nil {
 			break
 		}
 
-		return e.complexity.OrderListWithCursor.TotalCount(childComplexity), true
+		return e.ComplexityRoot.OrderListWithCursor.TotalCount(childComplexity), true
 
 	case "Organism.citations":
-		if e.complexity.Organism.Citations == nil {
+		if e.ComplexityRoot.Organism.Citations == nil {
 			break
 		}
 
-		return e.complexity.Organism.Citations(childComplexity), true
-
+		return e.ComplexityRoot.Organism.Citations(childComplexity), true
 	case "Organism.downloads":
-		if e.complexity.Organism.Downloads == nil {
+		if e.ComplexityRoot.Organism.Downloads == nil {
 			break
 		}
 
-		return e.complexity.Organism.Downloads(childComplexity), true
-
+		return e.ComplexityRoot.Organism.Downloads(childComplexity), true
 	case "Organism.scientific_name":
-		if e.complexity.Organism.ScientificName == nil {
+		if e.ComplexityRoot.Organism.ScientificName == nil {
 			break
 		}
 
-		return e.complexity.Organism.ScientificName(childComplexity), true
-
+		return e.ComplexityRoot.Organism.ScientificName(childComplexity), true
 	case "Organism.taxon_id":
-		if e.complexity.Organism.TaxonID == nil {
+		if e.ComplexityRoot.Organism.TaxonID == nil {
 			break
 		}
 
-		return e.complexity.Organism.TaxonID(childComplexity), true
+		return e.ComplexityRoot.Organism.TaxonID(childComplexity), true
 
 	case "Permission.created_at":
-		if e.complexity.Permission.CreatedAt == nil {
+		if e.ComplexityRoot.Permission.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Permission.CreatedAt(childComplexity), true
-
+		return e.ComplexityRoot.Permission.CreatedAt(childComplexity), true
 	case "Permission.description":
-		if e.complexity.Permission.Description == nil {
+		if e.ComplexityRoot.Permission.Description == nil {
 			break
 		}
 
-		return e.complexity.Permission.Description(childComplexity), true
-
+		return e.ComplexityRoot.Permission.Description(childComplexity), true
 	case "Permission.id":
-		if e.complexity.Permission.ID == nil {
+		if e.ComplexityRoot.Permission.ID == nil {
 			break
 		}
 
-		return e.complexity.Permission.ID(childComplexity), true
-
+		return e.ComplexityRoot.Permission.ID(childComplexity), true
 	case "Permission.permission":
-		if e.complexity.Permission.Permission == nil {
+		if e.ComplexityRoot.Permission.Permission == nil {
 			break
 		}
 
-		return e.complexity.Permission.Permission(childComplexity), true
-
+		return e.ComplexityRoot.Permission.Permission(childComplexity), true
 	case "Permission.resource":
-		if e.complexity.Permission.Resource == nil {
+		if e.ComplexityRoot.Permission.Resource == nil {
 			break
 		}
 
-		return e.complexity.Permission.Resource(childComplexity), true
-
+		return e.ComplexityRoot.Permission.Resource(childComplexity), true
 	case "Permission.updated_at":
-		if e.complexity.Permission.UpdatedAt == nil {
+		if e.ComplexityRoot.Permission.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.Permission.UpdatedAt(childComplexity), true
+		return e.ComplexityRoot.Permission.UpdatedAt(childComplexity), true
 
 	case "Phenotype.assay":
-		if e.complexity.Phenotype.Assay == nil {
+		if e.ComplexityRoot.Phenotype.Assay == nil {
 			break
 		}
 
-		return e.complexity.Phenotype.Assay(childComplexity), true
-
+		return e.ComplexityRoot.Phenotype.Assay(childComplexity), true
 	case "Phenotype.environment":
-		if e.complexity.Phenotype.Environment == nil {
+		if e.ComplexityRoot.Phenotype.Environment == nil {
 			break
 		}
 
-		return e.complexity.Phenotype.Environment(childComplexity), true
-
+		return e.ComplexityRoot.Phenotype.Environment(childComplexity), true
 	case "Phenotype.note":
-		if e.complexity.Phenotype.Note == nil {
+		if e.ComplexityRoot.Phenotype.Note == nil {
 			break
 		}
 
-		return e.complexity.Phenotype.Note(childComplexity), true
-
+		return e.ComplexityRoot.Phenotype.Note(childComplexity), true
 	case "Phenotype.phenotype":
-		if e.complexity.Phenotype.Phenotype == nil {
+		if e.ComplexityRoot.Phenotype.Phenotype == nil {
 			break
 		}
 
-		return e.complexity.Phenotype.Phenotype(childComplexity), true
-
+		return e.ComplexityRoot.Phenotype.Phenotype(childComplexity), true
 	case "Phenotype.publication":
-		if e.complexity.Phenotype.Publication == nil {
+		if e.ComplexityRoot.Phenotype.Publication == nil {
 			break
 		}
 
-		return e.complexity.Phenotype.Publication(childComplexity), true
+		return e.ComplexityRoot.Phenotype.Publication(childComplexity), true
 
 	case "Plasmid.created_at":
-		if e.complexity.Plasmid.CreatedAt == nil {
+		if e.ComplexityRoot.Plasmid.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.CreatedAt(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.CreatedAt(childComplexity), true
 	case "Plasmid.created_by":
-		if e.complexity.Plasmid.CreatedBy == nil {
+		if e.ComplexityRoot.Plasmid.CreatedBy == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.CreatedBy(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.CreatedBy(childComplexity), true
 	case "Plasmid.dbxrefs":
-		if e.complexity.Plasmid.Dbxrefs == nil {
+		if e.ComplexityRoot.Plasmid.Dbxrefs == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.Dbxrefs(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.Dbxrefs(childComplexity), true
 	case "Plasmid.depositor":
-		if e.complexity.Plasmid.Depositor == nil {
+		if e.ComplexityRoot.Plasmid.Depositor == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.Depositor(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.Depositor(childComplexity), true
 	case "Plasmid.editable_summary":
-		if e.complexity.Plasmid.EditableSummary == nil {
+		if e.ComplexityRoot.Plasmid.EditableSummary == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.EditableSummary(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.EditableSummary(childComplexity), true
 	case "Plasmid.genbank_accession":
-		if e.complexity.Plasmid.GenbankAccession == nil {
+		if e.ComplexityRoot.Plasmid.GenbankAccession == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.GenbankAccession(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.GenbankAccession(childComplexity), true
 	case "Plasmid.genes":
-		if e.complexity.Plasmid.Genes == nil {
+		if e.ComplexityRoot.Plasmid.Genes == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.Genes(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.Genes(childComplexity), true
 	case "Plasmid.id":
-		if e.complexity.Plasmid.ID == nil {
+		if e.ComplexityRoot.Plasmid.ID == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.ID(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.ID(childComplexity), true
 	case "Plasmid.image_map":
-		if e.complexity.Plasmid.ImageMap == nil {
+		if e.ComplexityRoot.Plasmid.ImageMap == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.ImageMap(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.ImageMap(childComplexity), true
 	case "Plasmid.in_stock":
-		if e.complexity.Plasmid.InStock == nil {
+		if e.ComplexityRoot.Plasmid.InStock == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.InStock(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.InStock(childComplexity), true
 	case "Plasmid.keywords":
-		if e.complexity.Plasmid.Keywords == nil {
+		if e.ComplexityRoot.Plasmid.Keywords == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.Keywords(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.Keywords(childComplexity), true
 	case "Plasmid.name":
-		if e.complexity.Plasmid.Name == nil {
+		if e.ComplexityRoot.Plasmid.Name == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.Name(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.Name(childComplexity), true
 	case "Plasmid.publications":
-		if e.complexity.Plasmid.Publications == nil {
+		if e.ComplexityRoot.Plasmid.Publications == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.Publications(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.Publications(childComplexity), true
 	case "Plasmid.sequence":
-		if e.complexity.Plasmid.Sequence == nil {
+		if e.ComplexityRoot.Plasmid.Sequence == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.Sequence(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.Sequence(childComplexity), true
 	case "Plasmid.summary":
-		if e.complexity.Plasmid.Summary == nil {
+		if e.ComplexityRoot.Plasmid.Summary == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.Summary(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.Summary(childComplexity), true
 	case "Plasmid.updated_at":
-		if e.complexity.Plasmid.UpdatedAt == nil {
+		if e.ComplexityRoot.Plasmid.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.UpdatedAt(childComplexity), true
-
+		return e.ComplexityRoot.Plasmid.UpdatedAt(childComplexity), true
 	case "Plasmid.updated_by":
-		if e.complexity.Plasmid.UpdatedBy == nil {
+		if e.ComplexityRoot.Plasmid.UpdatedBy == nil {
 			break
 		}
 
-		return e.complexity.Plasmid.UpdatedBy(childComplexity), true
+		return e.ComplexityRoot.Plasmid.UpdatedBy(childComplexity), true
 
 	case "PlasmidListWithCursor.limit":
-		if e.complexity.PlasmidListWithCursor.Limit == nil {
+		if e.ComplexityRoot.PlasmidListWithCursor.Limit == nil {
 			break
 		}
 
-		return e.complexity.PlasmidListWithCursor.Limit(childComplexity), true
-
+		return e.ComplexityRoot.PlasmidListWithCursor.Limit(childComplexity), true
 	case "PlasmidListWithCursor.nextCursor":
-		if e.complexity.PlasmidListWithCursor.NextCursor == nil {
+		if e.ComplexityRoot.PlasmidListWithCursor.NextCursor == nil {
 			break
 		}
 
-		return e.complexity.PlasmidListWithCursor.NextCursor(childComplexity), true
-
+		return e.ComplexityRoot.PlasmidListWithCursor.NextCursor(childComplexity), true
 	case "PlasmidListWithCursor.plasmids":
-		if e.complexity.PlasmidListWithCursor.Plasmids == nil {
+		if e.ComplexityRoot.PlasmidListWithCursor.Plasmids == nil {
 			break
 		}
 
-		return e.complexity.PlasmidListWithCursor.Plasmids(childComplexity), true
-
+		return e.ComplexityRoot.PlasmidListWithCursor.Plasmids(childComplexity), true
 	case "PlasmidListWithCursor.previousCursor":
-		if e.complexity.PlasmidListWithCursor.PreviousCursor == nil {
+		if e.ComplexityRoot.PlasmidListWithCursor.PreviousCursor == nil {
 			break
 		}
 
-		return e.complexity.PlasmidListWithCursor.PreviousCursor(childComplexity), true
-
+		return e.ComplexityRoot.PlasmidListWithCursor.PreviousCursor(childComplexity), true
 	case "PlasmidListWithCursor.totalCount":
-		if e.complexity.PlasmidListWithCursor.TotalCount == nil {
+		if e.ComplexityRoot.PlasmidListWithCursor.TotalCount == nil {
 			break
 		}
 
-		return e.complexity.PlasmidListWithCursor.TotalCount(childComplexity), true
+		return e.ComplexityRoot.PlasmidListWithCursor.TotalCount(childComplexity), true
 
 	case "Publication.abstract":
-		if e.complexity.Publication.Abstract == nil {
+		if e.ComplexityRoot.Publication.Abstract == nil {
 			break
 		}
 
-		return e.complexity.Publication.Abstract(childComplexity), true
-
+		return e.ComplexityRoot.Publication.Abstract(childComplexity), true
 	case "Publication.authors":
-		if e.complexity.Publication.Authors == nil {
+		if e.ComplexityRoot.Publication.Authors == nil {
 			break
 		}
 
-		return e.complexity.Publication.Authors(childComplexity), true
-
+		return e.ComplexityRoot.Publication.Authors(childComplexity), true
 	case "Publication.doi":
-		if e.complexity.Publication.Doi == nil {
+		if e.ComplexityRoot.Publication.Doi == nil {
 			break
 		}
 
-		return e.complexity.Publication.Doi(childComplexity), true
-
+		return e.ComplexityRoot.Publication.Doi(childComplexity), true
 	case "Publication.id":
-		if e.complexity.Publication.ID == nil {
+		if e.ComplexityRoot.Publication.ID == nil {
 			break
 		}
 
-		return e.complexity.Publication.ID(childComplexity), true
-
+		return e.ComplexityRoot.Publication.ID(childComplexity), true
 	case "Publication.issn":
-		if e.complexity.Publication.Issn == nil {
+		if e.ComplexityRoot.Publication.Issn == nil {
 			break
 		}
 
-		return e.complexity.Publication.Issn(childComplexity), true
-
+		return e.ComplexityRoot.Publication.Issn(childComplexity), true
 	case "Publication.issue":
-		if e.complexity.Publication.Issue == nil {
+		if e.ComplexityRoot.Publication.Issue == nil {
 			break
 		}
 
-		return e.complexity.Publication.Issue(childComplexity), true
-
+		return e.ComplexityRoot.Publication.Issue(childComplexity), true
 	case "Publication.journal":
-		if e.complexity.Publication.Journal == nil {
+		if e.ComplexityRoot.Publication.Journal == nil {
 			break
 		}
 
-		return e.complexity.Publication.Journal(childComplexity), true
-
+		return e.ComplexityRoot.Publication.Journal(childComplexity), true
 	case "Publication.pages":
-		if e.complexity.Publication.Pages == nil {
+		if e.ComplexityRoot.Publication.Pages == nil {
 			break
 		}
 
-		return e.complexity.Publication.Pages(childComplexity), true
-
+		return e.ComplexityRoot.Publication.Pages(childComplexity), true
 	case "Publication.pub_date":
-		if e.complexity.Publication.PubDate == nil {
+		if e.ComplexityRoot.Publication.PubDate == nil {
 			break
 		}
 
-		return e.complexity.Publication.PubDate(childComplexity), true
-
+		return e.ComplexityRoot.Publication.PubDate(childComplexity), true
 	case "Publication.pub_type":
-		if e.complexity.Publication.PubType == nil {
+		if e.ComplexityRoot.Publication.PubType == nil {
 			break
 		}
 
-		return e.complexity.Publication.PubType(childComplexity), true
-
+		return e.ComplexityRoot.Publication.PubType(childComplexity), true
 	case "Publication.source":
-		if e.complexity.Publication.Source == nil {
+		if e.ComplexityRoot.Publication.Source == nil {
 			break
 		}
 
-		return e.complexity.Publication.Source(childComplexity), true
-
+		return e.ComplexityRoot.Publication.Source(childComplexity), true
 	case "Publication.status":
-		if e.complexity.Publication.Status == nil {
+		if e.ComplexityRoot.Publication.Status == nil {
 			break
 		}
 
-		return e.complexity.Publication.Status(childComplexity), true
-
+		return e.ComplexityRoot.Publication.Status(childComplexity), true
 	case "Publication.title":
-		if e.complexity.Publication.Title == nil {
+		if e.ComplexityRoot.Publication.Title == nil {
 			break
 		}
 
-		return e.complexity.Publication.Title(childComplexity), true
-
+		return e.ComplexityRoot.Publication.Title(childComplexity), true
 	case "Publication.volume":
-		if e.complexity.Publication.Volume == nil {
+		if e.ComplexityRoot.Publication.Volume == nil {
 			break
 		}
 
-		return e.complexity.Publication.Volume(childComplexity), true
+		return e.ComplexityRoot.Publication.Volume(childComplexity), true
 
 	case "PublicationWithGene.abstract":
-		if e.complexity.PublicationWithGene.Abstract == nil {
+		if e.ComplexityRoot.PublicationWithGene.Abstract == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.Abstract(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.Abstract(childComplexity), true
 	case "PublicationWithGene.authors":
-		if e.complexity.PublicationWithGene.Authors == nil {
+		if e.ComplexityRoot.PublicationWithGene.Authors == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.Authors(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.Authors(childComplexity), true
 	case "PublicationWithGene.doi":
-		if e.complexity.PublicationWithGene.Doi == nil {
+		if e.ComplexityRoot.PublicationWithGene.Doi == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.Doi(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.Doi(childComplexity), true
 	case "PublicationWithGene.id":
-		if e.complexity.PublicationWithGene.ID == nil {
+		if e.ComplexityRoot.PublicationWithGene.ID == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.ID(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.ID(childComplexity), true
 	case "PublicationWithGene.issn":
-		if e.complexity.PublicationWithGene.Issn == nil {
+		if e.ComplexityRoot.PublicationWithGene.Issn == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.Issn(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.Issn(childComplexity), true
 	case "PublicationWithGene.issue":
-		if e.complexity.PublicationWithGene.Issue == nil {
+		if e.ComplexityRoot.PublicationWithGene.Issue == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.Issue(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.Issue(childComplexity), true
 	case "PublicationWithGene.journal":
-		if e.complexity.PublicationWithGene.Journal == nil {
+		if e.ComplexityRoot.PublicationWithGene.Journal == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.Journal(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.Journal(childComplexity), true
 	case "PublicationWithGene.pages":
-		if e.complexity.PublicationWithGene.Pages == nil {
+		if e.ComplexityRoot.PublicationWithGene.Pages == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.Pages(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.Pages(childComplexity), true
 	case "PublicationWithGene.pub_date":
-		if e.complexity.PublicationWithGene.PubDate == nil {
+		if e.ComplexityRoot.PublicationWithGene.PubDate == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.PubDate(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.PubDate(childComplexity), true
 	case "PublicationWithGene.pub_type":
-		if e.complexity.PublicationWithGene.PubType == nil {
+		if e.ComplexityRoot.PublicationWithGene.PubType == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.PubType(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.PubType(childComplexity), true
 	case "PublicationWithGene.related_genes":
-		if e.complexity.PublicationWithGene.RelatedGenes == nil {
+		if e.ComplexityRoot.PublicationWithGene.RelatedGenes == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.RelatedGenes(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.RelatedGenes(childComplexity), true
 	case "PublicationWithGene.source":
-		if e.complexity.PublicationWithGene.Source == nil {
+		if e.ComplexityRoot.PublicationWithGene.Source == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.Source(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.Source(childComplexity), true
 	case "PublicationWithGene.status":
-		if e.complexity.PublicationWithGene.Status == nil {
+		if e.ComplexityRoot.PublicationWithGene.Status == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.Status(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.Status(childComplexity), true
 	case "PublicationWithGene.title":
-		if e.complexity.PublicationWithGene.Title == nil {
+		if e.ComplexityRoot.PublicationWithGene.Title == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.Title(childComplexity), true
-
+		return e.ComplexityRoot.PublicationWithGene.Title(childComplexity), true
 	case "PublicationWithGene.volume":
-		if e.complexity.PublicationWithGene.Volume == nil {
+		if e.ComplexityRoot.PublicationWithGene.Volume == nil {
 			break
 		}
 
-		return e.complexity.PublicationWithGene.Volume(childComplexity), true
+		return e.ComplexityRoot.PublicationWithGene.Volume(childComplexity), true
 
 	case "Query.content":
-		if e.complexity.Query.Content == nil {
+		if e.ComplexityRoot.Query.Content == nil {
 			break
 		}
 
@@ -1845,10 +1681,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Content(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Query.Content(childComplexity, args["id"].(string)), true
 	case "Query.contentBySlug":
-		if e.complexity.Query.ContentBySlug == nil {
+		if e.ComplexityRoot.Query.ContentBySlug == nil {
 			break
 		}
 
@@ -1857,10 +1692,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ContentBySlug(childComplexity, args["slug"].(string)), true
-
+		return e.ComplexityRoot.Query.ContentBySlug(childComplexity, args["slug"].(string)), true
 	case "Query.geneGeneralInformation":
-		if e.complexity.Query.GeneGeneralInformation == nil {
+		if e.ComplexityRoot.Query.GeneGeneralInformation == nil {
 			break
 		}
 
@@ -1869,10 +1703,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.GeneGeneralInformation(childComplexity, args["gene"].(string)), true
-
+		return e.ComplexityRoot.Query.GeneGeneralInformation(childComplexity, args["gene"].(string)), true
 	case "Query.geneOntologyAnnotation":
-		if e.complexity.Query.GeneOntologyAnnotation == nil {
+		if e.ComplexityRoot.Query.GeneOntologyAnnotation == nil {
 			break
 		}
 
@@ -1881,10 +1714,10 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.GeneOntologyAnnotation(childComplexity, args["gene"].(string)), true
+		return e.ComplexityRoot.Query.GeneOntologyAnnotation(childComplexity, args["gene"].(string)), true
 
 	case "Query.listContentByNamespace":
-		if e.complexity.Query.ListContentByNamespace == nil {
+		if e.ComplexityRoot.Query.ListContentByNamespace == nil {
 			break
 		}
 
@@ -1893,10 +1726,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListContentByNamespace(childComplexity, args["namespace"].(string)), true
-
+		return e.ComplexityRoot.Query.ListContentByNamespace(childComplexity, args["namespace"].(string), args["limit"].(*int)), true
 	case "Query.listOrders":
-		if e.complexity.Query.ListOrders == nil {
+		if e.ComplexityRoot.Query.ListOrders == nil {
 			break
 		}
 
@@ -1905,24 +1737,21 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListOrders(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string)), true
-
+		return e.ComplexityRoot.Query.ListOrders(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*string)), true
 	case "Query.listOrganisms":
-		if e.complexity.Query.ListOrganisms == nil {
+		if e.ComplexityRoot.Query.ListOrganisms == nil {
 			break
 		}
 
-		return e.complexity.Query.ListOrganisms(childComplexity), true
-
+		return e.ComplexityRoot.Query.ListOrganisms(childComplexity), true
 	case "Query.listPermissions":
-		if e.complexity.Query.ListPermissions == nil {
+		if e.ComplexityRoot.Query.ListPermissions == nil {
 			break
 		}
 
-		return e.complexity.Query.ListPermissions(childComplexity), true
-
+		return e.ComplexityRoot.Query.ListPermissions(childComplexity), true
 	case "Query.listPhenotypeAssays":
-		if e.complexity.Query.ListPhenotypeAssays == nil {
+		if e.ComplexityRoot.Query.ListPhenotypeAssays == nil {
 			break
 		}
 
@@ -1931,10 +1760,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListPhenotypeAssays(childComplexity, args["search"].(string)), true
-
+		return e.ComplexityRoot.Query.ListPhenotypeAssays(childComplexity, args["search"].(string)), true
 	case "Query.listPhenotypeEnvironments":
-		if e.complexity.Query.ListPhenotypeEnvironments == nil {
+		if e.ComplexityRoot.Query.ListPhenotypeEnvironments == nil {
 			break
 		}
 
@@ -1943,10 +1771,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListPhenotypeEnvironments(childComplexity, args["search"].(string)), true
-
+		return e.ComplexityRoot.Query.ListPhenotypeEnvironments(childComplexity, args["search"].(string)), true
 	case "Query.listPhenotypes":
-		if e.complexity.Query.ListPhenotypes == nil {
+		if e.ComplexityRoot.Query.ListPhenotypes == nil {
 			break
 		}
 
@@ -1955,10 +1782,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListPhenotypes(childComplexity, args["search"].(string)), true
-
+		return e.ComplexityRoot.Query.ListPhenotypes(childComplexity, args["search"].(string)), true
 	case "Query.listPlasmids":
-		if e.complexity.Query.ListPlasmids == nil {
+		if e.ComplexityRoot.Query.ListPlasmids == nil {
 			break
 		}
 
@@ -1967,10 +1793,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListPlasmids(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*models.PlasmidListFilter)), true
-
+		return e.ComplexityRoot.Query.ListPlasmids(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*models.PlasmidListFilter)), true
 	case "Query.listPlasmidsWithAnnotation":
-		if e.complexity.Query.ListPlasmidsWithAnnotation == nil {
+		if e.ComplexityRoot.Query.ListPlasmidsWithAnnotation == nil {
 			break
 		}
 
@@ -1979,10 +1804,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListPlasmidsWithAnnotation(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["type"].(string), args["annotation"].(string)), true
-
+		return e.ComplexityRoot.Query.ListPlasmidsWithAnnotation(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["type"].(string), args["annotation"].(string)), true
 	case "Query.listPublicationsWithGene":
-		if e.complexity.Query.ListPublicationsWithGene == nil {
+		if e.ComplexityRoot.Query.ListPublicationsWithGene == nil {
 			break
 		}
 
@@ -1991,10 +1815,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListPublicationsWithGene(childComplexity, args["gene"].(string)), true
-
+		return e.ComplexityRoot.Query.ListPublicationsWithGene(childComplexity, args["gene"].(string)), true
 	case "Query.listRecentPlasmids":
-		if e.complexity.Query.ListRecentPlasmids == nil {
+		if e.ComplexityRoot.Query.ListRecentPlasmids == nil {
 			break
 		}
 
@@ -2003,10 +1826,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListRecentPlasmids(childComplexity, args["limit"].(int)), true
-
+		return e.ComplexityRoot.Query.ListRecentPlasmids(childComplexity, args["limit"].(int)), true
 	case "Query.listRecentPublications":
-		if e.complexity.Query.ListRecentPublications == nil {
+		if e.ComplexityRoot.Query.ListRecentPublications == nil {
 			break
 		}
 
@@ -2015,10 +1837,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListRecentPublications(childComplexity, args["limit"].(int)), true
-
+		return e.ComplexityRoot.Query.ListRecentPublications(childComplexity, args["limit"].(int)), true
 	case "Query.listRecentStrains":
-		if e.complexity.Query.ListRecentStrains == nil {
+		if e.ComplexityRoot.Query.ListRecentStrains == nil {
 			break
 		}
 
@@ -2027,17 +1848,15 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListRecentStrains(childComplexity, args["limit"].(int)), true
-
+		return e.ComplexityRoot.Query.ListRecentStrains(childComplexity, args["limit"].(int)), true
 	case "Query.listRoles":
-		if e.complexity.Query.ListRoles == nil {
+		if e.ComplexityRoot.Query.ListRoles == nil {
 			break
 		}
 
-		return e.complexity.Query.ListRoles(childComplexity), true
-
+		return e.ComplexityRoot.Query.ListRoles(childComplexity), true
 	case "Query.listStrains":
-		if e.complexity.Query.ListStrains == nil {
+		if e.ComplexityRoot.Query.ListStrains == nil {
 			break
 		}
 
@@ -2046,10 +1865,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListStrains(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*models.StrainListFilter)), true
-
+		return e.ComplexityRoot.Query.ListStrains(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["filter"].(*models.StrainListFilter)), true
 	case "Query.listStrainsWithAnnotation":
-		if e.complexity.Query.ListStrainsWithAnnotation == nil {
+		if e.ComplexityRoot.Query.ListStrainsWithAnnotation == nil {
 			break
 		}
 
@@ -2058,10 +1876,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListStrainsWithAnnotation(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["type"].(string), args["annotation"].(string)), true
-
+		return e.ComplexityRoot.Query.ListStrainsWithAnnotation(childComplexity, args["cursor"].(*int), args["limit"].(*int), args["type"].(string), args["annotation"].(string)), true
 	case "Query.listStrainsWithGene":
-		if e.complexity.Query.ListStrainsWithGene == nil {
+		if e.ComplexityRoot.Query.ListStrainsWithGene == nil {
 			break
 		}
 
@@ -2070,10 +1887,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListStrainsWithGene(childComplexity, args["gene"].(string)), true
-
+		return e.ComplexityRoot.Query.ListStrainsWithGene(childComplexity, args["gene"].(string)), true
 	case "Query.listUsers":
-		if e.complexity.Query.ListUsers == nil {
+		if e.ComplexityRoot.Query.ListUsers == nil {
 			break
 		}
 
@@ -2082,10 +1898,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.ListUsers(childComplexity, args["pagenum"].(string), args["pagesize"].(string), args["filter"].(string)), true
-
+		return e.ComplexityRoot.Query.ListUsers(childComplexity, args["pagenum"].(string), args["pagesize"].(string), args["filter"].(string)), true
 	case "Query.order":
-		if e.complexity.Query.Order == nil {
+		if e.ComplexityRoot.Query.Order == nil {
 			break
 		}
 
@@ -2094,10 +1909,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Order(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Query.Order(childComplexity, args["id"].(string)), true
 	case "Query.organism":
-		if e.complexity.Query.Organism == nil {
+		if e.ComplexityRoot.Query.Organism == nil {
 			break
 		}
 
@@ -2106,10 +1920,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Organism(childComplexity, args["taxon_id"].(string)), true
-
+		return e.ComplexityRoot.Query.Organism(childComplexity, args["taxon_id"].(string)), true
 	case "Query.permission":
-		if e.complexity.Query.Permission == nil {
+		if e.ComplexityRoot.Query.Permission == nil {
 			break
 		}
 
@@ -2118,10 +1931,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Permission(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Query.Permission(childComplexity, args["id"].(string)), true
 	case "Query.plasmid":
-		if e.complexity.Query.Plasmid == nil {
+		if e.ComplexityRoot.Query.Plasmid == nil {
 			break
 		}
 
@@ -2130,10 +1942,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Plasmid(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Query.Plasmid(childComplexity, args["id"].(string)), true
 	case "Query.publication":
-		if e.complexity.Query.Publication == nil {
+		if e.ComplexityRoot.Query.Publication == nil {
 			break
 		}
 
@@ -2142,10 +1953,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Publication(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Query.Publication(childComplexity, args["id"].(string)), true
 	case "Query.role":
-		if e.complexity.Query.Role == nil {
+		if e.ComplexityRoot.Query.Role == nil {
 			break
 		}
 
@@ -2154,10 +1964,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Role(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Query.Role(childComplexity, args["id"].(string)), true
 	case "Query.strain":
-		if e.complexity.Query.Strain == nil {
+		if e.ComplexityRoot.Query.Strain == nil {
 			break
 		}
 
@@ -2166,10 +1975,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Strain(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Query.Strain(childComplexity, args["id"].(string)), true
 	case "Query.user":
-		if e.complexity.Query.User == nil {
+		if e.ComplexityRoot.Query.User == nil {
 			break
 		}
 
@@ -2178,10 +1986,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
-
+		return e.ComplexityRoot.Query.User(childComplexity, args["id"].(string)), true
 	case "Query.userByEmail":
-		if e.complexity.Query.UserByEmail == nil {
+		if e.ComplexityRoot.Query.UserByEmail == nil {
 			break
 		}
 
@@ -2190,413 +1997,361 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.UserByEmail(childComplexity, args["email"].(string)), true
+		return e.ComplexityRoot.Query.UserByEmail(childComplexity, args["email"].(string)), true
 
 	case "Role.created_at":
-		if e.complexity.Role.CreatedAt == nil {
+		if e.ComplexityRoot.Role.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Role.CreatedAt(childComplexity), true
-
+		return e.ComplexityRoot.Role.CreatedAt(childComplexity), true
 	case "Role.description":
-		if e.complexity.Role.Description == nil {
+		if e.ComplexityRoot.Role.Description == nil {
 			break
 		}
 
-		return e.complexity.Role.Description(childComplexity), true
-
+		return e.ComplexityRoot.Role.Description(childComplexity), true
 	case "Role.id":
-		if e.complexity.Role.ID == nil {
+		if e.ComplexityRoot.Role.ID == nil {
 			break
 		}
 
-		return e.complexity.Role.ID(childComplexity), true
-
+		return e.ComplexityRoot.Role.ID(childComplexity), true
 	case "Role.permissions":
-		if e.complexity.Role.Permissions == nil {
+		if e.ComplexityRoot.Role.Permissions == nil {
 			break
 		}
 
-		return e.complexity.Role.Permissions(childComplexity), true
-
+		return e.ComplexityRoot.Role.Permissions(childComplexity), true
 	case "Role.role":
-		if e.complexity.Role.Role == nil {
+		if e.ComplexityRoot.Role.Role == nil {
 			break
 		}
 
-		return e.complexity.Role.Role(childComplexity), true
-
+		return e.ComplexityRoot.Role.Role(childComplexity), true
 	case "Role.updated_at":
-		if e.complexity.Role.UpdatedAt == nil {
+		if e.ComplexityRoot.Role.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.Role.UpdatedAt(childComplexity), true
+		return e.ComplexityRoot.Role.UpdatedAt(childComplexity), true
 
 	case "Strain.characteristics":
-		if e.complexity.Strain.Characteristics == nil {
+		if e.ComplexityRoot.Strain.Characteristics == nil {
 			break
 		}
 
-		return e.complexity.Strain.Characteristics(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Characteristics(childComplexity), true
 	case "Strain.created_at":
-		if e.complexity.Strain.CreatedAt == nil {
+		if e.ComplexityRoot.Strain.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Strain.CreatedAt(childComplexity), true
-
+		return e.ComplexityRoot.Strain.CreatedAt(childComplexity), true
 	case "Strain.created_by":
-		if e.complexity.Strain.CreatedBy == nil {
+		if e.ComplexityRoot.Strain.CreatedBy == nil {
 			break
 		}
 
-		return e.complexity.Strain.CreatedBy(childComplexity), true
-
+		return e.ComplexityRoot.Strain.CreatedBy(childComplexity), true
 	case "Strain.dbxrefs":
-		if e.complexity.Strain.Dbxrefs == nil {
+		if e.ComplexityRoot.Strain.Dbxrefs == nil {
 			break
 		}
 
-		return e.complexity.Strain.Dbxrefs(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Dbxrefs(childComplexity), true
 	case "Strain.depositor":
-		if e.complexity.Strain.Depositor == nil {
+		if e.ComplexityRoot.Strain.Depositor == nil {
 			break
 		}
 
-		return e.complexity.Strain.Depositor(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Depositor(childComplexity), true
 	case "Strain.editable_summary":
-		if e.complexity.Strain.EditableSummary == nil {
+		if e.ComplexityRoot.Strain.EditableSummary == nil {
 			break
 		}
 
-		return e.complexity.Strain.EditableSummary(childComplexity), true
-
+		return e.ComplexityRoot.Strain.EditableSummary(childComplexity), true
 	case "Strain.genes":
-		if e.complexity.Strain.Genes == nil {
+		if e.ComplexityRoot.Strain.Genes == nil {
 			break
 		}
 
-		return e.complexity.Strain.Genes(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Genes(childComplexity), true
 	case "Strain.genetic_modification":
-		if e.complexity.Strain.GeneticModification == nil {
+		if e.ComplexityRoot.Strain.GeneticModification == nil {
 			break
 		}
 
-		return e.complexity.Strain.GeneticModification(childComplexity), true
-
+		return e.ComplexityRoot.Strain.GeneticModification(childComplexity), true
 	case "Strain.genotypes":
-		if e.complexity.Strain.Genotypes == nil {
+		if e.ComplexityRoot.Strain.Genotypes == nil {
 			break
 		}
 
-		return e.complexity.Strain.Genotypes(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Genotypes(childComplexity), true
 	case "Strain.id":
-		if e.complexity.Strain.ID == nil {
+		if e.ComplexityRoot.Strain.ID == nil {
 			break
 		}
 
-		return e.complexity.Strain.ID(childComplexity), true
-
+		return e.ComplexityRoot.Strain.ID(childComplexity), true
 	case "Strain.in_stock":
-		if e.complexity.Strain.InStock == nil {
+		if e.ComplexityRoot.Strain.InStock == nil {
 			break
 		}
 
-		return e.complexity.Strain.InStock(childComplexity), true
-
+		return e.ComplexityRoot.Strain.InStock(childComplexity), true
 	case "Strain.label":
-		if e.complexity.Strain.Label == nil {
+		if e.ComplexityRoot.Strain.Label == nil {
 			break
 		}
 
-		return e.complexity.Strain.Label(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Label(childComplexity), true
 	case "Strain.mutagenesis_method":
-		if e.complexity.Strain.MutagenesisMethod == nil {
+		if e.ComplexityRoot.Strain.MutagenesisMethod == nil {
 			break
 		}
 
-		return e.complexity.Strain.MutagenesisMethod(childComplexity), true
-
+		return e.ComplexityRoot.Strain.MutagenesisMethod(childComplexity), true
 	case "Strain.names":
-		if e.complexity.Strain.Names == nil {
+		if e.ComplexityRoot.Strain.Names == nil {
 			break
 		}
 
-		return e.complexity.Strain.Names(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Names(childComplexity), true
 	case "Strain.parent":
-		if e.complexity.Strain.Parent == nil {
+		if e.ComplexityRoot.Strain.Parent == nil {
 			break
 		}
 
-		return e.complexity.Strain.Parent(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Parent(childComplexity), true
 	case "Strain.phenotypes":
-		if e.complexity.Strain.Phenotypes == nil {
+		if e.ComplexityRoot.Strain.Phenotypes == nil {
 			break
 		}
 
-		return e.complexity.Strain.Phenotypes(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Phenotypes(childComplexity), true
 	case "Strain.plasmid":
-		if e.complexity.Strain.Plasmid == nil {
+		if e.ComplexityRoot.Strain.Plasmid == nil {
 			break
 		}
 
-		return e.complexity.Strain.Plasmid(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Plasmid(childComplexity), true
 	case "Strain.publications":
-		if e.complexity.Strain.Publications == nil {
+		if e.ComplexityRoot.Strain.Publications == nil {
 			break
 		}
 
-		return e.complexity.Strain.Publications(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Publications(childComplexity), true
 	case "Strain.species":
-		if e.complexity.Strain.Species == nil {
+		if e.ComplexityRoot.Strain.Species == nil {
 			break
 		}
 
-		return e.complexity.Strain.Species(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Species(childComplexity), true
 	case "Strain.summary":
-		if e.complexity.Strain.Summary == nil {
+		if e.ComplexityRoot.Strain.Summary == nil {
 			break
 		}
 
-		return e.complexity.Strain.Summary(childComplexity), true
-
+		return e.ComplexityRoot.Strain.Summary(childComplexity), true
 	case "Strain.systematic_name":
-		if e.complexity.Strain.SystematicName == nil {
+		if e.ComplexityRoot.Strain.SystematicName == nil {
 			break
 		}
 
-		return e.complexity.Strain.SystematicName(childComplexity), true
-
+		return e.ComplexityRoot.Strain.SystematicName(childComplexity), true
 	case "Strain.updated_at":
-		if e.complexity.Strain.UpdatedAt == nil {
+		if e.ComplexityRoot.Strain.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.Strain.UpdatedAt(childComplexity), true
-
+		return e.ComplexityRoot.Strain.UpdatedAt(childComplexity), true
 	case "Strain.updated_by":
-		if e.complexity.Strain.UpdatedBy == nil {
+		if e.ComplexityRoot.Strain.UpdatedBy == nil {
 			break
 		}
 
-		return e.complexity.Strain.UpdatedBy(childComplexity), true
+		return e.ComplexityRoot.Strain.UpdatedBy(childComplexity), true
 
 	case "StrainListWithCursor.limit":
-		if e.complexity.StrainListWithCursor.Limit == nil {
+		if e.ComplexityRoot.StrainListWithCursor.Limit == nil {
 			break
 		}
 
-		return e.complexity.StrainListWithCursor.Limit(childComplexity), true
-
+		return e.ComplexityRoot.StrainListWithCursor.Limit(childComplexity), true
 	case "StrainListWithCursor.nextCursor":
-		if e.complexity.StrainListWithCursor.NextCursor == nil {
+		if e.ComplexityRoot.StrainListWithCursor.NextCursor == nil {
 			break
 		}
 
-		return e.complexity.StrainListWithCursor.NextCursor(childComplexity), true
-
+		return e.ComplexityRoot.StrainListWithCursor.NextCursor(childComplexity), true
 	case "StrainListWithCursor.previousCursor":
-		if e.complexity.StrainListWithCursor.PreviousCursor == nil {
+		if e.ComplexityRoot.StrainListWithCursor.PreviousCursor == nil {
 			break
 		}
 
-		return e.complexity.StrainListWithCursor.PreviousCursor(childComplexity), true
-
+		return e.ComplexityRoot.StrainListWithCursor.PreviousCursor(childComplexity), true
 	case "StrainListWithCursor.strains":
-		if e.complexity.StrainListWithCursor.Strains == nil {
+		if e.ComplexityRoot.StrainListWithCursor.Strains == nil {
 			break
 		}
 
-		return e.complexity.StrainListWithCursor.Strains(childComplexity), true
-
+		return e.ComplexityRoot.StrainListWithCursor.Strains(childComplexity), true
 	case "StrainListWithCursor.totalCount":
-		if e.complexity.StrainListWithCursor.TotalCount == nil {
+		if e.ComplexityRoot.StrainListWithCursor.TotalCount == nil {
 			break
 		}
 
-		return e.complexity.StrainListWithCursor.TotalCount(childComplexity), true
+		return e.ComplexityRoot.StrainListWithCursor.TotalCount(childComplexity), true
 
 	case "User.city":
-		if e.complexity.User.City == nil {
+		if e.ComplexityRoot.User.City == nil {
 			break
 		}
 
-		return e.complexity.User.City(childComplexity), true
-
+		return e.ComplexityRoot.User.City(childComplexity), true
 	case "User.country":
-		if e.complexity.User.Country == nil {
+		if e.ComplexityRoot.User.Country == nil {
 			break
 		}
 
-		return e.complexity.User.Country(childComplexity), true
-
+		return e.ComplexityRoot.User.Country(childComplexity), true
 	case "User.created_at":
-		if e.complexity.User.CreatedAt == nil {
+		if e.ComplexityRoot.User.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.User.CreatedAt(childComplexity), true
-
+		return e.ComplexityRoot.User.CreatedAt(childComplexity), true
 	case "User.email":
-		if e.complexity.User.Email == nil {
+		if e.ComplexityRoot.User.Email == nil {
 			break
 		}
 
-		return e.complexity.User.Email(childComplexity), true
-
+		return e.ComplexityRoot.User.Email(childComplexity), true
 	case "User.first_address":
-		if e.complexity.User.FirstAddress == nil {
+		if e.ComplexityRoot.User.FirstAddress == nil {
 			break
 		}
 
-		return e.complexity.User.FirstAddress(childComplexity), true
-
+		return e.ComplexityRoot.User.FirstAddress(childComplexity), true
 	case "User.first_name":
-		if e.complexity.User.FirstName == nil {
+		if e.ComplexityRoot.User.FirstName == nil {
 			break
 		}
 
-		return e.complexity.User.FirstName(childComplexity), true
-
+		return e.ComplexityRoot.User.FirstName(childComplexity), true
 	case "User.group_name":
-		if e.complexity.User.GroupName == nil {
+		if e.ComplexityRoot.User.GroupName == nil {
 			break
 		}
 
-		return e.complexity.User.GroupName(childComplexity), true
-
+		return e.ComplexityRoot.User.GroupName(childComplexity), true
 	case "User.id":
-		if e.complexity.User.ID == nil {
+		if e.ComplexityRoot.User.ID == nil {
 			break
 		}
 
-		return e.complexity.User.ID(childComplexity), true
-
+		return e.ComplexityRoot.User.ID(childComplexity), true
 	case "User.is_active":
-		if e.complexity.User.IsActive == nil {
+		if e.ComplexityRoot.User.IsActive == nil {
 			break
 		}
 
-		return e.complexity.User.IsActive(childComplexity), true
-
+		return e.ComplexityRoot.User.IsActive(childComplexity), true
 	case "User.last_name":
-		if e.complexity.User.LastName == nil {
+		if e.ComplexityRoot.User.LastName == nil {
 			break
 		}
 
-		return e.complexity.User.LastName(childComplexity), true
-
+		return e.ComplexityRoot.User.LastName(childComplexity), true
 	case "User.organization":
-		if e.complexity.User.Organization == nil {
+		if e.ComplexityRoot.User.Organization == nil {
 			break
 		}
 
-		return e.complexity.User.Organization(childComplexity), true
-
+		return e.ComplexityRoot.User.Organization(childComplexity), true
 	case "User.phone":
-		if e.complexity.User.Phone == nil {
+		if e.ComplexityRoot.User.Phone == nil {
 			break
 		}
 
-		return e.complexity.User.Phone(childComplexity), true
-
+		return e.ComplexityRoot.User.Phone(childComplexity), true
 	case "User.roles":
-		if e.complexity.User.Roles == nil {
+		if e.ComplexityRoot.User.Roles == nil {
 			break
 		}
 
-		return e.complexity.User.Roles(childComplexity), true
-
+		return e.ComplexityRoot.User.Roles(childComplexity), true
 	case "User.second_address":
-		if e.complexity.User.SecondAddress == nil {
+		if e.ComplexityRoot.User.SecondAddress == nil {
 			break
 		}
 
-		return e.complexity.User.SecondAddress(childComplexity), true
-
+		return e.ComplexityRoot.User.SecondAddress(childComplexity), true
 	case "User.state":
-		if e.complexity.User.State == nil {
+		if e.ComplexityRoot.User.State == nil {
 			break
 		}
 
-		return e.complexity.User.State(childComplexity), true
-
+		return e.ComplexityRoot.User.State(childComplexity), true
 	case "User.updated_at":
-		if e.complexity.User.UpdatedAt == nil {
+		if e.ComplexityRoot.User.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.User.UpdatedAt(childComplexity), true
-
+		return e.ComplexityRoot.User.UpdatedAt(childComplexity), true
 	case "User.zipcode":
-		if e.complexity.User.Zipcode == nil {
+		if e.ComplexityRoot.User.Zipcode == nil {
 			break
 		}
 
-		return e.complexity.User.Zipcode(childComplexity), true
+		return e.ComplexityRoot.User.Zipcode(childComplexity), true
 
 	case "UserList.pageNum":
-		if e.complexity.UserList.PageNum == nil {
+		if e.ComplexityRoot.UserList.PageNum == nil {
 			break
 		}
 
-		return e.complexity.UserList.PageNum(childComplexity), true
-
+		return e.ComplexityRoot.UserList.PageNum(childComplexity), true
 	case "UserList.pageSize":
-		if e.complexity.UserList.PageSize == nil {
+		if e.ComplexityRoot.UserList.PageSize == nil {
 			break
 		}
 
-		return e.complexity.UserList.PageSize(childComplexity), true
-
+		return e.ComplexityRoot.UserList.PageSize(childComplexity), true
 	case "UserList.totalCount":
-		if e.complexity.UserList.TotalCount == nil {
+		if e.ComplexityRoot.UserList.TotalCount == nil {
 			break
 		}
 
-		return e.complexity.UserList.TotalCount(childComplexity), true
-
+		return e.ComplexityRoot.UserList.TotalCount(childComplexity), true
 	case "UserList.users":
-		if e.complexity.UserList.Users == nil {
+		if e.ComplexityRoot.UserList.Users == nil {
 			break
 		}
 
-		return e.complexity.UserList.Users(childComplexity), true
+		return e.ComplexityRoot.UserList.Users(childComplexity), true
 
 	case "With.db":
-		if e.complexity.With.Db == nil {
+		if e.ComplexityRoot.With.Db == nil {
 			break
 		}
 
-		return e.complexity.With.Db(childComplexity), true
-
+		return e.ComplexityRoot.With.Db(childComplexity), true
 	case "With.id":
-		if e.complexity.With.ID == nil {
+		if e.ComplexityRoot.With.ID == nil {
 			break
 		}
 
-		return e.complexity.With.ID(childComplexity), true
-
+		return e.ComplexityRoot.With.ID(childComplexity), true
 	case "With.name":
-		if e.complexity.With.Name == nil {
+		if e.ComplexityRoot.With.Name == nil {
 			break
 		}
 
-		return e.complexity.With.Name(childComplexity), true
+		return e.ComplexityRoot.With.Name(childComplexity), true
 
 	}
 	return 0, false
@@ -2604,7 +2359,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
-	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
+	ec := newExecutionContext(opCtx, e, make(chan graphql.DeferredResult))
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputAddStrainPhenotypeInput,
 		ec.unmarshalInputCreateContentInput,
@@ -2643,9 +2398,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 				ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
 				data = ec._Query(ctx, opCtx.Operation.SelectionSet)
 			} else {
-				if atomic.LoadInt32(&ec.pendingDeferred) > 0 {
-					result := <-ec.deferredResults
-					atomic.AddInt32(&ec.pendingDeferred, -1)
+				if atomic.LoadInt32(&ec.PendingDeferred) > 0 {
+					result := <-ec.DeferredResults
+					atomic.AddInt32(&ec.PendingDeferred, -1)
 					data = result.Result
 					response.Path = result.Path
 					response.Label = result.Label
@@ -2657,8 +2412,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			var buf bytes.Buffer
 			data.MarshalGQL(&buf)
 			response.Data = buf.Bytes()
-			if atomic.LoadInt32(&ec.deferred) > 0 {
-				hasNext := atomic.LoadInt32(&ec.pendingDeferred) > 0
+			if atomic.LoadInt32(&ec.Deferred) > 0 {
+				hasNext := atomic.LoadInt32(&ec.PendingDeferred) > 0
 				response.HasNext = &hasNext
 			}
 
@@ -2686,44 +2441,22 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 }
 
 type executionContext struct {
-	*graphql.OperationContext
-	*executableSchema
-	deferred        int32
-	pendingDeferred int32
-	deferredResults chan graphql.DeferredResult
+	*graphql.ExecutionContextState[ResolverRoot, DirectiveRoot, ComplexityRoot]
 }
 
-func (ec *executionContext) processDeferredGroup(dg graphql.DeferredGroup) {
-	atomic.AddInt32(&ec.pendingDeferred, 1)
-	go func() {
-		ctx := graphql.WithFreshResponseContext(dg.Context)
-		dg.FieldSet.Dispatch(ctx)
-		ds := graphql.DeferredResult{
-			Path:   dg.Path,
-			Label:  dg.Label,
-			Result: dg.FieldSet,
-			Errors: graphql.GetErrors(ctx),
-		}
-		// null fields should bubble up
-		if dg.FieldSet.Invalids > 0 {
-			ds.Result = graphql.Null
-		}
-		ec.deferredResults <- ds
-	}()
-}
-
-func (ec *executionContext) introspectSchema() (*introspection.Schema, error) {
-	if ec.DisableIntrospection {
-		return nil, errors.New("introspection disabled")
+func newExecutionContext(
+	opCtx *graphql.OperationContext,
+	execSchema *executableSchema,
+	deferredResults chan graphql.DeferredResult,
+) *executionContext {
+	return &executionContext{
+		ExecutionContextState: graphql.NewExecutionContextState[ResolverRoot, DirectiveRoot, ComplexityRoot](
+			opCtx,
+			(*graphql.ExecutableSchemaState[ResolverRoot, DirectiveRoot, ComplexityRoot])(execSchema),
+			parsedSchema,
+			deferredResults,
+		),
 	}
-	return introspection.WrapSchema(ec.Schema()), nil
-}
-
-func (ec *executionContext) introspectType(name string) (*introspection.Type, error) {
-	if ec.DisableIntrospection {
-		return nil, errors.New("introspection disabled")
-	}
-	return introspection.WrapTypeFromDef(ec.Schema(), ec.Schema().Types[name]), nil
 }
 
 var sources = []*ast.Source{
@@ -3086,7 +2819,7 @@ type Author {
   # Content queries
   content(id: ID!): Content
   contentBySlug(slug: String!): Content
-  listContentByNamespace(namespace: String!): [Content!]!
+  listContentByNamespace(namespace: String!, limit: Int): [Content!]!
   # Download page queries
   organism(taxon_id: String!): Organism
   listOrganisms: [Organism!]
@@ -3103,6 +2836,24 @@ type Author {
   plasmid(id: ID!): Plasmid
   strain(id: ID!): Strain
   listStrainsWithGene(gene: String!): [Strain!]
+  """
+  Returns a cursor-paginated list of strains, optionally filtered by
+  StrainListFilter.
+
+  **Deduplication and pagination contract**
+
+  The resolver deduplicates strain records after fetching them from the backing
+  store. As a result, the number of items returned in a single page may be
+  strictly less than the requested ` + "`" + `limit` + "`" + `, even when additional pages exist.
+  Do NOT treat ` + "`" + `len(strains) < limit` + "`" + ` as a signal that the last page has been
+  reached.
+
+  Pagination termination MUST be determined solely by the ` + "`" + `nextCursor` + "`" + ` field
+  of the returned ` + "`" + `StrainListWithCursor` + "`" + `:
+  - If ` + "`" + `nextCursor` + "`" + ` is non-zero, a subsequent page is available; pass its
+    value as the ` + "`" + `cursor` + "`" + ` argument on the next request.
+  - If ` + "`" + `nextCursor` + "`" + ` is ` + "`" + `0` + "`" + `, no further pages exist and iteration must stop.
+  """
   listStrains(
     cursor: Int
     limit: Int
@@ -3517,3 +3268,733 @@ type DeletePermission {
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
+
+// childFields_* functions provide shared child field context lookups.
+// Each function is generated once per unique object type, deduplicating the
+// switch statements that were previously inlined in every fieldContext_* function.
+
+func (ec *executionContext) childFields_Auth(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "token":
+		return ec.fieldContext_Auth_token(ctx, field)
+	case "user":
+		return ec.fieldContext_Auth_user(ctx, field)
+	case "identity":
+		return ec.fieldContext_Auth_identity(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Auth", field.Name)
+}
+
+func (ec *executionContext) childFields_Author(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "last_name":
+		return ec.fieldContext_Author_last_name(ctx, field)
+	case "first_name":
+		return ec.fieldContext_Author_first_name(ctx, field)
+	case "initials":
+		return ec.fieldContext_Author_initials(ctx, field)
+	case "rank":
+		return ec.fieldContext_Author_rank(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Author", field.Name)
+}
+
+func (ec *executionContext) childFields_Citation(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "authors":
+		return ec.fieldContext_Citation_authors(ctx, field)
+	case "title":
+		return ec.fieldContext_Citation_title(ctx, field)
+	case "journal":
+		return ec.fieldContext_Citation_journal(ctx, field)
+	case "pubmed_id":
+		return ec.fieldContext_Citation_pubmed_id(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Citation", field.Name)
+}
+
+func (ec *executionContext) childFields_Content(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Content_id(ctx, field)
+	case "name":
+		return ec.fieldContext_Content_name(ctx, field)
+	case "slug":
+		return ec.fieldContext_Content_slug(ctx, field)
+	case "created_by":
+		return ec.fieldContext_Content_created_by(ctx, field)
+	case "updated_by":
+		return ec.fieldContext_Content_updated_by(ctx, field)
+	case "created_at":
+		return ec.fieldContext_Content_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_Content_updated_at(ctx, field)
+	case "content":
+		return ec.fieldContext_Content_content(ctx, field)
+	case "namespace":
+		return ec.fieldContext_Content_namespace(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Content", field.Name)
+}
+
+func (ec *executionContext) childFields_DeleteContent(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "success":
+		return ec.fieldContext_DeleteContent_success(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type DeleteContent", field.Name)
+}
+
+func (ec *executionContext) childFields_DeletePermission(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "success":
+		return ec.fieldContext_DeletePermission_success(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type DeletePermission", field.Name)
+}
+
+func (ec *executionContext) childFields_DeleteRole(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "success":
+		return ec.fieldContext_DeleteRole_success(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type DeleteRole", field.Name)
+}
+
+func (ec *executionContext) childFields_DeleteStock(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "success":
+		return ec.fieldContext_DeleteStock_success(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type DeleteStock", field.Name)
+}
+
+func (ec *executionContext) childFields_DeleteStrainPhenotype(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "success":
+		return ec.fieldContext_DeleteStrainPhenotype_success(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type DeleteStrainPhenotype", field.Name)
+}
+
+func (ec *executionContext) childFields_DeleteUser(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "success":
+		return ec.fieldContext_DeleteUser_success(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type DeleteUser", field.Name)
+}
+
+func (ec *executionContext) childFields_Download(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "title":
+		return ec.fieldContext_Download_title(ctx, field)
+	case "items":
+		return ec.fieldContext_Download_items(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Download", field.Name)
+}
+
+func (ec *executionContext) childFields_DownloadItem(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "title":
+		return ec.fieldContext_DownloadItem_title(ctx, field)
+	case "url":
+		return ec.fieldContext_DownloadItem_url(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type DownloadItem", field.Name)
+}
+
+func (ec *executionContext) childFields_Extension(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Extension_id(ctx, field)
+	case "db":
+		return ec.fieldContext_Extension_db(ctx, field)
+	case "relation":
+		return ec.fieldContext_Extension_relation(ctx, field)
+	case "name":
+		return ec.fieldContext_Extension_name(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Extension", field.Name)
+}
+
+func (ec *executionContext) childFields_GOAnnotation(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_GOAnnotation_id(ctx, field)
+	case "type":
+		return ec.fieldContext_GOAnnotation_type(ctx, field)
+	case "date":
+		return ec.fieldContext_GOAnnotation_date(ctx, field)
+	case "evidence_code":
+		return ec.fieldContext_GOAnnotation_evidence_code(ctx, field)
+	case "go_term":
+		return ec.fieldContext_GOAnnotation_go_term(ctx, field)
+	case "qualifier":
+		return ec.fieldContext_GOAnnotation_qualifier(ctx, field)
+	case "publication":
+		return ec.fieldContext_GOAnnotation_publication(ctx, field)
+	case "with":
+		return ec.fieldContext_GOAnnotation_with(ctx, field)
+	case "extensions":
+		return ec.fieldContext_GOAnnotation_extensions(ctx, field)
+	case "assigned_by":
+		return ec.fieldContext_GOAnnotation_assigned_by(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type GOAnnotation", field.Name)
+}
+
+func (ec *executionContext) childFields_Gene(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Gene_id(ctx, field)
+	case "name":
+		return ec.fieldContext_Gene_name(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Gene", field.Name)
+}
+
+func (ec *executionContext) childFields_GeneGeneralInfo(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_GeneGeneralInfo_id(ctx, field)
+	case "name_description":
+		return ec.fieldContext_GeneGeneralInfo_name_description(ctx, field)
+	case "gene_product":
+		return ec.fieldContext_GeneGeneralInfo_gene_product(ctx, field)
+	case "synonyms":
+		return ec.fieldContext_GeneGeneralInfo_synonyms(ctx, field)
+	case "description":
+		return ec.fieldContext_GeneGeneralInfo_description(ctx, field)
+	case "created_at":
+		return ec.fieldContext_GeneGeneralInfo_created_at(ctx, field)
+	case "created_by":
+		return ec.fieldContext_GeneGeneralInfo_created_by(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_GeneGeneralInfo_updated_at(ctx, field)
+	case "updated_by":
+		return ec.fieldContext_GeneGeneralInfo_updated_by(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type GeneGeneralInfo", field.Name)
+}
+
+func (ec *executionContext) childFields_Identity(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Identity_id(ctx, field)
+	case "identifier":
+		return ec.fieldContext_Identity_identifier(ctx, field)
+	case "provider":
+		return ec.fieldContext_Identity_provider(ctx, field)
+	case "user_id":
+		return ec.fieldContext_Identity_user_id(ctx, field)
+	case "created_at":
+		return ec.fieldContext_Identity_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_Identity_updated_at(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Identity", field.Name)
+}
+
+func (ec *executionContext) childFields_ImageFile(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "url":
+		return ec.fieldContext_ImageFile_url(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type ImageFile", field.Name)
+}
+
+func (ec *executionContext) childFields_Logout(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "success":
+		return ec.fieldContext_Logout_success(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Logout", field.Name)
+}
+
+func (ec *executionContext) childFields_Order(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Order_id(ctx, field)
+	case "created_at":
+		return ec.fieldContext_Order_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_Order_updated_at(ctx, field)
+	case "courier":
+		return ec.fieldContext_Order_courier(ctx, field)
+	case "courier_account":
+		return ec.fieldContext_Order_courier_account(ctx, field)
+	case "comments":
+		return ec.fieldContext_Order_comments(ctx, field)
+	case "payment":
+		return ec.fieldContext_Order_payment(ctx, field)
+	case "purchase_order_num":
+		return ec.fieldContext_Order_purchase_order_num(ctx, field)
+	case "status":
+		return ec.fieldContext_Order_status(ctx, field)
+	case "consumer":
+		return ec.fieldContext_Order_consumer(ctx, field)
+	case "payer":
+		return ec.fieldContext_Order_payer(ctx, field)
+	case "purchaser":
+		return ec.fieldContext_Order_purchaser(ctx, field)
+	case "items":
+		return ec.fieldContext_Order_items(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Order", field.Name)
+}
+
+func (ec *executionContext) childFields_OrderListWithCursor(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "orders":
+		return ec.fieldContext_OrderListWithCursor_orders(ctx, field)
+	case "nextCursor":
+		return ec.fieldContext_OrderListWithCursor_nextCursor(ctx, field)
+	case "previousCursor":
+		return ec.fieldContext_OrderListWithCursor_previousCursor(ctx, field)
+	case "limit":
+		return ec.fieldContext_OrderListWithCursor_limit(ctx, field)
+	case "totalCount":
+		return ec.fieldContext_OrderListWithCursor_totalCount(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type OrderListWithCursor", field.Name)
+}
+
+func (ec *executionContext) childFields_Organism(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "taxon_id":
+		return ec.fieldContext_Organism_taxon_id(ctx, field)
+	case "scientific_name":
+		return ec.fieldContext_Organism_scientific_name(ctx, field)
+	case "citations":
+		return ec.fieldContext_Organism_citations(ctx, field)
+	case "downloads":
+		return ec.fieldContext_Organism_downloads(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Organism", field.Name)
+}
+
+func (ec *executionContext) childFields_Permission(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Permission_id(ctx, field)
+	case "permission":
+		return ec.fieldContext_Permission_permission(ctx, field)
+	case "description":
+		return ec.fieldContext_Permission_description(ctx, field)
+	case "created_at":
+		return ec.fieldContext_Permission_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_Permission_updated_at(ctx, field)
+	case "resource":
+		return ec.fieldContext_Permission_resource(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Permission", field.Name)
+}
+
+func (ec *executionContext) childFields_Phenotype(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "phenotype":
+		return ec.fieldContext_Phenotype_phenotype(ctx, field)
+	case "note":
+		return ec.fieldContext_Phenotype_note(ctx, field)
+	case "assay":
+		return ec.fieldContext_Phenotype_assay(ctx, field)
+	case "environment":
+		return ec.fieldContext_Phenotype_environment(ctx, field)
+	case "publication":
+		return ec.fieldContext_Phenotype_publication(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Phenotype", field.Name)
+}
+
+func (ec *executionContext) childFields_Plasmid(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Plasmid_id(ctx, field)
+	case "created_at":
+		return ec.fieldContext_Plasmid_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_Plasmid_updated_at(ctx, field)
+	case "created_by":
+		return ec.fieldContext_Plasmid_created_by(ctx, field)
+	case "updated_by":
+		return ec.fieldContext_Plasmid_updated_by(ctx, field)
+	case "summary":
+		return ec.fieldContext_Plasmid_summary(ctx, field)
+	case "editable_summary":
+		return ec.fieldContext_Plasmid_editable_summary(ctx, field)
+	case "depositor":
+		return ec.fieldContext_Plasmid_depositor(ctx, field)
+	case "genes":
+		return ec.fieldContext_Plasmid_genes(ctx, field)
+	case "dbxrefs":
+		return ec.fieldContext_Plasmid_dbxrefs(ctx, field)
+	case "publications":
+		return ec.fieldContext_Plasmid_publications(ctx, field)
+	case "name":
+		return ec.fieldContext_Plasmid_name(ctx, field)
+	case "image_map":
+		return ec.fieldContext_Plasmid_image_map(ctx, field)
+	case "sequence":
+		return ec.fieldContext_Plasmid_sequence(ctx, field)
+	case "in_stock":
+		return ec.fieldContext_Plasmid_in_stock(ctx, field)
+	case "keywords":
+		return ec.fieldContext_Plasmid_keywords(ctx, field)
+	case "genbank_accession":
+		return ec.fieldContext_Plasmid_genbank_accession(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Plasmid", field.Name)
+}
+
+func (ec *executionContext) childFields_PlasmidListWithCursor(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "plasmids":
+		return ec.fieldContext_PlasmidListWithCursor_plasmids(ctx, field)
+	case "nextCursor":
+		return ec.fieldContext_PlasmidListWithCursor_nextCursor(ctx, field)
+	case "previousCursor":
+		return ec.fieldContext_PlasmidListWithCursor_previousCursor(ctx, field)
+	case "limit":
+		return ec.fieldContext_PlasmidListWithCursor_limit(ctx, field)
+	case "totalCount":
+		return ec.fieldContext_PlasmidListWithCursor_totalCount(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type PlasmidListWithCursor", field.Name)
+}
+
+func (ec *executionContext) childFields_Publication(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Publication_id(ctx, field)
+	case "doi":
+		return ec.fieldContext_Publication_doi(ctx, field)
+	case "title":
+		return ec.fieldContext_Publication_title(ctx, field)
+	case "abstract":
+		return ec.fieldContext_Publication_abstract(ctx, field)
+	case "journal":
+		return ec.fieldContext_Publication_journal(ctx, field)
+	case "pub_date":
+		return ec.fieldContext_Publication_pub_date(ctx, field)
+	case "volume":
+		return ec.fieldContext_Publication_volume(ctx, field)
+	case "pages":
+		return ec.fieldContext_Publication_pages(ctx, field)
+	case "issn":
+		return ec.fieldContext_Publication_issn(ctx, field)
+	case "pub_type":
+		return ec.fieldContext_Publication_pub_type(ctx, field)
+	case "source":
+		return ec.fieldContext_Publication_source(ctx, field)
+	case "issue":
+		return ec.fieldContext_Publication_issue(ctx, field)
+	case "status":
+		return ec.fieldContext_Publication_status(ctx, field)
+	case "authors":
+		return ec.fieldContext_Publication_authors(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Publication", field.Name)
+}
+
+func (ec *executionContext) childFields_PublicationWithGene(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "related_genes":
+		return ec.fieldContext_PublicationWithGene_related_genes(ctx, field)
+	case "id":
+		return ec.fieldContext_PublicationWithGene_id(ctx, field)
+	case "doi":
+		return ec.fieldContext_PublicationWithGene_doi(ctx, field)
+	case "title":
+		return ec.fieldContext_PublicationWithGene_title(ctx, field)
+	case "abstract":
+		return ec.fieldContext_PublicationWithGene_abstract(ctx, field)
+	case "journal":
+		return ec.fieldContext_PublicationWithGene_journal(ctx, field)
+	case "pub_date":
+		return ec.fieldContext_PublicationWithGene_pub_date(ctx, field)
+	case "volume":
+		return ec.fieldContext_PublicationWithGene_volume(ctx, field)
+	case "pages":
+		return ec.fieldContext_PublicationWithGene_pages(ctx, field)
+	case "issn":
+		return ec.fieldContext_PublicationWithGene_issn(ctx, field)
+	case "pub_type":
+		return ec.fieldContext_PublicationWithGene_pub_type(ctx, field)
+	case "source":
+		return ec.fieldContext_PublicationWithGene_source(ctx, field)
+	case "issue":
+		return ec.fieldContext_PublicationWithGene_issue(ctx, field)
+	case "status":
+		return ec.fieldContext_PublicationWithGene_status(ctx, field)
+	case "authors":
+		return ec.fieldContext_PublicationWithGene_authors(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type PublicationWithGene", field.Name)
+}
+
+func (ec *executionContext) childFields_Role(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Role_id(ctx, field)
+	case "role":
+		return ec.fieldContext_Role_role(ctx, field)
+	case "description":
+		return ec.fieldContext_Role_description(ctx, field)
+	case "created_at":
+		return ec.fieldContext_Role_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_Role_updated_at(ctx, field)
+	case "permissions":
+		return ec.fieldContext_Role_permissions(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
+}
+
+func (ec *executionContext) childFields_Strain(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Strain_id(ctx, field)
+	case "created_at":
+		return ec.fieldContext_Strain_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_Strain_updated_at(ctx, field)
+	case "created_by":
+		return ec.fieldContext_Strain_created_by(ctx, field)
+	case "updated_by":
+		return ec.fieldContext_Strain_updated_by(ctx, field)
+	case "summary":
+		return ec.fieldContext_Strain_summary(ctx, field)
+	case "editable_summary":
+		return ec.fieldContext_Strain_editable_summary(ctx, field)
+	case "depositor":
+		return ec.fieldContext_Strain_depositor(ctx, field)
+	case "genes":
+		return ec.fieldContext_Strain_genes(ctx, field)
+	case "dbxrefs":
+		return ec.fieldContext_Strain_dbxrefs(ctx, field)
+	case "publications":
+		return ec.fieldContext_Strain_publications(ctx, field)
+	case "systematic_name":
+		return ec.fieldContext_Strain_systematic_name(ctx, field)
+	case "label":
+		return ec.fieldContext_Strain_label(ctx, field)
+	case "species":
+		return ec.fieldContext_Strain_species(ctx, field)
+	case "plasmid":
+		return ec.fieldContext_Strain_plasmid(ctx, field)
+	case "parent":
+		return ec.fieldContext_Strain_parent(ctx, field)
+	case "names":
+		return ec.fieldContext_Strain_names(ctx, field)
+	case "in_stock":
+		return ec.fieldContext_Strain_in_stock(ctx, field)
+	case "phenotypes":
+		return ec.fieldContext_Strain_phenotypes(ctx, field)
+	case "genetic_modification":
+		return ec.fieldContext_Strain_genetic_modification(ctx, field)
+	case "mutagenesis_method":
+		return ec.fieldContext_Strain_mutagenesis_method(ctx, field)
+	case "characteristics":
+		return ec.fieldContext_Strain_characteristics(ctx, field)
+	case "genotypes":
+		return ec.fieldContext_Strain_genotypes(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Strain", field.Name)
+}
+
+func (ec *executionContext) childFields_StrainListWithCursor(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "strains":
+		return ec.fieldContext_StrainListWithCursor_strains(ctx, field)
+	case "nextCursor":
+		return ec.fieldContext_StrainListWithCursor_nextCursor(ctx, field)
+	case "previousCursor":
+		return ec.fieldContext_StrainListWithCursor_previousCursor(ctx, field)
+	case "limit":
+		return ec.fieldContext_StrainListWithCursor_limit(ctx, field)
+	case "totalCount":
+		return ec.fieldContext_StrainListWithCursor_totalCount(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type StrainListWithCursor", field.Name)
+}
+
+func (ec *executionContext) childFields_User(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_User_id(ctx, field)
+	case "first_name":
+		return ec.fieldContext_User_first_name(ctx, field)
+	case "last_name":
+		return ec.fieldContext_User_last_name(ctx, field)
+	case "email":
+		return ec.fieldContext_User_email(ctx, field)
+	case "organization":
+		return ec.fieldContext_User_organization(ctx, field)
+	case "group_name":
+		return ec.fieldContext_User_group_name(ctx, field)
+	case "first_address":
+		return ec.fieldContext_User_first_address(ctx, field)
+	case "second_address":
+		return ec.fieldContext_User_second_address(ctx, field)
+	case "city":
+		return ec.fieldContext_User_city(ctx, field)
+	case "state":
+		return ec.fieldContext_User_state(ctx, field)
+	case "zipcode":
+		return ec.fieldContext_User_zipcode(ctx, field)
+	case "country":
+		return ec.fieldContext_User_country(ctx, field)
+	case "phone":
+		return ec.fieldContext_User_phone(ctx, field)
+	case "is_active":
+		return ec.fieldContext_User_is_active(ctx, field)
+	case "created_at":
+		return ec.fieldContext_User_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_User_updated_at(ctx, field)
+	case "roles":
+		return ec.fieldContext_User_roles(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+}
+
+func (ec *executionContext) childFields_UserList(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "users":
+		return ec.fieldContext_UserList_users(ctx, field)
+	case "pageNum":
+		return ec.fieldContext_UserList_pageNum(ctx, field)
+	case "pageSize":
+		return ec.fieldContext_UserList_pageSize(ctx, field)
+	case "totalCount":
+		return ec.fieldContext_UserList_totalCount(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type UserList", field.Name)
+}
+
+func (ec *executionContext) childFields_With(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_With_id(ctx, field)
+	case "db":
+		return ec.fieldContext_With_db(ctx, field)
+	case "name":
+		return ec.fieldContext_With_name(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type With", field.Name)
+}
+
+func (ec *executionContext) childFields___Directive(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___Directive_name(ctx, field)
+	case "description":
+		return ec.fieldContext___Directive_description(ctx, field)
+	case "isRepeatable":
+		return ec.fieldContext___Directive_isRepeatable(ctx, field)
+	case "locations":
+		return ec.fieldContext___Directive_locations(ctx, field)
+	case "args":
+		return ec.fieldContext___Directive_args(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Directive", field.Name)
+}
+
+func (ec *executionContext) childFields___EnumValue(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___EnumValue_name(ctx, field)
+	case "description":
+		return ec.fieldContext___EnumValue_description(ctx, field)
+	case "isDeprecated":
+		return ec.fieldContext___EnumValue_isDeprecated(ctx, field)
+	case "deprecationReason":
+		return ec.fieldContext___EnumValue_deprecationReason(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __EnumValue", field.Name)
+}
+
+func (ec *executionContext) childFields___Field(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___Field_name(ctx, field)
+	case "description":
+		return ec.fieldContext___Field_description(ctx, field)
+	case "args":
+		return ec.fieldContext___Field_args(ctx, field)
+	case "type":
+		return ec.fieldContext___Field_type(ctx, field)
+	case "isDeprecated":
+		return ec.fieldContext___Field_isDeprecated(ctx, field)
+	case "deprecationReason":
+		return ec.fieldContext___Field_deprecationReason(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Field", field.Name)
+}
+
+func (ec *executionContext) childFields___InputValue(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___InputValue_name(ctx, field)
+	case "description":
+		return ec.fieldContext___InputValue_description(ctx, field)
+	case "type":
+		return ec.fieldContext___InputValue_type(ctx, field)
+	case "defaultValue":
+		return ec.fieldContext___InputValue_defaultValue(ctx, field)
+	case "isDeprecated":
+		return ec.fieldContext___InputValue_isDeprecated(ctx, field)
+	case "deprecationReason":
+		return ec.fieldContext___InputValue_deprecationReason(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __InputValue", field.Name)
+}
+
+func (ec *executionContext) childFields___Schema(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "description":
+		return ec.fieldContext___Schema_description(ctx, field)
+	case "types":
+		return ec.fieldContext___Schema_types(ctx, field)
+	case "queryType":
+		return ec.fieldContext___Schema_queryType(ctx, field)
+	case "mutationType":
+		return ec.fieldContext___Schema_mutationType(ctx, field)
+	case "subscriptionType":
+		return ec.fieldContext___Schema_subscriptionType(ctx, field)
+	case "directives":
+		return ec.fieldContext___Schema_directives(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+}
+
+func (ec *executionContext) childFields___Type(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "kind":
+		return ec.fieldContext___Type_kind(ctx, field)
+	case "name":
+		return ec.fieldContext___Type_name(ctx, field)
+	case "description":
+		return ec.fieldContext___Type_description(ctx, field)
+	case "specifiedByURL":
+		return ec.fieldContext___Type_specifiedByURL(ctx, field)
+	case "fields":
+		return ec.fieldContext___Type_fields(ctx, field)
+	case "interfaces":
+		return ec.fieldContext___Type_interfaces(ctx, field)
+	case "possibleTypes":
+		return ec.fieldContext___Type_possibleTypes(ctx, field)
+	case "enumValues":
+		return ec.fieldContext___Type_enumValues(ctx, field)
+	case "inputFields":
+		return ec.fieldContext___Type_inputFields(ctx, field)
+	case "ofType":
+		return ec.fieldContext___Type_ofType(ctx, field)
+	case "isOneOf":
+		return ec.fieldContext___Type_isOneOf(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
+}

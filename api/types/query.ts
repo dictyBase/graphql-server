@@ -159,8 +159,8 @@ export const UpdateUser = gql`
 }
     `;
 export const ListContentByNamespace = gql`
-    query ListContentByNamespace($namespace: String!) {
-  listContentByNamespace(namespace: $namespace) {
+    query ListContentByNamespace($namespace: String!, $limit: Int) {
+  listContentByNamespace(namespace: $namespace, limit: $limit) {
     id
     content
     name
