@@ -2,7 +2,7 @@ module github.com/dictyBase/graphql-server
 
 require (
 	github.com/99designs/gqlgen v0.17.91
-	github.com/IBM/fp-go/v2 v2.3.82
+	github.com/IBM/fp-go/v2 v2.3.122
 	github.com/Jeffail/gabs/v2 v2.7.0
 	github.com/dictyBase/aphgrpc v1.4.2
 	github.com/dictyBase/go-genproto v0.0.0-20250812211349-c01bdbe25058
@@ -60,7 +60,7 @@ require (
 	github.com/sosodev/duration v1.4.0 // indirect
 	github.com/stretchr/objx v0.5.3 // indirect
 	github.com/tinylib/msgp v1.6.4 // indirect
-	github.com/urfave/cli/v3 v3.10.1 // indirect
+	github.com/urfave/cli/v3 v3.11.0 // indirect
 	github.com/zeebo/xxh3 v1.1.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/crypto v0.55.0 // indirect
