@@ -173,16 +173,18 @@ export type NumberOfPublicationsWithGeneFieldPolicy = {
 	num_pubs?: FieldPolicy<any> | FieldReadFunction<any>,
 	publications?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type OrderKeySpecifier = ('comments' | 'consumer' | 'courier' | 'courier_account' | 'created_at' | 'id' | 'items' | 'payer' | 'payment' | 'purchase_order_num' | 'purchaser' | 'status' | 'updated_at' | OrderKeySpecifier)[];
+export type OrderKeySpecifier = ('comments' | 'consumer' | 'consumer_info' | 'courier' | 'courier_account' | 'created_at' | 'id' | 'items' | 'payer' | 'payer_info' | 'payment' | 'purchase_order_num' | 'purchaser' | 'status' | 'updated_at' | OrderKeySpecifier)[];
 export type OrderFieldPolicy = {
 	comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	consumer?: FieldPolicy<any> | FieldReadFunction<any>,
+	consumer_info?: FieldPolicy<any> | FieldReadFunction<any>,
 	courier?: FieldPolicy<any> | FieldReadFunction<any>,
 	courier_account?: FieldPolicy<any> | FieldReadFunction<any>,
 	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	items?: FieldPolicy<any> | FieldReadFunction<any>,
 	payer?: FieldPolicy<any> | FieldReadFunction<any>,
+	payer_info?: FieldPolicy<any> | FieldReadFunction<any>,
 	payment?: FieldPolicy<any> | FieldReadFunction<any>,
 	purchase_order_num?: FieldPolicy<any> | FieldReadFunction<any>,
 	purchaser?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -396,6 +398,19 @@ export type UserFieldPolicy = {
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	zipcode?: FieldPolicy<any> | FieldReadFunction<any>
 };
+export type UserInfoKeySpecifier = ('city' | 'country' | 'first_address' | 'first_name' | 'last_name' | 'organization' | 'phone' | 'second_address' | 'state' | 'zipcode' | UserInfoKeySpecifier)[];
+export type UserInfoFieldPolicy = {
+	city?: FieldPolicy<any> | FieldReadFunction<any>,
+	country?: FieldPolicy<any> | FieldReadFunction<any>,
+	first_address?: FieldPolicy<any> | FieldReadFunction<any>,
+	first_name?: FieldPolicy<any> | FieldReadFunction<any>,
+	last_name?: FieldPolicy<any> | FieldReadFunction<any>,
+	organization?: FieldPolicy<any> | FieldReadFunction<any>,
+	phone?: FieldPolicy<any> | FieldReadFunction<any>,
+	second_address?: FieldPolicy<any> | FieldReadFunction<any>,
+	state?: FieldPolicy<any> | FieldReadFunction<any>,
+	zipcode?: FieldPolicy<any> | FieldReadFunction<any>
+};
 export type UserListKeySpecifier = ('pageNum' | 'pageSize' | 'totalCount' | 'users' | UserListKeySpecifier)[];
 export type UserListFieldPolicy = {
 	pageNum?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -557,6 +572,10 @@ export type StrictTypedTypePolicies = {
 	User?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | UserKeySpecifier | (() => undefined | UserKeySpecifier),
 		fields?: UserFieldPolicy,
+	},
+	UserInfo?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | UserInfoKeySpecifier | (() => undefined | UserInfoKeySpecifier),
+		fields?: UserInfoFieldPolicy,
 	},
 	UserList?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | UserListKeySpecifier | (() => undefined | UserListKeySpecifier),

@@ -7,6 +7,7 @@ package genresolver
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/dictyBase/go-genproto/dictybaseapis/order"
@@ -78,6 +79,16 @@ func (r *orderResolver) Purchaser(ctx context.Context, obj *order.Order) (*user.
 // Items is the resolver for the items field.
 func (r *orderResolver) Items(ctx context.Context, obj *order.Order) ([]models.Stock, error) {
 	panic("not implemented")
+}
+
+// ConsumerInfo is the resolver for the consumer_info field.
+func (r *orderResolver) ConsumerInfo(ctx context.Context, obj *order.Order) (*order.UserInfo, error) {
+	panic(fmt.Errorf("not implemented: ConsumerInfo - consumer_info"))
+}
+
+// PayerInfo is the resolver for the payer_info field.
+func (r *orderResolver) PayerInfo(ctx context.Context, obj *order.Order) (*order.UserInfo, error) {
+	panic(fmt.Errorf("not implemented: PayerInfo - payer_info"))
 }
 
 // Order returns generated.OrderResolver implementation.

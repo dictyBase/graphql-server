@@ -30,6 +30,8 @@ func (mrs *MutationResolver) CreateOrder(
 	attr.PurchaseOrderNum = *input.PurchaseOrderNum
 	attr.Purchaser = input.Purchaser
 	attr.Status = statusConverter(input.Status)
+	attr.ConsumerInfo = userInfoFromInput(input.ConsumerInfo)
+	attr.PayerInfo = userInfoFromInput(input.PayerInfo)
 	o, err := mrs.GetOrderClient(registry.ORDER).CreateOrder(ctx, &pb.NewOrder{
 		Data: &pb.NewOrder_Data{
 			Type:       "order",
@@ -43,6 +45,49 @@ func (mrs *MutationResolver) CreateOrder(
 	}
 	mrs.Logger.Debugf("successfully created new order with ID %s", o.Data.Id)
 	return o, nil
+}
+
+// userInfoFromInput converts the optional GraphQL user profile input
+// into its protocol buffer representation, returning nil for an absent
+// profile.
+func userInfoFromInput(in *models.UserInfoInput) *pb.UserInfo {
+	if in == nil {
+		return nil
+	}
+
+	u := &pb.UserInfo{}
+	if in.FirstName != nil {
+		u.FirstName = *in.FirstName
+	}
+	if in.LastName != nil {
+		u.LastName = *in.LastName
+	}
+	if in.Organization != nil {
+		u.Organization = *in.Organization
+	}
+	if in.FirstAddress != nil {
+		u.FirstAddress = *in.FirstAddress
+	}
+	if in.SecondAddress != nil {
+		u.SecondAddress = *in.SecondAddress
+	}
+	if in.City != nil {
+		u.City = *in.City
+	}
+	if in.State != nil {
+		u.State = *in.State
+	}
+	if in.Zipcode != nil {
+		u.Zipcode = *in.Zipcode
+	}
+	if in.Country != nil {
+		u.Country = *in.Country
+	}
+	if in.Phone != nil {
+		u.Phone = *in.Phone
+	}
+
+	return u
 }
 
 // statusConverter converts the enum status string to protocol buffer int32 value

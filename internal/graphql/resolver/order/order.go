@@ -152,6 +152,22 @@ func (ord *OrderResolver) Purchaser(
 	return g, nil
 }
 
+// ConsumerInfo resolves the shipper profile embedded in the order.
+func (ord *OrderResolver) ConsumerInfo(
+	ctx context.Context,
+	obj *pb.Order,
+) (*pb.UserInfo, error) {
+	return obj.Data.Attributes.ConsumerInfo, nil
+}
+
+// PayerInfo resolves the payer profile embedded in the order.
+func (ord *OrderResolver) PayerInfo(
+	ctx context.Context,
+	obj *pb.Order,
+) (*pb.UserInfo, error) {
+	return obj.Data.Attributes.PayerInfo, nil
+}
+
 func (ord *OrderResolver) Items(
 	ctx context.Context,
 	obj *pb.Order,

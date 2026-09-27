@@ -33,6 +33,8 @@ type OrderResolver interface {
 	Payer(ctx context.Context, obj *order.Order) (*user.User, error)
 	Purchaser(ctx context.Context, obj *order.Order) (*user.User, error)
 	Items(ctx context.Context, obj *order.Order) ([]models.Stock, error)
+	ConsumerInfo(ctx context.Context, obj *order.Order) (*order.UserInfo, error)
+	PayerInfo(ctx context.Context, obj *order.Order) (*order.UserInfo, error)
 }
 
 // endregion ************************** generated!.gotpl **************************
@@ -378,6 +380,70 @@ func (ec *executionContext) fieldContext_Order_items(_ context.Context, field gr
 	return fc, nil
 }
 
+func (ec *executionContext) _Order_consumer_info(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Order_consumer_info(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return ec.Resolvers.Order().ConsumerInfo(ctx, obj)
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *order.UserInfo) graphql.Marshaler {
+			return ec.marshalOUserInfo2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐUserInfo(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_Order_consumer_info(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Order",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_UserInfo(ctx, field)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Order_payer_info(ctx context.Context, field graphql.CollectedField, obj *order.Order) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Order_payer_info(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return ec.Resolvers.Order().PayerInfo(ctx, obj)
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *order.UserInfo) graphql.Marshaler {
+			return ec.marshalOUserInfo2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐUserInfo(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_Order_payer_info(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Order",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_UserInfo(ctx, field)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _OrderListWithCursor_orders(ctx context.Context, field graphql.CollectedField, obj *models.OrderListWithCursor) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -502,6 +568,236 @@ func (ec *executionContext) fieldContext_OrderListWithCursor_totalCount(_ contex
 	return graphql.NewScalarFieldContext("OrderListWithCursor", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
+func (ec *executionContext) _UserInfo_first_name(ctx context.Context, field graphql.CollectedField, obj *order.UserInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UserInfo_first_name(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.FirstName, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_UserInfo_first_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("UserInfo", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _UserInfo_last_name(ctx context.Context, field graphql.CollectedField, obj *order.UserInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UserInfo_last_name(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.LastName, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_UserInfo_last_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("UserInfo", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _UserInfo_organization(ctx context.Context, field graphql.CollectedField, obj *order.UserInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UserInfo_organization(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Organization, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_UserInfo_organization(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("UserInfo", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _UserInfo_first_address(ctx context.Context, field graphql.CollectedField, obj *order.UserInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UserInfo_first_address(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.FirstAddress, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_UserInfo_first_address(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("UserInfo", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _UserInfo_second_address(ctx context.Context, field graphql.CollectedField, obj *order.UserInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UserInfo_second_address(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.SecondAddress, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_UserInfo_second_address(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("UserInfo", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _UserInfo_city(ctx context.Context, field graphql.CollectedField, obj *order.UserInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UserInfo_city(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.City, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_UserInfo_city(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("UserInfo", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _UserInfo_state(ctx context.Context, field graphql.CollectedField, obj *order.UserInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UserInfo_state(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.State, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_UserInfo_state(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("UserInfo", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _UserInfo_zipcode(ctx context.Context, field graphql.CollectedField, obj *order.UserInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UserInfo_zipcode(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Zipcode, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_UserInfo_zipcode(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("UserInfo", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _UserInfo_country(ctx context.Context, field graphql.CollectedField, obj *order.UserInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UserInfo_country(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Country, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_UserInfo_country(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("UserInfo", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _UserInfo_phone(ctx context.Context, field graphql.CollectedField, obj *order.UserInfo) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UserInfo_phone(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Phone, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalOString2string(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_UserInfo_phone(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("UserInfo", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
@@ -517,7 +813,7 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"courier", "courier_account", "comments", "payment", "purchase_order_num", "status", "consumer", "payer", "purchaser", "items"}
+	fieldsInOrder := [...]string{"courier", "courier_account", "comments", "payment", "purchase_order_num", "status", "consumer", "payer", "purchaser", "items", "consumer_info", "payer_info"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -594,6 +890,20 @@ func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, 
 				return it, err
 			}
 			it.Items = data
+		case "consumer_info":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("consumer_info"))
+			data, err := ec.unmarshalOUserInfoInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUserInfoInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConsumerInfo = data
+		case "payer_info":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("payer_info"))
+			data, err := ec.unmarshalOUserInfoInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUserInfoInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PayerInfo = data
 		}
 	}
 	return it, nil
@@ -666,6 +976,99 @@ func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, 
 				return it, err
 			}
 			it.Items = data
+		}
+	}
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUserInfoInput(ctx context.Context, obj any) (models.UserInfoInput, error) {
+	var it models.UserInfoInput
+	if obj == nil {
+		return it, nil
+	}
+
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"first_name", "last_name", "organization", "first_address", "second_address", "city", "state", "zipcode", "country", "phone"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "first_name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first_name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FirstName = data
+		case "last_name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last_name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LastName = data
+		case "organization":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organization"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Organization = data
+		case "first_address":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first_address"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FirstAddress = data
+		case "second_address":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("second_address"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SecondAddress = data
+		case "city":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("city"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.City = data
+		case "state":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("state"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.State = data
+		case "zipcode":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("zipcode"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Zipcode = data
+		case "country":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("country"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Country = data
+		case "phone":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phone"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Phone = data
 		}
 	}
 	return it, nil
@@ -1158,6 +1561,78 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "consumer_info":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Order_consumer_info(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "payer_info":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Order_payer_info(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1215,6 +1690,90 @@ func (ec *executionContext) _OrderListWithCursor(ctx context.Context, sel ast.Se
 		case "totalCount":
 			out.Values[i] = ec._OrderListWithCursor_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
+
+	for label, dfs := range deferred {
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userInfoImplementors = []string{"UserInfo"}
+
+func (ec *executionContext) _UserInfo(ctx context.Context, sel ast.SelectionSet, obj *order.UserInfo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userInfoImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserInfo")
+		case "first_name":
+			out.Values[i] = ec._UserInfo_first_name(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "last_name":
+			out.Values[i] = ec._UserInfo_last_name(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "organization":
+			out.Values[i] = ec._UserInfo_organization(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "first_address":
+			out.Values[i] = ec._UserInfo_first_address(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "second_address":
+			out.Values[i] = ec._UserInfo_second_address(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "city":
+			out.Values[i] = ec._UserInfo_city(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "state":
+			out.Values[i] = ec._UserInfo_state(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "zipcode":
+			out.Values[i] = ec._UserInfo_zipcode(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "country":
+			out.Values[i] = ec._UserInfo_country(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "phone":
+			out.Values[i] = ec._UserInfo_phone(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
 				out.Invalids++
 			}
 		default:
@@ -1323,6 +1882,21 @@ func (ec *executionContext) unmarshalOUpdateOrderInput2ᚖgithubᚗcomᚋdictyBa
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputUpdateOrderInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUserInfo2ᚖgithubᚗcomᚋdictyBaseᚋgoᚑgenprotoᚋdictybaseapisᚋorderᚐUserInfo(ctx context.Context, sel ast.SelectionSet, v *order.UserInfo) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UserInfo(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOUserInfoInput2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐUserInfoInput(ctx context.Context, v any) (*models.UserInfoInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUserInfoInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
