@@ -54,16 +54,18 @@ type CreateGeneGeneralInfoInput struct {
 }
 
 type CreateOrderInput struct {
-	Courier          string     `json:"courier"`
-	CourierAccount   string     `json:"courier_account"`
-	Comments         *string    `json:"comments,omitempty"`
-	Payment          string     `json:"payment"`
-	PurchaseOrderNum *string    `json:"purchase_order_num,omitempty"`
-	Status           StatusEnum `json:"status"`
-	Consumer         string     `json:"consumer"`
-	Payer            string     `json:"payer"`
-	Purchaser        string     `json:"purchaser"`
-	Items            []string   `json:"items"`
+	Courier          string         `json:"courier"`
+	CourierAccount   string         `json:"courier_account"`
+	Comments         *string        `json:"comments,omitempty"`
+	Payment          string         `json:"payment"`
+	PurchaseOrderNum *string        `json:"purchase_order_num,omitempty"`
+	Status           StatusEnum     `json:"status"`
+	Consumer         string         `json:"consumer"`
+	Payer            string         `json:"payer"`
+	Purchaser        string         `json:"purchaser"`
+	Items            []string       `json:"items"`
+	ConsumerInfo     *UserInfoInput `json:"consumer_info,omitempty"`
+	PayerInfo        *UserInfoInput `json:"payer_info,omitempty"`
 }
 
 type CreatePermissionInput struct {
@@ -452,6 +454,19 @@ type UpdateUserInput struct {
 	Country       *string `json:"country,omitempty"`
 	Phone         *string `json:"phone,omitempty"`
 	IsActive      *bool   `json:"is_active,omitempty"`
+}
+
+type UserInfoInput struct {
+	FirstName     *string `json:"first_name,omitempty"`
+	LastName      *string `json:"last_name,omitempty"`
+	Organization  *string `json:"organization,omitempty"`
+	FirstAddress  *string `json:"first_address,omitempty"`
+	SecondAddress *string `json:"second_address,omitempty"`
+	City          *string `json:"city,omitempty"`
+	State         *string `json:"state,omitempty"`
+	Zipcode       *string `json:"zipcode,omitempty"`
+	Country       *string `json:"country,omitempty"`
+	Phone         *string `json:"phone,omitempty"`
 }
 
 type UserList struct {

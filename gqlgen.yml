@@ -59,6 +59,8 @@ models:
         resolver: true
   Order:
     model: github.com/dictyBase/go-genproto/dictybaseapis/order.Order
+  UserInfo:
+    model: github.com/dictyBase/go-genproto/dictybaseapis/order.UserInfo
   Auth:
     model: github.com/dictyBase/go-genproto/dictybaseapis/auth.Auth
   Gene:

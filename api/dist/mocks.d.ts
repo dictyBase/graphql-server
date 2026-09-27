@@ -127,10 +127,12 @@ export type CreateGeneGeneralInfoInput = {
 export type CreateOrderInput = {
     comments?: InputMaybe<Scalars['String']['input']>;
     consumer: Scalars['String']['input'];
+    consumer_info?: InputMaybe<UserInfoInput>;
     courier: Scalars['String']['input'];
     courier_account: Scalars['String']['input'];
     items: Array<Scalars['String']['input']>;
     payer: Scalars['String']['input'];
+    payer_info?: InputMaybe<UserInfoInput>;
     payment: Scalars['String']['input'];
     purchase_order_num?: InputMaybe<Scalars['String']['input']>;
     purchaser: Scalars['String']['input'];
@@ -446,12 +448,14 @@ export type Order = {
     __typename?: 'Order';
     comments?: Maybe<Scalars['String']['output']>;
     consumer?: Maybe<User>;
+    consumer_info?: Maybe<UserInfo>;
     courier?: Maybe<Scalars['String']['output']>;
     courier_account?: Maybe<Scalars['String']['output']>;
     created_at: Scalars['Timestamp']['output'];
     id: Scalars['ID']['output'];
     items?: Maybe<Array<Stock>>;
     payer?: Maybe<User>;
+    payer_info?: Maybe<UserInfo>;
     payment?: Maybe<Scalars['String']['output']>;
     purchase_order_num?: Maybe<Scalars['String']['output']>;
     purchaser?: Maybe<User>;
@@ -887,6 +891,31 @@ export type User = {
     state?: Maybe<Scalars['String']['output']>;
     updated_at: Scalars['Timestamp']['output'];
     zipcode?: Maybe<Scalars['String']['output']>;
+};
+export type UserInfo = {
+    __typename?: 'UserInfo';
+    city?: Maybe<Scalars['String']['output']>;
+    country?: Maybe<Scalars['String']['output']>;
+    first_address?: Maybe<Scalars['String']['output']>;
+    first_name?: Maybe<Scalars['String']['output']>;
+    last_name?: Maybe<Scalars['String']['output']>;
+    organization?: Maybe<Scalars['String']['output']>;
+    phone?: Maybe<Scalars['String']['output']>;
+    second_address?: Maybe<Scalars['String']['output']>;
+    state?: Maybe<Scalars['String']['output']>;
+    zipcode?: Maybe<Scalars['String']['output']>;
+};
+export type UserInfoInput = {
+    city?: InputMaybe<Scalars['String']['input']>;
+    country?: InputMaybe<Scalars['String']['input']>;
+    first_address?: InputMaybe<Scalars['String']['input']>;
+    first_name?: InputMaybe<Scalars['String']['input']>;
+    last_name?: InputMaybe<Scalars['String']['input']>;
+    organization?: InputMaybe<Scalars['String']['input']>;
+    phone?: InputMaybe<Scalars['String']['input']>;
+    second_address?: InputMaybe<Scalars['String']['input']>;
+    state?: InputMaybe<Scalars['String']['input']>;
+    zipcode?: InputMaybe<Scalars['String']['input']>;
 };
 export type UserList = {
     __typename?: 'UserList';

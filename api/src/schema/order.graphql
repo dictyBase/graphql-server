@@ -1,3 +1,16 @@
+type UserInfo {
+  first_name: String
+  last_name: String
+  organization: String
+  first_address: String
+  second_address: String
+  city: String
+  state: String
+  zipcode: String
+  country: String
+  phone: String
+}
+
 type Order {
   id: ID!
   created_at: Timestamp!
@@ -12,6 +25,8 @@ type Order {
   payer: User
   purchaser: User
   items: [Stock!]
+  consumer_info: UserInfo
+  payer_info: UserInfo
 }
 
 type OrderListWithCursor {
@@ -40,6 +55,21 @@ input CreateOrderInput {
   payer: String!
   purchaser: String!
   items: [String!]!
+  consumer_info: UserInfoInput
+  payer_info: UserInfoInput
+}
+
+input UserInfoInput {
+  first_name: String
+  last_name: String
+  organization: String
+  first_address: String
+  second_address: String
+  city: String
+  state: String
+  zipcode: String
+  country: String
+  phone: String
 }
 
 input UpdateOrderInput {

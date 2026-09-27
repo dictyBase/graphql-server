@@ -200,12 +200,14 @@ type ComplexityRoot struct {
 	Order struct {
 		Comments         func(childComplexity int) int
 		Consumer         func(childComplexity int) int
+		ConsumerInfo     func(childComplexity int) int
 		Courier          func(childComplexity int) int
 		CourierAccount   func(childComplexity int) int
 		CreatedAt        func(childComplexity int) int
 		ID               func(childComplexity int) int
 		Items            func(childComplexity int) int
 		Payer            func(childComplexity int) int
+		PayerInfo        func(childComplexity int) int
 		Payment          func(childComplexity int) int
 		PurchaseOrderNum func(childComplexity int) int
 		Purchaser        func(childComplexity int) int
@@ -402,6 +404,19 @@ type ComplexityRoot struct {
 		SecondAddress func(childComplexity int) int
 		State         func(childComplexity int) int
 		UpdatedAt     func(childComplexity int) int
+		Zipcode       func(childComplexity int) int
+	}
+
+	UserInfo struct {
+		City          func(childComplexity int) int
+		Country       func(childComplexity int) int
+		FirstAddress  func(childComplexity int) int
+		FirstName     func(childComplexity int) int
+		LastName      func(childComplexity int) int
+		Organization  func(childComplexity int) int
+		Phone         func(childComplexity int) int
+		SecondAddress func(childComplexity int) int
+		State         func(childComplexity int) int
 		Zipcode       func(childComplexity int) int
 	}
 
@@ -1170,6 +1185,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Order.Consumer(childComplexity), true
+	case "Order.consumer_info":
+		if e.ComplexityRoot.Order.ConsumerInfo == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Order.ConsumerInfo(childComplexity), true
 	case "Order.courier":
 		if e.ComplexityRoot.Order.Courier == nil {
 			break
@@ -1206,6 +1227,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Order.Payer(childComplexity), true
+	case "Order.payer_info":
+		if e.ComplexityRoot.Order.PayerInfo == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Order.PayerInfo(childComplexity), true
 	case "Order.payment":
 		if e.ComplexityRoot.Order.Payment == nil {
 			break
@@ -2309,6 +2336,67 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.ComplexityRoot.User.Zipcode(childComplexity), true
 
+	case "UserInfo.city":
+		if e.ComplexityRoot.UserInfo.City == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UserInfo.City(childComplexity), true
+	case "UserInfo.country":
+		if e.ComplexityRoot.UserInfo.Country == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UserInfo.Country(childComplexity), true
+	case "UserInfo.first_address":
+		if e.ComplexityRoot.UserInfo.FirstAddress == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UserInfo.FirstAddress(childComplexity), true
+	case "UserInfo.first_name":
+		if e.ComplexityRoot.UserInfo.FirstName == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UserInfo.FirstName(childComplexity), true
+	case "UserInfo.last_name":
+		if e.ComplexityRoot.UserInfo.LastName == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UserInfo.LastName(childComplexity), true
+	case "UserInfo.organization":
+		if e.ComplexityRoot.UserInfo.Organization == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UserInfo.Organization(childComplexity), true
+	case "UserInfo.phone":
+		if e.ComplexityRoot.UserInfo.Phone == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UserInfo.Phone(childComplexity), true
+	case "UserInfo.second_address":
+		if e.ComplexityRoot.UserInfo.SecondAddress == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UserInfo.SecondAddress(childComplexity), true
+	case "UserInfo.state":
+		if e.ComplexityRoot.UserInfo.State == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UserInfo.State(childComplexity), true
+	case "UserInfo.zipcode":
+		if e.ComplexityRoot.UserInfo.Zipcode == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UserInfo.Zipcode(childComplexity), true
+
 	case "UserList.pageNum":
 		if e.ComplexityRoot.UserList.PageNum == nil {
 			break
@@ -2385,6 +2473,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateStrainPhenotypePayloadInput,
 		ec.unmarshalInputUpdateStrainPhenotypeTargetInput,
 		ec.unmarshalInputUpdateUserInput,
+		ec.unmarshalInputUserInfoInput,
 	)
 	first := true
 
@@ -2638,7 +2727,20 @@ input CreateGeneGeneralInfoInput {
   uploadFile(file: Upload!): ImageFile!
 }
 `, BuiltIn: false},
-	{Name: "../../../api/src/schema/order.graphql", Input: `type Order {
+	{Name: "../../../api/src/schema/order.graphql", Input: `type UserInfo {
+  first_name: String
+  last_name: String
+  organization: String
+  first_address: String
+  second_address: String
+  city: String
+  state: String
+  zipcode: String
+  country: String
+  phone: String
+}
+
+type Order {
   id: ID!
   created_at: Timestamp!
   updated_at: Timestamp!
@@ -2652,6 +2754,8 @@ input CreateGeneGeneralInfoInput {
   payer: User
   purchaser: User
   items: [Stock!]
+  consumer_info: UserInfo
+  payer_info: UserInfo
 }
 
 type OrderListWithCursor {
@@ -2680,6 +2784,21 @@ input CreateOrderInput {
   payer: String!
   purchaser: String!
   items: [String!]!
+  consumer_info: UserInfoInput
+  payer_info: UserInfoInput
+}
+
+input UserInfoInput {
+  first_name: String
+  last_name: String
+  organization: String
+  first_address: String
+  second_address: String
+  city: String
+  state: String
+  zipcode: String
+  country: String
+  phone: String
 }
 
 input UpdateOrderInput {
@@ -3541,6 +3660,10 @@ func (ec *executionContext) childFields_Order(ctx context.Context, field graphql
 		return ec.fieldContext_Order_purchaser(ctx, field)
 	case "items":
 		return ec.fieldContext_Order_items(ctx, field)
+	case "consumer_info":
+		return ec.fieldContext_Order_consumer_info(ctx, field)
+	case "payer_info":
+		return ec.fieldContext_Order_payer_info(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type Order", field.Name)
 }
@@ -3859,6 +3982,32 @@ func (ec *executionContext) childFields_User(ctx context.Context, field graphql.
 		return ec.fieldContext_User_roles(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+}
+
+func (ec *executionContext) childFields_UserInfo(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "first_name":
+		return ec.fieldContext_UserInfo_first_name(ctx, field)
+	case "last_name":
+		return ec.fieldContext_UserInfo_last_name(ctx, field)
+	case "organization":
+		return ec.fieldContext_UserInfo_organization(ctx, field)
+	case "first_address":
+		return ec.fieldContext_UserInfo_first_address(ctx, field)
+	case "second_address":
+		return ec.fieldContext_UserInfo_second_address(ctx, field)
+	case "city":
+		return ec.fieldContext_UserInfo_city(ctx, field)
+	case "state":
+		return ec.fieldContext_UserInfo_state(ctx, field)
+	case "zipcode":
+		return ec.fieldContext_UserInfo_zipcode(ctx, field)
+	case "country":
+		return ec.fieldContext_UserInfo_country(ctx, field)
+	case "phone":
+		return ec.fieldContext_UserInfo_phone(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type UserInfo", field.Name)
 }
 
 func (ec *executionContext) childFields_UserList(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
