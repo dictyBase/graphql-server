@@ -22,7 +22,7 @@ func (mrs *MutationResolver) CreatePermission(
 	n, err := mrs.GetPermissionClient(registry.PERMISSION).
 		CreatePermission(ctx, &pb.CreatePermissionRequest{
 			Data: &pb.CreatePermissionRequest_Data{
-				Type: "permission",
+				Type: typePermission,
 				Attributes: &pb.PermissionAttributes{
 					Permission:  input.Permission,
 					Description: input.Description,
@@ -46,14 +46,14 @@ func (mrs *MutationResolver) UpdatePermission(
 ) (*pb.Permission, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
+		return nil, fmt.Errorf(errParseIDFormat, id, err)
 	}
 	n, err := mrs.GetPermissionClient(registry.PERMISSION).
 		UpdatePermission(ctx, &pb.UpdatePermissionRequest{
 			Id: i,
 			Data: &pb.UpdatePermissionRequest_Data{
 				Id:   i,
-				Type: "permission",
+				Type: typePermission,
 				Attributes: &pb.PermissionAttributes{
 					Permission:  input.Permission,
 					Description: input.Description,
@@ -84,7 +84,7 @@ func (mrs *MutationResolver) DeletePermission(
 ) (*models.DeletePermission, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
+		return nil, fmt.Errorf(errParseIDFormat, id, err)
 	}
 
 	_, err = mrs.GetPermissionClient(registry.PERMISSION).
@@ -107,7 +107,7 @@ func (qrs *QueryResolver) Permission(
 ) (*pb.Permission, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
+		return nil, fmt.Errorf(errParseIDFormat, id, err)
 	}
 	g, err := qrs.GetPermissionClient(registry.PERMISSION).
 		GetPermission(ctx, &jsonapi.GetRequestWithFields{Id: i})
@@ -134,7 +134,7 @@ func (qrs *QueryResolver) ListPermissions(
 	for _, n := range l.Data {
 		item := &pb.Permission{
 			Data: &pb.PermissionData{
-				Type: "permission",
+				Type: typePermission,
 				Id:   n.Id,
 				Attributes: &pb.PermissionAttributes{
 					Permission:  n.Attributes.Permission,

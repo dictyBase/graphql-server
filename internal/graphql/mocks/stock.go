@@ -18,39 +18,39 @@ var (
 var MockPlasmidAttributes = &stock.PlasmidAttributes{
 	CreatedAt:       StockTimestamp,
 	UpdatedAt:       StockTimestamp,
-	CreatedBy:       "art@vandelay.com",
-	UpdatedBy:       "art@vandelay.com",
+	CreatedBy:       createdByEmail,
+	UpdatedBy:       createdByEmail,
 	Summary:         "test summary",
 	EditableSummary: "editable test summary",
 	Genes:           []string{"DDB_G0285425"},
-	Dbxrefs:         []string{"test1"},
+	Dbxrefs:         []string{dbxrefTest},
 	Publications:    []string{"99999"},
 	ImageMap:        "https://eric.dictybase.dev/test.jpg",
 	Sequence:        "ABCDEF",
-	Name:            "pTest",
+	Name:            plasmidName,
 }
 
 var MockStrainAttributes = &stock.StrainAttributes{
 	CreatedAt:       StockTimestamp,
 	UpdatedAt:       StockTimestamp,
-	CreatedBy:       "art@vandelay.com",
-	UpdatedBy:       "art@vandelay.com",
+	CreatedBy:       createdByEmail,
+	UpdatedBy:       createdByEmail,
 	Summary:         "test summary",
 	EditableSummary: "editable test summary",
 	Genes:           []string{"DDB_G0285425"},
-	Dbxrefs:         []string{"test1"},
+	Dbxrefs:         []string{dbxrefTest},
 	Publications:    []string{"99999"},
 	Label:           "test99",
 	Species:         "human",
-	Plasmid:         "pTest",
+	Plasmid:         plasmidName,
 	Names:           []string{"fusilli"},
 }
 
 func MockStrain() *stock.Strain {
 	return &stock.Strain{
 		Data: &stock.Strain_Data{
-			Type:       "strain",
-			Id:         "DBS123456",
+			Type:       strainType,
+			Id:         stockID,
 			Attributes: MockStrainAttributes,
 		},
 	}
@@ -74,51 +74,51 @@ func MockPlasmidInputWithParams(depositor string) *stock.PlasmidAttributes {
 var MockUpdateStrainAttributes = &stock.StrainAttributes{
 	CreatedAt:       StockTimestamp,
 	UpdatedAt:       StockTimestamp,
-	CreatedBy:       "art@vandelay.com",
-	UpdatedBy:       "h.e.@pennypacker.com",
+	CreatedBy:       createdByEmail,
+	UpdatedBy:       updatedByEmail,
 	Summary:         "updated summary",
 	EditableSummary: "editable updated summary",
 	Depositor:       "puddy@nyrangers.com",
 	Genes:           []string{"sadA"},
-	Dbxrefs:         []string{"test1"},
+	Dbxrefs:         []string{dbxrefTest},
 	Publications:    []string{"99999"},
 	Label:           "test99",
 	Species:         "human",
-	Plasmid:         "pTest",
+	Plasmid:         plasmidName,
 	Names:           []string{"fusilli"},
 }
 
 var MockUpdatePlasmidAttributes = &stock.PlasmidAttributes{
 	CreatedAt:       StockTimestamp,
 	UpdatedAt:       StockTimestamp,
-	CreatedBy:       "art@vandelay.com",
-	UpdatedBy:       "h.e.@pennypacker.com",
+	CreatedBy:       createdByEmail,
+	UpdatedBy:       updatedByEmail,
 	Summary:         "updated summary",
 	EditableSummary: "editable updated summary",
 	Depositor:       "puddy@nyrangers.com",
 	Genes:           []string{"sadA"},
-	Dbxrefs:         []string{"test1"},
+	Dbxrefs:         []string{dbxrefTest},
 	Publications:    []string{"99999"},
 	ImageMap:        "https://eric.dictybase.dev/test.jpg",
 	Sequence:        "ABCDEF",
-	Name:            "pTest",
+	Name:            plasmidName,
 }
 
 var mockStrainData = &stock.StrainCollection_Data{
-	Type:       "strain",
-	Id:         "DBS123456",
+	Type:       strainType,
+	Id:         stockID,
 	Attributes: MockStrainAttributes,
 }
 
 var mockPlasmidList = &stock.PlasmidCollection_Data{
-	Type:       "plasmid",
-	Id:         "DBP123456",
+	Type:       plasmidType,
+	Id:         plasmidStrainID,
 	Attributes: MockPlasmidAttributes,
 }
 
 func MockStrainCollection() *stock.StrainCollection {
 	var strains []*stock.StrainCollection_Data
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		strains = append(strains, mockStrainData)
 	}
 	return &stock.StrainCollection{
@@ -133,8 +133,8 @@ func MockStrainCollection() *stock.StrainCollection {
 func MockStrainList() *stock.StrainList {
 	return &stock.StrainList{
 		Data: []*stock.StrainList_Data{
-			{Type: "strain", Id: "DBS000001", Attributes: MockStrainAttributes},
-			{Type: "strain", Id: "DBS000002", Attributes: MockStrainAttributes},
+			{Type: strainType, Id: "DBS000001", Attributes: MockStrainAttributes},
+			{Type: strainType, Id: "DBS000002", Attributes: MockStrainAttributes},
 		},
 	}
 }
@@ -161,8 +161,8 @@ func mockPlasmidWithParams(depositor string) *stock.Plasmid {
 	attr.Depositor = depositor
 	return &stock.Plasmid{
 		Data: &stock.Plasmid_Data{
-			Type:       "plasmid",
-			Id:         "DBP123456",
+			Type:       plasmidType,
+			Id:         plasmidStrainID,
 			Attributes: attr,
 		},
 	}
@@ -174,8 +174,8 @@ func mockStrainWithParams(depositor, parent string) *stock.Strain {
 	attr.Parent = parent
 	return &stock.Strain{
 		Data: &stock.Strain_Data{
-			Type:       "strain",
-			Id:         "DBS123456",
+			Type:       strainType,
+			Id:         stockID,
 			Attributes: attr,
 		},
 	}
@@ -184,8 +184,8 @@ func mockStrainWithParams(depositor, parent string) *stock.Strain {
 func mockUpdatePlasmid() *stock.Plasmid {
 	return &stock.Plasmid{
 		Data: &stock.Plasmid_Data{
-			Type:       "plasmid",
-			Id:         "DBP123456",
+			Type:       plasmidType,
+			Id:         plasmidStrainID,
 			Attributes: MockUpdatePlasmidAttributes,
 		},
 	}
@@ -194,8 +194,8 @@ func mockUpdatePlasmid() *stock.Plasmid {
 func mockUpdateStrain() *stock.Strain {
 	return &stock.Strain{
 		Data: &stock.Strain_Data{
-			Type:       "strain",
-			Id:         "DBS123456",
+			Type:       strainType,
+			Id:         stockID,
 			Attributes: MockUpdateStrainAttributes,
 		},
 	}
@@ -211,7 +211,7 @@ func MockedStockClient() *clients.StockServiceClient {
 		&stock.StockId{Id: "DBS987654"},
 	).Return(mockStrainWithParams("kenny@bania.com", "DBS987654"), nil).On("GetStrain",
 		mock.MatchedBy(func(ctx context.Context) bool { return true }),
-		&stock.StockId{Id: "DBS123456"},
+		&stock.StockId{Id: stockID},
 	).Return(MockStrain(), nil).
 		On("GetStrain",
 			mock.AnythingOfType("*context.emptyCtx"),
