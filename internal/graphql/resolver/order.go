@@ -3,6 +3,8 @@ package resolver
 import (
 	"context"
 
+	F "github.com/IBM/fp-go/v2/function"
+	O "github.com/IBM/fp-go/v2/option"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/order"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
@@ -17,21 +19,20 @@ func (mrs *MutationResolver) CreateOrder(
 	ctx context.Context,
 	input *models.CreateOrderInput,
 ) (*pb.Order, error) {
-	attr := &pb.NewOrderAttributes{}
-	if input.Comments != nil {
-		attr.Comments = *input.Comments
+	attr := &pb.NewOrderAttributes{
+		Comments:         deref(input.Comments),
+		Consumer:         input.Consumer,
+		Courier:          input.Courier,
+		CourierAccount:   input.CourierAccount,
+		Items:            input.Items,
+		Payer:            input.Payer,
+		Payment:          input.Payment,
+		PurchaseOrderNum: deref(input.PurchaseOrderNum),
+		Purchaser:        input.Purchaser,
+		Status:           statusConverter(input.Status),
+		ConsumerInfo:     userInfoFromInput(input.ConsumerInfo),
+		PayerInfo:        userInfoFromInput(input.PayerInfo),
 	}
-	attr.Consumer = input.Consumer
-	attr.Courier = input.Courier
-	attr.CourierAccount = input.CourierAccount
-	attr.Items = input.Items
-	attr.Payer = input.Payer
-	attr.Payment = input.Payment
-	attr.PurchaseOrderNum = *input.PurchaseOrderNum
-	attr.Purchaser = input.Purchaser
-	attr.Status = statusConverter(input.Status)
-	attr.ConsumerInfo = userInfoFromInput(input.ConsumerInfo)
-	attr.PayerInfo = userInfoFromInput(input.PayerInfo)
 	o, err := mrs.GetOrderClient(registry.ORDER).CreateOrder(ctx, &pb.NewOrder{
 		Data: &pb.NewOrder_Data{
 			Type:       "order",
@@ -47,47 +48,35 @@ func (mrs *MutationResolver) CreateOrder(
 	return o, nil
 }
 
+// deref returns the pointed-to string, or empty when the pointer is nil.
+var deref = F.Flow3(
+	O.FromNillable[string],
+	O.Map(F.Deref[string]),
+	O.GetOrElse(F.Constant("")),
+)
+
 // userInfoFromInput converts the optional GraphQL user profile input
 // into its protocol buffer representation, returning nil for an absent
 // profile.
 func userInfoFromInput(in *models.UserInfoInput) *pb.UserInfo {
-	if in == nil {
-		return nil
-	}
-
-	u := &pb.UserInfo{}
-	if in.FirstName != nil {
-		u.FirstName = *in.FirstName
-	}
-	if in.LastName != nil {
-		u.LastName = *in.LastName
-	}
-	if in.Organization != nil {
-		u.Organization = *in.Organization
-	}
-	if in.FirstAddress != nil {
-		u.FirstAddress = *in.FirstAddress
-	}
-	if in.SecondAddress != nil {
-		u.SecondAddress = *in.SecondAddress
-	}
-	if in.City != nil {
-		u.City = *in.City
-	}
-	if in.State != nil {
-		u.State = *in.State
-	}
-	if in.Zipcode != nil {
-		u.Zipcode = *in.Zipcode
-	}
-	if in.Country != nil {
-		u.Country = *in.Country
-	}
-	if in.Phone != nil {
-		u.Phone = *in.Phone
-	}
-
-	return u
+	return F.Pipe2(
+		O.FromNillable(in),
+		O.Map(func(in *models.UserInfoInput) *pb.UserInfo {
+			return &pb.UserInfo{
+				FirstName:     deref(in.FirstName),
+				LastName:      deref(in.LastName),
+				Organization:  deref(in.Organization),
+				FirstAddress:  deref(in.FirstAddress),
+				SecondAddress: deref(in.SecondAddress),
+				City:          deref(in.City),
+				State:         deref(in.State),
+				Zipcode:       deref(in.Zipcode),
+				Country:       deref(in.Country),
+				Phone:         deref(in.Phone),
+			}
+		}),
+		O.GetOrElse(F.Constant[*pb.UserInfo](nil)),
+	)
 }
 
 // statusConverter converts the enum status string to protocol buffer int32 value
@@ -150,9 +139,9 @@ func (mrs *MutationResolver) UpdateOrder(
 
 func normalizeUpdateOrderAttr(
 	attr *models.UpdateOrderInput,
-) map[string]interface{} {
+) map[string]any {
 	fields := structs.Fields(attr)
-	newAttr := make(map[string]interface{})
+	newAttr := make(map[string]any)
 	for _, k := range fields {
 		if k.Name() == "Status" {
 			newAttr["Status"] = statusConverter(*attr.Status)
