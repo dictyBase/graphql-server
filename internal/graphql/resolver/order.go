@@ -49,9 +49,8 @@ func (mrs *MutationResolver) CreateOrder(
 }
 
 // deref returns the pointed-to string, or empty when the pointer is nil.
-var deref = F.Flow3(
-	O.FromNillable[string],
-	O.Map(F.Deref[string]),
+var deref = F.Flow2(
+	O.FromNillable2[string],
 	O.GetOrElse(F.Constant("")),
 )
 
@@ -60,8 +59,8 @@ var deref = F.Flow3(
 // profile.
 func userInfoFromInput(in *models.UserInfoInput) *pb.UserInfo {
 	return F.Pipe2(
-		O.FromNillable(in),
-		O.Map(func(in *models.UserInfoInput) *pb.UserInfo {
+		O.FromNillable2(in),
+		O.Map(func(in models.UserInfoInput) *pb.UserInfo {
 			return &pb.UserInfo{
 				FirstName:     deref(in.FirstName),
 				LastName:      deref(in.LastName),

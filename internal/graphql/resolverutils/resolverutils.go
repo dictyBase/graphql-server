@@ -15,16 +15,16 @@ import (
 
 func GetCursorFP(cursor *int) int64 {
 	return F.Pipe2(
-		O.FromNillable(cursor),
-		O.Map(func(ptr *int) int64 { return int64(*ptr) }),
+		O.FromNillable2(cursor),
+		O.Map(func(v int) int64 { return int64(v) }),
 		O.GetOrElse(F.Constant(int64(0))),
 	)
 }
 
 func GetLimitFP(limit *int) int64 {
 	return F.Pipe2(
-		O.FromNillable(limit),
-		O.Map(func(ptr *int) int64 { return int64(*ptr) }),
+		O.FromNillable2(limit),
+		O.Map(func(v int) int64 { return int64(v) }),
 		O.GetOrElse(F.Constant(int64(10))),
 	)
 }

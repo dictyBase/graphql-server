@@ -104,16 +104,12 @@ func BuildPlasmidFieldQuery(filter *models.PlasmidListFilter) string {
 	return F.Pipe2(
 		[]O.Option[string]{
 			F.Pipe1(
-				O.FromNillable(filter.Summary),
-				O.Map(func(ptr *string) string {
-					return S.Format[string]("summary=~%s")(*ptr)
-				}),
+				O.FromNillable2(filter.Summary),
+				O.Map(S.Format[string]("summary=~%s")),
 			),
 			F.Pipe1(
-				O.FromNillable(filter.Name),
-				O.Map(func(ptr *string) string {
-					return S.Format[string]("plasmid_name===%s")(*ptr)
-				}),
+				O.FromNillable2(filter.Name),
+				O.Map(S.Format[string]("plasmid_name===%s")),
 			),
 		},
 		A.FilterMap(O.Fold(
