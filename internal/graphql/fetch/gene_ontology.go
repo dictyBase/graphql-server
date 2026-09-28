@@ -76,7 +76,7 @@ type FetchAndBuildAnnotationsParams struct {
 	Logger    *logrus.Entry
 }
 
-func fetchAndUnmarshalJSON(url string, target interface{}) error {
+func fetchAndUnmarshalJSON(url string, target any) error {
 	res, err := GetResp(url)
 	if err != nil {
 		return fmt.Errorf("error fetching data: %w", err)

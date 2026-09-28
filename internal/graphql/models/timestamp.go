@@ -19,7 +19,7 @@ func MarshalTimestamp(t time.Time) graphql.Marshaler {
 	})
 }
 
-func UnmarshalTimestamp(v interface{}) (time.Time, error) {
+func UnmarshalTimestamp(v any) (time.Time, error) {
 	if s, ok := v.(int); ok {
 		return time.Unix(int64(s), 0), nil
 	}

@@ -15,9 +15,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// stringToPointer is a helper function to convert a string to a pointer to a string.
+// stringToPointer is used as a mapping function where a pointer to
+// each converted value is required.
 func stringToPointer(s string) *string {
-	return &s
+	return new(s)
 }
 
 func (qrs *QueryResolver) GeneOntologyAnnotation(

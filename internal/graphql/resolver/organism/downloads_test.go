@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -29,7 +28,7 @@ func downloadTestData() ([]byte, error) {
 	path := filepath.Join(
 		filepath.Dir(dir), "../../../testdata", "44689.json",
 	)
-	b, err := ioutil.ReadFile(path)
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return b, errors.New("unable to read test file")
 	}

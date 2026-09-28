@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -22,7 +21,7 @@ func doiTestData() ([]byte, error) {
 	path := filepath.Join(
 		filepath.Dir(dir), "../../testdata", "gwdi_doi.json",
 	)
-	b, err := ioutil.ReadFile(path)
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return b, errors.New("unable to read test file")
 	}

@@ -29,7 +29,7 @@ func GetGeneFromCache(ctx context.Context, cache repository.Repository, gene str
 		nferr := fmt.Errorf("gene %s does not exist", gene)
 		graphql.AddError(ctx, &gqlerror.Error{
 			Message: "gene does not exist",
-			Extensions: map[string]interface{}{
+			Extensions: map[string]any{
 				"code":      "NotFound",
 				"timestamp": time.Now(),
 			},

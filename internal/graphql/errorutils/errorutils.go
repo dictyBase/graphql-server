@@ -19,7 +19,7 @@ func AddGQLError(ctx context.Context, err error) {
 	code := fmt.Sprint(errStatus.Code())
 	graphql.AddError(ctx, &gqlerror.Error{
 		Message: errStatus.Message(),
-		Extensions: map[string]interface{}{
+		Extensions: map[string]any{
 			"code":      code,
 			"timestamp": time.Now(),
 		},
