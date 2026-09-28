@@ -22,7 +22,7 @@ func (mrs *MutationResolver) CreateRole(
 	n, err := mrs.GetRoleClient(registry.ROLE).
 		CreateRole(ctx, &pb.CreateRoleRequest{
 			Data: &pb.CreateRoleRequest_Data{
-				Type: "role",
+				Type: typeRole,
 				Attributes: &pb.RoleAttributes{
 					Role:        input.Role,
 					Description: input.Description,
@@ -47,7 +47,7 @@ func (mrs *MutationResolver) CreateRolePermissionRelationship(
 	rid, err := strconv.ParseInt(roleID, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf(
-			"error in parsing string %s to int %s",
+			errParseIDFormat,
 			roleID,
 			err,
 		)
@@ -55,7 +55,7 @@ func (mrs *MutationResolver) CreateRolePermissionRelationship(
 	pid, err := strconv.ParseInt(permissionID, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf(
-			"error in parsing string %s to int %s",
+			errParseIDFormat,
 			permissionID,
 			err,
 		)
@@ -65,7 +65,7 @@ func (mrs *MutationResolver) CreateRolePermissionRelationship(
 			Id: rid,
 			Data: []*jsonapi.Data{
 				{
-					Type: "permission",
+					Type: typePermission,
 					Id:   pid,
 				},
 			},
@@ -98,14 +98,14 @@ func (mrs *MutationResolver) UpdateRole(
 ) (*pb.Role, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
+		return nil, fmt.Errorf(errParseIDFormat, id, err)
 	}
 	n, err := mrs.GetRoleClient(registry.ROLE).
 		UpdateRole(ctx, &pb.UpdateRoleRequest{
 			Id: i,
 			Data: &pb.UpdateRoleRequest_Data{
 				Id:   i,
-				Type: "role",
+				Type: typeRole,
 				Attributes: &pb.RoleAttributes{
 					Role:        input.Role,
 					Description: input.Description,
@@ -135,7 +135,7 @@ func (mrs *MutationResolver) DeleteRole(
 ) (*models.DeleteRole, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
+		return nil, fmt.Errorf(errParseIDFormat, id, err)
 	}
 	if _, err := mrs.GetRoleClient(registry.ROLE).DeleteRole(ctx, &jsonapi.DeleteRequest{Id: i}); err != nil {
 		mrs.Logger.Error(err)
@@ -155,7 +155,7 @@ func (qrs *QueryResolver) Role(
 ) (*pb.Role, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
+		return nil, fmt.Errorf(errParseIDFormat, id, err)
 	}
 	g, err := qrs.GetRoleClient(registry.ROLE).
 		GetRole(ctx, &jsonapi.GetRequest{Id: i})
@@ -180,7 +180,7 @@ func (qrs *QueryResolver) ListRoles(ctx context.Context) ([]*pb.Role, error) {
 	for _, n := range l.Data {
 		item := &pb.Role{
 			Data: &pb.RoleData{
-				Type: "role",
+				Type: typeRole,
 				Id:   n.Id,
 				Attributes: &pb.RoleAttributes{
 					Role:        n.Attributes.Role,

@@ -11,11 +11,11 @@ import (
 func MockTagAnno(value, tag string) *annotation.TaggedAnnotation {
 	return &annotation.TaggedAnnotation{
 		Data: &annotation.TaggedAnnotation_Data{
-			Type: "annotation",
+			Type: annoType,
 			Id:   "123456",
 			Attributes: &annotation.TaggedAnnotationAttributes{
 				Value:     value,
-				EntryId:   "DBS0236922",
+				EntryId:   annotatedEntryID,
 				CreatedBy: "dsc@dictycr.org",
 				CreatedAt: timestamppb.Now(),
 				Tag:       tag,
@@ -30,11 +30,11 @@ func MockTagList(
 	onto, tag, value string,
 ) *annotation.TaggedAnnotationCollection_Data {
 	return &annotation.TaggedAnnotationCollection_Data{
-		Type: "annotation",
+		Type: annoType,
 		Id:   "888888",
 		Attributes: &annotation.TaggedAnnotationAttributes{
 			Value:     value,
-			EntryId:   "DBS0236922",
+			EntryId:   annotatedEntryID,
 			CreatedBy: "dsc@dictycr.org",
 			CreatedAt: timestamppb.Now(),
 			Tag:       tag,
@@ -48,7 +48,7 @@ func MockTagGroupAnno(
 	onto, tag, value string,
 ) *annotation.TaggedAnnotationGroup_Data {
 	return &annotation.TaggedAnnotationGroup_Data{
-		Type: "annotation",
+		Type: annoType,
 		Id:   "99999999",
 		Attributes: &annotation.TaggedAnnotationAttributes{
 			Version:   1,
@@ -108,7 +108,7 @@ func MockPhenotypeAnno() *annotation.TaggedAnnotationGroupCollection {
 		gdata,
 		MockTagGroupAnno(
 			registry.PhenoOntology,
-			"delayed culmination",
+			delayedCulmination,
 			registry.EmptyValue,
 		),
 	)
@@ -155,7 +155,7 @@ func MockPhenoCollectionAnno(
 	tag, id string,
 ) *annotation.TaggedAnnotationCollection_Data {
 	return &annotation.TaggedAnnotationCollection_Data{
-		Type: "annotation",
+		Type: annoType,
 		Id:   "99999999",
 		Attributes: &annotation.TaggedAnnotationAttributes{
 			Version:   1,
@@ -173,19 +173,19 @@ func MockPhenotypeListAnno() *annotation.TaggedAnnotationCollection {
 	cdata := []*annotation.TaggedAnnotationCollection_Data{}
 	cdata = append(
 		cdata,
-		MockPhenoCollectionAnno("delayed culmination", "DBS123456"),
+		MockPhenoCollectionAnno(delayedCulmination, "DBS123456"),
 	)
 	cdata = append(
 		cdata,
-		MockPhenoCollectionAnno("delayed culmination", "DBS987654"),
+		MockPhenoCollectionAnno(delayedCulmination, "DBS987654"),
 	)
 	cdata = append(
 		cdata,
-		MockPhenoCollectionAnno("delayed culmination", "DBS000001"),
+		MockPhenoCollectionAnno(delayedCulmination, "DBS000001"),
 	)
 	cdata = append(
 		cdata,
-		MockPhenoCollectionAnno("delayed culmination", "DBS000001"),
+		MockPhenoCollectionAnno(delayedCulmination, "DBS000001"),
 	)
 	return &annotation.TaggedAnnotationCollection{
 		Data: cdata,
@@ -198,7 +198,7 @@ func MockPhenotypeListAnno() *annotation.TaggedAnnotationCollection {
 // MockBacterialAnnoEntry creates one "bacterial food source" annotation entry.
 func MockBacterialAnnoEntry(id string) *annotation.TaggedAnnotationCollection_Data {
 	return &annotation.TaggedAnnotationCollection_Data{
-		Type: "annotation",
+		Type: annoType,
 		Id:   "77777777",
 		Attributes: &annotation.TaggedAnnotationAttributes{
 			Version:   1,
@@ -227,7 +227,7 @@ func MockBacterialStrainListAnno() *annotation.TaggedAnnotationCollection {
 }
 
 var (
-	MockSysNameAnno   = MockTagAnno("DBS0236922", registry.SysnameTag)
+	MockSysNameAnno   = MockTagAnno(annotatedEntryID, registry.SysnameTag)
 	MockGenModAnno    = MockTagAnno("exogenous mutation", registry.MuttypeTag)
 	MockMutMethodAnno = MockTagAnno("Random Insertion", registry.MutmethodTag)
 )
@@ -236,7 +236,7 @@ var MockGenotypeAnno = MockTagAnno(
 	"axeA1,axeB1,axeC1,sadA-[sadA-KO],[pSadA-GFP],bsR,neoR",
 	registry.GenoTag,
 )
-var MockInStockAnno = MockTagAnno("DBS0236922", registry.SysnameTag)
+var MockInStockAnno = MockTagAnno(annotatedEntryID, registry.SysnameTag)
 
 func MockedAnnotationClient() *clients.TaggedAnnotationServiceClient {
 	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)

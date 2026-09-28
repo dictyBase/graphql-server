@@ -20,6 +20,12 @@ const (
 	geneGOAnnotationPrefix = "gene:goa:"
 )
 
+// Log field keys shared by the cache lookups.
+const (
+	logFieldError = "error"
+	logFieldGene  = "gene"
+)
+
 type CachedAnnotationsParams struct {
 	Ctx    context.Context
 	Gene   string
@@ -92,8 +98,8 @@ func GetCachedAnnotations(
 	exists, err := params.Redis.Exists(cacheKey)
 	if err != nil {
 		params.Logger.WithFields(logrus.Fields{
-			"gene":  params.Gene,
-			"error": err,
+			logFieldGene:  params.Gene,
+			logFieldError: err,
 		}).Error("failed to check cache for gene ontology annotations")
 		errorutils.AddGQLError(params.Ctx, err)
 		return nil, false, fmt.Errorf("error checking cache: %w", err)
@@ -105,8 +111,8 @@ func GetCachedAnnotations(
 	cached, err := params.Redis.Get(cacheKey)
 	if err != nil {
 		params.Logger.WithFields(logrus.Fields{
-			"gene":  params.Gene,
-			"error": err,
+			logFieldGene:  params.Gene,
+			logFieldError: err,
 		}).Error("failed to get cached gene ontology annotations")
 		errorutils.AddGQLError(params.Ctx, err)
 		return nil, true, fmt.Errorf("error retrieving from cache: %w", err)
@@ -115,8 +121,8 @@ func GetCachedAnnotations(
 	var annotations []*models.GOAnnotation
 	if err := json.Unmarshal([]byte(cached), &annotations); err != nil {
 		params.Logger.WithFields(logrus.Fields{
-			"gene":  params.Gene,
-			"error": err,
+			logFieldGene:  params.Gene,
+			logFieldError: err,
 		}).Error("failed to unmarshal cached gene ontology annotations")
 		errorutils.AddGQLError(params.Ctx, err)
 		return nil, true, fmt.Errorf("error parsing cached data: %w", err)
@@ -128,8 +134,8 @@ func CacheAnnotations(params *CacheAnnotationsParams) error {
 	cached, err := json.Marshal(params.Annotations)
 	if err != nil {
 		params.Logger.WithFields(logrus.Fields{
-			"gene":  params.Gene,
-			"error": err,
+			logFieldGene:  params.Gene,
+			logFieldError: err,
 		}).Error("failed to marshal annotations for caching")
 		errorutils.AddGQLError(params.Ctx, err)
 		return fmt.Errorf("error preparing data for cache: %w", err)
@@ -137,8 +143,8 @@ func CacheAnnotations(params *CacheAnnotationsParams) error {
 
 	if err := params.Redis.SetWithTTL(getCacheKey(params.Gene), string(cached), 14*24*time.Hour); err != nil {
 		params.Logger.WithFields(logrus.Fields{
-			"gene":  params.Gene,
-			"error": err,
+			logFieldGene:  params.Gene,
+			logFieldError: err,
 		}).Error("failed to cache gene ontology annotations")
 		errorutils.AddGQLError(params.Ctx, err)
 		return fmt.Errorf("error caching annotations: %w", err)

@@ -33,7 +33,7 @@ func (mrs *MutationResolver) CreateUser(
 	n, err := mrs.GetUserClient(registry.USER).
 		CreateUser(ctx, &pb.CreateUserRequest{
 			Data: &pb.CreateUserRequest_Data{
-				Type: "user",
+				Type: typeUser,
 				Attributes: &pb.UserAttributes{
 					FirstName:     attr.FirstName,
 					LastName:      attr.LastName,
@@ -62,9 +62,9 @@ func (mrs *MutationResolver) CreateUser(
 
 func normalizeCreateUserAttr(
 	attr *models.CreateUserInput,
-) map[string]interface{} {
+) map[string]any {
 	fields := structs.Fields(attr)
-	newAttr := make(map[string]interface{})
+	newAttr := make(map[string]any)
 	for _, k := range fields {
 		if !k.IsZero() {
 			newAttr[k.Name()] = k.Value()
@@ -84,7 +84,7 @@ func (mrs *MutationResolver) CreateUserRoleRelationship(
 	uid, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf(
-			"error in parsing string %s to int %s",
+			errParseIDFormat,
 			userID,
 			err,
 		)
@@ -92,7 +92,7 @@ func (mrs *MutationResolver) CreateUserRoleRelationship(
 	rid, err := strconv.ParseInt(roleID, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf(
-			"error in parsing string %s to int %s",
+			errParseIDFormat,
 			roleID,
 			err,
 		)
@@ -102,7 +102,7 @@ func (mrs *MutationResolver) CreateUserRoleRelationship(
 			Id: uid,
 			Data: []*jsonapi.Data{
 				{
-					Type: "role",
+					Type: typeRole,
 					Id:   rid,
 				},
 			},
@@ -135,7 +135,7 @@ func (mrs *MutationResolver) UpdateUser(
 ) (*pb.User, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
+		return nil, fmt.Errorf(errParseIDFormat, id, err)
 	}
 	f, err := mrs.GetUserClient(registry.USER).
 		GetUser(ctx, &jsonapi.GetRequest{Id: i})
@@ -152,7 +152,7 @@ func (mrs *MutationResolver) UpdateUser(
 			Id: i,
 			Data: &pb.UpdateUserRequest_Data{
 				Id:         i,
-				Type:       "user",
+				Type:       typeUser,
 				Attributes: attr,
 			},
 		})
@@ -247,7 +247,7 @@ func (mrs *MutationResolver) DeleteUser(
 ) (*models.DeleteUser, error) {
 	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
+		return nil, fmt.Errorf(errParseIDFormat, id, err)
 	}
 	if _, err := mrs.GetUserClient(registry.USER).DeleteUser(ctx, &jsonapi.DeleteRequest{Id: i}); err != nil {
 		mrs.Logger.Error(err)
@@ -288,7 +288,7 @@ func (qrs *QueryResolver) User(
 	qrs.Logger.Debugf("successfully found user with ID %d", userID)
 	return &pb.User{
 		Data: &pb.UserData{
-			Type: "user",
+			Type: typeUser,
 			Id:   userID,
 			Attributes: &pb.UserAttributes{
 				FirstName:    userResp.Username,
@@ -329,7 +329,7 @@ func (qrs *QueryResolver) UserByEmail(
 	qrs.Logger.Debugf("successfully found user with ID %d", userID)
 	return &pb.User{
 		Data: &pb.UserData{
-			Type: "user",
+			Type: typeUser,
 			Id:   userID,
 			Attributes: &pb.UserAttributes{
 				FirstName:    userResp.Username,
@@ -358,7 +358,7 @@ func (qrs *QueryResolver) ListUsers(
 	pn, err := strconv.ParseInt(pagenum, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf(
-			"error in parsing string %s to int %s",
+			errParseIDFormat,
 			pagenum,
 			err,
 		)
@@ -366,7 +366,7 @@ func (qrs *QueryResolver) ListUsers(
 	ps, err := strconv.ParseInt(pagesize, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf(
-			"error in parsing string %s to int %s",
+			errParseIDFormat,
 			pagesize,
 			err,
 		)
@@ -385,7 +385,7 @@ func (qrs *QueryResolver) ListUsers(
 	for _, n := range g.Data {
 		item := &pb.User{
 			Data: &pb.UserData{
-				Type: "user",
+				Type: typeUser,
 				Id:   n.Id,
 				Attributes: &pb.UserAttributes{
 					FirstName:     n.Attributes.FirstName,

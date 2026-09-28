@@ -24,14 +24,14 @@ var MockOrderAttributes = &order.OrderAttributes{
 
 var singleMockOrder = &order.Order{
 	Data: &order.Order_Data{
-		Type:       "order",
+		Type:       orderType,
 		Id:         "999",
 		Attributes: MockOrderAttributes,
 	},
 }
 
 var mockCollection = &order.OrderCollection_Data{
-	Type:       "order",
+	Type:       orderType,
 	Id:         "999",
 	Attributes: MockOrderAttributes,
 }
@@ -56,7 +56,7 @@ func mockOrderCollection() *order.OrderCollection {
 func mockUpdateOrder() *order.Order {
 	return &order.Order{
 		Data: &order.Order_Data{
-			Type: "order",
+			Type: orderType,
 			Id:   "999",
 			Attributes: &order.OrderAttributes{
 				CreatedAt:        timestamppb.Now(),

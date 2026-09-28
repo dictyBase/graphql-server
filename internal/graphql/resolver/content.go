@@ -72,7 +72,7 @@ func (mrs *MutationResolver) UpdateContent(
 	cid, err := strconv.ParseInt(input.ID, 10, 64)
 	if err != nil {
 		perr := fmt.Errorf(
-			"error in parsing string %s to int %s",
+			errParseIDFormat,
 			input.ID,
 			err,
 		)
@@ -111,7 +111,7 @@ func (mrs *MutationResolver) DeleteContent(
 	}
 	cid, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
+		return nil, fmt.Errorf(errParseIDFormat, id, err)
 	}
 	if _, err := mrs.GetContentClient(registry.CONTENT).DeleteContent(ctx, &pb.ContentIdRequest{Id: cid}); err != nil {
 		return &models.DeleteContent{
@@ -130,7 +130,7 @@ func (qrs *QueryResolver) Content(
 ) (*pb.Content, error) {
 	cid, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("error in parsing string %s to int %s", id, err)
+		return nil, fmt.Errorf(errParseIDFormat, id, err)
 	}
 	content, err := qrs.GetContentClient(registry.CONTENT).
 		GetContent(ctx, &pb.ContentIdRequest{Id: cid})
