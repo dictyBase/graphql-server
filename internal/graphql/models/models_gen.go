@@ -522,7 +522,7 @@ func (e *PlasmidType) UnmarshalGQL(v any) error {
 }
 
 func (e PlasmidType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
+	_, _ = fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 func (e *PlasmidType) UnmarshalJSON(b []byte) error {
@@ -581,7 +581,7 @@ func (e *StatusEnum) UnmarshalGQL(v any) error {
 }
 
 func (e StatusEnum) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
+	_, _ = fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 func (e *StatusEnum) UnmarshalJSON(b []byte) error {
@@ -640,7 +640,7 @@ func (e *StrainType) UnmarshalGQL(v any) error {
 }
 
 func (e StrainType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
+	_, _ = fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 func (e *StrainType) UnmarshalJSON(b []byte) error {
