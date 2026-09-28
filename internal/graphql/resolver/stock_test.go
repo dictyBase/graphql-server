@@ -517,9 +517,10 @@ func TestGetOntology(t *testing.T) {
 
 func sliceConverter(s []string) []*string {
 	c := []*string{}
-	// need to use for loop here, not range
+	// Range over the index, never over the values: ranging values would
+	// take the address of the loop copy, see
 	// https://github.com/golang/go/issues/22791#issuecomment-345391395
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		c = append(c, &s[i])
 	}
 	return c

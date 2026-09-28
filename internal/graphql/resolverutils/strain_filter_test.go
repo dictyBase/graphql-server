@@ -88,7 +88,7 @@ func TestStrainFilterToQueryFP_WithLabelAndSummary(t *testing.T) {
 		{
 			name: "label with bacterial",
 			filter: models.StrainListFilter{
-				Label:      strPtr("coli"),
+				Label:      new("coli"),
 				StrainType: models.StrainTypeBacterial,
 			},
 			contains: []string{
@@ -99,7 +99,7 @@ func TestStrainFilterToQueryFP_WithLabelAndSummary(t *testing.T) {
 		{
 			name: "summary with regular",
 			filter: models.StrainListFilter{
-				Summary:    strPtr("knockout"),
+				Summary:    new("knockout"),
 				StrainType: models.StrainTypeRegular,
 			},
 			contains: []string{
@@ -110,8 +110,8 @@ func TestStrainFilterToQueryFP_WithLabelAndSummary(t *testing.T) {
 		{
 			name: "label and summary with gwdi",
 			filter: models.StrainListFilter{
-				Label:      strPtr("axe"),
-				Summary:    strPtr("mutant"),
+				Label:      new("axe"),
+				Summary:    new("mutant"),
 				StrainType: models.StrainTypeGwdi,
 			},
 			contains: []string{
@@ -145,7 +145,7 @@ func TestStrainFilterToQueryFP_UnsupportedFields(t *testing.T) {
 		{
 			name: "ID not supported",
 			filter: models.StrainListFilter{
-				ID:         strPtr("DBS123456"),
+				ID:         new("DBS123456"),
 				StrainType: models.StrainTypeAll,
 			},
 			errContains: "id filter is not yet supported",
@@ -153,7 +153,7 @@ func TestStrainFilterToQueryFP_UnsupportedFields(t *testing.T) {
 		{
 			name: "InStock not supported",
 			filter: models.StrainListFilter{
-				InStock:    boolPtr(true),
+				InStock:    new(true),
 				StrainType: models.StrainTypeAll,
 			},
 			errContains: "in_stock filter is not yet supported",
@@ -161,8 +161,8 @@ func TestStrainFilterToQueryFP_UnsupportedFields(t *testing.T) {
 		{
 			name: "both ID and InStock not supported",
 			filter: models.StrainListFilter{
-				ID:         strPtr("DBS123456"),
-				InStock:    boolPtr(false),
+				ID:         new("DBS123456"),
+				InStock:    new(false),
 				StrainType: models.StrainTypeBacterial,
 			},
 			errContains: "id filter is not yet supported",
@@ -187,9 +187,3 @@ func TestStrainFilterToQueryFP_InvalidStrainType(t *testing.T) {
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "invalid strain type")
 }
-
-func strPtr(s string) *string { return &s }
-
-func boolPtr(b bool) *bool { return &b }
-
-
