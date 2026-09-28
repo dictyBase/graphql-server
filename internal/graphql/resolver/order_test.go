@@ -5,10 +5,14 @@ import (
 	"testing"
 
 	"github.com/dictyBase/go-genproto/dictybaseapis/order"
+	"github.com/emirpasic/gods/maps/hashmap"
 
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
+	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestOrder(t *testing.T) {
@@ -121,4 +125,92 @@ func TestUpdateOrder(t *testing.T) {
 	assert.Exactly(o.Data.Attributes.Payer, mocks.MockOrderAttributes.Payer, "should match existing payer")
 	assert.Exactly(o.Data.Attributes.Purchaser, mocks.MockOrderAttributes.Purchaser, "should match existing purchaser")
 	assert.ElementsMatch(o.Data.Attributes.Items, mocks.MockOrderAttributes.Items, "should match existing items")
+}
+
+func TestCreateOrderWithUserInfo(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	client := new(clients.OrderServiceClient)
+	var captured *order.NewOrder
+	client.On(
+		"CreateOrder",
+		mock.Anything,
+		mock.AnythingOfType("*order.NewOrder"),
+	).Run(func(args mock.Arguments) {
+		captured = args.Get(1).(*order.NewOrder)
+	}).Return(&order.Order{
+		Data: &order.Order_Data{
+			Type:       "order",
+			Id:         "999",
+			Attributes: mocks.MockOrderAttributes,
+		},
+	}, nil)
+	reg := &mocks.MockRegistry{ConnMap: hashmap.New()}
+	reg.ConnMap.Put(registry.ORDER, client)
+	ord := &MutationResolver{Registry: reg, Logger: mocks.TestLogger()}
+	first := "Art"
+	city := "New York"
+	phone := "555-0100"
+	input := &models.CreateOrderInput{
+		Courier:        "USPS",
+		CourierAccount: "123456",
+		Payment:        "credit",
+		Status:         models.StatusEnumInPreparation,
+		Consumer:       "art@vandelayindustries.com",
+		Payer:          "george@costanza.com",
+		Purchaser:      "thatsgold@jerry.org",
+		Items:          []string{"DBS123456"},
+		ConsumerInfo:   &models.UserInfoInput{FirstName: &first, City: &city},
+		PayerInfo:      &models.UserInfoInput{Phone: &phone},
+	}
+	_, err := ord.CreateOrder(context.Background(), input)
+	assert.NoError(err, "expect no error from creating an order")
+	attr := captured.Data.Attributes
+	assert.Empty(attr.Comments, "absent comments should be empty")
+	assert.Empty(attr.PurchaseOrderNum, "absent purchase order number should be empty")
+	assert.Exactly(first, attr.ConsumerInfo.FirstName, "should map consumer first name")
+	assert.Exactly(city, attr.ConsumerInfo.City, "should map consumer city")
+	assert.Empty(attr.ConsumerInfo.LastName, "unset consumer field should be empty")
+	assert.Exactly(phone, attr.PayerInfo.Phone, "should map payer phone")
+	assert.Empty(attr.PayerInfo.FirstName, "unset payer field should be empty")
+}
+
+func TestUserInfoFromInput(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	assert.Nil(userInfoFromInput(nil), "nil input should yield nil profile")
+	empty := userInfoFromInput(&models.UserInfoInput{})
+	assert.NotNil(empty, "empty input should yield empty profile")
+	assert.Empty(empty.FirstName, "empty input should have empty fields")
+	name := "Kramer"
+	org := "Kramerica"
+	addr1 := "129 W 81st"
+	addr2 := "Apt 5B"
+	state := "NY"
+	zip := "10024"
+	country := "USA"
+	full := userInfoFromInput(&models.UserInfoInput{
+		FirstName:     &name,
+		LastName:      &name,
+		Organization:  &org,
+		FirstAddress:  &addr1,
+		SecondAddress: &addr2,
+		City:          &addr1,
+		State:         &state,
+		Zipcode:       &zip,
+		Country:       &country,
+		Phone:         &zip,
+	})
+	assert.Exactly(&order.UserInfo{
+		FirstName:     name,
+		LastName:      name,
+		Organization:  org,
+		FirstAddress:  addr1,
+		SecondAddress: addr2,
+		City:          addr1,
+		State:         state,
+		Zipcode:       zip,
+		Country:       country,
+		Phone:         zip,
+	}, full, "should map every field")
 }

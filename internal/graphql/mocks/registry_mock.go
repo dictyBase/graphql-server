@@ -75,7 +75,18 @@ func (mr *MockRegistry) GetStockClient(key string) stock.StockServiceClient {
 }
 
 func (mr *MockRegistry) GetOrderClient(key string) order.OrderServiceClient {
-	return MockedOrderClient()
+	if mr.ConnMap == nil {
+		return MockedOrderClient()
+	}
+	v, ok := mr.ConnMap.Get(key)
+	if !ok {
+		return MockedOrderClient()
+	}
+	client, ok := v.(order.OrderServiceClient)
+	if !ok {
+		return MockedOrderClient()
+	}
+	return client
 }
 
 func (mr *MockRegistry) GetContentClient(
