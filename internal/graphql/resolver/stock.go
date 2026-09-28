@@ -319,7 +319,7 @@ func (qrs *QueryResolver) ListStrains(
 			limit:       limit,
 			filter:      filter,
 		},
-		F.Ternary(isBacterialFilter, runBacterialPipeline, runStockPipeline),
+		runStrainPipeline,
 		toEither[error, *models.StrainListWithCursor],
 		E.Fold(onStrainListError, onStrainListSuccess),
 	)

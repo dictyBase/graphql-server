@@ -89,8 +89,8 @@ var strainTypeIsValid = E.FromPredicate(
 // ── field query builder ──────────────────────────────────────────────────────
 
 var formatStrainFieldQuery = F.Curry2(
-	func(format string, value *string) string {
-		return S.Format[string](format)(*value)
+	func(format string, value string) string {
+		return S.Format[string](format)(value)
 	},
 )
 
@@ -120,11 +120,11 @@ func assembleStrainFilterQuery(p strainFilterQueryPair) string {
 	return F.Pipe2(
 		[]O.Option[string]{
 			F.Pipe1(
-				O.FromNillable(f.Label),
+				O.FromNillable2(f.Label),
 				O.Map(formatStrainFieldQuery("label=~%s")),
 			),
 			F.Pipe1(
-				O.FromNillable(f.Summary),
+				O.FromNillable2(f.Summary),
 				O.Map(formatStrainFieldQuery("summary=~%s")),
 			),
 			F.Pipe1(
@@ -151,12 +151,12 @@ func assembleStrainFilterQuery(p strainFilterQueryPair) string {
 func StrainFilterToQueryFP(filter *models.StrainListFilter) IOE.IOEither[error, string] {
 	return F.Pipe3(
 		filter,
-		O.FromNillable[models.StrainListFilter],
+		O.FromNillable2[models.StrainListFilter],
 		O.Fold(
 			F.Constant(E.Right[error]("")),
-			func(f *models.StrainListFilter) E.Either[error, string] {
+			func(f models.StrainListFilter) E.Either[error, string] {
 				return F.Pipe7(
-					f,
+					&f,
 					E.Of[error, *models.StrainListFilter],
 					E.Chain(CheckStrainIDField),
 					E.Chain(CheckStrainInStockField),
@@ -165,7 +165,7 @@ func StrainFilterToQueryFP(filter *models.StrainListFilter) IOE.IOEither[error, 
 					}),
 					E.Chain(strainTypeIsValid),
 					E.Map[error](func(st models.StrainType) strainFilterQueryPair {
-						return T.MakeTuple2(f, st)
+						return T.MakeTuple2(&f, st)
 					}),
 					E.Map[error](assembleStrainFilterQuery),
 				)

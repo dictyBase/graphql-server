@@ -118,6 +118,13 @@ var isBacterialFilter = F.Pipe2(
 	P.ContraMap(filterFromInput),
 )
 
+// runStrainPipeline routes a strain list request to the bacterial or the
+// stock-service pipeline depending on the filter.
+var runStrainPipeline = P.Fold(
+	runStockPipeline,
+	runBacterialPipeline,
+)(isBacterialFilter)
+
 // ── stock-service pipeline ───────────────────────────────────────────────────
 
 func runStockPipeline(
@@ -252,13 +259,16 @@ func runBacterialPipeline(
 		IOE.Map[error](computeBacterialParams),
 		IOE.Chain(fetchBacterialAnnotations),
 		IOE.Map[error](deduplicateBacterialIDs),
-		IOE.Chain(F.Ternary(
-			isEmptyBacterialIDs,
-			emptyBacterialResult,
-			fetchAndBuildBacterialResult,
-		)),
+		IOE.Chain(routeBacterialResult),
 	)
 }
+
+// routeBacterialResult dispatches the bacterial pipeline: an empty ID list
+// short-circuits to an empty result, anything else is fetched and built.
+var routeBacterialResult = P.Fold(
+	fetchAndBuildBacterialResult,
+	emptyBacterialResult,
+)(isEmptyBacterialIDs)
 
 // isEmptyBacterialIDs checks whether the deduplicated ID list is empty.
 // When true, the pipeline short-circuits to an empty result without
@@ -278,12 +288,10 @@ func emptyBacterialResult(
 }
 
 var extractNextCursor = func(m *anno.Meta) int {
-	return int(F.Pipe1(
-		O.FromNillable(m),
-		O.Fold(
-			F.Constant[int64](0),
-			func(meta *anno.Meta) int64 { return meta.NextCursor },
-		),
+	return int(F.Pipe2(
+		O.FromNillable2[*anno.Meta](&m),
+		O.Map(func(meta *anno.Meta) int64 { return meta.NextCursor }),
+		O.GetOrElse(F.Constant(int64(0))),
 	))
 }
 

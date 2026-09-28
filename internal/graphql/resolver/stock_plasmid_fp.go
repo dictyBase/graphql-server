@@ -49,8 +49,8 @@ var (
 	ptrString = func(s string) *string { return &s }
 
 	formatPlasmidFieldQuery = F.Curry2(
-		func(format string, value *string) string {
-			return S.Format[string](format)(*value)
+		func(format string, value string) string {
+			return S.Format[string](format)(value)
 		},
 	)
 
@@ -154,9 +154,9 @@ func buildListPlasmidFilterQuery(
 ) IOE.IOEither[error, listPlasmidsContext] {
 	return F.Pipe8(
 		ctx.filter,
-		O.FromNillable[models.PlasmidListFilter],
-		O.Map(func(filter *models.PlasmidListFilter) filterValidationPair {
-			return Pa.MakePair(ctx, filter)
+		O.FromNillable2[models.PlasmidListFilter],
+		O.Map(func(filter models.PlasmidListFilter) filterValidationPair {
+			return Pa.MakePair(ctx, &filter)
 		}),
 		O.GetOrElse(F.Constant(Pa.MakePair(ctx, &models.PlasmidListFilter{
 			PlasmidType: models.PlasmidTypeAll,
@@ -219,11 +219,11 @@ func buildFilterQuery(
 	return F.Pipe2(
 		[]O.Option[string]{
 			F.Pipe1(
-				O.FromNillable(filter.Summary),
+				O.FromNillable2(filter.Summary),
 				O.Map(formatPlasmidFieldQuery("summary=~%s")),
 			),
 			F.Pipe1(
-				O.FromNillable(filter.Name),
+				O.FromNillable2(filter.Name),
 				O.Map(formatPlasmidFieldQuery("plasmid_name===%s")),
 			),
 			R.Lookup[string](plasmidType)(map[models.PlasmidType]string{
