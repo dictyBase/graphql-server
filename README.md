@@ -53,6 +53,22 @@ OPTIONS:
    --stock-grpc-port value, --sp value       stock grpc port [$STOCK_API_SERVICE_PORT]
    --order-grpc-host value, --oh value       order grpc host [$ORDER_API_SERVICE_HOST]
    --order-grpc-port value, --op value       order grpc port [$ORDER_API_SERVICE_PORT]
+   --auth-enabled                            enable logto jwt auth middleware and management client [$AUTH_ENABLED]
+   --auth-api-endpoint value                 base http url of logto authentication api endpoint [$AUTH_ENDPOINT]
+   --app-id value                            api identifier [$APPLICATION_ID]
+   --app-secret value                        secret to access the authentication api [$APPLICATION_SECRET]
+   --jwks-uri value                          url to retrieve JWK public key set [$JWKS_PUBLIC_URI]
+   --jwt-issuer value                        expected jwt issuer of the token [$JWT_ISSUER]
+   --jwt-audience value                      expect jwt audience of the token [$JWT_AUDIENCE]
+```
+
+Authentication is optional. With `--auth-enabled` unset or `false` (the
+default) the server starts without any Logto dependencies — the JWKS endpoint
+is never fetched and no Logto credentials are required; resolvers that need
+the Logto management API (user/permission lookups) return an
+`authentication is disabled` error instead. With `--auth-enabled` set to
+`true`, all six auth flags above become required and the JWT middleware is
+active, matching the previous behavior.
 ```
 
 ## Development
