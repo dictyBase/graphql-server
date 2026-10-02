@@ -29,6 +29,10 @@ import (
 
 // RunGraphQLServer starts the GraphQL backend
 func RunGraphQLServer(cltx *cli.Context) error {
+	authEnabled := cltx.Bool("auth-enabled")
+	if err := validateAuthFlags(cltx, authEnabled); err != nil {
+		return cli.NewExitError(err.Error(), 2)
+	}
 	nreg := registry.NewRegistry()
 	if err := setupServices(cltx, nreg); err != nil {
 		return cli.NewExitError(err.Error(), 2)
@@ -41,18 +45,20 @@ func RunGraphQLServer(cltx *cli.Context) error {
 	s := resolver.NewResolver(nreg, dl, log)
 	crs := getCORS(cltx.StringSlice("allowed-origin"))
 	router.Use(crs.Handler)
-	authMdw, err := middleware.NewJWTAuth(
-		cltx.String("jwks-uri"),
-		cltx.String("jwt-audience"),
-		cltx.String("jwt-issuer"),
-	)
-	if err != nil {
-		return cli.NewExitError(
-			fmt.Sprintf("error in creating jwt auth middleware %s", err),
-			2,
+	if authEnabled {
+		authMdw, err := middleware.NewJWTAuth(
+			cltx.String("jwks-uri"),
+			cltx.String("jwt-audience"),
+			cltx.String("jwt-issuer"),
 		)
+		if err != nil {
+			return cli.NewExitError(
+				fmt.Sprintf("error in creating jwt auth middleware %s", err),
+				2,
+			)
+		}
+		router.Use(authMdw.JwtHandler)
 	}
-	router.Use(authMdw.JwtHandler)
 	router.Use(dataloader.DataloaderMiddleware(nreg))
 	execSchema := generated.NewExecutableSchema(generated.Config{Resolvers: s})
 	srv := handler.NewDefaultServer(execSchema)
@@ -66,12 +72,36 @@ func RunGraphQLServer(cltx *cli.Context) error {
 		Handler:      router,
 	}
 	log.Infof(
-		"going to start graphql server with jwt-audience %s and jwt-issuer %s",
+		"going to start graphql server with authentication enabled %t, jwt-audience %s and jwt-issuer %s",
+		authEnabled,
 		cltx.String("jwt-audience"),
 		cltx.String("jwt-issuer"),
 	)
 	log.Fatal(hsrv.ListenAndServe())
 
+	return nil
+}
+
+// validateAuthFlags ensures the logto related flags are present when
+// authentication is enabled. They stay optional so that the server can run
+// without any auth dependencies when --auth-enabled is false (the default).
+func validateAuthFlags(cltx *cli.Context, authEnabled bool) error {
+	if !authEnabled {
+		return nil
+	}
+	required := []string{
+		"jwks-uri",
+		"jwt-issuer",
+		"jwt-audience",
+		"auth-api-endpoint",
+		"app-id",
+		"app-secret",
+	}
+	for _, f := range required {
+		if cltx.String(f) == "" {
+			return fmt.Errorf("--%s is required when auth is enabled", f)
+		}
+	}
 	return nil
 }
 
@@ -124,17 +154,21 @@ func addEndpoints(ctx *cli.Context, nreg registry.Registry) {
 	nreg.AddAPIEndpoint(registry.PUBLICATION, ctx.String("publication-api"))
 	nreg.AddAPIEndpoint(registry.ORGANISM, ctx.String("organism-api"))
 	nreg.AddAPIEndpoint(registry.S3STORAGE, ctx.String("s3-storage-api"))
-	nreg.AddAuthClient(
-		registry.AUTH,
-		authentication.NewClient(&authentication.LogtoClientParams{
-			URL:         ctx.String("auth-api-endpoint"),
-			AppID:       ctx.String("app-id"),
-			AppSecret:   ctx.String("app-secret"),
-			APIResource: ctx.String("api-resource"),
-			Key:         "AUTHTOKEN",
-			TokenCache:  nreg.GetRedisRepository(registry.REDISREPO),
-		}),
-	)
+	if ctx.Bool("auth-enabled") {
+		nreg.AddAuthClient(
+			registry.AUTH,
+			authentication.NewClient(&authentication.LogtoClientParams{
+				URL:         ctx.String("auth-api-endpoint"),
+				AppID:       ctx.String("app-id"),
+				AppSecret:   ctx.String("app-secret"),
+				APIResource: ctx.String("api-resource"),
+				Key:         "AUTHTOKEN",
+				TokenCache:  nreg.GetRedisRepository(registry.REDISREPO),
+			}),
+		)
+		return
+	}
+	nreg.AddAuthClient(registry.AUTH, authentication.NoopClient{})
 }
 
 func setupS3Client(ctx *cli.Context, nreg registry.Registry) error {

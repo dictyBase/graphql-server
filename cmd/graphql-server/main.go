@@ -68,17 +68,20 @@ func redisFlags() []cli.Flag {
 
 func authFlags() []cli.Flag {
 	return []cli.Flag{
-		cli.StringFlag{
-			Name:     "auth-api-endpoint",
-			Usage:    "base http url of logto authentication api endpoint",
-			EnvVar:   "AUTH_ENDPOINT",
-			Required: true,
+		cli.BoolFlag{
+			Name:   "auth-enabled",
+			Usage:  "enable logto jwt auth middleware and management client",
+			EnvVar: "AUTH_ENABLED",
 		},
 		cli.StringFlag{
-			Name:     "app-id",
-			Usage:    "api identifier",
-			EnvVar:   "APPLICATION_ID",
-			Required: true,
+			Name:   "auth-api-endpoint",
+			Usage:  "base http url of logto authentication api endpoint",
+			EnvVar: "AUTH_ENDPOINT",
+		},
+		cli.StringFlag{
+			Name:   "app-id",
+			Usage:  "api identifier",
+			EnvVar: "APPLICATION_ID",
 		},
 		cli.StringFlag{
 			Name:  "api-resource",
@@ -86,28 +89,24 @@ func authFlags() []cli.Flag {
 			Value: "https://default.logto.app/api",
 		},
 		cli.StringFlag{
-			Name:     "app-secret",
-			Usage:    "secret to access the authentication api",
-			EnvVar:   "APPLICATION_SECRET",
-			Required: true,
+			Name:   "app-secret",
+			Usage:  "secret to access the authentication api",
+			EnvVar: "APPLICATION_SECRET",
 		},
 		cli.StringFlag{
-			Name:     "jwks-uri",
-			Usage:    "url to retrieve JWK public key set",
-			EnvVar:   "JWKS_PUBLIC_URI",
-			Required: true,
+			Name:   "jwks-uri",
+			Usage:  "url to retrieve JWK public key set",
+			EnvVar: "JWKS_PUBLIC_URI",
 		},
 		cli.StringFlag{
-			Name:     "jwt-issuer",
-			Usage:    "expected jwt issuer of the token",
-			EnvVar:   "JWT_ISSUER",
-			Required: true,
+			Name:   "jwt-issuer",
+			Usage:  "expected jwt issuer of the token",
+			EnvVar: "JWT_ISSUER",
 		},
 		cli.StringFlag{
-			Name:     "jwt-audience",
-			Usage:    "expect jwt audience of the token",
-			EnvVar:   "JWT_AUDIENCE",
-			Required: true,
+			Name:   "jwt-audience",
+			Usage:  "expect jwt audience of the token",
+			EnvVar: "JWT_AUDIENCE",
 		},
 	}
 }
