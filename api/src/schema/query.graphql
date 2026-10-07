@@ -19,6 +19,23 @@ type Query {
   listRecentPublications(limit: Int!): [Publication!]
   listPublicationsWithGene(gene: String!): [PublicationWithGene!]!
   # Stock queries
+  #
+  # Returns short type-ahead suggestions for a partial stock search
+  # text. The match runs against stock_id, genes, dbxrefs, the strain
+  # label, the strain names, the species, the strain plasmid and the
+  # plasmid name.
+  #
+  # Constraints:
+  # - query must be at least 3 characters. The server trims the text
+  #   and lowercases it.
+  # - limit defaults to 5 when omitted and never exceeds 50.
+  # - entity restricts the search to strains or plasmids. Omitted
+  #   entity covers both kinds, same as ALL.
+  listStockSuggestions(
+    query: String!
+    limit: Int
+    entity: StockEntityType
+  ): StockSuggestionList!
   plasmid(id: ID!): Plasmid
   strain(id: ID!): Strain
   listStrainsWithGene(gene: String!): [Strain!]

@@ -286,7 +286,7 @@ export type PublicationWithGeneFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	volume?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPhenotypeAssays' | 'listPhenotypeEnvironments' | 'listPhenotypes' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPhenotypeAssays' | 'listPhenotypeEnvironments' | 'listPhenotypes' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStockSuggestions' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	content?: FieldPolicy<any> | FieldReadFunction<any>,
 	contentBySlug?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -306,6 +306,7 @@ export type QueryFieldPolicy = {
 	listRecentPublications?: FieldPolicy<any> | FieldReadFunction<any>,
 	listRecentStrains?: FieldPolicy<any> | FieldReadFunction<any>,
 	listRoles?: FieldPolicy<any> | FieldReadFunction<any>,
+	listStockSuggestions?: FieldPolicy<any> | FieldReadFunction<any>,
 	listStrains?: FieldPolicy<any> | FieldReadFunction<any>,
 	listStrainsWithAnnotation?: FieldPolicy<any> | FieldReadFunction<any>,
 	listStrainsWithGene?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -343,6 +344,20 @@ export type StockFieldPolicy = {
 	summary?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_by?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type StockSuggestionKeySpecifier = ('display_text' | 'entity' | 'field' | 'id' | 'score' | StockSuggestionKeySpecifier)[];
+export type StockSuggestionFieldPolicy = {
+	display_text?: FieldPolicy<any> | FieldReadFunction<any>,
+	entity?: FieldPolicy<any> | FieldReadFunction<any>,
+	field?: FieldPolicy<any> | FieldReadFunction<any>,
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	score?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type StockSuggestionListKeySpecifier = ('limit' | 'suggestions' | 'totalCount' | StockSuggestionListKeySpecifier)[];
+export type StockSuggestionListFieldPolicy = {
+	limit?: FieldPolicy<any> | FieldReadFunction<any>,
+	suggestions?: FieldPolicy<any> | FieldReadFunction<any>,
+	totalCount?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type StrainKeySpecifier = ('characteristics' | 'created_at' | 'created_by' | 'dbxrefs' | 'depositor' | 'editable_summary' | 'genes' | 'genetic_modification' | 'genotypes' | 'id' | 'in_stock' | 'label' | 'mutagenesis_method' | 'names' | 'parent' | 'phenotypes' | 'plasmid' | 'publications' | 'species' | 'summary' | 'systematic_name' | 'updated_at' | 'updated_by' | StrainKeySpecifier)[];
 export type StrainFieldPolicy = {
@@ -560,6 +575,14 @@ export type StrictTypedTypePolicies = {
 	Stock?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | StockKeySpecifier | (() => undefined | StockKeySpecifier),
 		fields?: StockFieldPolicy,
+	},
+	StockSuggestion?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | StockSuggestionKeySpecifier | (() => undefined | StockSuggestionKeySpecifier),
+		fields?: StockSuggestionFieldPolicy,
+	},
+	StockSuggestionList?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | StockSuggestionListKeySpecifier | (() => undefined | StockSuggestionListKeySpecifier),
+		fields?: StockSuggestionListFieldPolicy,
 	},
 	Strain?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | StrainKeySpecifier | (() => undefined | StrainKeySpecifier),
