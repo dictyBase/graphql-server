@@ -655,6 +655,7 @@ export type Query = {
   listRecentPublications?: Maybe<Array<Publication>>;
   listRecentStrains?: Maybe<Array<Strain>>;
   listRoles?: Maybe<Array<Role>>;
+  listStockSuggestions: StockSuggestionList;
   listStrains?: Maybe<StrainListWithCursor>;
   listStrainsWithAnnotation?: Maybe<StrainListWithCursor>;
   listStrainsWithGene?: Maybe<Array<Strain>>;
@@ -751,6 +752,13 @@ export type QueryListRecentPublicationsArgs = {
 
 export type QueryListRecentStrainsArgs = {
   limit: Scalars['Int']['input'];
+};
+
+
+export type QueryListStockSuggestionsArgs = {
+  entity?: InputMaybe<StockEntityType>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  query: Scalars['String']['input'];
 };
 
 
@@ -855,6 +863,41 @@ export type Stock = {
   summary?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['Timestamp']['output'];
   updated_by: User;
+};
+
+export enum StockEntityType {
+  All = 'ALL',
+  Plasmid = 'PLASMID',
+  Strain = 'STRAIN'
+}
+
+export enum StockSearchFieldEnum {
+  Dbxrefs = 'DBXREFS',
+  Depositor = 'DEPOSITOR',
+  Genes = 'GENES',
+  Label = 'LABEL',
+  Name = 'NAME',
+  Names = 'NAMES',
+  Plasmid = 'PLASMID',
+  Species = 'SPECIES',
+  StockId = 'STOCK_ID',
+  Summary = 'SUMMARY'
+}
+
+export type StockSuggestion = {
+  __typename?: 'StockSuggestion';
+  display_text: Scalars['String']['output'];
+  entity: StockEntityType;
+  field: StockSearchFieldEnum;
+  id: Scalars['ID']['output'];
+  score: Scalars['Float']['output'];
+};
+
+export type StockSuggestionList = {
+  __typename?: 'StockSuggestionList';
+  limit?: Maybe<Scalars['Int']['output']>;
+  suggestions: Array<StockSuggestion>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Strain = Stock & {
@@ -1252,6 +1295,15 @@ export type ListPublicationsWithGeneQueryVariables = Exact<{
 
 
 export type ListPublicationsWithGeneQuery = { __typename?: 'Query', listPublicationsWithGene: Array<{ __typename?: 'PublicationWithGene', id: string, doi?: string | null, title: string, journal: string, pub_date?: string | null, volume?: string | null, pages?: string | null, pub_type: string, source: string, issue?: string | null, related_genes: Array<{ __typename?: 'Gene', id: string, name: string }>, authors: Array<{ __typename?: 'Author', last_name: string, rank?: string | null }> }> };
+
+export type ListStockSuggestionsQueryVariables = Exact<{
+  query: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  entity?: InputMaybe<StockEntityType>;
+}>;
+
+
+export type ListStockSuggestionsQuery = { __typename?: 'Query', listStockSuggestions: { __typename?: 'StockSuggestionList', limit?: number | null, totalCount: number, suggestions: Array<{ __typename?: 'StockSuggestion', id: string, entity: StockEntityType, field: StockSearchFieldEnum, display_text: string, score: number }> } };
 
 export type StrainListQueryVariables = Exact<{
   cursor: Scalars['Int']['input'];
@@ -2449,6 +2501,51 @@ export function useListPublicationsWithGeneLazyQuery(baseOptions?: Apollo.LazyQu
 export type ListPublicationsWithGeneQueryHookResult = ReturnType<typeof useListPublicationsWithGeneQuery>;
 export type ListPublicationsWithGeneLazyQueryHookResult = ReturnType<typeof useListPublicationsWithGeneLazyQuery>;
 export type ListPublicationsWithGeneQueryResult = Apollo.QueryResult<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>;
+export const ListStockSuggestionsDocument = gql`
+    query ListStockSuggestions($query: String!, $limit: Int, $entity: StockEntityType) {
+  listStockSuggestions(query: $query, limit: $limit, entity: $entity) {
+    suggestions {
+      id
+      entity
+      field
+      display_text
+      score
+    }
+    limit
+    totalCount
+  }
+}
+    `;
+
+/**
+ * __useListStockSuggestionsQuery__
+ *
+ * To run a query within a React component, call `useListStockSuggestionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListStockSuggestionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListStockSuggestionsQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *      limit: // value for 'limit'
+ *      entity: // value for 'entity'
+ *   },
+ * });
+ */
+export function useListStockSuggestionsQuery(baseOptions: Apollo.QueryHookOptions<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>(ListStockSuggestionsDocument, options);
+      }
+export function useListStockSuggestionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>(ListStockSuggestionsDocument, options);
+        }
+export type ListStockSuggestionsQueryHookResult = ReturnType<typeof useListStockSuggestionsQuery>;
+export type ListStockSuggestionsLazyQueryHookResult = ReturnType<typeof useListStockSuggestionsLazyQuery>;
+export type ListStockSuggestionsQueryResult = Apollo.QueryResult<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>;
 export const StrainListDocument = gql`
     query StrainList($cursor: Int!, $limit: Int!, $filter: StrainListFilter) {
   listStrains(cursor: $cursor, limit: $limit, filter: $filter) {

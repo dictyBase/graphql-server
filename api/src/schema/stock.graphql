@@ -242,3 +242,52 @@ type DeleteStrainPhenotype {
   success: Boolean!
 }
 
+# StockEntityType selects the kind of stock that an autocomplete
+# request covers. An omitted entity argument covers both kinds, same
+# as ALL.
+enum StockEntityType {
+  ALL
+  STRAIN
+  PLASMID
+}
+
+# StockSearchFieldEnum names the stock field that produced a match.
+# SUMMARY and DEPOSITOR mirror the shared search field enum but the
+# autocomplete search does not currently emit them.
+enum StockSearchFieldEnum {
+  STOCK_ID
+  GENES
+  DBXREFS
+  LABEL
+  NAMES
+  SPECIES
+  PLASMID
+  NAME
+  SUMMARY
+  DEPOSITOR
+}
+
+# StockSuggestion is one type-ahead autocomplete match.
+type StockSuggestion {
+  # stock_id of the matched stock, for example DBS0236126.
+  id: ID!
+  # Kind of the matched stock. Never ALL here.
+  entity: StockEntityType!
+  # Field that produced the match.
+  field: StockSearchFieldEnum!
+  # Text shown for this suggestion in the user interface.
+  display_text: String!
+  # Rank score. A prefix match scores above a fuzzy match.
+  score: Float!
+}
+
+# StockSuggestionList returns the suggestions of an autocomplete
+# request. An empty list is valid, because a query can match no stock.
+type StockSuggestionList {
+  suggestions: [StockSuggestion!]!
+  # Effective limit of the request.
+  limit: Int
+  # Number of rows in suggestions.
+  totalCount: Int!
+}
+

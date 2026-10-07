@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mockUserByEmailQuery = exports.mockListPhenotypeAssaysQuery = exports.mockListPhenotypeEnvironmentsQuery = exports.mockListPhenotypesQuery = exports.mockListRecentStrainsQuery = exports.mockListRecentPlasmidsQuery = exports.mockStrainQuery = exports.mockPlasmidQuery = exports.mockPlasmidListFilterQuery = exports.mockListPlasmidsInventoryQuery = exports.mockListStrainsInventoryQuery = exports.mockListBacterialStrainsQuery = exports.mockListStrainsWithPhenotypeQuery = exports.mockStrainListQuery = exports.mockListPublicationsWithGeneQuery = exports.mockListRecentPublicationsQuery = exports.mockPublicationQuery = exports.mockListStrainsWithGeneQuery = exports.mockGeneOntologyAnnotationQuery = exports.mockListPublicationsWithGeneSummaryQuery = exports.mockGeneOntologyAnnotationSummaryQuery = exports.mockGeneGeneralInformationSummaryQuery = exports.mockListOrganismsQuery = exports.mockContentQuery = exports.mockContentBySlugQuery = exports.mockListContentByNamespaceQuery = exports.mockUpdateUserMutation = exports.mockCreateUserMutation = exports.mockUploadFileMutation = exports.mockUpdateStrainPhenotypeMutation = exports.mockAddStrainPhenotypeMutation = exports.mockCreateOrderMutation = exports.mockUpdateGeneGeneralInfoMutation = exports.mockCreateGeneGeneralInfoMutation = exports.mockDeleteContentMutation = exports.mockUpdateContentMutation = exports.mockCreateContentMutation = exports.mockLogoutMutation = exports.mockLoginMutation = exports.StrainType = exports.StatusEnum = exports.PlasmidType = void 0;
+exports.mockUserByEmailQuery = exports.mockListPhenotypeAssaysQuery = exports.mockListPhenotypeEnvironmentsQuery = exports.mockListPhenotypesQuery = exports.mockListRecentStrainsQuery = exports.mockListRecentPlasmidsQuery = exports.mockStrainQuery = exports.mockPlasmidQuery = exports.mockPlasmidListFilterQuery = exports.mockListPlasmidsInventoryQuery = exports.mockListStrainsInventoryQuery = exports.mockListBacterialStrainsQuery = exports.mockListStrainsWithPhenotypeQuery = exports.mockStrainListQuery = exports.mockListStockSuggestionsQuery = exports.mockListPublicationsWithGeneQuery = exports.mockListRecentPublicationsQuery = exports.mockPublicationQuery = exports.mockListStrainsWithGeneQuery = exports.mockGeneOntologyAnnotationQuery = exports.mockListPublicationsWithGeneSummaryQuery = exports.mockGeneOntologyAnnotationSummaryQuery = exports.mockGeneGeneralInformationSummaryQuery = exports.mockListOrganismsQuery = exports.mockContentQuery = exports.mockContentBySlugQuery = exports.mockListContentByNamespaceQuery = exports.mockUpdateUserMutation = exports.mockCreateUserMutation = exports.mockUploadFileMutation = exports.mockUpdateStrainPhenotypeMutation = exports.mockAddStrainPhenotypeMutation = exports.mockCreateOrderMutation = exports.mockUpdateGeneGeneralInfoMutation = exports.mockCreateGeneGeneralInfoMutation = exports.mockDeleteContentMutation = exports.mockUpdateContentMutation = exports.mockCreateContentMutation = exports.mockLogoutMutation = exports.mockLoginMutation = exports.StrainType = exports.StockSearchFieldEnum = exports.StockEntityType = exports.StatusEnum = exports.PlasmidType = void 0;
 const msw_1 = require("msw");
 var PlasmidType;
 (function (PlasmidType) {
@@ -15,6 +15,25 @@ var StatusEnum;
     StatusEnum["InPreparation"] = "IN_PREPARATION";
     StatusEnum["Shipped"] = "SHIPPED";
 })(StatusEnum || (exports.StatusEnum = StatusEnum = {}));
+var StockEntityType;
+(function (StockEntityType) {
+    StockEntityType["All"] = "ALL";
+    StockEntityType["Plasmid"] = "PLASMID";
+    StockEntityType["Strain"] = "STRAIN";
+})(StockEntityType || (exports.StockEntityType = StockEntityType = {}));
+var StockSearchFieldEnum;
+(function (StockSearchFieldEnum) {
+    StockSearchFieldEnum["Dbxrefs"] = "DBXREFS";
+    StockSearchFieldEnum["Depositor"] = "DEPOSITOR";
+    StockSearchFieldEnum["Genes"] = "GENES";
+    StockSearchFieldEnum["Label"] = "LABEL";
+    StockSearchFieldEnum["Name"] = "NAME";
+    StockSearchFieldEnum["Names"] = "NAMES";
+    StockSearchFieldEnum["Plasmid"] = "PLASMID";
+    StockSearchFieldEnum["Species"] = "SPECIES";
+    StockSearchFieldEnum["StockId"] = "STOCK_ID";
+    StockSearchFieldEnum["Summary"] = "SUMMARY";
+})(StockSearchFieldEnum || (exports.StockSearchFieldEnum = StockSearchFieldEnum = {}));
 var StrainType;
 (function (StrainType) {
     StrainType["All"] = "ALL";
@@ -445,6 +464,23 @@ exports.mockListRecentPublicationsQuery = mockListRecentPublicationsQuery;
  */
 const mockListPublicationsWithGeneQuery = (resolver, options) => msw_1.graphql.query('ListPublicationsWithGene', resolver, options);
 exports.mockListPublicationsWithGeneQuery = mockListPublicationsWithGeneQuery;
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockListStockSuggestionsQuery(
+ *   ({ query, variables }) => {
+ *     const { query, limit, entity } = variables;
+ *     return HttpResponse.json({
+ *       data: { listStockSuggestions }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+const mockListStockSuggestionsQuery = (resolver, options) => msw_1.graphql.query('ListStockSuggestions', resolver, options);
+exports.mockListStockSuggestionsQuery = mockListStockSuggestionsQuery;
 /**
  * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
  * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))

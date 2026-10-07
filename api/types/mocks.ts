@@ -653,6 +653,7 @@ export type Query = {
   listRecentPublications?: Maybe<Array<Publication>>;
   listRecentStrains?: Maybe<Array<Strain>>;
   listRoles?: Maybe<Array<Role>>;
+  listStockSuggestions: StockSuggestionList;
   listStrains?: Maybe<StrainListWithCursor>;
   listStrainsWithAnnotation?: Maybe<StrainListWithCursor>;
   listStrainsWithGene?: Maybe<Array<Strain>>;
@@ -749,6 +750,13 @@ export type QueryListRecentPublicationsArgs = {
 
 export type QueryListRecentStrainsArgs = {
   limit: Scalars['Int']['input'];
+};
+
+
+export type QueryListStockSuggestionsArgs = {
+  entity?: InputMaybe<StockEntityType>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  query: Scalars['String']['input'];
 };
 
 
@@ -853,6 +861,41 @@ export type Stock = {
   summary?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['Timestamp']['output'];
   updated_by: User;
+};
+
+export enum StockEntityType {
+  All = 'ALL',
+  Plasmid = 'PLASMID',
+  Strain = 'STRAIN'
+}
+
+export enum StockSearchFieldEnum {
+  Dbxrefs = 'DBXREFS',
+  Depositor = 'DEPOSITOR',
+  Genes = 'GENES',
+  Label = 'LABEL',
+  Name = 'NAME',
+  Names = 'NAMES',
+  Plasmid = 'PLASMID',
+  Species = 'SPECIES',
+  StockId = 'STOCK_ID',
+  Summary = 'SUMMARY'
+}
+
+export type StockSuggestion = {
+  __typename?: 'StockSuggestion';
+  display_text: Scalars['String']['output'];
+  entity: StockEntityType;
+  field: StockSearchFieldEnum;
+  id: Scalars['ID']['output'];
+  score: Scalars['Float']['output'];
+};
+
+export type StockSuggestionList = {
+  __typename?: 'StockSuggestionList';
+  limit?: Maybe<Scalars['Int']['output']>;
+  suggestions: Array<StockSuggestion>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Strain = Stock & {
@@ -1250,6 +1293,15 @@ export type ListPublicationsWithGeneQueryVariables = Exact<{
 
 
 export type ListPublicationsWithGeneQuery = { __typename?: 'Query', listPublicationsWithGene: Array<{ __typename?: 'PublicationWithGene', id: string, doi?: string | null, title: string, journal: string, pub_date?: any | null, volume?: string | null, pages?: string | null, pub_type: string, source: string, issue?: string | null, related_genes: Array<{ __typename?: 'Gene', id: string, name: string }>, authors: Array<{ __typename?: 'Author', last_name: string, rank?: string | null }> }> };
+
+export type ListStockSuggestionsQueryVariables = Exact<{
+  query: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  entity?: InputMaybe<StockEntityType>;
+}>;
+
+
+export type ListStockSuggestionsQuery = { __typename?: 'Query', listStockSuggestions: { __typename?: 'StockSuggestionList', limit?: number | null, totalCount: number, suggestions: Array<{ __typename?: 'StockSuggestion', id: string, entity: StockEntityType, field: StockSearchFieldEnum, display_text: string, score: number }> } };
 
 export type StrainListQueryVariables = Exact<{
   cursor: Scalars['Int']['input'];
@@ -1901,6 +1953,28 @@ export const mockListRecentPublicationsQuery = (resolver: GraphQLResponseResolve
 export const mockListPublicationsWithGeneQuery = (resolver: GraphQLResponseResolver<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>, options?: RequestHandlerOptions) =>
   graphql.query<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>(
     'ListPublicationsWithGene',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockListStockSuggestionsQuery(
+ *   ({ query, variables }) => {
+ *     const { query, limit, entity } = variables;
+ *     return HttpResponse.json({
+ *       data: { listStockSuggestions }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockListStockSuggestionsQuery = (resolver: GraphQLResponseResolver<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>, options?: RequestHandlerOptions) =>
+  graphql.query<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>(
+    'ListStockSuggestions',
     resolver,
     options
   )
