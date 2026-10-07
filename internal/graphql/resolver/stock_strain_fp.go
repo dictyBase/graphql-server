@@ -289,7 +289,7 @@ func emptyBacterialResult(
 
 var extractNextCursor = func(m *anno.Meta) int {
 	return int(F.Pipe2(
-		O.FromNillable2[*anno.Meta](&m),
+		O.FromNillable2(&m),
 		O.Map(func(meta *anno.Meta) int64 { return meta.NextCursor }),
 		O.GetOrElse(F.Constant(int64(0))),
 	))
