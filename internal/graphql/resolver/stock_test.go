@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -795,4 +796,229 @@ func TestListStrainsAllExcludesBacterial(t *testing.T) {
 	require.Len(result.Strains, 3)
 	mockedStock.AssertExpectations(t)
 	mockedAnno.AssertNotCalled(t, "ListAnnotations")
+}
+
+func TestListStockSuggestions(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	resolver := &QueryResolver{
+		Registry: &mocks.MockRegistry{},
+		Logger:   mocks.TestLogger(),
+	}
+
+	result, err := resolver.ListStockSuggestions(
+		context.Background(),
+		"ax4",
+		nil,
+		nil,
+	)
+	require.NoError(err)
+	require.Equal(3, result.TotalCount, "should match total count")
+	require.NotNil(result.Limit, "should resolve limit from meta")
+	require.Equal(5, *result.Limit, "should match effective limit from meta")
+	require.Len(result.Suggestions, 3, "should have three suggestions")
+
+	first := result.Suggestions[0]
+	require.Equal("DBS0236126", first.ID, "should match stock id")
+	require.Equal(
+		models.StockEntityTypeStrain,
+		first.Entity,
+		"should map strain entity",
+	)
+	require.Equal(
+		models.StockSearchFieldEnumStockID,
+		first.Field,
+		"should map stock_id field",
+	)
+	require.Equal("DBS0236126", first.DisplayText, "should match display text")
+	require.Equal(1.0, first.Score, "should match score")
+
+	require.Equal(
+		models.StockEntityTypePlasmid,
+		result.Suggestions[2].Entity,
+		"should map plasmid entity",
+	)
+	require.Equal(
+		models.StockSearchFieldEnumName,
+		result.Suggestions[2].Field,
+		"should map plasmid name field",
+	)
+}
+
+func TestListStockSuggestionsPassesExpectedParams(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"AutocompleteStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(params *pb.StockAutocompleteParameters) bool {
+			attr := params.Data.Attributes
+			return params.Data.Type == "stock" &&
+				attr.Query == "dbp1" &&
+				attr.Limit == 25 &&
+				attr.Entity == pb.StockEntity_STOCK_ENTITY_PLASMID
+		}),
+	).Return(mocks.MockStockSuggestionCollection(), nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	limit := 25
+	entity := models.StockEntityTypePlasmid
+
+	result, err := resolver.ListStockSuggestions(
+		context.Background(),
+		"dbp1",
+		&limit,
+		&entity,
+	)
+	require.NoError(err)
+	require.Len(result.Suggestions, 3)
+	mockedStockClient.AssertExpectations(t)
+}
+
+func TestListStockSuggestionsDefaultsToBothEntities(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"AutocompleteStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(params *pb.StockAutocompleteParameters) bool {
+			attr := params.Data.Attributes
+			return attr.Query == "ax4" &&
+				attr.Limit == 0 &&
+				attr.Entity == pb.StockEntity_STOCK_ENTITY_UNSPECIFIED
+		}),
+	).Return(mocks.MockStockSuggestionCollection(), nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	entity := models.StockEntityTypeAll
+
+	result, err := resolver.ListStockSuggestions(
+		context.Background(),
+		"ax4",
+		nil,
+		&entity,
+	)
+	require.NoError(err)
+	require.Len(result.Suggestions, 3)
+	mockedStockClient.AssertExpectations(t)
+}
+
+func TestListStockSuggestionsError(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"AutocompleteStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockAutocompleteParameters"),
+	).Return(nil, fmt.Errorf("stock service unavailable"))
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.ListStockSuggestions(
+		context.Background(),
+		"ax4",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "stock service unavailable")
+	require.NotNil(result, "should return empty suggestion list on error")
+	mockedStockClient.AssertExpectations(t)
+}
+
+func TestListStockSuggestionsInvalidEntityEnum(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"AutocompleteStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockAutocompleteParameters"),
+	).Return(&pb.StockSuggestionCollection{
+		Data: []*pb.StockSuggestion{
+			{
+				Id:          "DBS0236126",
+				Entity:      pb.StockEntity(99),
+				Field:       pb.StockSearchField_STOCK_SEARCH_FIELD_STOCK_ID,
+				DisplayText: "DBS0236126",
+				Score:       1,
+			},
+		},
+		Meta: &pb.Meta{Limit: 5, Total: 1},
+	}, nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	_, err := resolver.ListStockSuggestions(
+		context.Background(),
+		"ax4",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "unexpected stock entity")
+	mockedStockClient.AssertExpectations(t)
+}
+
+func TestListStockSuggestionsInvalidFieldEnum(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"AutocompleteStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockAutocompleteParameters"),
+	).Return(&pb.StockSuggestionCollection{
+		Data: []*pb.StockSuggestion{
+			{
+				Id:          "DBS0236126",
+				Entity:      pb.StockEntity_STOCK_ENTITY_STRAIN,
+				Field:       pb.StockSearchField(99),
+				DisplayText: "DBS0236126",
+				Score:       1,
+			},
+		},
+		Meta: &pb.Meta{Limit: 5, Total: 1},
+	}, nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	_, err := resolver.ListStockSuggestions(
+		context.Background(),
+		"ax4",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "unexpected search field")
+	mockedStockClient.AssertExpectations(t)
 }

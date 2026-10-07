@@ -372,6 +372,49 @@ func (qrs *QueryResolver) ListPlasmids(
 	return result.F2, nil
 }
 
+// ListStockSuggestions resolves the listStockSuggestions GraphQL query. It
+// returns short type-ahead suggestions for a partial stock search text. The
+// match runs against stock_id, genes, dbxrefs, the strain label, the strain
+// names, the species, the strain plasmid and the plasmid name.
+//
+// The query must be at least 3 characters; the stock service trims the text
+// and lowercases it. The limit defaults to 5 on the service when omitted and
+// never exceeds 50. An omitted entity covers both kinds of stock, same as
+// ALL.
+func (qrs *QueryResolver) ListStockSuggestions(
+	ctx context.Context,
+	query string,
+	limit *int,
+	entity *models.StockEntityType,
+) (*models.StockSuggestionList, error) {
+	result := F.Pipe5(
+		IOE.Of[error](listStockSuggestionsContext{
+			client: qrs.GetStockClient(registry.STOCK),
+			gctx:   ctx,
+			query:  query,
+			limit:  limit,
+			entity: entity,
+		}),
+		IOE.ChainEitherK(buildStockSuggestionParams),
+		IOE.Chain(fetchStockSuggestionCollection),
+		IOE.ChainEitherK(toStockSuggestionList),
+		toEither[error, *models.StockSuggestionList],
+		E.Fold(onStockSuggestionListError, onStockSuggestionListSuccess),
+	)
+
+	if result.F1 != nil {
+		errorutils.AddGQLError(ctx, result.F1)
+		qrs.Logger.Error(result.F1)
+		return result.F2, result.F1
+	}
+
+	qrs.Logger.Debugf(
+		"successfully retrieved %d stock suggestions",
+		result.F2.TotalCount,
+	)
+	return result.F2, nil
+}
+
 //nolint:dupl
 func (qrs *QueryResolver) ListStrainsWithAnnotation(
 	ctx context.Context,

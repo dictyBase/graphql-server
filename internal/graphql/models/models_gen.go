@@ -336,6 +336,20 @@ func (PublicationWithGene) IsBasePublication() {}
 type Query struct {
 }
 
+type StockSuggestion struct {
+	ID          string               `json:"id"`
+	Entity      StockEntityType      `json:"entity"`
+	Field       StockSearchFieldEnum `json:"field"`
+	DisplayText string               `json:"display_text"`
+	Score       float64              `json:"score"`
+}
+
+type StockSuggestionList struct {
+	Suggestions []*StockSuggestion `json:"suggestions"`
+	Limit       *int               `json:"limit,omitempty"`
+	TotalCount  int                `json:"totalCount"`
+}
+
 type StrainListFilter struct {
 	Label      *string    `json:"label,omitempty"`
 	Summary    *string    `json:"summary,omitempty"`
@@ -593,6 +607,134 @@ func (e *StatusEnum) UnmarshalJSON(b []byte) error {
 }
 
 func (e StatusEnum) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type StockEntityType string
+
+const (
+	StockEntityTypeAll     StockEntityType = "ALL"
+	StockEntityTypeStrain  StockEntityType = "STRAIN"
+	StockEntityTypePlasmid StockEntityType = "PLASMID"
+)
+
+var AllStockEntityType = []StockEntityType{
+	StockEntityTypeAll,
+	StockEntityTypeStrain,
+	StockEntityTypePlasmid,
+}
+
+func (e StockEntityType) IsValid() bool {
+	switch e {
+	case StockEntityTypeAll, StockEntityTypeStrain, StockEntityTypePlasmid:
+		return true
+	}
+	return false
+}
+
+func (e StockEntityType) String() string {
+	return string(e)
+}
+
+func (e *StockEntityType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = StockEntityType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid StockEntityType", str)
+	}
+	return nil
+}
+
+func (e StockEntityType) MarshalGQL(w io.Writer) {
+	_, _ = fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *StockEntityType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e StockEntityType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type StockSearchFieldEnum string
+
+const (
+	StockSearchFieldEnumStockID   StockSearchFieldEnum = "STOCK_ID"
+	StockSearchFieldEnumGenes     StockSearchFieldEnum = "GENES"
+	StockSearchFieldEnumDbxrefs   StockSearchFieldEnum = "DBXREFS"
+	StockSearchFieldEnumLabel     StockSearchFieldEnum = "LABEL"
+	StockSearchFieldEnumNames     StockSearchFieldEnum = "NAMES"
+	StockSearchFieldEnumSpecies   StockSearchFieldEnum = "SPECIES"
+	StockSearchFieldEnumPlasmid   StockSearchFieldEnum = "PLASMID"
+	StockSearchFieldEnumName      StockSearchFieldEnum = "NAME"
+	StockSearchFieldEnumSummary   StockSearchFieldEnum = "SUMMARY"
+	StockSearchFieldEnumDepositor StockSearchFieldEnum = "DEPOSITOR"
+)
+
+var AllStockSearchFieldEnum = []StockSearchFieldEnum{
+	StockSearchFieldEnumStockID,
+	StockSearchFieldEnumGenes,
+	StockSearchFieldEnumDbxrefs,
+	StockSearchFieldEnumLabel,
+	StockSearchFieldEnumNames,
+	StockSearchFieldEnumSpecies,
+	StockSearchFieldEnumPlasmid,
+	StockSearchFieldEnumName,
+	StockSearchFieldEnumSummary,
+	StockSearchFieldEnumDepositor,
+}
+
+func (e StockSearchFieldEnum) IsValid() bool {
+	switch e {
+	case StockSearchFieldEnumStockID, StockSearchFieldEnumGenes, StockSearchFieldEnumDbxrefs, StockSearchFieldEnumLabel, StockSearchFieldEnumNames, StockSearchFieldEnumSpecies, StockSearchFieldEnumPlasmid, StockSearchFieldEnumName, StockSearchFieldEnumSummary, StockSearchFieldEnumDepositor:
+		return true
+	}
+	return false
+}
+
+func (e StockSearchFieldEnum) String() string {
+	return string(e)
+}
+
+func (e *StockSearchFieldEnum) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = StockSearchFieldEnum(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid StockSearchFieldEnum", str)
+	}
+	return nil
+}
+
+func (e StockSearchFieldEnum) MarshalGQL(w io.Writer) {
+	_, _ = fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *StockSearchFieldEnum) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e StockSearchFieldEnum) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil

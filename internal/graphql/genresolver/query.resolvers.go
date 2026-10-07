@@ -76,6 +76,11 @@ func (r *queryResolver) ListPublicationsWithGene(ctx context.Context, gene strin
 	panic(fmt.Errorf("not implemented: ListPublicationsWithGene - listPublicationsWithGene"))
 }
 
+// ListStockSuggestions is the resolver for the listStockSuggestions field.
+func (r *queryResolver) ListStockSuggestions(ctx context.Context, query string, limit *int, entity *models.StockEntityType) (*models.StockSuggestionList, error) {
+	panic(fmt.Errorf("not implemented: ListStockSuggestions - listStockSuggestions"))
+}
+
 // Plasmid is the resolver for the plasmid field.
 func (r *queryResolver) Plasmid(ctx context.Context, id string) (*models.Plasmid, error) {
 	panic("not implemented")

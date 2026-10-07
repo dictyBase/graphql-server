@@ -329,6 +329,7 @@ type ComplexityRoot struct {
 		ListRecentPublications     func(childComplexity int, limit int) int
 		ListRecentStrains          func(childComplexity int, limit int) int
 		ListRoles                  func(childComplexity int) int
+		ListStockSuggestions       func(childComplexity int, query string, limit *int, entity *models.StockEntityType) int
 		ListStrains                func(childComplexity int, cursor *int, limit *int, filter *models.StrainListFilter) int
 		ListStrainsWithAnnotation  func(childComplexity int, cursor *int, limit *int, typeArg string, annotation string) int
 		ListStrainsWithGene        func(childComplexity int, gene string) int
@@ -351,6 +352,20 @@ type ComplexityRoot struct {
 		Permissions func(childComplexity int) int
 		Role        func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
+	}
+
+	StockSuggestion struct {
+		DisplayText func(childComplexity int) int
+		Entity      func(childComplexity int) int
+		Field       func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Score       func(childComplexity int) int
+	}
+
+	StockSuggestionList struct {
+		Limit       func(childComplexity int) int
+		Suggestions func(childComplexity int) int
+		TotalCount  func(childComplexity int) int
 	}
 
 	Strain struct {
@@ -1882,6 +1897,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Query.ListRoles(childComplexity), true
+	case "Query.listStockSuggestions":
+		if e.ComplexityRoot.Query.ListStockSuggestions == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listStockSuggestions_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Query.ListStockSuggestions(childComplexity, args["query"].(string), args["limit"].(*int), args["entity"].(*models.StockEntityType)), true
 	case "Query.listStrains":
 		if e.ComplexityRoot.Query.ListStrains == nil {
 			break
@@ -2062,6 +2088,56 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Role.UpdatedAt(childComplexity), true
+
+	case "StockSuggestion.display_text":
+		if e.ComplexityRoot.StockSuggestion.DisplayText == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSuggestion.DisplayText(childComplexity), true
+	case "StockSuggestion.entity":
+		if e.ComplexityRoot.StockSuggestion.Entity == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSuggestion.Entity(childComplexity), true
+	case "StockSuggestion.field":
+		if e.ComplexityRoot.StockSuggestion.Field == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSuggestion.Field(childComplexity), true
+	case "StockSuggestion.id":
+		if e.ComplexityRoot.StockSuggestion.ID == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSuggestion.ID(childComplexity), true
+	case "StockSuggestion.score":
+		if e.ComplexityRoot.StockSuggestion.Score == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSuggestion.Score(childComplexity), true
+
+	case "StockSuggestionList.limit":
+		if e.ComplexityRoot.StockSuggestionList.Limit == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSuggestionList.Limit(childComplexity), true
+	case "StockSuggestionList.suggestions":
+		if e.ComplexityRoot.StockSuggestionList.Suggestions == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSuggestionList.Suggestions(childComplexity), true
+	case "StockSuggestionList.totalCount":
+		if e.ComplexityRoot.StockSuggestionList.TotalCount == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSuggestionList.TotalCount(childComplexity), true
 
 	case "Strain.characteristics":
 		if e.ComplexityRoot.Strain.Characteristics == nil {
@@ -2952,6 +3028,23 @@ type Author {
   listRecentPublications(limit: Int!): [Publication!]
   listPublicationsWithGene(gene: String!): [PublicationWithGene!]!
   # Stock queries
+  #
+  # Returns short type-ahead suggestions for a partial stock search
+  # text. The match runs against stock_id, genes, dbxrefs, the strain
+  # label, the strain names, the species, the strain plasmid and the
+  # plasmid name.
+  #
+  # Constraints:
+  # - query must be at least 3 characters. The server trims the text
+  #   and lowercases it.
+  # - limit defaults to 5 when omitted and never exceeds 50.
+  # - entity restricts the search to strains or plasmids. Omitted
+  #   entity covers both kinds, same as ALL.
+  listStockSuggestions(
+    query: String!
+    limit: Int
+    entity: StockEntityType
+  ): StockSuggestionList!
   plasmid(id: ID!): Plasmid
   strain(id: ID!): Strain
   listStrainsWithGene(gene: String!): [Strain!]
@@ -3258,6 +3351,55 @@ input DeleteStrainPhenotypeInput {
 
 type DeleteStrainPhenotype {
   success: Boolean!
+}
+
+# StockEntityType selects the kind of stock that an autocomplete
+# request covers. An omitted entity argument covers both kinds, same
+# as ALL.
+enum StockEntityType {
+  ALL
+  STRAIN
+  PLASMID
+}
+
+# StockSearchFieldEnum names the stock field that produced a match.
+# SUMMARY and DEPOSITOR mirror the shared search field enum but the
+# autocomplete search does not currently emit them.
+enum StockSearchFieldEnum {
+  STOCK_ID
+  GENES
+  DBXREFS
+  LABEL
+  NAMES
+  SPECIES
+  PLASMID
+  NAME
+  SUMMARY
+  DEPOSITOR
+}
+
+# StockSuggestion is one type-ahead autocomplete match.
+type StockSuggestion {
+  # stock_id of the matched stock, for example DBS0236126.
+  id: ID!
+  # Kind of the matched stock. Never ALL here.
+  entity: StockEntityType!
+  # Field that produced the match.
+  field: StockSearchFieldEnum!
+  # Text shown for this suggestion in the user interface.
+  display_text: String!
+  # Rank score. A prefix match scores above a fuzzy match.
+  score: Float!
+}
+
+# StockSuggestionList returns the suggestions of an autocomplete
+# request. An empty list is valid, because a query can match no stock.
+type StockSuggestionList {
+  suggestions: [StockSuggestion!]!
+  # Effective limit of the request.
+  limit: Int
+  # Number of rows in suggestions.
+  totalCount: Int!
 }
 
 `, BuiltIn: false},
@@ -3874,6 +4016,34 @@ func (ec *executionContext) childFields_Role(ctx context.Context, field graphql.
 		return ec.fieldContext_Role_permissions(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
+}
+
+func (ec *executionContext) childFields_StockSuggestion(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_StockSuggestion_id(ctx, field)
+	case "entity":
+		return ec.fieldContext_StockSuggestion_entity(ctx, field)
+	case "field":
+		return ec.fieldContext_StockSuggestion_field(ctx, field)
+	case "display_text":
+		return ec.fieldContext_StockSuggestion_display_text(ctx, field)
+	case "score":
+		return ec.fieldContext_StockSuggestion_score(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type StockSuggestion", field.Name)
+}
+
+func (ec *executionContext) childFields_StockSuggestionList(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "suggestions":
+		return ec.fieldContext_StockSuggestionList_suggestions(ctx, field)
+	case "limit":
+		return ec.fieldContext_StockSuggestionList_limit(ctx, field)
+	case "totalCount":
+		return ec.fieldContext_StockSuggestionList_totalCount(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type StockSuggestionList", field.Name)
 }
 
 func (ec *executionContext) childFields_Strain(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {

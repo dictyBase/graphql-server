@@ -790,6 +790,199 @@ func (ec *executionContext) fieldContext_PlasmidListWithCursor_totalCount(_ cont
 	return graphql.NewScalarFieldContext("PlasmidListWithCursor", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
+func (ec *executionContext) _StockSuggestion_id(ctx context.Context, field graphql.CollectedField, obj *models.StockSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StockSuggestion_id(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_StockSuggestion_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("StockSuggestion", field, false, false, errors.New("field of type ID does not have child fields"))
+}
+
+func (ec *executionContext) _StockSuggestion_entity(ctx context.Context, field graphql.CollectedField, obj *models.StockSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StockSuggestion_entity(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Entity, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v models.StockEntityType) graphql.Marshaler {
+			return ec.marshalNStockEntityType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockEntityType(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_StockSuggestion_entity(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("StockSuggestion", field, false, false, errors.New("field of type StockEntityType does not have child fields"))
+}
+
+func (ec *executionContext) _StockSuggestion_field(ctx context.Context, field graphql.CollectedField, obj *models.StockSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StockSuggestion_field(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Field, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v models.StockSearchFieldEnum) graphql.Marshaler {
+			return ec.marshalNStockSearchFieldEnum2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockSearchFieldEnum(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_StockSuggestion_field(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("StockSuggestion", field, false, false, errors.New("field of type StockSearchFieldEnum does not have child fields"))
+}
+
+func (ec *executionContext) _StockSuggestion_display_text(ctx context.Context, field graphql.CollectedField, obj *models.StockSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StockSuggestion_display_text(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.DisplayText, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_StockSuggestion_display_text(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("StockSuggestion", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _StockSuggestion_score(ctx context.Context, field graphql.CollectedField, obj *models.StockSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StockSuggestion_score(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Score, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v float64) graphql.Marshaler {
+			return ec.marshalNFloat2float64(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_StockSuggestion_score(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("StockSuggestion", field, false, false, errors.New("field of type Float does not have child fields"))
+}
+
+func (ec *executionContext) _StockSuggestionList_suggestions(ctx context.Context, field graphql.CollectedField, obj *models.StockSuggestionList) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StockSuggestionList_suggestions(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Suggestions, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v []*models.StockSuggestion) graphql.Marshaler {
+			return ec.marshalNStockSuggestion2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockSuggestionᚄ(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_StockSuggestionList_suggestions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StockSuggestionList",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_StockSuggestion(ctx, field)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StockSuggestionList_limit(ctx context.Context, field graphql.CollectedField, obj *models.StockSuggestionList) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StockSuggestionList_limit(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Limit, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *int) graphql.Marshaler {
+			return ec.marshalOInt2ᚖint(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_StockSuggestionList_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("StockSuggestionList", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
+func (ec *executionContext) _StockSuggestionList_totalCount(ctx context.Context, field graphql.CollectedField, obj *models.StockSuggestionList) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StockSuggestionList_totalCount(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.TotalCount, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_StockSuggestionList_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("StockSuggestionList", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
 func (ec *executionContext) _Strain_id(ctx context.Context, field graphql.CollectedField, obj *models.Strain) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3021,6 +3214,112 @@ func (ec *executionContext) _PlasmidListWithCursor(ctx context.Context, sel ast.
 	return out
 }
 
+var stockSuggestionImplementors = []string{"StockSuggestion"}
+
+func (ec *executionContext) _StockSuggestion(ctx context.Context, sel ast.SelectionSet, obj *models.StockSuggestion) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, stockSuggestionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferredFieldSet := graphql.NewFieldSet(nil)
+	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("StockSuggestion")
+		case "id":
+			out.Values[i] = ec._StockSuggestion_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "entity":
+			out.Values[i] = ec._StockSuggestion_entity(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "field":
+			out.Values[i] = ec._StockSuggestion_field(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "display_text":
+			out.Values[i] = ec._StockSuggestion_display_text(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "score":
+			out.Values[i] = ec._StockSuggestion_score(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
+
+	ec.ProcessDeferredGroup(graphql.DeferredGroup{
+		Defers:   deferLabelToView,
+		Path:     graphql.GetPath(ctx),
+		FieldSet: deferredFieldSet,
+		Context:  ctx,
+	})
+
+	return out
+}
+
+var stockSuggestionListImplementors = []string{"StockSuggestionList"}
+
+func (ec *executionContext) _StockSuggestionList(ctx context.Context, sel ast.SelectionSet, obj *models.StockSuggestionList) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, stockSuggestionListImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferredFieldSet := graphql.NewFieldSet(nil)
+	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("StockSuggestionList")
+		case "suggestions":
+			out.Values[i] = ec._StockSuggestionList_suggestions(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "limit":
+			out.Values[i] = ec._StockSuggestionList_limit(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._StockSuggestionList_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
+
+	ec.ProcessDeferredGroup(graphql.DeferredGroup{
+		Defers:   deferLabelToView,
+		Path:     graphql.GetPath(ctx),
+		FieldSet: deferredFieldSet,
+		Context:  ctx,
+	})
+
+	return out
+}
+
 var strainImplementors = []string{"Strain", "Stock"}
 
 func (ec *executionContext) _Strain(ctx context.Context, sel ast.SelectionSet, obj *models.Strain) graphql.Marshaler {
@@ -3769,6 +4068,62 @@ func (ec *executionContext) marshalNStock2githubᚗcomᚋdictyBaseᚋgraphqlᚑs
 	return ec._Stock(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNStockEntityType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockEntityType(ctx context.Context, v any) (models.StockEntityType, error) {
+	var res models.StockEntityType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNStockEntityType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockEntityType(ctx context.Context, sel ast.SelectionSet, v models.StockEntityType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNStockSearchFieldEnum2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockSearchFieldEnum(ctx context.Context, v any) (models.StockSearchFieldEnum, error) {
+	var res models.StockSearchFieldEnum
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNStockSearchFieldEnum2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockSearchFieldEnum(ctx context.Context, sel ast.SelectionSet, v models.StockSearchFieldEnum) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) marshalNStockSuggestion2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockSuggestionᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.StockSuggestion) graphql.Marshaler {
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNStockSuggestion2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockSuggestion(ctx, sel, v[i])
+	})
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNStockSuggestion2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockSuggestion(ctx context.Context, sel ast.SelectionSet, v *models.StockSuggestion) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._StockSuggestion(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNStockSuggestionList2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockSuggestionList(ctx context.Context, sel ast.SelectionSet, v *models.StockSuggestionList) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._StockSuggestionList(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.Strain) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
@@ -3915,6 +4270,22 @@ func (ec *executionContext) marshalOStock2ᚕgithubᚗcomᚋdictyBaseᚋgraphql�
 	}
 
 	return ret
+}
+
+func (ec *executionContext) unmarshalOStockEntityType2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockEntityType(ctx context.Context, v any) (*models.StockEntityType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(models.StockEntityType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOStockEntityType2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStockEntityType(ctx context.Context, sel ast.SelectionSet, v *models.StockEntityType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOStrain2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStrainᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.Strain) graphql.Marshaler {
