@@ -173,16 +173,18 @@ export type NumberOfPublicationsWithGeneFieldPolicy = {
 	num_pubs?: FieldPolicy<any> | FieldReadFunction<any>,
 	publications?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type OrderKeySpecifier = ('comments' | 'consumer' | 'courier' | 'courier_account' | 'created_at' | 'id' | 'items' | 'payer' | 'payment' | 'purchase_order_num' | 'purchaser' | 'status' | 'updated_at' | OrderKeySpecifier)[];
+export type OrderKeySpecifier = ('comments' | 'consumer' | 'consumer_info' | 'courier' | 'courier_account' | 'created_at' | 'id' | 'items' | 'payer' | 'payer_info' | 'payment' | 'purchase_order_num' | 'purchaser' | 'status' | 'updated_at' | OrderKeySpecifier)[];
 export type OrderFieldPolicy = {
 	comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	consumer?: FieldPolicy<any> | FieldReadFunction<any>,
+	consumer_info?: FieldPolicy<any> | FieldReadFunction<any>,
 	courier?: FieldPolicy<any> | FieldReadFunction<any>,
 	courier_account?: FieldPolicy<any> | FieldReadFunction<any>,
 	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	items?: FieldPolicy<any> | FieldReadFunction<any>,
 	payer?: FieldPolicy<any> | FieldReadFunction<any>,
+	payer_info?: FieldPolicy<any> | FieldReadFunction<any>,
 	payment?: FieldPolicy<any> | FieldReadFunction<any>,
 	purchase_order_num?: FieldPolicy<any> | FieldReadFunction<any>,
 	purchaser?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -284,7 +286,7 @@ export type PublicationWithGeneFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	volume?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPhenotypeAssays' | 'listPhenotypeEnvironments' | 'listPhenotypes' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPhenotypeAssays' | 'listPhenotypeEnvironments' | 'listPhenotypes' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStockSuggestions' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	content?: FieldPolicy<any> | FieldReadFunction<any>,
 	contentBySlug?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -304,6 +306,7 @@ export type QueryFieldPolicy = {
 	listRecentPublications?: FieldPolicy<any> | FieldReadFunction<any>,
 	listRecentStrains?: FieldPolicy<any> | FieldReadFunction<any>,
 	listRoles?: FieldPolicy<any> | FieldReadFunction<any>,
+	listStockSuggestions?: FieldPolicy<any> | FieldReadFunction<any>,
 	listStrains?: FieldPolicy<any> | FieldReadFunction<any>,
 	listStrainsWithAnnotation?: FieldPolicy<any> | FieldReadFunction<any>,
 	listStrainsWithGene?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -341,6 +344,20 @@ export type StockFieldPolicy = {
 	summary?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_by?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type StockSuggestionKeySpecifier = ('display_text' | 'entity' | 'field' | 'id' | 'score' | StockSuggestionKeySpecifier)[];
+export type StockSuggestionFieldPolicy = {
+	display_text?: FieldPolicy<any> | FieldReadFunction<any>,
+	entity?: FieldPolicy<any> | FieldReadFunction<any>,
+	field?: FieldPolicy<any> | FieldReadFunction<any>,
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	score?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type StockSuggestionListKeySpecifier = ('limit' | 'suggestions' | 'totalCount' | StockSuggestionListKeySpecifier)[];
+export type StockSuggestionListFieldPolicy = {
+	limit?: FieldPolicy<any> | FieldReadFunction<any>,
+	suggestions?: FieldPolicy<any> | FieldReadFunction<any>,
+	totalCount?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type StrainKeySpecifier = ('characteristics' | 'created_at' | 'created_by' | 'dbxrefs' | 'depositor' | 'editable_summary' | 'genes' | 'genetic_modification' | 'genotypes' | 'id' | 'in_stock' | 'label' | 'mutagenesis_method' | 'names' | 'parent' | 'phenotypes' | 'plasmid' | 'publications' | 'species' | 'summary' | 'systematic_name' | 'updated_at' | 'updated_by' | StrainKeySpecifier)[];
 export type StrainFieldPolicy = {
@@ -394,6 +411,19 @@ export type UserFieldPolicy = {
 	second_address?: FieldPolicy<any> | FieldReadFunction<any>,
 	state?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
+	zipcode?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type UserInfoKeySpecifier = ('city' | 'country' | 'first_address' | 'first_name' | 'last_name' | 'organization' | 'phone' | 'second_address' | 'state' | 'zipcode' | UserInfoKeySpecifier)[];
+export type UserInfoFieldPolicy = {
+	city?: FieldPolicy<any> | FieldReadFunction<any>,
+	country?: FieldPolicy<any> | FieldReadFunction<any>,
+	first_address?: FieldPolicy<any> | FieldReadFunction<any>,
+	first_name?: FieldPolicy<any> | FieldReadFunction<any>,
+	last_name?: FieldPolicy<any> | FieldReadFunction<any>,
+	organization?: FieldPolicy<any> | FieldReadFunction<any>,
+	phone?: FieldPolicy<any> | FieldReadFunction<any>,
+	second_address?: FieldPolicy<any> | FieldReadFunction<any>,
+	state?: FieldPolicy<any> | FieldReadFunction<any>,
 	zipcode?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type UserListKeySpecifier = ('pageNum' | 'pageSize' | 'totalCount' | 'users' | UserListKeySpecifier)[];
@@ -546,6 +576,14 @@ export type StrictTypedTypePolicies = {
 		keyFields?: false | StockKeySpecifier | (() => undefined | StockKeySpecifier),
 		fields?: StockFieldPolicy,
 	},
+	StockSuggestion?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | StockSuggestionKeySpecifier | (() => undefined | StockSuggestionKeySpecifier),
+		fields?: StockSuggestionFieldPolicy,
+	},
+	StockSuggestionList?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | StockSuggestionListKeySpecifier | (() => undefined | StockSuggestionListKeySpecifier),
+		fields?: StockSuggestionListFieldPolicy,
+	},
 	Strain?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | StrainKeySpecifier | (() => undefined | StrainKeySpecifier),
 		fields?: StrainFieldPolicy,
@@ -557,6 +595,10 @@ export type StrictTypedTypePolicies = {
 	User?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | UserKeySpecifier | (() => undefined | UserKeySpecifier),
 		fields?: UserFieldPolicy,
+	},
+	UserInfo?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | UserInfoKeySpecifier | (() => undefined | UserInfoKeySpecifier),
+		fields?: UserInfoFieldPolicy,
 	},
 	UserList?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | UserListKeySpecifier | (() => undefined | UserListKeySpecifier),

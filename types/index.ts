@@ -100,10 +100,12 @@ export type CreateGeneGeneralInfoInput = {
 export type CreateOrderInput = {
   comments?: InputMaybe<Scalars['String']['input']>;
   consumer: Scalars['String']['input'];
+  consumer_info?: InputMaybe<UserInfoInput>;
   courier: Scalars['String']['input'];
   courier_account: Scalars['String']['input'];
   items: Array<Scalars['String']['input']>;
   payer: Scalars['String']['input'];
+  payer_info?: InputMaybe<UserInfoInput>;
   payment: Scalars['String']['input'];
   purchase_order_num?: InputMaybe<Scalars['String']['input']>;
   purchaser: Scalars['String']['input'];
@@ -501,12 +503,14 @@ export type Order = {
   __typename?: 'Order';
   comments?: Maybe<Scalars['String']['output']>;
   consumer?: Maybe<User>;
+  consumer_info?: Maybe<UserInfo>;
   courier?: Maybe<Scalars['String']['output']>;
   courier_account?: Maybe<Scalars['String']['output']>;
   created_at: Scalars['Timestamp']['output'];
   id: Scalars['ID']['output'];
   items?: Maybe<Array<Stock>>;
   payer?: Maybe<User>;
+  payer_info?: Maybe<UserInfo>;
   payment?: Maybe<Scalars['String']['output']>;
   purchase_order_num?: Maybe<Scalars['String']['output']>;
   purchaser?: Maybe<User>;
@@ -651,6 +655,7 @@ export type Query = {
   listRecentPublications?: Maybe<Array<Publication>>;
   listRecentStrains?: Maybe<Array<Strain>>;
   listRoles?: Maybe<Array<Role>>;
+  listStockSuggestions: StockSuggestionList;
   listStrains?: Maybe<StrainListWithCursor>;
   listStrainsWithAnnotation?: Maybe<StrainListWithCursor>;
   listStrainsWithGene?: Maybe<Array<Strain>>;
@@ -747,6 +752,13 @@ export type QueryListRecentPublicationsArgs = {
 
 export type QueryListRecentStrainsArgs = {
   limit: Scalars['Int']['input'];
+};
+
+
+export type QueryListStockSuggestionsArgs = {
+  entity?: InputMaybe<StockEntityType>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  query: Scalars['String']['input'];
 };
 
 
@@ -851,6 +863,41 @@ export type Stock = {
   summary?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['Timestamp']['output'];
   updated_by: User;
+};
+
+export enum StockEntityType {
+  All = 'ALL',
+  Plasmid = 'PLASMID',
+  Strain = 'STRAIN'
+}
+
+export enum StockSearchFieldEnum {
+  Dbxrefs = 'DBXREFS',
+  Depositor = 'DEPOSITOR',
+  Genes = 'GENES',
+  Label = 'LABEL',
+  Name = 'NAME',
+  Names = 'NAMES',
+  Plasmid = 'PLASMID',
+  Species = 'SPECIES',
+  StockId = 'STOCK_ID',
+  Summary = 'SUMMARY'
+}
+
+export type StockSuggestion = {
+  __typename?: 'StockSuggestion';
+  display_text: Scalars['String']['output'];
+  entity: StockEntityType;
+  field: StockSearchFieldEnum;
+  id: Scalars['ID']['output'];
+  score: Scalars['Float']['output'];
+};
+
+export type StockSuggestionList = {
+  __typename?: 'StockSuggestionList';
+  limit?: Maybe<Scalars['Int']['output']>;
+  suggestions: Array<StockSuggestion>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Strain = Stock & {
@@ -1027,6 +1074,33 @@ export type User = {
   state?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['Timestamp']['output'];
   zipcode?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserInfo = {
+  __typename?: 'UserInfo';
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  first_address?: Maybe<Scalars['String']['output']>;
+  first_name?: Maybe<Scalars['String']['output']>;
+  last_name?: Maybe<Scalars['String']['output']>;
+  organization?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  second_address?: Maybe<Scalars['String']['output']>;
+  state?: Maybe<Scalars['String']['output']>;
+  zipcode?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserInfoInput = {
+  city?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  first_address?: InputMaybe<Scalars['String']['input']>;
+  first_name?: InputMaybe<Scalars['String']['input']>;
+  last_name?: InputMaybe<Scalars['String']['input']>;
+  organization?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  second_address?: InputMaybe<Scalars['String']['input']>;
+  state?: InputMaybe<Scalars['String']['input']>;
+  zipcode?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UserList = {
@@ -1221,6 +1295,15 @@ export type ListPublicationsWithGeneQueryVariables = Exact<{
 
 
 export type ListPublicationsWithGeneQuery = { __typename?: 'Query', listPublicationsWithGene: Array<{ __typename?: 'PublicationWithGene', id: string, doi?: string | null, title: string, journal: string, pub_date?: string | null, volume?: string | null, pages?: string | null, pub_type: string, source: string, issue?: string | null, related_genes: Array<{ __typename?: 'Gene', id: string, name: string }>, authors: Array<{ __typename?: 'Author', last_name: string, rank?: string | null }> }> };
+
+export type ListStockSuggestionsQueryVariables = Exact<{
+  query: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  entity?: InputMaybe<StockEntityType>;
+}>;
+
+
+export type ListStockSuggestionsQuery = { __typename?: 'Query', listStockSuggestions: { __typename?: 'StockSuggestionList', limit?: number | null, totalCount: number, suggestions: Array<{ __typename?: 'StockSuggestion', id: string, entity: StockEntityType, field: StockSearchFieldEnum, display_text: string, score: number }> } };
 
 export type StrainListQueryVariables = Exact<{
   cursor: Scalars['Int']['input'];
@@ -2418,6 +2501,51 @@ export function useListPublicationsWithGeneLazyQuery(baseOptions?: Apollo.LazyQu
 export type ListPublicationsWithGeneQueryHookResult = ReturnType<typeof useListPublicationsWithGeneQuery>;
 export type ListPublicationsWithGeneLazyQueryHookResult = ReturnType<typeof useListPublicationsWithGeneLazyQuery>;
 export type ListPublicationsWithGeneQueryResult = Apollo.QueryResult<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>;
+export const ListStockSuggestionsDocument = gql`
+    query ListStockSuggestions($query: String!, $limit: Int, $entity: StockEntityType) {
+  listStockSuggestions(query: $query, limit: $limit, entity: $entity) {
+    suggestions {
+      id
+      entity
+      field
+      display_text
+      score
+    }
+    limit
+    totalCount
+  }
+}
+    `;
+
+/**
+ * __useListStockSuggestionsQuery__
+ *
+ * To run a query within a React component, call `useListStockSuggestionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListStockSuggestionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListStockSuggestionsQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *      limit: // value for 'limit'
+ *      entity: // value for 'entity'
+ *   },
+ * });
+ */
+export function useListStockSuggestionsQuery(baseOptions: Apollo.QueryHookOptions<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>(ListStockSuggestionsDocument, options);
+      }
+export function useListStockSuggestionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>(ListStockSuggestionsDocument, options);
+        }
+export type ListStockSuggestionsQueryHookResult = ReturnType<typeof useListStockSuggestionsQuery>;
+export type ListStockSuggestionsLazyQueryHookResult = ReturnType<typeof useListStockSuggestionsLazyQuery>;
+export type ListStockSuggestionsQueryResult = Apollo.QueryResult<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>;
 export const StrainListDocument = gql`
     query StrainList($cursor: Int!, $limit: Int!, $filter: StrainListFilter) {
   listStrains(cursor: $cursor, limit: $limit, filter: $filter) {

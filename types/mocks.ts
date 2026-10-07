@@ -98,10 +98,12 @@ export type CreateGeneGeneralInfoInput = {
 export type CreateOrderInput = {
   comments?: InputMaybe<Scalars['String']['input']>;
   consumer: Scalars['String']['input'];
+  consumer_info?: InputMaybe<UserInfoInput>;
   courier: Scalars['String']['input'];
   courier_account: Scalars['String']['input'];
   items: Array<Scalars['String']['input']>;
   payer: Scalars['String']['input'];
+  payer_info?: InputMaybe<UserInfoInput>;
   payment: Scalars['String']['input'];
   purchase_order_num?: InputMaybe<Scalars['String']['input']>;
   purchaser: Scalars['String']['input'];
@@ -499,12 +501,14 @@ export type Order = {
   __typename?: 'Order';
   comments?: Maybe<Scalars['String']['output']>;
   consumer?: Maybe<User>;
+  consumer_info?: Maybe<UserInfo>;
   courier?: Maybe<Scalars['String']['output']>;
   courier_account?: Maybe<Scalars['String']['output']>;
   created_at: Scalars['Timestamp']['output'];
   id: Scalars['ID']['output'];
   items?: Maybe<Array<Stock>>;
   payer?: Maybe<User>;
+  payer_info?: Maybe<UserInfo>;
   payment?: Maybe<Scalars['String']['output']>;
   purchase_order_num?: Maybe<Scalars['String']['output']>;
   purchaser?: Maybe<User>;
@@ -649,6 +653,7 @@ export type Query = {
   listRecentPublications?: Maybe<Array<Publication>>;
   listRecentStrains?: Maybe<Array<Strain>>;
   listRoles?: Maybe<Array<Role>>;
+  listStockSuggestions: StockSuggestionList;
   listStrains?: Maybe<StrainListWithCursor>;
   listStrainsWithAnnotation?: Maybe<StrainListWithCursor>;
   listStrainsWithGene?: Maybe<Array<Strain>>;
@@ -745,6 +750,13 @@ export type QueryListRecentPublicationsArgs = {
 
 export type QueryListRecentStrainsArgs = {
   limit: Scalars['Int']['input'];
+};
+
+
+export type QueryListStockSuggestionsArgs = {
+  entity?: InputMaybe<StockEntityType>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  query: Scalars['String']['input'];
 };
 
 
@@ -849,6 +861,41 @@ export type Stock = {
   summary?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['Timestamp']['output'];
   updated_by: User;
+};
+
+export enum StockEntityType {
+  All = 'ALL',
+  Plasmid = 'PLASMID',
+  Strain = 'STRAIN'
+}
+
+export enum StockSearchFieldEnum {
+  Dbxrefs = 'DBXREFS',
+  Depositor = 'DEPOSITOR',
+  Genes = 'GENES',
+  Label = 'LABEL',
+  Name = 'NAME',
+  Names = 'NAMES',
+  Plasmid = 'PLASMID',
+  Species = 'SPECIES',
+  StockId = 'STOCK_ID',
+  Summary = 'SUMMARY'
+}
+
+export type StockSuggestion = {
+  __typename?: 'StockSuggestion';
+  display_text: Scalars['String']['output'];
+  entity: StockEntityType;
+  field: StockSearchFieldEnum;
+  id: Scalars['ID']['output'];
+  score: Scalars['Float']['output'];
+};
+
+export type StockSuggestionList = {
+  __typename?: 'StockSuggestionList';
+  limit?: Maybe<Scalars['Int']['output']>;
+  suggestions: Array<StockSuggestion>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Strain = Stock & {
@@ -1025,6 +1072,33 @@ export type User = {
   state?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['Timestamp']['output'];
   zipcode?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserInfo = {
+  __typename?: 'UserInfo';
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  first_address?: Maybe<Scalars['String']['output']>;
+  first_name?: Maybe<Scalars['String']['output']>;
+  last_name?: Maybe<Scalars['String']['output']>;
+  organization?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  second_address?: Maybe<Scalars['String']['output']>;
+  state?: Maybe<Scalars['String']['output']>;
+  zipcode?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserInfoInput = {
+  city?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  first_address?: InputMaybe<Scalars['String']['input']>;
+  first_name?: InputMaybe<Scalars['String']['input']>;
+  last_name?: InputMaybe<Scalars['String']['input']>;
+  organization?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  second_address?: InputMaybe<Scalars['String']['input']>;
+  state?: InputMaybe<Scalars['String']['input']>;
+  zipcode?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UserList = {
@@ -1219,6 +1293,15 @@ export type ListPublicationsWithGeneQueryVariables = Exact<{
 
 
 export type ListPublicationsWithGeneQuery = { __typename?: 'Query', listPublicationsWithGene: Array<{ __typename?: 'PublicationWithGene', id: string, doi?: string | null, title: string, journal: string, pub_date?: any | null, volume?: string | null, pages?: string | null, pub_type: string, source: string, issue?: string | null, related_genes: Array<{ __typename?: 'Gene', id: string, name: string }>, authors: Array<{ __typename?: 'Author', last_name: string, rank?: string | null }> }> };
+
+export type ListStockSuggestionsQueryVariables = Exact<{
+  query: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  entity?: InputMaybe<StockEntityType>;
+}>;
+
+
+export type ListStockSuggestionsQuery = { __typename?: 'Query', listStockSuggestions: { __typename?: 'StockSuggestionList', limit?: number | null, totalCount: number, suggestions: Array<{ __typename?: 'StockSuggestion', id: string, entity: StockEntityType, field: StockSearchFieldEnum, display_text: string, score: number }> } };
 
 export type StrainListQueryVariables = Exact<{
   cursor: Scalars['Int']['input'];
@@ -1870,6 +1953,28 @@ export const mockListRecentPublicationsQuery = (resolver: GraphQLResponseResolve
 export const mockListPublicationsWithGeneQuery = (resolver: GraphQLResponseResolver<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>, options?: RequestHandlerOptions) =>
   graphql.query<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>(
     'ListPublicationsWithGene',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockListStockSuggestionsQuery(
+ *   ({ query, variables }) => {
+ *     const { query, limit, entity } = variables;
+ *     return HttpResponse.json({
+ *       data: { listStockSuggestions }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockListStockSuggestionsQuery = (resolver: GraphQLResponseResolver<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>, options?: RequestHandlerOptions) =>
+  graphql.query<ListStockSuggestionsQuery, ListStockSuggestionsQueryVariables>(
+    'ListStockSuggestions',
     resolver,
     options
   )
