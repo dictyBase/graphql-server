@@ -18,6 +18,36 @@ type StockServiceClient struct {
 	mock.Mock
 }
 
+// AutocompleteStock provides a mock function with given fields: ctx, in, opts
+func (_m *StockServiceClient) AutocompleteStock(ctx context.Context, in *stock.StockAutocompleteParameters, opts ...grpc.CallOption) (*stock.StockSuggestionCollection, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, in)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *stock.StockSuggestionCollection
+	if rf, ok := ret.Get(0).(func(context.Context, *stock.StockAutocompleteParameters, ...grpc.CallOption) *stock.StockSuggestionCollection); ok {
+		r0 = rf(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*stock.StockSuggestionCollection)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *stock.StockAutocompleteParameters, ...grpc.CallOption) error); ok {
+		r1 = rf(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CreatePlasmid provides a mock function with given fields: ctx, in, opts
 func (_m *StockServiceClient) CreatePlasmid(ctx context.Context, in *stock.NewPlasmid, opts ...grpc.CallOption) (*stock.Plasmid, error) {
 	_va := make([]interface{}, len(opts))
@@ -340,6 +370,36 @@ func (_m *StockServiceClient) RemoveStock(ctx context.Context, in *stock.StockId
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *stock.StockId, ...grpc.CallOption) error); ok {
+		r1 = rf(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SearchStock provides a mock function with given fields: ctx, in, opts
+func (_m *StockServiceClient) SearchStock(ctx context.Context, in *stock.StockSearchParameters, opts ...grpc.CallOption) (*stock.StockSearchResultCollection, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, in)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *stock.StockSearchResultCollection
+	if rf, ok := ret.Get(0).(func(context.Context, *stock.StockSearchParameters, ...grpc.CallOption) *stock.StockSearchResultCollection); ok {
+		r0 = rf(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*stock.StockSearchResultCollection)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *stock.StockSearchParameters, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)

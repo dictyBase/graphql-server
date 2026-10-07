@@ -18,6 +18,36 @@ type OrderServiceClient struct {
 	mock.Mock
 }
 
+// AutocompleteOrder provides a mock function with given fields: ctx, in, opts
+func (_m *OrderServiceClient) AutocompleteOrder(ctx context.Context, in *order.AutocompleteParameters, opts ...grpc.CallOption) (*order.OrderSuggestionCollection, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, in)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *order.OrderSuggestionCollection
+	if rf, ok := ret.Get(0).(func(context.Context, *order.AutocompleteParameters, ...grpc.CallOption) *order.OrderSuggestionCollection); ok {
+		r0 = rf(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*order.OrderSuggestionCollection)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *order.AutocompleteParameters, ...grpc.CallOption) error); ok {
+		r1 = rf(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CreateOrder provides a mock function with given fields: ctx, in, opts
 func (_m *OrderServiceClient) CreateOrder(ctx context.Context, in *order.NewOrder, opts ...grpc.CallOption) (*order.Order, error) {
 	_va := make([]interface{}, len(opts))

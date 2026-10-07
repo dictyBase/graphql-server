@@ -201,6 +201,42 @@ func mockUpdateStrain() *stock.Strain {
 	}
 }
 
+// mockStockSuggestionID is the stock_id carried by the autocomplete
+// suggestion fixtures below.
+const mockStockSuggestionID = "DBS0236126"
+
+func MockStockSuggestionCollection() *stock.StockSuggestionCollection {
+	return &stock.StockSuggestionCollection{
+		Data: []*stock.StockSuggestion{
+			{
+				Id:          mockStockSuggestionID,
+				Entity:      stock.StockEntity_STOCK_ENTITY_STRAIN,
+				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_STOCK_ID,
+				DisplayText: mockStockSuggestionID,
+				Score:       1,
+			},
+			{
+				Id:          mockStockSuggestionID,
+				Entity:      stock.StockEntity_STOCK_ENTITY_STRAIN,
+				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_LABEL,
+				DisplayText: "AX4",
+				Score:       0.5,
+			},
+			{
+				Id:          "DBP0236126",
+				Entity:      stock.StockEntity_STOCK_ENTITY_PLASMID,
+				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_NAME,
+				DisplayText: "pDV4",
+				Score:       0.25,
+			},
+		},
+		Meta: &stock.Meta{
+			Limit: 5,
+			Total: 3,
+		},
+	}
+}
+
 func MockedStockClient() *clients.StockServiceClient {
 	mockedStockClient := new(clients.StockServiceClient)
 	mockedStockClient.On("GetPlasmid",
@@ -232,6 +268,11 @@ func MockedStockClient() *clients.StockServiceClient {
 			mock.AnythingOfType("*stock.StockParameters"),
 		).
 		Return(MockPlasmidCollection(), nil).
+		On("AutocompleteStock",
+			mock.MatchedBy(func(ctx context.Context) bool { return true }),
+			mock.AnythingOfType("*stock.StockAutocompleteParameters"),
+		).
+		Return(MockStockSuggestionCollection(), nil).
 		On("CreateStrain",
 			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.NewStrain"),
