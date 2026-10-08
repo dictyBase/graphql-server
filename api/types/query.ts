@@ -411,6 +411,23 @@ export const ListPublicationsWithGene = gql`
   }
 }
     `;
+export const SearchStocks = gql`
+    query SearchStocks($query: String!, $limit: Int, $entity: StockEntityType) {
+  searchStocks(query: $query, limit: $limit, entity: $entity) {
+    results {
+      id
+      entity
+      field
+      display_text
+      score
+      summary
+      strain_label
+    }
+    limit
+    totalCount
+  }
+}
+    `;
 export const ListStockSuggestions = gql`
     query ListStockSuggestions($query: String!, $limit: Int, $entity: StockEntityType) {
   listStockSuggestions(query: $query, limit: $limit, entity: $entity) {
