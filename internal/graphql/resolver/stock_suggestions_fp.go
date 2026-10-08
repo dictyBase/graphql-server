@@ -7,6 +7,7 @@ import (
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
+	L "github.com/IBM/fp-go/v2/optics/lens"
 	O "github.com/IBM/fp-go/v2/option"
 	R "github.com/IBM/fp-go/v2/record"
 	T "github.com/IBM/fp-go/v2/tuple"
@@ -14,9 +15,9 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 )
 
-// listStockSuggestionsContext carries the autocomplete request through the
-// suggestion pipeline. Only the caller-supplied fields are set at the seed;
-// the params and collection are filled by the pipeline steps.
+// listStockSuggestionsContext carries the autocomplete request through
+// the suggestion pipeline. Only the caller-supplied fields are set at
+// the seed; the params and collection are attached by the lens setters.
 type listStockSuggestionsContext struct {
 	client     pb.StockServiceClient
 	gctx       context.Context
@@ -26,6 +27,35 @@ type listStockSuggestionsContext struct {
 	params     *pb.StockAutocompleteParameters
 	collection *pb.StockSuggestionCollection
 }
+
+// ── state lenses ────────────────────────────────────────────────────────────
+
+var (
+	suggestionParamsLens = L.MakeLens(
+		func(s listStockSuggestionsContext) *pb.StockAutocompleteParameters {
+			return s.params
+		},
+		func(
+			s listStockSuggestionsContext,
+			params *pb.StockAutocompleteParameters,
+		) listStockSuggestionsContext {
+			s.params = params
+			return s
+		},
+	)
+	suggestionCollectionLens = L.MakeLens(
+		func(s listStockSuggestionsContext) *pb.StockSuggestionCollection {
+			return s.collection
+		},
+		func(
+			s listStockSuggestionsContext,
+			coll *pb.StockSuggestionCollection,
+		) listStockSuggestionsContext {
+			s.collection = coll
+			return s
+		},
+	)
+)
 
 // ── enum conversions ────────────────────────────────────────────────────────
 
@@ -182,63 +212,72 @@ func convertSuggestionItem(
 
 // ── pipeline steps ──────────────────────────────────────────────────────────
 
-// buildStockSuggestionParams fills the request params on the context from
-// the caller-supplied fields.
-func buildStockSuggestionParams(
-	ctx listStockSuggestionsContext,
-) E.Either[error, listStockSuggestionsContext] {
-	return F.Pipe1(
-		toProtoStockEntity(ctx.entity),
-		E.Map[error](func(entity pb.StockEntity) listStockSuggestionsContext {
-			ctx.params = &pb.StockAutocompleteParameters{
-				Data: &pb.StockAutocompleteParameters_Data{
-					Type: "stock",
-					Attributes: &pb.StockAutocompleteAttributes{
-						Query:  ctx.query,
-						Limit:  resolveSuggestionLimit(ctx.limit),
-						Entity: entity,
-					},
+var buildSuggestionParameters = F.Curry2(
+	func(
+		s listStockSuggestionsContext,
+		entity pb.StockEntity,
+	) *pb.StockAutocompleteParameters {
+		return &pb.StockAutocompleteParameters{
+			Data: &pb.StockAutocompleteParameters_Data{
+				Type: "stock",
+				Attributes: &pb.StockAutocompleteAttributes{
+					Query:  s.query,
+					Limit:  resolveSuggestionLimit(s.limit),
+					Entity: entity,
 				},
-			}
-			return ctx
+			},
+		}
+	},
+)
+
+// suggestionParamsFromState derives the request params from the caller
+// supplied fields. It fails when the entity filter is unknown.
+func suggestionParamsFromState(
+	s listStockSuggestionsContext,
+) E.Either[error, *pb.StockAutocompleteParameters] {
+	return F.Pipe1(
+		toProtoStockEntity(s.entity),
+		E.Map[error](buildSuggestionParameters(s)),
+	)
+}
+
+func fetchSuggestionCollection(
+	s listStockSuggestionsContext,
+) IOE.IOEither[error, *pb.StockSuggestionCollection] {
+	return F.Pipe1(
+		IOE.TryCatchError(func() (*pb.StockSuggestionCollection, error) {
+			return s.client.AutocompleteStock(s.gctx, s.params)
+		}),
+		IOE.MapLeft[*pb.StockSuggestionCollection](func(err error) error {
+			return fmt.Errorf("fetch stock suggestions for query %q: %w", s.query, err)
 		}),
 	)
 }
 
-func fetchStockSuggestionCollection(
-	ctx listStockSuggestionsContext,
-) IOE.IOEither[error, listStockSuggestionsContext] {
-	return F.Pipe2(
-		IOE.TryCatchError(func() (*pb.StockSuggestionCollection, error) {
-			return ctx.client.AutocompleteStock(ctx.gctx, ctx.params)
-		}),
-		IOE.MapLeft[*pb.StockSuggestionCollection](func(err error) error {
-			return fmt.Errorf("fetch stock suggestions for query %q: %w", ctx.query, err)
-		}),
-		IOE.Map[error](func(coll *pb.StockSuggestionCollection) listStockSuggestionsContext {
-			ctx.collection = coll
-			return ctx
-		}),
-	)
-}
+var buildSuggestionList = F.Curry2(
+	func(
+		s listStockSuggestionsContext,
+		suggestions []*models.StockSuggestion,
+	) *models.StockSuggestionList {
+		meta := s.collection.Meta
+		lmt := int(meta.Limit)
+		return &models.StockSuggestionList{
+			Suggestions: suggestions,
+			Limit:       &lmt,
+			TotalCount:  int(meta.Total),
+		}
+	},
+)
 
 // toStockSuggestionList projects the fetched collection onto the GraphQL
 // list type. One bad suggestion fails the whole result, because the
 // GraphQL enums carry no invalid value to fall back to.
 func toStockSuggestionList(
-	ctx listStockSuggestionsContext,
+	s listStockSuggestionsContext,
 ) E.Either[error, *models.StockSuggestionList] {
 	return F.Pipe2(
-		ctx.collection.Data,
+		s.collection.Data,
 		E.TraverseArray(convertSuggestionItem),
-		E.Map[error](func(suggestions []*models.StockSuggestion) *models.StockSuggestionList {
-			meta := ctx.collection.Meta
-			lmt := int(meta.Limit)
-			return &models.StockSuggestionList{
-				Suggestions: suggestions,
-				Limit:       &lmt,
-				TotalCount:  int(meta.Total),
-			}
-		}),
+		E.Map[error](buildSuggestionList(s)),
 	)
 }

@@ -11,6 +11,7 @@ import (
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
+	ioeutils "github.com/dictyBase/fp-go-loom/ioeitherutils"
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
@@ -320,7 +321,7 @@ func (qrs *QueryResolver) ListStrains(
 			filter:      filter,
 		},
 		runStrainPipeline,
-		toEither[error, *models.StrainListWithCursor],
+		ioeutils.ToEither[error, *models.StrainListWithCursor],
 		E.Fold(onStrainListError, onStrainListSuccess),
 	)
 
@@ -355,7 +356,7 @@ func (qrs *QueryResolver) ListPlasmids(
 		IOE.Chain(buildListPlasmidFilterQuery),
 		IOE.Chain(fetchListPlasmidCollection),
 		IOE.Map[error](extractListPlasmidResult),
-		toEither[error, *models.PlasmidListWithCursor],
+		ioeutils.ToEither[error, *models.PlasmidListWithCursor],
 		E.Fold(onPlasmidListError, onPlasmidListSuccess),
 	)
 
@@ -389,18 +390,19 @@ func (qrs *QueryResolver) ListStockSuggestions(
 	limit *int,
 	entity *models.StockEntityType,
 ) (*models.StockSuggestionList, error) {
-	result := F.Pipe5(
-		IOE.Of[error](listStockSuggestionsContext{
+	result := F.Pipe6(
+		E.Of[error](listStockSuggestionsContext{
 			client: qrs.GetStockClient(registry.STOCK),
 			gctx:   ctx,
 			query:  query,
 			limit:  limit,
 			entity: entity,
 		}),
-		IOE.ChainEitherK(buildStockSuggestionParams),
-		IOE.Chain(fetchStockSuggestionCollection),
-		IOE.ChainEitherK(toStockSuggestionList),
-		toEither[error, *models.StockSuggestionList],
+		E.Bind(suggestionParamsLens.Set, suggestionParamsFromState),
+		IOE.FromEither[error, listStockSuggestionsContext],
+		IOE.Bind(suggestionCollectionLens.Set, fetchSuggestionCollection),
+		ioeutils.ToEither[error, listStockSuggestionsContext],
+		E.Chain(toStockSuggestionList),
 		E.Fold(onStockSuggestionListError, onStockSuggestionListSuccess),
 	)
 
@@ -435,18 +437,19 @@ func (qrs *QueryResolver) SearchStocks(
 	limit *int,
 	entity *models.StockEntityType,
 ) (*models.StockSearchResultList, error) {
-	result := F.Pipe5(
-		IOE.Of[error](listStockSearchContext{
+	result := F.Pipe6(
+		E.Of[error](listStockSearchContext{
 			client: qrs.GetStockClient(registry.STOCK),
 			gctx:   ctx,
 			query:  query,
 			limit:  limit,
 			entity: entity,
 		}),
-		IOE.ChainEitherK(buildStockSearchParams),
-		IOE.Chain(fetchStockSearchCollection),
-		IOE.ChainEitherK(toStockSearchList),
-		toEither[error, *models.StockSearchResultList],
+		E.Bind(searchParamsLens.Set, searchParamsFromState),
+		IOE.FromEither[error, listStockSearchContext],
+		IOE.Bind(searchCollectionLens.Set, fetchSearchCollection),
+		ioeutils.ToEither[error, listStockSearchContext],
+		E.Chain(toStockSearchList),
 		E.Fold(onStockSearchListError, onStockSearchListSuccess),
 	)
 

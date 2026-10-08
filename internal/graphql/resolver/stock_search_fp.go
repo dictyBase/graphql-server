@@ -7,6 +7,7 @@ import (
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
+	L "github.com/IBM/fp-go/v2/optics/lens"
 	O "github.com/IBM/fp-go/v2/option"
 	T "github.com/IBM/fp-go/v2/tuple"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
@@ -15,7 +16,7 @@ import (
 
 // listStockSearchContext carries the full search request through the
 // search pipeline. Only the caller-supplied fields are set at the seed;
-// the params and collection are filled by the pipeline steps. The enum
+// the params and collection are attached by the lens setters. The enum
 // conversions are shared with the autocomplete pipeline in
 // stock_suggestions_fp.go.
 type listStockSearchContext struct {
@@ -27,6 +28,35 @@ type listStockSearchContext struct {
 	params     *pb.StockSearchParameters
 	collection *pb.StockSearchResultCollection
 }
+
+// ── state lenses ────────────────────────────────────────────────────────────
+
+var (
+	searchParamsLens = L.MakeLens(
+		func(s listStockSearchContext) *pb.StockSearchParameters {
+			return s.params
+		},
+		func(
+			s listStockSearchContext,
+			params *pb.StockSearchParameters,
+		) listStockSearchContext {
+			s.params = params
+			return s
+		},
+	)
+	searchCollectionLens = L.MakeLens(
+		func(s listStockSearchContext) *pb.StockSearchResultCollection {
+			return s.collection
+		},
+		func(
+			s listStockSearchContext,
+			coll *pb.StockSearchResultCollection,
+		) listStockSearchContext {
+			s.collection = coll
+			return s
+		},
+	)
+)
 
 // zeroSearchLimit lets the stock service apply its own default of 50
 // when the GraphQL query omits the limit.
@@ -87,63 +117,72 @@ func convertSearchResultItem(
 
 // ── pipeline steps ──────────────────────────────────────────────────────────
 
-// buildStockSearchParams fills the request params on the context from
-// the caller-supplied fields.
-func buildStockSearchParams(
-	ctx listStockSearchContext,
-) E.Either[error, listStockSearchContext] {
-	return F.Pipe1(
-		toProtoStockEntity(ctx.entity),
-		E.Map[error](func(entity pb.StockEntity) listStockSearchContext {
-			ctx.params = &pb.StockSearchParameters{
-				Data: &pb.StockSearchParameters_Data{
-					Type: "stock",
-					Attributes: &pb.StockSearchAttributes{
-						Query:  ctx.query,
-						Limit:  resolveSearchLimit(ctx.limit),
-						Entity: entity,
-					},
+var buildSearchParameters = F.Curry2(
+	func(
+		s listStockSearchContext,
+		entity pb.StockEntity,
+	) *pb.StockSearchParameters {
+		return &pb.StockSearchParameters{
+			Data: &pb.StockSearchParameters_Data{
+				Type: "stock",
+				Attributes: &pb.StockSearchAttributes{
+					Query:  s.query,
+					Limit:  resolveSearchLimit(s.limit),
+					Entity: entity,
 				},
-			}
-			return ctx
+			},
+		}
+	},
+)
+
+// searchParamsFromState derives the request params from the caller
+// supplied fields. It fails when the entity filter is unknown.
+func searchParamsFromState(
+	s listStockSearchContext,
+) E.Either[error, *pb.StockSearchParameters] {
+	return F.Pipe1(
+		toProtoStockEntity(s.entity),
+		E.Map[error](buildSearchParameters(s)),
+	)
+}
+
+func fetchSearchCollection(
+	s listStockSearchContext,
+) IOE.IOEither[error, *pb.StockSearchResultCollection] {
+	return F.Pipe1(
+		IOE.TryCatchError(func() (*pb.StockSearchResultCollection, error) {
+			return s.client.SearchStock(s.gctx, s.params)
+		}),
+		IOE.MapLeft[*pb.StockSearchResultCollection](func(err error) error {
+			return fmt.Errorf("search stocks for query %q: %w", s.query, err)
 		}),
 	)
 }
 
-func fetchStockSearchCollection(
-	ctx listStockSearchContext,
-) IOE.IOEither[error, listStockSearchContext] {
-	return F.Pipe2(
-		IOE.TryCatchError(func() (*pb.StockSearchResultCollection, error) {
-			return ctx.client.SearchStock(ctx.gctx, ctx.params)
-		}),
-		IOE.MapLeft[*pb.StockSearchResultCollection](func(err error) error {
-			return fmt.Errorf("search stocks for query %q: %w", ctx.query, err)
-		}),
-		IOE.Map[error](func(coll *pb.StockSearchResultCollection) listStockSearchContext {
-			ctx.collection = coll
-			return ctx
-		}),
-	)
-}
+var buildSearchResultList = F.Curry2(
+	func(
+		s listStockSearchContext,
+		results []*models.StockSearchResult,
+	) *models.StockSearchResultList {
+		meta := s.collection.Meta
+		lmt := int(meta.Limit)
+		return &models.StockSearchResultList{
+			Results:    results,
+			Limit:      &lmt,
+			TotalCount: int(meta.Total),
+		}
+	},
+)
 
 // toStockSearchList projects the fetched collection onto the GraphQL
 // list type. One bad result fails the whole response, because the
 // GraphQL enums carry no invalid value to fall back to.
 func toStockSearchList(
-	ctx listStockSearchContext,
+	s listStockSearchContext,
 ) E.Either[error, *models.StockSearchResultList] {
 	return F.Pipe2(
-		ctx.collection.Data,
+		s.collection.Data,
 		E.TraverseArray(convertSearchResultItem),
-		E.Map[error](func(results []*models.StockSearchResult) *models.StockSearchResultList {
-			meta := ctx.collection.Meta
-			lmt := int(meta.Limit)
-			return &models.StockSearchResultList{
-				Results:    results,
-				Limit:      &lmt,
-				TotalCount: int(meta.Total),
-			}
-		}),
+		E.Map[error](buildSearchResultList(s)),
 	)
 }
