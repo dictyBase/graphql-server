@@ -106,19 +106,6 @@ func toKnownProtoEntity(
 	)
 }
 
-// toProtoStockEntity converts the optional GraphQL entity filter to the
-// protobuf enum. An absent filter and ALL both cover both kinds of stock.
-func toProtoStockEntity(
-	entity *models.StockEntityType,
-) E.Either[error, pb.StockEntity] {
-	return F.Pipe3(
-		entity,
-		O.FromNillable2[models.StockEntityType],
-		O.GetOrElse(F.Constant(models.StockEntityTypeAll)),
-		toKnownProtoEntity,
-	)
-}
-
 // toGQLEntity maps a matched stock kind back to the GraphQL enum. The
 // stock service contract says it never returns an unspecified kind, so an
 // unknown value is an error rather than a silent default.
@@ -235,8 +222,11 @@ var buildSuggestionParameters = F.Curry2(
 func suggestionParamsFromState(
 	s listStockSuggestionsContext,
 ) E.Either[error, *pb.StockAutocompleteParameters] {
-	return F.Pipe1(
-		toProtoStockEntity(s.entity),
+	return F.Pipe4(
+		s.entity,
+		O.FromNillable2[models.StockEntityType],
+		O.GetOrElse(F.Constant(models.StockEntityTypeAll)),
+		toKnownProtoEntity,
 		E.Map[error](buildSuggestionParameters(s)),
 	)
 }

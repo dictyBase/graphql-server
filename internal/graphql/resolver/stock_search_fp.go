@@ -140,8 +140,11 @@ var buildSearchParameters = F.Curry2(
 func searchParamsFromState(
 	s listStockSearchContext,
 ) E.Either[error, *pb.StockSearchParameters] {
-	return F.Pipe1(
-		toProtoStockEntity(s.entity),
+	return F.Pipe4(
+		s.entity,
+		O.FromNillable2[models.StockEntityType],
+		O.GetOrElse(F.Constant(models.StockEntityTypeAll)),
+		toKnownProtoEntity,
 		E.Map[error](buildSearchParameters(s)),
 	)
 }
