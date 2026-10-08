@@ -219,7 +219,7 @@ func MockStockSuggestionCollection() *stock.StockSuggestionCollection {
 				Id:          mockStockSuggestionID,
 				Entity:      stock.StockEntity_STOCK_ENTITY_STRAIN,
 				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_LABEL,
-				DisplayText: "AX4",
+				DisplayText: mockStockSearchLabel,
 				Score:       0.5,
 			},
 			{
@@ -232,6 +232,53 @@ func MockStockSuggestionCollection() *stock.StockSuggestionCollection {
 		},
 		Meta: &stock.Meta{
 			Limit: 5,
+			Total: 3,
+		},
+	}
+}
+
+// MockStockSearchID is the stock_id carried by the search result
+// fixtures below.
+const (
+	MockStockSearchID = "DBS0236126"
+	// mockStockSearchLabel is the strain label carried by the strain
+	// search result fixtures below.
+	mockStockSearchLabel = "AX4"
+)
+
+func MockStockSearchResultCollection() *stock.StockSearchResultCollection {
+	return &stock.StockSearchResultCollection{
+		Data: []*stock.StockSearchResult{
+			{
+				Id:          MockStockSearchID,
+				Entity:      stock.StockEntity_STOCK_ENTITY_STRAIN,
+				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_STOCK_ID,
+				DisplayText: MockStockSearchID,
+				Score:       1,
+				Summary:     "GWDI strain carrying a csA deletion.",
+				StrainLabel: mockStockSearchLabel,
+			},
+			{
+				Id:          MockStockSearchID,
+				Entity:      stock.StockEntity_STOCK_ENTITY_STRAIN,
+				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_SUMMARY,
+				DisplayText: "csA deletion strain",
+				Score:       0.5,
+				Summary:     "GWDI strain carrying a csA deletion.",
+				StrainLabel: mockStockSearchLabel,
+			},
+			{
+				Id:          "DBP0236126",
+				Entity:      stock.StockEntity_STOCK_ENTITY_PLASMID,
+				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_NAME,
+				DisplayText: "pDV4",
+				Score:       0.25,
+				Summary:     "",
+				StrainLabel: "",
+			},
+		},
+		Meta: &stock.Meta{
+			Limit: 50,
 			Total: 3,
 		},
 	}
@@ -273,6 +320,11 @@ func MockedStockClient() *clients.StockServiceClient {
 			mock.AnythingOfType("*stock.StockAutocompleteParameters"),
 		).
 		Return(MockStockSuggestionCollection(), nil).
+		On("SearchStock",
+			mock.MatchedBy(func(ctx context.Context) bool { return true }),
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(MockStockSearchResultCollection(), nil).
 		On("CreateStrain",
 			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.NewStrain"),

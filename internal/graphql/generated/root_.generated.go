@@ -340,6 +340,7 @@ type ComplexityRoot struct {
 		Plasmid                    func(childComplexity int, id string) int
 		Publication                func(childComplexity int, id string) int
 		Role                       func(childComplexity int, id string) int
+		SearchStocks               func(childComplexity int, query string, limit *int, entity *models.StockEntityType) int
 		Strain                     func(childComplexity int, id string) int
 		User                       func(childComplexity int, id string) int
 		UserByEmail                func(childComplexity int, email string) int
@@ -352,6 +353,22 @@ type ComplexityRoot struct {
 		Permissions func(childComplexity int) int
 		Role        func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
+	}
+
+	StockSearchResult struct {
+		DisplayText func(childComplexity int) int
+		Entity      func(childComplexity int) int
+		Field       func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Score       func(childComplexity int) int
+		StrainLabel func(childComplexity int) int
+		Summary     func(childComplexity int) int
+	}
+
+	StockSearchResultList struct {
+		Limit      func(childComplexity int) int
+		Results    func(childComplexity int) int
+		TotalCount func(childComplexity int) int
 	}
 
 	StockSuggestion struct {
@@ -2018,6 +2035,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Query.Role(childComplexity, args["id"].(string)), true
+	case "Query.searchStocks":
+		if e.ComplexityRoot.Query.SearchStocks == nil {
+			break
+		}
+
+		args, err := ec.field_Query_searchStocks_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Query.SearchStocks(childComplexity, args["query"].(string), args["limit"].(*int), args["entity"].(*models.StockEntityType)), true
 	case "Query.strain":
 		if e.ComplexityRoot.Query.Strain == nil {
 			break
@@ -2088,6 +2116,68 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Role.UpdatedAt(childComplexity), true
+
+	case "StockSearchResult.display_text":
+		if e.ComplexityRoot.StockSearchResult.DisplayText == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResult.DisplayText(childComplexity), true
+	case "StockSearchResult.entity":
+		if e.ComplexityRoot.StockSearchResult.Entity == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResult.Entity(childComplexity), true
+	case "StockSearchResult.field":
+		if e.ComplexityRoot.StockSearchResult.Field == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResult.Field(childComplexity), true
+	case "StockSearchResult.id":
+		if e.ComplexityRoot.StockSearchResult.ID == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResult.ID(childComplexity), true
+	case "StockSearchResult.score":
+		if e.ComplexityRoot.StockSearchResult.Score == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResult.Score(childComplexity), true
+	case "StockSearchResult.strain_label":
+		if e.ComplexityRoot.StockSearchResult.StrainLabel == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResult.StrainLabel(childComplexity), true
+	case "StockSearchResult.summary":
+		if e.ComplexityRoot.StockSearchResult.Summary == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResult.Summary(childComplexity), true
+
+	case "StockSearchResultList.limit":
+		if e.ComplexityRoot.StockSearchResultList.Limit == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResultList.Limit(childComplexity), true
+	case "StockSearchResultList.results":
+		if e.ComplexityRoot.StockSearchResultList.Results == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResultList.Results(childComplexity), true
+	case "StockSearchResultList.totalCount":
+		if e.ComplexityRoot.StockSearchResultList.TotalCount == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResultList.TotalCount(childComplexity), true
 
 	case "StockSuggestion.display_text":
 		if e.ComplexityRoot.StockSuggestion.DisplayText == nil {
@@ -3045,6 +3135,23 @@ type Author {
     limit: Int
     entity: StockEntityType
   ): StockSuggestionList!
+  #
+  # Returns the results of a full stock search. The match runs against
+  # stock_id, genes, dbxrefs, the strain label, the strain names, the
+  # species, the strain plasmid, the plasmid name, the summary and the
+  # depositor. The search does not use editable_summary.
+  #
+  # Constraints:
+  # - query must be at least 2 characters, because gene names such as
+  #   csA are short.
+  # - limit defaults to 50 when omitted and never exceeds 100.
+  # - entity restricts the search to strains or plasmids. Omitted
+  #   entity covers both kinds, same as ALL.
+  searchStocks(
+    query: String!
+    limit: Int
+    entity: StockEntityType
+  ): StockSearchResultList!
   plasmid(id: ID!): Plasmid
   strain(id: ID!): Strain
   listStrainsWithGene(gene: String!): [Strain!]
@@ -3399,6 +3506,38 @@ type StockSuggestionList {
   # Effective limit of the request.
   limit: Int
   # Number of rows in suggestions.
+  totalCount: Int!
+}
+
+# StockSearchResult is one full search match.
+type StockSearchResult {
+  # stock_id of the matched stock, for example DBS0236126.
+  id: ID!
+  # Kind of the matched stock. Never ALL here.
+  entity: StockEntityType!
+  # Field that produced the match.
+  field: StockSearchFieldEnum!
+  # Text shown for the matched field in the user interface.
+  display_text: String!
+  # Rank score. A prefix match scores above a phrase match, a phrase
+  # match scores above a token match, and a token match scores above a
+  # fuzzy match.
+  score: Float!
+  # Complete stored summary of the stock document. It is not a snippet,
+  # and it is not highlighted. Empty when the stock has no summary.
+  summary: String!
+  # Strain label, shown as Descriptor in the stock center. Empty for
+  # plasmid results and for strains without a label.
+  strain_label: String!
+}
+
+# StockSearchResultList returns the results of a full search request.
+# An empty list is valid, because a query can match no stock.
+type StockSearchResultList {
+  results: [StockSearchResult!]!
+  # Effective limit of the request.
+  limit: Int
+  # Number of rows in results.
   totalCount: Int!
 }
 
@@ -4016,6 +4155,38 @@ func (ec *executionContext) childFields_Role(ctx context.Context, field graphql.
 		return ec.fieldContext_Role_permissions(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
+}
+
+func (ec *executionContext) childFields_StockSearchResult(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_StockSearchResult_id(ctx, field)
+	case "entity":
+		return ec.fieldContext_StockSearchResult_entity(ctx, field)
+	case "field":
+		return ec.fieldContext_StockSearchResult_field(ctx, field)
+	case "display_text":
+		return ec.fieldContext_StockSearchResult_display_text(ctx, field)
+	case "score":
+		return ec.fieldContext_StockSearchResult_score(ctx, field)
+	case "summary":
+		return ec.fieldContext_StockSearchResult_summary(ctx, field)
+	case "strain_label":
+		return ec.fieldContext_StockSearchResult_strain_label(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type StockSearchResult", field.Name)
+}
+
+func (ec *executionContext) childFields_StockSearchResultList(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "results":
+		return ec.fieldContext_StockSearchResultList_results(ctx, field)
+	case "limit":
+		return ec.fieldContext_StockSearchResultList_limit(ctx, field)
+	case "totalCount":
+		return ec.fieldContext_StockSearchResultList_totalCount(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type StockSearchResultList", field.Name)
 }
 
 func (ec *executionContext) childFields_StockSuggestion(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
