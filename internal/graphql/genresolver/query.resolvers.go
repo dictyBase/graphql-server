@@ -81,6 +81,11 @@ func (r *queryResolver) ListStockSuggestions(ctx context.Context, query string, 
 	panic(fmt.Errorf("not implemented: ListStockSuggestions - listStockSuggestions"))
 }
 
+// SearchStocks is the resolver for the searchStocks field.
+func (r *queryResolver) SearchStocks(ctx context.Context, query string, limit *int, entity *models.StockEntityType) (*models.StockSearchResultList, error) {
+	panic(fmt.Errorf("not implemented: SearchStocks - searchStocks"))
+}
+
 // Plasmid is the resolver for the plasmid field.
 func (r *queryResolver) Plasmid(ctx context.Context, id string) (*models.Plasmid, error) {
 	panic("not implemented")

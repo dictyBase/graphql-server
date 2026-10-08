@@ -291,3 +291,35 @@ type StockSuggestionList {
   totalCount: Int!
 }
 
+# StockSearchResult is one full search match.
+type StockSearchResult {
+  # stock_id of the matched stock, for example DBS0236126.
+  id: ID!
+  # Kind of the matched stock. Never ALL here.
+  entity: StockEntityType!
+  # Field that produced the match.
+  field: StockSearchFieldEnum!
+  # Text shown for the matched field in the user interface.
+  display_text: String!
+  # Rank score. A prefix match scores above a phrase match, a phrase
+  # match scores above a token match, and a token match scores above a
+  # fuzzy match.
+  score: Float!
+  # Complete stored summary of the stock document. It is not a snippet,
+  # and it is not highlighted. Empty when the stock has no summary.
+  summary: String!
+  # Strain label, shown as Descriptor in the stock center. Empty for
+  # plasmid results and for strains without a label.
+  strain_label: String!
+}
+
+# StockSearchResultList returns the results of a full search request.
+# An empty list is valid, because a query can match no stock.
+type StockSearchResultList {
+  results: [StockSearchResult!]!
+  # Effective limit of the request.
+  limit: Int
+  # Number of rows in results.
+  totalCount: Int!
+}
+

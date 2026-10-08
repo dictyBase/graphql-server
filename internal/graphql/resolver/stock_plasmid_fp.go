@@ -133,10 +133,6 @@ func validateAndBuildPlasmidFilter(
 	)
 }
 
-func toEither[ERR, A any](ioe IOE.IOEither[ERR, A]) E.Either[ERR, A] {
-	return ioe()
-}
-
 func onPlasmidListError(
 	err error,
 ) T.Tuple2[error, *models.PlasmidListWithCursor] {

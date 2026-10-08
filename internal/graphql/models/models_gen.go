@@ -336,6 +336,22 @@ func (PublicationWithGene) IsBasePublication() {}
 type Query struct {
 }
 
+type StockSearchResult struct {
+	ID          string               `json:"id"`
+	Entity      StockEntityType      `json:"entity"`
+	Field       StockSearchFieldEnum `json:"field"`
+	DisplayText string               `json:"display_text"`
+	Score       float64              `json:"score"`
+	Summary     string               `json:"summary"`
+	StrainLabel string               `json:"strain_label"`
+}
+
+type StockSearchResultList struct {
+	Results    []*StockSearchResult `json:"results"`
+	Limit      *int                 `json:"limit,omitempty"`
+	TotalCount int                  `json:"totalCount"`
+}
+
 type StockSuggestion struct {
 	ID          string               `json:"id"`
 	Entity      StockEntityType      `json:"entity"`

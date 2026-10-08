@@ -36,6 +36,23 @@ type Query {
     limit: Int
     entity: StockEntityType
   ): StockSuggestionList!
+  #
+  # Returns the results of a full stock search. The match runs against
+  # stock_id, genes, dbxrefs, the strain label, the strain names, the
+  # species, the strain plasmid, the plasmid name, the summary and the
+  # depositor. The search does not use editable_summary.
+  #
+  # Constraints:
+  # - query must be at least 2 characters, because gene names such as
+  #   csA are short.
+  # - limit defaults to 50 when omitted and never exceeds 100.
+  # - entity restricts the search to strains or plasmids. Omitted
+  #   entity covers both kinds, same as ALL.
+  searchStocks(
+    query: String!
+    limit: Int
+    entity: StockEntityType
+  ): StockSearchResultList!
   plasmid(id: ID!): Plasmid
   strain(id: ID!): Strain
   listStrainsWithGene(gene: String!): [Strain!]

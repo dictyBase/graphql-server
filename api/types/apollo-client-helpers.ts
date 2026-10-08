@@ -286,7 +286,7 @@ export type PublicationWithGeneFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	volume?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPhenotypeAssays' | 'listPhenotypeEnvironments' | 'listPhenotypes' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStockSuggestions' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPhenotypeAssays' | 'listPhenotypeEnvironments' | 'listPhenotypes' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStockSuggestions' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'searchStocks' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	content?: FieldPolicy<any> | FieldReadFunction<any>,
 	contentBySlug?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -317,6 +317,7 @@ export type QueryFieldPolicy = {
 	plasmid?: FieldPolicy<any> | FieldReadFunction<any>,
 	publication?: FieldPolicy<any> | FieldReadFunction<any>,
 	role?: FieldPolicy<any> | FieldReadFunction<any>,
+	searchStocks?: FieldPolicy<any> | FieldReadFunction<any>,
 	strain?: FieldPolicy<any> | FieldReadFunction<any>,
 	user?: FieldPolicy<any> | FieldReadFunction<any>,
 	userByEmail?: FieldPolicy<any> | FieldReadFunction<any>
@@ -344,6 +345,22 @@ export type StockFieldPolicy = {
 	summary?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_by?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type StockSearchResultKeySpecifier = ('display_text' | 'entity' | 'field' | 'id' | 'score' | 'strain_label' | 'summary' | StockSearchResultKeySpecifier)[];
+export type StockSearchResultFieldPolicy = {
+	display_text?: FieldPolicy<any> | FieldReadFunction<any>,
+	entity?: FieldPolicy<any> | FieldReadFunction<any>,
+	field?: FieldPolicy<any> | FieldReadFunction<any>,
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	score?: FieldPolicy<any> | FieldReadFunction<any>,
+	strain_label?: FieldPolicy<any> | FieldReadFunction<any>,
+	summary?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type StockSearchResultListKeySpecifier = ('limit' | 'results' | 'totalCount' | StockSearchResultListKeySpecifier)[];
+export type StockSearchResultListFieldPolicy = {
+	limit?: FieldPolicy<any> | FieldReadFunction<any>,
+	results?: FieldPolicy<any> | FieldReadFunction<any>,
+	totalCount?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type StockSuggestionKeySpecifier = ('display_text' | 'entity' | 'field' | 'id' | 'score' | StockSuggestionKeySpecifier)[];
 export type StockSuggestionFieldPolicy = {
@@ -575,6 +592,14 @@ export type StrictTypedTypePolicies = {
 	Stock?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | StockKeySpecifier | (() => undefined | StockKeySpecifier),
 		fields?: StockFieldPolicy,
+	},
+	StockSearchResult?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | StockSearchResultKeySpecifier | (() => undefined | StockSearchResultKeySpecifier),
+		fields?: StockSearchResultFieldPolicy,
+	},
+	StockSearchResultList?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | StockSearchResultListKeySpecifier | (() => undefined | StockSearchResultListKeySpecifier),
+		fields?: StockSearchResultListFieldPolicy,
 	},
 	StockSuggestion?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | StockSuggestionKeySpecifier | (() => undefined | StockSuggestionKeySpecifier),

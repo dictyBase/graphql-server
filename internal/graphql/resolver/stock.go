@@ -11,6 +11,7 @@ import (
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
+	ioeutils "github.com/dictyBase/fp-go-loom/ioeitherutils"
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
@@ -320,7 +321,7 @@ func (qrs *QueryResolver) ListStrains(
 			filter:      filter,
 		},
 		runStrainPipeline,
-		toEither[error, *models.StrainListWithCursor],
+		ioeutils.ToEither[error, *models.StrainListWithCursor],
 		E.Fold(onStrainListError, onStrainListSuccess),
 	)
 
@@ -355,7 +356,7 @@ func (qrs *QueryResolver) ListPlasmids(
 		IOE.Chain(buildListPlasmidFilterQuery),
 		IOE.Chain(fetchListPlasmidCollection),
 		IOE.Map[error](extractListPlasmidResult),
-		toEither[error, *models.PlasmidListWithCursor],
+		ioeutils.ToEither[error, *models.PlasmidListWithCursor],
 		E.Fold(onPlasmidListError, onPlasmidListSuccess),
 	)
 
@@ -381,6 +382,8 @@ func (qrs *QueryResolver) ListPlasmids(
 // and lowercases it. The limit defaults to 5 on the service when omitted and
 // never exceeds 50. An omitted entity covers both kinds of stock, same as
 // ALL.
+//
+//nolint:dupl // shares request shape with SearchStocks
 func (qrs *QueryResolver) ListStockSuggestions(
 	ctx context.Context,
 	query string,
@@ -395,10 +398,10 @@ func (qrs *QueryResolver) ListStockSuggestions(
 			limit:  limit,
 			entity: entity,
 		}),
-		IOE.ChainEitherK(buildStockSuggestionParams),
-		IOE.Chain(fetchStockSuggestionCollection),
-		IOE.ChainEitherK(toStockSuggestionList),
-		toEither[error, *models.StockSuggestionList],
+		IOE.Bind(suggestionParamsLens.Set, suggestionParamsFromState),
+		IOE.Bind(suggestionCollectionLens.Set, fetchSuggestionCollection),
+		ioeutils.ToEither[error, listStockSuggestionsContext],
+		E.Chain(toStockSuggestionList),
 		E.Fold(onStockSuggestionListError, onStockSuggestionListSuccess),
 	)
 
@@ -410,6 +413,52 @@ func (qrs *QueryResolver) ListStockSuggestions(
 
 	qrs.Logger.Debugf(
 		"successfully retrieved %d stock suggestions",
+		result.F2.TotalCount,
+	)
+	return result.F2, nil
+}
+
+// SearchStocks resolves the searchStocks GraphQL query. It returns the
+// results of a full stock search. The match runs against stock_id, genes,
+// dbxrefs, the strain label, the strain names, the species, the strain
+// plasmid, the plasmid name, the summary and the depositor. The search
+// does not use editable_summary.
+//
+// The query must be at least 2 characters, because gene names such as csA
+// are short. The limit defaults to 50 on the service when omitted and
+// never exceeds 100. An omitted entity covers both kinds of stock, same
+// as ALL.
+//
+//nolint:dupl // shares request shape with ListStockSuggestions
+func (qrs *QueryResolver) SearchStocks(
+	ctx context.Context,
+	query string,
+	limit *int,
+	entity *models.StockEntityType,
+) (*models.StockSearchResultList, error) {
+	result := F.Pipe5(
+		IOE.Of[error](listStockSearchContext{
+			client: qrs.GetStockClient(registry.STOCK),
+			gctx:   ctx,
+			query:  query,
+			limit:  limit,
+			entity: entity,
+		}),
+		IOE.Bind(searchParamsLens.Set, searchParamsFromState),
+		IOE.Bind(searchCollectionLens.Set, fetchSearchCollection),
+		ioeutils.ToEither[error, listStockSearchContext],
+		E.Chain(toStockSearchList),
+		E.Fold(onStockSearchListError, onStockSearchListSuccess),
+	)
+
+	if result.F1 != nil {
+		errorutils.AddGQLError(ctx, result.F1)
+		qrs.Logger.Error(result.F1)
+		return result.F2, result.F1
+	}
+
+	qrs.Logger.Debugf(
+		"successfully retrieved %d stock search results",
 		result.F2.TotalCount,
 	)
 	return result.F2, nil

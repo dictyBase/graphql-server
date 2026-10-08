@@ -666,6 +666,7 @@ export type Query = {
   plasmid?: Maybe<Plasmid>;
   publication?: Maybe<Publication>;
   role?: Maybe<Role>;
+  searchStocks: StockSearchResultList;
   strain?: Maybe<Strain>;
   user?: Maybe<User>;
   userByEmail?: Maybe<User>;
@@ -819,6 +820,13 @@ export type QueryRoleArgs = {
 };
 
 
+export type QuerySearchStocksArgs = {
+  entity?: InputMaybe<StockEntityType>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  query: Scalars['String']['input'];
+};
+
+
 export type QueryStrainArgs = {
   id: Scalars['ID']['input'];
 };
@@ -883,6 +891,24 @@ export enum StockSearchFieldEnum {
   StockId = 'STOCK_ID',
   Summary = 'SUMMARY'
 }
+
+export type StockSearchResult = {
+  __typename?: 'StockSearchResult';
+  display_text: Scalars['String']['output'];
+  entity: StockEntityType;
+  field: StockSearchFieldEnum;
+  id: Scalars['ID']['output'];
+  score: Scalars['Float']['output'];
+  strain_label: Scalars['String']['output'];
+  summary: Scalars['String']['output'];
+};
+
+export type StockSearchResultList = {
+  __typename?: 'StockSearchResultList';
+  limit?: Maybe<Scalars['Int']['output']>;
+  results: Array<StockSearchResult>;
+  totalCount: Scalars['Int']['output'];
+};
 
 export type StockSuggestion = {
   __typename?: 'StockSuggestion';
@@ -1295,6 +1321,15 @@ export type ListPublicationsWithGeneQueryVariables = Exact<{
 
 
 export type ListPublicationsWithGeneQuery = { __typename?: 'Query', listPublicationsWithGene: Array<{ __typename?: 'PublicationWithGene', id: string, doi?: string | null, title: string, journal: string, pub_date?: string | null, volume?: string | null, pages?: string | null, pub_type: string, source: string, issue?: string | null, related_genes: Array<{ __typename?: 'Gene', id: string, name: string }>, authors: Array<{ __typename?: 'Author', last_name: string, rank?: string | null }> }> };
+
+export type SearchStocksQueryVariables = Exact<{
+  query: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  entity?: InputMaybe<StockEntityType>;
+}>;
+
+
+export type SearchStocksQuery = { __typename?: 'Query', searchStocks: { __typename?: 'StockSearchResultList', limit?: number | null, totalCount: number, results: Array<{ __typename?: 'StockSearchResult', id: string, entity: StockEntityType, field: StockSearchFieldEnum, display_text: string, score: number, summary: string, strain_label: string }> } };
 
 export type ListStockSuggestionsQueryVariables = Exact<{
   query: Scalars['String']['input'];
@@ -2501,6 +2536,53 @@ export function useListPublicationsWithGeneLazyQuery(baseOptions?: Apollo.LazyQu
 export type ListPublicationsWithGeneQueryHookResult = ReturnType<typeof useListPublicationsWithGeneQuery>;
 export type ListPublicationsWithGeneLazyQueryHookResult = ReturnType<typeof useListPublicationsWithGeneLazyQuery>;
 export type ListPublicationsWithGeneQueryResult = Apollo.QueryResult<ListPublicationsWithGeneQuery, ListPublicationsWithGeneQueryVariables>;
+export const SearchStocksDocument = gql`
+    query SearchStocks($query: String!, $limit: Int, $entity: StockEntityType) {
+  searchStocks(query: $query, limit: $limit, entity: $entity) {
+    results {
+      id
+      entity
+      field
+      display_text
+      score
+      summary
+      strain_label
+    }
+    limit
+    totalCount
+  }
+}
+    `;
+
+/**
+ * __useSearchStocksQuery__
+ *
+ * To run a query within a React component, call `useSearchStocksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchStocksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchStocksQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *      limit: // value for 'limit'
+ *      entity: // value for 'entity'
+ *   },
+ * });
+ */
+export function useSearchStocksQuery(baseOptions: Apollo.QueryHookOptions<SearchStocksQuery, SearchStocksQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchStocksQuery, SearchStocksQueryVariables>(SearchStocksDocument, options);
+      }
+export function useSearchStocksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchStocksQuery, SearchStocksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchStocksQuery, SearchStocksQueryVariables>(SearchStocksDocument, options);
+        }
+export type SearchStocksQueryHookResult = ReturnType<typeof useSearchStocksQuery>;
+export type SearchStocksLazyQueryHookResult = ReturnType<typeof useSearchStocksLazyQuery>;
+export type SearchStocksQueryResult = Apollo.QueryResult<SearchStocksQuery, SearchStocksQueryVariables>;
 export const ListStockSuggestionsDocument = gql`
     query ListStockSuggestions($query: String!, $limit: Int, $entity: StockEntityType) {
   listStockSuggestions(query: $query, limit: $limit, entity: $entity) {

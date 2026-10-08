@@ -1022,3 +1022,238 @@ func TestListStockSuggestionsInvalidFieldEnum(t *testing.T) {
 	require.ErrorContains(err, "unexpected search field")
 	mockedStockClient.AssertExpectations(t)
 }
+
+func TestSearchStocks(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	resolver := &QueryResolver{
+		Registry: &mocks.MockRegistry{},
+		Logger:   mocks.TestLogger(),
+	}
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.NoError(err)
+	require.Equal(3, result.TotalCount, "should match total count")
+	require.NotNil(result.Limit, "should resolve limit from meta")
+	require.Equal(50, *result.Limit, "should match effective limit from meta")
+	require.Len(result.Results, 3, "should have three results")
+
+	first := result.Results[0]
+	require.Equal(mocks.MockStockSearchID, first.ID, "should match stock id")
+	require.Equal(
+		models.StockEntityTypeStrain,
+		first.Entity,
+		"should map strain entity",
+	)
+	require.Equal(
+		models.StockSearchFieldEnumStockID,
+		first.Field,
+		"should map stock_id field",
+	)
+	require.Equal(mocks.MockStockSearchID, first.DisplayText, "should match display text")
+	require.Equal(1.0, first.Score, "should match score")
+	require.Equal(
+		"GWDI strain carrying a csA deletion.",
+		first.Summary,
+		"should match summary",
+	)
+	require.Equal("AX4", first.StrainLabel, "should match strain label")
+
+	plasmid := result.Results[2]
+	require.Equal(
+		models.StockEntityTypePlasmid,
+		plasmid.Entity,
+		"should map plasmid entity",
+	)
+	require.Equal(
+		models.StockSearchFieldEnumSummary,
+		result.Results[1].Field,
+		"should map summary field",
+	)
+	require.Empty(plasmid.StrainLabel, "plasmid results carry no strain label")
+	require.Empty(plasmid.Summary, "should keep empty summary")
+}
+
+func TestSearchStocksPassesExpectedParams(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"SearchStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(params *pb.StockSearchParameters) bool {
+			attr := params.Data.Attributes
+			return params.Data.Type == "stock" &&
+				attr.Query == "csa" &&
+				attr.Limit == 25 &&
+				attr.Entity == pb.StockEntity_STOCK_ENTITY_STRAIN
+		}),
+	).Return(mocks.MockStockSearchResultCollection(), nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	limit := 25
+	entity := models.StockEntityTypeStrain
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		&limit,
+		&entity,
+	)
+	require.NoError(err)
+	require.Len(result.Results, 3)
+	mockedStockClient.AssertExpectations(t)
+}
+
+func TestSearchStocksDefaultsToBothEntities(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"SearchStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(params *pb.StockSearchParameters) bool {
+			attr := params.Data.Attributes
+			return attr.Query == "csa" &&
+				attr.Limit == 0 &&
+				attr.Entity == pb.StockEntity_STOCK_ENTITY_UNSPECIFIED
+		}),
+	).Return(mocks.MockStockSearchResultCollection(), nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	entity := models.StockEntityTypeAll
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		&entity,
+	)
+	require.NoError(err)
+	require.Len(result.Results, 3)
+	mockedStockClient.AssertExpectations(t)
+}
+
+func TestSearchStocksError(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"SearchStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockSearchParameters"),
+	).Return(nil, fmt.Errorf("stock service unavailable"))
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "stock service unavailable")
+	require.ErrorContains(err, "search stocks for query")
+	require.NotNil(result, "should return empty search list on error")
+	mockedStockClient.AssertExpectations(t)
+}
+
+func TestSearchStocksInvalidEntityEnum(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"SearchStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockSearchParameters"),
+	).Return(&pb.StockSearchResultCollection{
+		Data: []*pb.StockSearchResult{
+			{
+				Id:          mocks.MockStockSearchID,
+				Entity:      pb.StockEntity(99),
+				Field:       pb.StockSearchField_STOCK_SEARCH_FIELD_STOCK_ID,
+				DisplayText: mocks.MockStockSearchID,
+				Score:       1,
+			},
+		},
+		Meta: &pb.Meta{Limit: 50, Total: 1},
+	}, nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	_, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "unexpected stock entity")
+	mockedStockClient.AssertExpectations(t)
+}
+
+func TestSearchStocksInvalidFieldEnum(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"SearchStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockSearchParameters"),
+	).Return(&pb.StockSearchResultCollection{
+		Data: []*pb.StockSearchResult{
+			{
+				Id:          mocks.MockStockSearchID,
+				Entity:      pb.StockEntity_STOCK_ENTITY_STRAIN,
+				Field:       pb.StockSearchField(99),
+				DisplayText: mocks.MockStockSearchID,
+				Score:       1,
+			},
+		},
+		Meta: &pb.Meta{Limit: 50, Total: 1},
+	}, nil)
+
+	reg := &stockClientRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	_, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "unexpected search field")
+	mockedStockClient.AssertExpectations(t)
+}
