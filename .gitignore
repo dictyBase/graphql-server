@@ -6,14 +6,3 @@ node_modules
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
-internal/graphql/.DS_Store
-.aider*
-.env
-
-**/.claude/settings.local.json
-.mcp.json
-.claude
-opencode.json
-.opencode
-.crush
-tea_debug.log

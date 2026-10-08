@@ -1,0 +1,97 @@
+type Query {
+  # Gene queries
+  geneOntologyAnnotation(gene: String!): [GOAnnotation!]
+  geneGeneralInformation(gene: String!): GeneGeneralInfo
+  # Content queries
+  content(id: ID!): Content
+  contentBySlug(slug: String!): Content
+  listContentByNamespace(namespace: String!, limit: Int): [Content!]!
+  # Download page queries
+  organism(taxon_id: String!): Organism
+  listOrganisms: [Organism!]
+  # Order queries
+  order(id: ID!): Order
+  listOrders(cursor: Int, limit: Int, filter: String): OrderListWithCursor
+  # Publication queries
+  publication(id: ID!): Publication
+  # List publication query that is by default is sorted by publication
+  # date in descendent order
+  listRecentPublications(limit: Int!): [Publication!]
+  listPublicationsWithGene(gene: String!): [PublicationWithGene!]!
+  # Stock queries
+  #
+  # Returns short type-ahead suggestions for a partial stock search
+  # text. The match runs against stock_id, genes, dbxrefs, the strain
+  # label, the strain names, the species, the strain plasmid and the
+  # plasmid name.
+  #
+  # Constraints:
+  # - query must be at least 3 characters. The server trims the text
+  #   and lowercases it.
+  # - limit defaults to 5 when omitted and never exceeds 50.
+  # - entity restricts the search to strains or plasmids. Omitted
+  #   entity covers both kinds, same as ALL.
+  listStockSuggestions(
+    query: String!
+    limit: Int
+    entity: StockEntityType
+  ): StockSuggestionList!
+  #
+  # Returns the results of a full stock search. The match runs against
+  # stock_id, genes, dbxrefs, the strain label, the strain names, the
+  # species, the strain plasmid, the plasmid name, the summary and the
+  # depositor. The search does not use editable_summary.
+  #
+  # Constraints:
+  # - query must be at least 2 characters, because gene names such as
+  #   csA are short.
+  # - limit defaults to 50 when omitted and never exceeds 100.
+  # - entity restricts the search to strains or plasmids. Omitted
+  #   entity covers both kinds, same as ALL.
+  searchStocks(
+    query: String!
+    limit: Int
+    entity: StockEntityType
+  ): StockSearchResultList!
+  plasmid(id: ID!): Plasmid
+  strain(id: ID!): Strain
+  listStrainsWithGene(gene: String!): [Strain!]
+  listStrains(
+    cursor: Int
+    limit: Int
+    filter: StrainListFilter
+  ): StrainListWithCursor
+  listPlasmids(cursor: Int, limit: Int, filter: PlasmidListFilter): PlasmidListWithCursor
+  listStrainsWithAnnotation(
+    cursor: Int
+    limit: Int
+    type: String!
+    annotation: String!
+  ): StrainListWithCursor
+  listPlasmidsWithAnnotation(
+    cursor: Int
+    limit: Int
+    type: String!
+    annotation: String!
+  ): PlasmidListWithCursor
+  # List plasmid query that is by default is sorted by plasmid
+  # date in descendent order
+  listRecentPlasmids(limit: Int!): [Plasmid!]
+  # List strain query that is by default is sorted by strain
+  # date in descendent order
+  listRecentStrains(limit: Int!): [Strain!]
+  # List Phenotypes that match the provided search string
+  listPhenotypes(search: String!): [String!]!
+  # List Phenotype Environments that match the provided search string
+  listPhenotypeEnvironments(search: String!): [String!]!
+  # List Phenotype Assays that match the provided search string
+  listPhenotypeAssays(search: String!): [String!]!
+  # User queries
+  user(id: ID!): User
+  userByEmail(email: String!): User
+  listUsers(pagenum: String!, pagesize: String!, filter: String!): UserList
+  role(id: ID!): Role
+  listRoles: [Role!]
+  permission(id: ID!): Permission
+  listPermissions: [Permission!]
+}
