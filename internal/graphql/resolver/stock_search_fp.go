@@ -136,16 +136,19 @@ var buildSearchParameters = F.Curry2(
 )
 
 // searchParamsFromState derives the request params from the caller
-// supplied fields. It fails when the entity filter is unknown.
+// supplied fields. It fails when the entity filter is unknown. The
+// Either lookup lifts straight into IOEither, so the resolver pipeline
+// stays in IOEither until the forced edge.
 func searchParamsFromState(
 	s listStockSearchContext,
-) E.Either[error, *pb.StockSearchParameters] {
-	return F.Pipe4(
+) IOE.IOEither[error, *pb.StockSearchParameters] {
+	return F.Pipe5(
 		s.entity,
 		O.FromNillable2[models.StockEntityType],
 		O.GetOrElse(F.Constant(models.StockEntityTypeAll)),
 		toKnownProtoEntity,
 		E.Map[error](buildSearchParameters(s)),
+		IOE.FromEither[error, *pb.StockSearchParameters],
 	)
 }
 

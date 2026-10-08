@@ -218,16 +218,19 @@ var buildSuggestionParameters = F.Curry2(
 )
 
 // suggestionParamsFromState derives the request params from the caller
-// supplied fields. It fails when the entity filter is unknown.
+// supplied fields. It fails when the entity filter is unknown. The
+// Either lookup lifts straight into IOEither, so the resolver pipeline
+// stays in IOEither until the forced edge.
 func suggestionParamsFromState(
 	s listStockSuggestionsContext,
-) E.Either[error, *pb.StockAutocompleteParameters] {
-	return F.Pipe4(
+) IOE.IOEither[error, *pb.StockAutocompleteParameters] {
+	return F.Pipe5(
 		s.entity,
 		O.FromNillable2[models.StockEntityType],
 		O.GetOrElse(F.Constant(models.StockEntityTypeAll)),
 		toKnownProtoEntity,
 		E.Map[error](buildSuggestionParameters(s)),
+		IOE.FromEither[error, *pb.StockAutocompleteParameters],
 	)
 }
 

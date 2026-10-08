@@ -390,16 +390,15 @@ func (qrs *QueryResolver) ListStockSuggestions(
 	limit *int,
 	entity *models.StockEntityType,
 ) (*models.StockSuggestionList, error) {
-	result := F.Pipe6(
-		E.Of[error](listStockSuggestionsContext{
+	result := F.Pipe5(
+		IOE.Of[error](listStockSuggestionsContext{
 			client: qrs.GetStockClient(registry.STOCK),
 			gctx:   ctx,
 			query:  query,
 			limit:  limit,
 			entity: entity,
 		}),
-		E.Bind(suggestionParamsLens.Set, suggestionParamsFromState),
-		IOE.FromEither[error, listStockSuggestionsContext],
+		IOE.Bind(suggestionParamsLens.Set, suggestionParamsFromState),
 		IOE.Bind(suggestionCollectionLens.Set, fetchSuggestionCollection),
 		ioeutils.ToEither[error, listStockSuggestionsContext],
 		E.Chain(toStockSuggestionList),
@@ -437,16 +436,15 @@ func (qrs *QueryResolver) SearchStocks(
 	limit *int,
 	entity *models.StockEntityType,
 ) (*models.StockSearchResultList, error) {
-	result := F.Pipe6(
-		E.Of[error](listStockSearchContext{
+	result := F.Pipe5(
+		IOE.Of[error](listStockSearchContext{
 			client: qrs.GetStockClient(registry.STOCK),
 			gctx:   ctx,
 			query:  query,
 			limit:  limit,
 			entity: entity,
 		}),
-		E.Bind(searchParamsLens.Set, searchParamsFromState),
-		IOE.FromEither[error, listStockSearchContext],
+		IOE.Bind(searchParamsLens.Set, searchParamsFromState),
 		IOE.Bind(searchCollectionLens.Set, fetchSearchCollection),
 		ioeutils.ToEither[error, listStockSearchContext],
 		E.Chain(toStockSearchList),
