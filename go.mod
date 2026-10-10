@@ -5,6 +5,7 @@ require (
 	github.com/IBM/fp-go/v2 v2.3.146
 	github.com/Jeffail/gabs/v2 v2.7.0
 	github.com/dictyBase/aphgrpc v1.4.2
+	github.com/dictyBase/fp-go-loom v0.0.0-20261003160438-079ef0095a48
 	github.com/dictyBase/go-genproto v0.0.0-20261007153809-00e41d0050e2
 	github.com/emirpasic/gods v1.18.1
 	github.com/fatih/structs v1.1.0
@@ -21,7 +22,7 @@ require (
 	github.com/urfave/cli v1.22.17
 	github.com/vektah/dataloaden v0.3.0
 	github.com/vektah/gqlparser v1.3.1
-	github.com/vektah/gqlparser/v2 v2.5.58
+	github.com/vektah/gqlparser/v2 v2.5.61
 	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678
 	google.golang.org/grpc v1.84.0
 	google.golang.org/protobuf v1.36.12
@@ -34,7 +35,6 @@ require (
 	github.com/coder/websocket v1.8.15 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1 // indirect
-	github.com/dictyBase/fp-go-loom v0.0.0-20261003160438-079ef0095a48 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/goccy/go-json v0.10.6 // indirect
