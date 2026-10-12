@@ -97,30 +97,28 @@ func inStockForEntity(
 	entryID string,
 	entity models.StockEntityType,
 ) IOE.IOEither[error, bool] {
-	return F.Pipe2(
+	return F.Pipe5(
 		inventoryRefFor(entity),
 		IOE.FromEither[error, inventoryRef],
-		IOE.Chain(func(ref inventoryRef) IOE.IOEither[error, bool] {
-			return F.Pipe3(
-				IOE.TryCatchError(func() (*annotation.TaggedAnnotation, error) {
-					return annoClient.GetEntryAnnotation(
-						ctx,
-						&annotation.EntryAnnotationRequest{
-							Tag:      ref.tag,
-							Ontology: ref.ontology,
-							EntryId:  entryID,
-						},
-					)
-				}),
-				IOE.MapTo[error, *annotation.TaggedAnnotation](true),
-				IOE.OrElse(recoverNotFound(isNotFoundStatus)),
-				IOE.MapLeft[bool](func(err error) error {
-					return fmt.Errorf(
-						"error getting %s from inventory: %w",
-						entryID,
-						err,
-					)
-				}),
+		IOE.Chain(func(ref inventoryRef) IOE.IOEither[error, *annotation.TaggedAnnotation] {
+			return IOE.TryCatchError(func() (*annotation.TaggedAnnotation, error) {
+				return annoClient.GetEntryAnnotation(
+					ctx,
+					&annotation.EntryAnnotationRequest{
+						Tag:      ref.tag,
+						Ontology: ref.ontology,
+						EntryId:  entryID,
+					},
+				)
+			})
+		}),
+		IOE.MapTo[error, *annotation.TaggedAnnotation](true),
+		IOE.OrElse(recoverNotFound(isNotFoundStatus)),
+		IOE.MapLeft[bool](func(err error) error {
+			return fmt.Errorf(
+				"error getting %s from inventory: %w",
+				entryID,
+				err,
 			)
 		}),
 	)
