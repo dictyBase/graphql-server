@@ -422,6 +422,7 @@ export const SearchStocks = gql`
       score
       summary
       strain_label
+      in_stock
     }
     limit
     totalCount
