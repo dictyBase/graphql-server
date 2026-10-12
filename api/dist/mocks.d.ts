@@ -766,6 +766,7 @@ export type StockSearchResult = {
     entity: StockEntityType;
     field: StockSearchFieldEnum;
     id: Scalars['ID']['output'];
+    in_stock: Scalars['Boolean']['output'];
     score: Scalars['Float']['output'];
     strain_label: Scalars['String']['output'];
     summary: Scalars['String']['output'];
@@ -1537,6 +1538,7 @@ export type SearchStocksQuery = {
             score: number;
             summary: string;
             strain_label: string;
+            in_stock: boolean;
         }>;
     };
 };

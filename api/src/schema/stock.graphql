@@ -311,6 +311,9 @@ type StockSearchResult {
   # Strain label, shown as Descriptor in the stock center. Empty for
   # plasmid results and for strains without a label.
   strain_label: String!
+  # Whether the stock is in the stock center inventory. Same meaning
+  # as the in_stock field of Strain and Plasmid.
+  in_stock: Boolean!
 }
 
 # StockSearchResultList returns the results of a full search request.
