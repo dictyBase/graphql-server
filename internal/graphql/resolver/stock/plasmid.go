@@ -111,11 +111,11 @@ func (prs *PlasmidResolver) InStock(
 	obj *models.Plasmid,
 ) (bool, error) {
 	result := F.Pipe2(
-		inStockFromInventory(
+		inStockForEntity(
 			ctx,
 			prs.AnnotationClient,
 			obj.ID,
-			plasmidInventoryRef,
+			models.StockEntityTypePlasmid,
 		),
 		ioeutils.ToEither[error, bool],
 		E.Fold(onInventoryError, onInventorySuccess),
