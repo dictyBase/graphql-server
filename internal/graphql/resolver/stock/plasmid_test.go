@@ -8,6 +8,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func plasmidResolver(
@@ -80,3 +81,34 @@ func TestPlasmidGenes(t *testing.T) {
 		"should match depositor last name",
 	)
 } */
+
+func TestPlasmidNotInStock(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	r := plasmidResolver(mocks.MockedNotInStockClient())
+
+	inStock, err := r.InStock(context.Background(),
+		ConvertToPlasmidModel(
+			"DBP0000120",
+			mocks.MockPlasmidInputWithParams("kenny@bania.com"),
+		))
+
+	assert.NoError(err, "expect no error from a missing inventory entry")
+	assert.False(inStock, "should return false after a not-found inventory entry")
+}
+
+func TestPlasmidInStockError(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+	r := plasmidResolver(mocks.MockedInStockErrorClient())
+
+	inStock, err := r.InStock(context.Background(),
+		ConvertToPlasmidModel(
+			"DBP0000120",
+			mocks.MockPlasmidInputWithParams("kenny@bania.com"),
+		))
+
+	require.Error(err, "expect an error from the inventory service failure")
+	require.ErrorContains(err, "from inventory")
+	require.False(inStock, "should return false on an inventory service failure")
+}

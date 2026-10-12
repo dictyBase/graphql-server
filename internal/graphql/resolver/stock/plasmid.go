@@ -7,7 +7,10 @@ import (
 	"strconv"
 	"strings"
 
+	E "github.com/IBM/fp-go/v2/either"
+	F "github.com/IBM/fp-go/v2/function"
 	"github.com/dictyBase/aphgrpc"
+	ioeutils "github.com/dictyBase/fp-go-loom/ioeitherutils"
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
@@ -19,8 +22,6 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var numRgx = regexp.MustCompile("[0-9]+")
@@ -109,24 +110,23 @@ func (prs *PlasmidResolver) InStock(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (bool, error) {
-	id := obj.ID
-	_, err := prs.AnnotationClient.GetEntryAnnotation(
-		ctx,
-		&annotation.EntryAnnotationRequest{
-			Tag:      registry.PlasmidInvTag,
-			Ontology: registry.PlasmidInvOnto,
-			EntryId:  id,
-		},
+	result := F.Pipe2(
+		inStockFromInventory(
+			ctx,
+			prs.AnnotationClient,
+			obj.ID,
+			plasmidInventoryRef,
+		),
+		ioeutils.ToEither[error, bool],
+		E.Fold(onInventoryError, onInventorySuccess),
 	)
-	if err != nil {
-		if status.Code(err) == codes.NotFound {
-			return false, nil
-		}
-		errorutils.AddGQLError(ctx, err)
-		prs.Logger.Errorf("error getting %s from inventory: %v", id, err)
-		return false, err
+
+	if result.F1 != nil {
+		errorutils.AddGQLError(ctx, result.F1)
+		prs.Logger.Error(result.F1)
+		return false, result.F1
 	}
-	return true, nil
+	return result.F2, nil
 }
 
 /*

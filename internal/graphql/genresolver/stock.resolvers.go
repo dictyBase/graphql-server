@@ -7,6 +7,7 @@ package genresolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
 	"github.com/dictyBase/graphql-server/internal/graphql/generated"
@@ -51,6 +52,11 @@ func (r *plasmidResolver) Keywords(ctx context.Context, obj *models.Plasmid) ([]
 // GenbankAccession is the resolver for the genbank_accession field.
 func (r *plasmidResolver) GenbankAccession(ctx context.Context, obj *models.Plasmid) (*string, error) {
 	panic("not implemented")
+}
+
+// InStock is the resolver for the in_stock field.
+func (r *stockSearchResultResolver) InStock(ctx context.Context, obj *models.StockSearchResult) (bool, error) {
+	panic(fmt.Errorf("not implemented: InStock - in_stock"))
 }
 
 // CreatedBy is the resolver for the created_by field.
@@ -126,10 +132,16 @@ func (r *strainResolver) Genotypes(ctx context.Context, obj *models.Strain) ([]s
 // Plasmid returns generated.PlasmidResolver implementation.
 func (r *Resolver) Plasmid() generated.PlasmidResolver { return &plasmidResolver{r} }
 
+// StockSearchResult returns generated.StockSearchResultResolver implementation.
+func (r *Resolver) StockSearchResult() generated.StockSearchResultResolver {
+	return &stockSearchResultResolver{r}
+}
+
 // Strain returns generated.StrainResolver implementation.
 func (r *Resolver) Strain() generated.StrainResolver { return &strainResolver{r} }
 
 type (
-	plasmidResolver struct{ *Resolver }
-	strainResolver  struct{ *Resolver }
+	plasmidResolver           struct{ *Resolver }
+	stockSearchResultResolver struct{ *Resolver }
+	strainResolver            struct{ *Resolver }
 )

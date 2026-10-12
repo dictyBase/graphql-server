@@ -102,6 +102,13 @@ func (rrs *Resolver) Plasmid() generated.PlasmidResolver {
 	}
 }
 
+func (rrs *Resolver) StockSearchResult() generated.StockSearchResultResolver {
+	return &stock.StockSearchResultResolver{
+		AnnotationClient: rrs.GetAnnotationClient(registry.ANNOTATION),
+		Logger:           rrs.Logger,
+	}
+}
+
 func (rrs *Resolver) Order() generated.OrderResolver {
 	return &order.OrderResolver{
 		Client:      rrs.GetOrderClient(registry.ORDER),

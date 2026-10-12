@@ -59,6 +59,10 @@ models:
         resolver: true
   Order:
     model: github.com/dictyBase/go-genproto/dictybaseapis/order.Order
+  StockSearchResult:
+    fields:
+      in_stock:
+        resolver: true
   UserInfo:
     model: github.com/dictyBase/go-genproto/dictybaseapis/order.UserInfo
   Auth:
