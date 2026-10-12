@@ -344,6 +344,7 @@ type StockSearchResult struct {
 	Score       float64              `json:"score"`
 	Summary     string               `json:"summary"`
 	StrainLabel string               `json:"strain_label"`
+	InStock     bool                 `json:"in_stock"`
 }
 
 type StockSearchResultList struct {

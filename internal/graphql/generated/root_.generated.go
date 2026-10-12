@@ -32,6 +32,7 @@ type ResolverRoot interface {
 	Plasmid() PlasmidResolver
 	Query() QueryResolver
 	Role() RoleResolver
+	StockSearchResult() StockSearchResultResolver
 	Strain() StrainResolver
 	User() UserResolver
 }
@@ -360,6 +361,7 @@ type ComplexityRoot struct {
 		Entity      func(childComplexity int) int
 		Field       func(childComplexity int) int
 		ID          func(childComplexity int) int
+		InStock     func(childComplexity int) int
 		Score       func(childComplexity int) int
 		StrainLabel func(childComplexity int) int
 		Summary     func(childComplexity int) int
@@ -2141,6 +2143,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.StockSearchResult.ID(childComplexity), true
+	case "StockSearchResult.in_stock":
+		if e.ComplexityRoot.StockSearchResult.InStock == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResult.InStock(childComplexity), true
 	case "StockSearchResult.score":
 		if e.ComplexityRoot.StockSearchResult.Score == nil {
 			break
@@ -3529,6 +3537,9 @@ type StockSearchResult {
   # Strain label, shown as Descriptor in the stock center. Empty for
   # plasmid results and for strains without a label.
   strain_label: String!
+  # Whether the stock is in the stock center inventory. Same meaning
+  # as the in_stock field of Strain and Plasmid.
+  in_stock: Boolean!
 }
 
 # StockSearchResultList returns the results of a full search request.
@@ -4173,6 +4184,8 @@ func (ec *executionContext) childFields_StockSearchResult(ctx context.Context, f
 		return ec.fieldContext_StockSearchResult_summary(ctx, field)
 	case "strain_label":
 		return ec.fieldContext_StockSearchResult_strain_label(ctx, field)
+	case "in_stock":
+		return ec.fieldContext_StockSearchResult_in_stock(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type StockSearchResult", field.Name)
 }

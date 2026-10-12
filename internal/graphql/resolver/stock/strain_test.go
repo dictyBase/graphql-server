@@ -8,6 +8,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func strainResolver(
@@ -213,4 +214,27 @@ func TestParent(t *testing.T) {
 		mocks.MockStrainAttributes.Label,
 		"should match label for parent",
 	)
+}
+
+func TestStrainNotInStock(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	r := strainResolver(mocks.MockedNotInStockClient())
+
+	inStock, err := r.InStock(context.Background(), mockStrainInput)
+
+	assert.NoError(err, "expect no error from a missing inventory entry")
+	assert.False(inStock, "should return false after a not-found inventory entry")
+}
+
+func TestStrainInStockError(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+	r := strainResolver(mocks.MockedInStockErrorClient())
+
+	inStock, err := r.InStock(context.Background(), mockStrainInput)
+
+	require.Error(err, "expect an error from the inventory service failure")
+	require.ErrorContains(err, "from inventory")
+	require.False(inStock, "should return false on an inventory service failure")
 }

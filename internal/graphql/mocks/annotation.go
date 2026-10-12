@@ -5,6 +5,8 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/stretchr/testify/mock"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -295,6 +297,29 @@ func MockedInStockClient() *clients.TaggedAnnotationServiceClient {
 		mock.Anything,
 		mock.AnythingOfType("*annotation.EntryAnnotationRequest"),
 	).Return(MockInStockAnno, nil)
+	return mockedAnnoClient
+}
+
+// MockedNotInStockClient answers the inventory lookup with not-found.
+func MockedNotInStockClient() *clients.TaggedAnnotationServiceClient {
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+	mockedAnnoClient.On(
+		"GetEntryAnnotation",
+		mock.Anything,
+		mock.AnythingOfType("*annotation.EntryAnnotationRequest"),
+	).Return(nil, status.Error(codes.NotFound, "annotation not found"))
+	return mockedAnnoClient
+}
+
+// MockedInStockErrorClient fails the inventory lookup with an internal
+// error.
+func MockedInStockErrorClient() *clients.TaggedAnnotationServiceClient {
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+	mockedAnnoClient.On(
+		"GetEntryAnnotation",
+		mock.Anything,
+		mock.AnythingOfType("*annotation.EntryAnnotationRequest"),
+	).Return(nil, status.Error(codes.Internal, "annotation service unavailable"))
 	return mockedAnnoClient
 }
 

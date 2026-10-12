@@ -32,6 +32,9 @@ type PlasmidResolver interface {
 	Keywords(ctx context.Context, obj *models.Plasmid) ([]string, error)
 	GenbankAccession(ctx context.Context, obj *models.Plasmid) (*string, error)
 }
+type StockSearchResultResolver interface {
+	InStock(ctx context.Context, obj *models.StockSearchResult) (bool, error)
+}
 type StrainResolver interface {
 	CreatedBy(ctx context.Context, obj *models.Strain) (*user.User, error)
 	UpdatedBy(ctx context.Context, obj *models.Strain) (*user.User, error)
@@ -949,6 +952,29 @@ func (ec *executionContext) _StockSearchResult_strain_label(ctx context.Context,
 }
 func (ec *executionContext) fieldContext_StockSearchResult_strain_label(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	return graphql.NewScalarFieldContext("StockSearchResult", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _StockSearchResult_in_stock(ctx context.Context, field graphql.CollectedField, obj *models.StockSearchResult) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StockSearchResult_in_stock(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return ec.Resolvers.StockSearchResult().InStock(ctx, obj)
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
+			return ec.marshalNBoolean2bool(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_StockSearchResult_in_stock(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("StockSearchResult", field, true, true, errors.New("field of type Boolean does not have child fields"))
 }
 
 func (ec *executionContext) _StockSearchResultList_results(ctx context.Context, field graphql.CollectedField, obj *models.StockSearchResultList) (ret graphql.Marshaler) {
@@ -3468,38 +3494,76 @@ func (ec *executionContext) _StockSearchResult(ctx context.Context, sel ast.Sele
 		case "id":
 			out.Values[i] = ec._StockSearchResult_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "entity":
 			out.Values[i] = ec._StockSearchResult_entity(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "field":
 			out.Values[i] = ec._StockSearchResult_field(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "display_text":
 			out.Values[i] = ec._StockSearchResult_display_text(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "score":
 			out.Values[i] = ec._StockSearchResult_score(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "summary":
 			out.Values[i] = ec._StockSearchResult_summary(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "strain_label":
 			out.Values[i] = ec._StockSearchResult_strain_label(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "in_stock":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StockSearchResult_in_stock(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.IsDeferred() {
+				deferredFieldSet.AddField(field)
+				fieldIndex := len(deferredFieldSet.Values) - 1
+				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, deferredFieldSet)
+				})
+
+				for _, deferrable := range field.Deferrables {
+					view, ok := deferLabelToView[deferrable.Label]
+					if !ok {
+						view = deferredFieldSet.NewView()
+						deferLabelToView[deferrable.Label] = view
+					}
+					view.AddIndices(fieldIndex)
+				}
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

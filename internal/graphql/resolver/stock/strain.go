@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"regexp"
 
+	E "github.com/IBM/fp-go/v2/either"
+	F "github.com/IBM/fp-go/v2/function"
 	"github.com/dictyBase/aphgrpc"
+	ioeutils "github.com/dictyBase/fp-go-loom/ioeitherutils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -315,24 +318,23 @@ func (srs *StrainResolver) InStock(
 	ctx context.Context,
 	obj *models.Strain,
 ) (bool, error) {
-	id := obj.ID
-	_, err := srs.AnnotationClient.GetEntryAnnotation(
-		ctx,
-		&annotation.EntryAnnotationRequest{
-			Tag:      registry.StrainInvTag,
-			Ontology: registry.StrainInvOnto,
-			EntryId:  id,
-		},
+	result := F.Pipe2(
+		inStockFromInventory(
+			ctx,
+			srs.AnnotationClient,
+			obj.ID,
+			strainInventoryRef,
+		),
+		ioeutils.ToEither[error, bool],
+		E.Fold(onInventoryError, onInventorySuccess),
 	)
-	if err != nil {
-		if status.Code(err) == codes.NotFound {
-			return false, nil
-		}
-		errorutils.AddGQLError(ctx, err)
-		srs.Logger.Errorf("error getting %s from inventory: %v", id, err)
-		return false, err
+
+	if result.F1 != nil {
+		errorutils.AddGQLError(ctx, result.F1)
+		srs.Logger.Error(result.F1)
+		return false, result.F1
 	}
-	return true, nil
+	return result.F2, nil
 }
 
 func getPhenotypes(
