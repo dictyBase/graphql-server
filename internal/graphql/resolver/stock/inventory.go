@@ -25,23 +25,16 @@ type inventoryRef struct {
 	ontology string
 }
 
-// strainInventoryRef and plasmidInventoryRef name the inventory
-// annotation sets of the two stock kinds.
-var (
-	strainInventoryRef = inventoryRef{
-		tag:      registry.StrainInvTag,
-		ontology: registry.StrainInvOnto,
-	}
-	plasmidInventoryRef = inventoryRef{
-		tag:      registry.PlasmidInvTag,
-		ontology: registry.PlasmidInvOnto,
-	}
-)
-
 // inventoryRefs maps each GraphQL stock kind to its inventory set.
 var inventoryRefs = map[models.StockEntityType]inventoryRef{
-	models.StockEntityTypeStrain:  strainInventoryRef,
-	models.StockEntityTypePlasmid: plasmidInventoryRef,
+	models.StockEntityTypeStrain: {
+		tag:      registry.StrainInvTag,
+		ontology: registry.StrainInvOnto,
+	},
+	models.StockEntityTypePlasmid: {
+		tag:      registry.PlasmidInvTag,
+		ontology: registry.PlasmidInvOnto,
+	},
 }
 
 // inventoryRefFor resolves the inventory set of a stock kind. An
@@ -94,36 +87,10 @@ func onInventorySuccess(inStock bool) T.Tuple2[error, bool] {
 	return T.MakeTuple2[error](nil, inStock)
 }
 
-// inStockFromInventory reports whether entryID carries the inventory
-// annotation of ref. A missing annotation gives false. Every other
-// failure is an error.
-func inStockFromInventory(
-	ctx context.Context,
-	annoClient annotation.TaggedAnnotationServiceClient,
-	entryID string,
-	ref inventoryRef,
-) IOE.IOEither[error, bool] {
-	return F.Pipe3(
-		IOE.TryCatchError(func() (*annotation.TaggedAnnotation, error) {
-			return annoClient.GetEntryAnnotation(
-				ctx,
-				&annotation.EntryAnnotationRequest{
-					Tag:      ref.tag,
-					Ontology: ref.ontology,
-					EntryId:  entryID,
-				},
-			)
-		}),
-		IOE.MapTo[error, *annotation.TaggedAnnotation](true),
-		IOE.OrElse(recoverNotFound(isNotFoundStatus)),
-		IOE.MapLeft[bool](func(err error) error {
-			return fmt.Errorf("error getting %s from inventory: %w", entryID, err)
-		}),
-	)
-}
-
 // inStockForEntity reports whether one stock is in the stock center
-// inventory. The entity of the stock selects the inventory set.
+// inventory. The entity of the stock selects the inventory annotation
+// set. A missing annotation gives false. Every other failure is an
+// error.
 func inStockForEntity(
 	ctx context.Context,
 	annoClient annotation.TaggedAnnotationServiceClient,
@@ -134,7 +101,27 @@ func inStockForEntity(
 		inventoryRefFor(entity),
 		IOE.FromEither[error, inventoryRef],
 		IOE.Chain(func(ref inventoryRef) IOE.IOEither[error, bool] {
-			return inStockFromInventory(ctx, annoClient, entryID, ref)
+			return F.Pipe3(
+				IOE.TryCatchError(func() (*annotation.TaggedAnnotation, error) {
+					return annoClient.GetEntryAnnotation(
+						ctx,
+						&annotation.EntryAnnotationRequest{
+							Tag:      ref.tag,
+							Ontology: ref.ontology,
+							EntryId:  entryID,
+						},
+					)
+				}),
+				IOE.MapTo[error, *annotation.TaggedAnnotation](true),
+				IOE.OrElse(recoverNotFound(isNotFoundStatus)),
+				IOE.MapLeft[bool](func(err error) error {
+					return fmt.Errorf(
+						"error getting %s from inventory: %w",
+						entryID,
+						err,
+					)
+				}),
+			)
 		}),
 	)
 }

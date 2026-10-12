@@ -319,11 +319,11 @@ func (srs *StrainResolver) InStock(
 	obj *models.Strain,
 ) (bool, error) {
 	result := F.Pipe2(
-		inStockFromInventory(
+		inStockForEntity(
 			ctx,
 			srs.AnnotationClient,
 			obj.ID,
-			strainInventoryRef,
+			models.StockEntityTypeStrain,
 		),
 		ioeutils.ToEither[error, bool],
 		E.Fold(onInventoryError, onInventorySuccess),
