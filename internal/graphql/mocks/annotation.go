@@ -240,13 +240,40 @@ var MockGenotypeAnno = MockTagAnno(
 )
 var MockInStockAnno = MockTagAnno(annotatedEntryID, registry.SysnameTag)
 
+func MockAnnotationSuggestionCollection() *annotation.AnnotationSuggestionCollection {
+	return &annotation.AnnotationSuggestionCollection{
+		Data: []*annotation.AnnotationSuggestion{
+			{
+				EntryId:     "DBS0235559",
+				Field:       annotation.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_SYNONYM,
+				DisplayText: "catenin null",
+				Score:       0.75,
+			},
+			{
+				EntryId:     "DBS0236126",
+				Field:       annotation.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_GENOTYPE,
+				DisplayText: "axeA1,axeB1",
+				Score:       0.4,
+			},
+		},
+		Meta: &annotation.Meta{
+			Limit: 5,
+			Total: 2,
+		},
+	}
+}
+
 func MockedAnnotationClient() *clients.TaggedAnnotationServiceClient {
 	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
 	mockedAnnoClient.On(
 		"ListAnnotations",
 		mock.Anything,
 		mock.AnythingOfType("*annotation.ListParameters"),
-	).Return(MockPhenotypeListAnno(), nil)
+	).Return(MockPhenotypeListAnno(), nil).On(
+		"AutocompleteAnnotation",
+		mock.Anything,
+		mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
+	).Return(MockAnnotationSuggestionCollection(), nil)
 	return mockedAnnoClient
 }
 

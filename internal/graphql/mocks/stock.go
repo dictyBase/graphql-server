@@ -218,7 +218,7 @@ func MockStockSuggestionCollection() *stock.StockSuggestionCollection {
 				Score:       1,
 			},
 			{
-				Id:          mockStockSuggestionID,
+				Id:          "DBS0236127",
 				Entity:      stock.StockEntity_STOCK_ENTITY_STRAIN,
 				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_LABEL,
 				DisplayText: mockStockSearchLabel,
