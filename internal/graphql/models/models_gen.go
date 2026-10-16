@@ -699,6 +699,8 @@ const (
 	StockSearchFieldEnumName      StockSearchFieldEnum = "NAME"
 	StockSearchFieldEnumSummary   StockSearchFieldEnum = "SUMMARY"
 	StockSearchFieldEnumDepositor StockSearchFieldEnum = "DEPOSITOR"
+	StockSearchFieldEnumSynonym   StockSearchFieldEnum = "SYNONYM"
+	StockSearchFieldEnumGenotype  StockSearchFieldEnum = "GENOTYPE"
 )
 
 var AllStockSearchFieldEnum = []StockSearchFieldEnum{
@@ -712,11 +714,13 @@ var AllStockSearchFieldEnum = []StockSearchFieldEnum{
 	StockSearchFieldEnumName,
 	StockSearchFieldEnumSummary,
 	StockSearchFieldEnumDepositor,
+	StockSearchFieldEnumSynonym,
+	StockSearchFieldEnumGenotype,
 }
 
 func (e StockSearchFieldEnum) IsValid() bool {
 	switch e {
-	case StockSearchFieldEnumStockID, StockSearchFieldEnumGenes, StockSearchFieldEnumDbxrefs, StockSearchFieldEnumLabel, StockSearchFieldEnumNames, StockSearchFieldEnumSpecies, StockSearchFieldEnumPlasmid, StockSearchFieldEnumName, StockSearchFieldEnumSummary, StockSearchFieldEnumDepositor:
+	case StockSearchFieldEnumStockID, StockSearchFieldEnumGenes, StockSearchFieldEnumDbxrefs, StockSearchFieldEnumLabel, StockSearchFieldEnumNames, StockSearchFieldEnumSpecies, StockSearchFieldEnumPlasmid, StockSearchFieldEnumName, StockSearchFieldEnumSummary, StockSearchFieldEnumDepositor, StockSearchFieldEnumSynonym, StockSearchFieldEnumGenotype:
 		return true
 	}
 	return false
