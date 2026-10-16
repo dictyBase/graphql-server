@@ -918,7 +918,12 @@ func TestListStockSuggestionsDefaultsToBothEntities(t *testing.T) {
 	mockedAnnoClient.On(
 		"AutocompleteAnnotation",
 		mock.MatchedBy(func(ctx context.Context) bool { return true }),
-		mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
+		mock.MatchedBy(func(params *anno.AnnotationAutocompleteParameters) bool {
+			attr := params.Data.Attributes
+			return params.Data.Type == "annotation" &&
+				attr.Query == "ax4" &&
+				attr.Limit == 0
+		}),
 	).Return(mocks.MockAnnotationSuggestionCollection(), nil)
 
 	reg := &bacterialStrainRegistry{
@@ -1065,6 +1070,187 @@ func TestListStockSuggestionsInvalidFieldEnum(t *testing.T) {
 	require.Error(err)
 	require.ErrorContains(err, "unexpected search field")
 	mockedStockClient.AssertExpectations(t)
+}
+
+func TestListStockSuggestionsStrainCallsBothServices(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"AutocompleteStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(params *pb.StockAutocompleteParameters) bool {
+			attr := params.Data.Attributes
+			return params.Data.Type == "stock" &&
+				attr.Query == "ax4" &&
+				attr.Limit == 10 &&
+				attr.Entity == pb.StockEntity_STOCK_ENTITY_STRAIN
+		}),
+	).Return(mocks.MockStockSuggestionCollection(), nil)
+
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+	mockedAnnoClient.On(
+		"AutocompleteAnnotation",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.MatchedBy(func(params *anno.AnnotationAutocompleteParameters) bool {
+			attr := params.Data.Attributes
+			return params.Data.Type == "annotation" &&
+				attr.Query == "ax4" &&
+				attr.Limit == 10
+		}),
+	).Return(mocks.MockAnnotationSuggestionCollection(), nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	limit := 10
+	entity := models.StockEntityTypeStrain
+
+	result, err := resolver.ListStockSuggestions(
+		context.Background(),
+		"ax4",
+		&limit,
+		&entity,
+	)
+	require.NoError(err)
+	require.Len(result.Suggestions, 4)
+	require.Equal(10, *result.Limit)
+	mockedStockClient.AssertExpectations(t)
+	mockedAnnoClient.AssertExpectations(t)
+}
+
+func TestListStockSuggestionsBothEmpty(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"AutocompleteStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockAutocompleteParameters"),
+	).Return(&pb.StockSuggestionCollection{
+		Data: nil,
+		Meta: &pb.Meta{Limit: 5, Total: 0},
+	}, nil)
+
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+	mockedAnnoClient.On(
+		"AutocompleteAnnotation",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
+	).Return(&anno.AnnotationSuggestionCollection{
+		Data: nil,
+		Meta: &anno.Meta{Limit: 5, Total: 0},
+	}, nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.ListStockSuggestions(
+		context.Background(),
+		"zzz",
+		nil,
+		nil,
+	)
+	require.NoError(err)
+	require.Empty(result.Suggestions)
+	require.Equal(5, *result.Limit)
+	require.Equal(0, result.TotalCount)
+	mockedStockClient.AssertExpectations(t)
+	mockedAnnoClient.AssertExpectations(t)
+}
+
+func TestListStockSuggestionsAnnotationError(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"AutocompleteStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockAutocompleteParameters"),
+	).Return(mocks.MockStockSuggestionCollection(), nil)
+
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+	mockedAnnoClient.On(
+		"AutocompleteAnnotation",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
+	).Return(nil, fmt.Errorf("annotation service unavailable"))
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.ListStockSuggestions(
+		context.Background(),
+		"ax4",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "annotation service unavailable")
+	require.NotNil(result, "should return empty suggestion list on error")
+	mockedStockClient.AssertExpectations(t)
+	mockedAnnoClient.AssertExpectations(t)
+}
+
+func TestListStockSuggestionsInvalidAnnotationFieldEnum(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"AutocompleteStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockAutocompleteParameters"),
+	).Return(mocks.MockStockSuggestionCollection(), nil)
+
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+	mockedAnnoClient.On(
+		"AutocompleteAnnotation",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
+	).Return(&anno.AnnotationSuggestionCollection{
+		Data: []*anno.AnnotationSuggestion{
+			{
+				EntryId:     "DBS0236126",
+				Field:       anno.AnnotationSearchField(99),
+				DisplayText: "bad",
+				Score:       1.0,
+			},
+		},
+		Meta: &anno.Meta{Limit: 5, Total: 1},
+	}, nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	_, err := resolver.ListStockSuggestions(
+		context.Background(),
+		"ax4",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "unexpected annotation search field")
+	mockedStockClient.AssertExpectations(t)
+	mockedAnnoClient.AssertExpectations(t)
 }
 
 func TestSearchStocks(t *testing.T) {
