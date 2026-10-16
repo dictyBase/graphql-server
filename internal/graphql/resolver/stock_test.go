@@ -21,6 +21,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // stockClientRegistry returns a fixed stock client for resolver tests
@@ -1343,32 +1345,88 @@ func TestSearchStocks(t *testing.T) {
 	require.Empty(plasmid.Summary, "should keep empty summary")
 }
 
+func TestSearchStocksPlasmidSkipsAnnotationSearch(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.MatchedBy(func(params *pb.StockSearchParameters) bool {
+				attr := params.Data.Attributes
+				return params.Data.Type == "stock" &&
+					attr.Query == "pdv" &&
+					attr.Limit == 25 &&
+					attr.Entity == pb.StockEntity_STOCK_ENTITY_PLASMID
+			}),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	limit := 25
+	entity := models.StockEntityTypePlasmid
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"pdv",
+		&limit,
+		&entity,
+	)
+	require.NoError(err)
+	require.Len(result.Results, 3)
+	mockedAnnoClient.AssertNotCalled(t, "SearchAnnotation")
+	mockedStockClient.AssertNotCalled(t, "ListStrainsByIds")
+}
+
 func TestSearchStocksPassesExpectedParams(t *testing.T) {
 	t.Parallel()
 	require := require.New(t)
 
-	mockedStockClient := new(clients.StockServiceClient)
-	mockedStockClient.On(
-		"SearchStock",
-		mock.MatchedBy(func(ctx context.Context) bool { return true }),
-		mock.MatchedBy(func(params *pb.StockSearchParameters) bool {
-			attr := params.Data.Attributes
-			return params.Data.Type == "stock" &&
-				attr.Query == "csa" &&
-				attr.Limit == 25 &&
-				attr.Entity == pb.StockEntity_STOCK_ENTITY_STRAIN
-		}),
-	).Return(mocks.MockStockSearchResultCollection(), nil)
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.MatchedBy(func(params *pb.StockSearchParameters) bool {
+				attr := params.Data.Attributes
+				return params.Data.Type == "stock" &&
+					attr.Query == "csa" &&
+					attr.Limit == 25 &&
+					attr.Entity == pb.StockEntity_STOCK_ENTITY_STRAIN
+			}),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			&pb.StockIdList{Id: []string{mocks.MockAnnoSearchStrainID, mocks.MockStockSearchID}},
+		).
+		Return(mocks.MockSearchStrainList(), nil)
 
-	mockedStockClient.On(
-		"ListStrainsByIds",
-		mock.MatchedBy(func(ctx context.Context) bool { return true }),
-		mock.AnythingOfType("*stock.StockIdList"),
-	).Return(mocks.MockSearchStrainList(), nil)
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.MatchedBy(func(params *anno.AnnotationSearchParameters) bool {
+				attr := params.Data.Attributes
+				return params.Data.Type == "annotation" &&
+					attr.Query == "csa" &&
+					attr.Limit == 25
+			}),
+		).
+		Return(mocks.MockAnnotationSearchResultCollection(), nil)
 
-	reg := &stockClientRegistry{
+	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
 	}
 	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
 	limit := 25
@@ -1382,34 +1440,49 @@ func TestSearchStocksPassesExpectedParams(t *testing.T) {
 	)
 	require.NoError(err)
 	require.Len(result.Results, 4)
-	mockedStockClient.AssertExpectations(t)
+	require.Equal(25, *result.Limit)
 }
 
 func TestSearchStocksDefaultsToBothEntities(t *testing.T) {
 	t.Parallel()
 	require := require.New(t)
 
-	mockedStockClient := new(clients.StockServiceClient)
-	mockedStockClient.On(
-		"SearchStock",
-		mock.MatchedBy(func(ctx context.Context) bool { return true }),
-		mock.MatchedBy(func(params *pb.StockSearchParameters) bool {
-			attr := params.Data.Attributes
-			return attr.Query == "csa" &&
-				attr.Limit == 0 &&
-				attr.Entity == pb.StockEntity_STOCK_ENTITY_UNSPECIFIED
-		}),
-	).Return(mocks.MockStockSearchResultCollection(), nil)
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.MatchedBy(func(params *pb.StockSearchParameters) bool {
+				attr := params.Data.Attributes
+				return attr.Query == "csa" &&
+					attr.Limit == 0 &&
+					attr.Entity == pb.StockEntity_STOCK_ENTITY_UNSPECIFIED
+			}),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			&pb.StockIdList{Id: []string{mocks.MockAnnoSearchStrainID, mocks.MockStockSearchID}},
+		).
+		Return(mocks.MockSearchStrainList(), nil)
 
-	mockedStockClient.On(
-		"ListStrainsByIds",
-		mock.MatchedBy(func(ctx context.Context) bool { return true }),
-		mock.AnythingOfType("*stock.StockIdList"),
-	).Return(mocks.MockSearchStrainList(), nil)
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.MatchedBy(func(params *anno.AnnotationSearchParameters) bool {
+				attr := params.Data.Attributes
+				return params.Data.Type == "annotation" &&
+					attr.Query == "csa" &&
+					attr.Limit == 0
+			}),
+		).
+		Return(mocks.MockAnnotationSearchResultCollection(), nil)
 
-	reg := &stockClientRegistry{
+	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
 	}
 	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
 	entity := models.StockEntityTypeAll
@@ -1422,23 +1495,249 @@ func TestSearchStocksDefaultsToBothEntities(t *testing.T) {
 	)
 	require.NoError(err)
 	require.Len(result.Results, 4)
-	mockedStockClient.AssertExpectations(t)
+}
+
+func TestSearchStocksClampsAnnotationLimitAboveFifty(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.MatchedBy(func(params *pb.StockSearchParameters) bool {
+				attr := params.Data.Attributes
+				return attr.Query == "csa" &&
+					attr.Limit == 75 &&
+					attr.Entity == pb.StockEntity_STOCK_ENTITY_UNSPECIFIED
+			}),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			&pb.StockIdList{Id: []string{mocks.MockAnnoSearchStrainID, mocks.MockStockSearchID}},
+		).
+		Return(mocks.MockSearchStrainList(), nil)
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.MatchedBy(func(params *anno.AnnotationSearchParameters) bool {
+				attr := params.Data.Attributes
+				return attr.Query == "csa" && attr.Limit == 50
+			}),
+		).
+		Return(mocks.MockAnnotationSearchResultCollection(), nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	limit := 75
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		&limit,
+		nil,
+	)
+	require.NoError(err)
+	require.Equal(75, *result.Limit)
+	require.Len(result.Results, 4)
+}
+
+func TestSearchStocksEmptyAnnotationSkipsListStrainsByIds(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(&anno.AnnotationSearchResultCollection{
+			Data: []*anno.AnnotationSearchResult{},
+			Meta: &anno.Meta{Limit: 50, Total: 0},
+		}, nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.NoError(err)
+	require.Len(result.Results, 3)
+	mockedStockClient.AssertNotCalled(t, "ListStrainsByIds")
+}
+
+func TestSearchStocksDropsStaleAnnotationStrainID(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(&pb.StockSearchResultCollection{
+			Data: []*pb.StockSearchResult{},
+			Meta: &pb.Meta{Limit: 50, Total: 0},
+		}, nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			&pb.StockIdList{Id: []string{mocks.MockAnnoSearchStrainID, "DBS9999999"}},
+		).
+		Return(&pb.StrainList{
+			Data: []*pb.StrainList_Data{
+				{
+					Type: "strain",
+					Id:   mocks.MockAnnoSearchStrainID,
+					Attributes: &pb.StrainAttributes{
+						Summary: "Catenin null mutant strain.",
+						Label:   "aarA-",
+					},
+				},
+			},
+		}, nil)
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(&anno.AnnotationSearchResultCollection{
+			Data: []*anno.AnnotationSearchResult{
+				{
+					EntryId:     "DBS9999999",
+					Field:       anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_PHENOTYPE,
+					DisplayText: "delayed culmination",
+					Score:       900.0,
+				},
+				{
+					EntryId:     mocks.MockAnnoSearchStrainID,
+					Field:       anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_SYNONYM,
+					DisplayText: "catenin null",
+					Score:       500.0,
+				},
+			},
+			Meta: &anno.Meta{Limit: 50, Total: 2},
+		}, nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"ca",
+		nil,
+		nil,
+	)
+	require.NoError(err)
+	require.Len(result.Results, 1)
+	require.Equal(mocks.MockAnnoSearchStrainID, result.Results[0].ID)
+	require.Equal(1, result.TotalCount)
+}
+
+func TestSearchStocksAllStaleAnnotationIDsNotFound(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			&pb.StockIdList{Id: []string{"DBS9999999"}},
+		).
+		Return(nil, status.Error(codes.NotFound, "could not find any strains"))
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(&anno.AnnotationSearchResultCollection{
+			Data: []*anno.AnnotationSearchResult{
+				{
+					EntryId:     "DBS9999999",
+					Field:       anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_PHENOTYPE,
+					DisplayText: "delayed culmination",
+					Score:       900.0,
+				},
+			},
+			Meta: &anno.Meta{Limit: 50, Total: 1},
+		}, nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.NoError(err)
+	require.Len(result.Results, 3)
+	require.Equal(3, result.TotalCount)
 }
 
 func TestSearchStocksError(t *testing.T) {
 	t.Parallel()
 	require := require.New(t)
 
-	mockedStockClient := new(clients.StockServiceClient)
-	mockedStockClient.On(
-		"SearchStock",
-		mock.MatchedBy(func(ctx context.Context) bool { return true }),
-		mock.AnythingOfType("*stock.StockSearchParameters"),
-	).Return(nil, fmt.Errorf("stock service unavailable"))
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(nil, fmt.Errorf("stock service unavailable"))
 
-	reg := &stockClientRegistry{
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+
+	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
 	}
 	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
 
@@ -1452,40 +1751,135 @@ func TestSearchStocksError(t *testing.T) {
 	require.ErrorContains(err, "stock service unavailable")
 	require.ErrorContains(err, "search stocks for query")
 	require.NotNil(result, "should return empty search list on error")
-	mockedStockClient.AssertExpectations(t)
+	mockedAnnoClient.AssertNotCalled(t, "SearchAnnotation")
+}
+
+func TestSearchStocksAnnotationError(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(nil, fmt.Errorf("annotation service unavailable"))
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "annotation service unavailable")
+	require.ErrorContains(err, "search annotations for query")
+	require.NotNil(result)
+	mockedStockClient.AssertNotCalled(t, "ListStrainsByIds")
+}
+
+func TestSearchStocksListStrainsByIdsError(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockIdList"),
+		).
+		Return(nil, fmt.Errorf("strain batch lookup failed"))
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(mocks.MockAnnotationSearchResultCollection(), nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "strain batch lookup failed")
+	require.ErrorContains(err, "fetch strain metadata for query")
+	require.NotNil(result)
 }
 
 func TestSearchStocksInvalidEntityEnum(t *testing.T) {
 	t.Parallel()
 	require := require.New(t)
 
-	mockedStockClient := new(clients.StockServiceClient)
-	mockedStockClient.On(
-		"SearchStock",
-		mock.MatchedBy(func(ctx context.Context) bool { return true }),
-		mock.AnythingOfType("*stock.StockSearchParameters"),
-	).Return(&pb.StockSearchResultCollection{
-		Data: []*pb.StockSearchResult{
-			{
-				Id:          mocks.MockStockSearchID,
-				Entity:      pb.StockEntity(99),
-				Field:       pb.StockSearchField_STOCK_SEARCH_FIELD_STOCK_ID,
-				DisplayText: mocks.MockStockSearchID,
-				Score:       1,
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(&pb.StockSearchResultCollection{
+			Data: []*pb.StockSearchResult{
+				{
+					Id:          mocks.MockStockSearchID,
+					Entity:      pb.StockEntity(99),
+					Field:       pb.StockSearchField_STOCK_SEARCH_FIELD_STOCK_ID,
+					DisplayText: mocks.MockStockSearchID,
+					Score:       1,
+				},
 			},
-		},
-		Meta: &pb.Meta{Limit: 50, Total: 1},
-	}, nil)
+			Meta: &pb.Meta{Limit: 50, Total: 1},
+		}, nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockIdList"),
+		).
+		Return(mocks.MockSearchStrainList(), nil)
 
-	mockedStockClient.On(
-		"ListStrainsByIds",
-		mock.MatchedBy(func(ctx context.Context) bool { return true }),
-		mock.AnythingOfType("*stock.StockIdList"),
-	).Return(mocks.MockSearchStrainList(), nil)
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(mocks.MockAnnotationSearchResultCollection(), nil)
 
-	reg := &stockClientRegistry{
+	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
 	}
 	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
 
@@ -1497,7 +1891,113 @@ func TestSearchStocksInvalidEntityEnum(t *testing.T) {
 	)
 	require.Error(err)
 	require.ErrorContains(err, "unexpected stock entity")
-	mockedStockClient.AssertExpectations(t)
+}
+
+func TestSearchStocksInvalidFieldEnum(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(&pb.StockSearchResultCollection{
+			Data: []*pb.StockSearchResult{
+				{
+					Id:          mocks.MockStockSearchID,
+					Entity:      pb.StockEntity_STOCK_ENTITY_STRAIN,
+					Field:       pb.StockSearchField(99),
+					DisplayText: mocks.MockStockSearchID,
+					Score:       1,
+				},
+			},
+			Meta: &pb.Meta{Limit: 50, Total: 1},
+		}, nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockIdList"),
+		).
+		Return(mocks.MockSearchStrainList(), nil)
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(mocks.MockAnnotationSearchResultCollection(), nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	_, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "unexpected search field")
+}
+
+func TestSearchStocksInvalidAnnotationFieldEnum(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockIdList"),
+		).
+		Return(mocks.MockSearchStrainList(), nil)
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(&anno.AnnotationSearchResultCollection{
+			Data: []*anno.AnnotationSearchResult{
+				{
+					EntryId:     mocks.MockAnnoSearchStrainID,
+					Field:       anno.AnnotationSearchField(99),
+					DisplayText: "bad enum",
+					Score:       1.0,
+				},
+			},
+			Meta: &anno.Meta{Limit: 50, Total: 1},
+		}, nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	_, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.Error(err)
+	require.ErrorContains(err, "unexpected annotation search field")
 }
 
 func TestConvertAnnotationSuggestionItem(t *testing.T) {
@@ -1633,51 +2133,6 @@ func TestMergeSuggestionsTieBreakingAndLimitTruncation(t *testing.T) {
 		effectiveLimit: 5,
 	})
 	require.Empty(empty)
-}
-
-func TestSearchStocksInvalidFieldEnum(t *testing.T) {
-	t.Parallel()
-	require := require.New(t)
-
-	mockedStockClient := new(clients.StockServiceClient)
-	mockedStockClient.On(
-		"SearchStock",
-		mock.MatchedBy(func(ctx context.Context) bool { return true }),
-		mock.AnythingOfType("*stock.StockSearchParameters"),
-	).Return(&pb.StockSearchResultCollection{
-		Data: []*pb.StockSearchResult{
-			{
-				Id:          mocks.MockStockSearchID,
-				Entity:      pb.StockEntity_STOCK_ENTITY_STRAIN,
-				Field:       pb.StockSearchField(99),
-				DisplayText: mocks.MockStockSearchID,
-				Score:       1,
-			},
-		},
-		Meta: &pb.Meta{Limit: 50, Total: 1},
-	}, nil)
-
-	mockedStockClient.On(
-		"ListStrainsByIds",
-		mock.MatchedBy(func(ctx context.Context) bool { return true }),
-		mock.AnythingOfType("*stock.StockIdList"),
-	).Return(mocks.MockSearchStrainList(), nil)
-
-	reg := &stockClientRegistry{
-		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
-		stockClient:  mockedStockClient,
-	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
-
-	_, err := resolver.SearchStocks(
-		context.Background(),
-		"csa",
-		nil,
-		nil,
-	)
-	require.Error(err)
-	require.ErrorContains(err, "unexpected search field")
-	mockedStockClient.AssertExpectations(t)
 }
 
 func TestConvertAnnotationSearchResultAllTenFields(t *testing.T) {
