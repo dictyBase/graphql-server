@@ -15,6 +15,9 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
+
+	E "github.com/IBM/fp-go/v2/either"
+	F "github.com/IBM/fp-go/v2/function"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -818,13 +821,13 @@ func TestListStockSuggestions(t *testing.T) {
 		nil,
 	)
 	require.NoError(err)
-	require.Equal(3, result.TotalCount, "should match total count")
+	require.Equal(4, result.TotalCount, "should match merged unique count")
 	require.NotNil(result.Limit, "should resolve limit from meta")
 	require.Equal(5, *result.Limit, "should match effective limit from meta")
-	require.Len(result.Suggestions, 3, "should have three suggestions")
+	require.Len(result.Suggestions, 4, "should have four merged suggestions")
 
 	first := result.Suggestions[0]
-	require.Equal("DBS0236126", first.ID, "should match stock id")
+	require.Equal("DBS0236126", first.ID, "should keep highest score for duplicate DBS0236126")
 	require.Equal(
 		models.StockEntityTypeStrain,
 		first.Entity,
@@ -838,14 +841,19 @@ func TestListStockSuggestions(t *testing.T) {
 	require.Equal("DBS0236126", first.DisplayText, "should match display text")
 	require.Equal(1.0, first.Score, "should match score")
 
+	second := result.Suggestions[1]
+	require.Equal("DBS0235559", second.ID, "should include annotation suggestion")
+	require.Equal(models.StockEntityTypeStrain, second.Entity)
+	require.Equal(models.StockSearchFieldEnumSynonym, second.Field)
+
 	require.Equal(
 		models.StockEntityTypePlasmid,
-		result.Suggestions[2].Entity,
+		result.Suggestions[3].Entity,
 		"should map plasmid entity",
 	)
 	require.Equal(
 		models.StockSearchFieldEnumName,
-		result.Suggestions[2].Field,
+		result.Suggestions[3].Field,
 		"should map plasmid name field",
 	)
 }
@@ -867,9 +875,12 @@ func TestListStockSuggestionsPassesExpectedParams(t *testing.T) {
 		}),
 	).Return(mocks.MockStockSuggestionCollection(), nil)
 
-	reg := &stockClientRegistry{
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+
+	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
 	}
 	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
 	limit := 25
@@ -884,6 +895,7 @@ func TestListStockSuggestionsPassesExpectedParams(t *testing.T) {
 	require.NoError(err)
 	require.Len(result.Suggestions, 3)
 	mockedStockClient.AssertExpectations(t)
+	mockedAnnoClient.AssertNotCalled(t, "AutocompleteAnnotation")
 }
 
 func TestListStockSuggestionsDefaultsToBothEntities(t *testing.T) {
@@ -902,9 +914,17 @@ func TestListStockSuggestionsDefaultsToBothEntities(t *testing.T) {
 		}),
 	).Return(mocks.MockStockSuggestionCollection(), nil)
 
-	reg := &stockClientRegistry{
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+	mockedAnnoClient.On(
+		"AutocompleteAnnotation",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
+	).Return(mocks.MockAnnotationSuggestionCollection(), nil)
+
+	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
 	}
 	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
 	entity := models.StockEntityTypeAll
@@ -916,8 +936,9 @@ func TestListStockSuggestionsDefaultsToBothEntities(t *testing.T) {
 		&entity,
 	)
 	require.NoError(err)
-	require.Len(result.Suggestions, 3)
+	require.Len(result.Suggestions, 4)
 	mockedStockClient.AssertExpectations(t)
+	mockedAnnoClient.AssertExpectations(t)
 }
 
 func TestListStockSuggestionsError(t *testing.T) {
@@ -931,9 +952,12 @@ func TestListStockSuggestionsError(t *testing.T) {
 		mock.AnythingOfType("*stock.StockAutocompleteParameters"),
 	).Return(nil, fmt.Errorf("stock service unavailable"))
 
-	reg := &stockClientRegistry{
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+
+	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
 	}
 	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
 
@@ -971,9 +995,17 @@ func TestListStockSuggestionsInvalidEntityEnum(t *testing.T) {
 		Meta: &pb.Meta{Limit: 5, Total: 1},
 	}, nil)
 
-	reg := &stockClientRegistry{
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+	mockedAnnoClient.On(
+		"AutocompleteAnnotation",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
+	).Return(mocks.MockAnnotationSuggestionCollection(), nil)
+
+	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
 	}
 	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
 
@@ -1010,9 +1042,17 @@ func TestListStockSuggestionsInvalidFieldEnum(t *testing.T) {
 		Meta: &pb.Meta{Limit: 5, Total: 1},
 	}, nil)
 
-	reg := &stockClientRegistry{
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+	mockedAnnoClient.On(
+		"AutocompleteAnnotation",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
+	).Return(mocks.MockAnnotationSuggestionCollection(), nil)
+
+	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
 	}
 	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
 
@@ -1221,6 +1261,141 @@ func TestSearchStocksInvalidEntityEnum(t *testing.T) {
 	require.Error(err)
 	require.ErrorContains(err, "unexpected stock entity")
 	mockedStockClient.AssertExpectations(t)
+}
+
+func TestConvertAnnotationSuggestionItem(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	synItem := &anno.AnnotationSuggestion{
+		EntryId:     "DBS0235559",
+		Field:       anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_SYNONYM,
+		DisplayText: "catenin null",
+		Score:       1001.2,
+	}
+	synRes := convertAnnotationSuggestionItem(synItem)
+	require.True(E.IsRight(synRes))
+	synModel := F.Pipe1(
+		synRes,
+		E.GetOrElse(F.Constant1[error](&models.StockSuggestion{})),
+	)
+	require.Equal("DBS0235559", synModel.ID)
+	require.Equal(models.StockEntityTypeStrain, synModel.Entity)
+	require.Equal(models.StockSearchFieldEnumSynonym, synModel.Field)
+	require.Equal("catenin null", synModel.DisplayText)
+	require.Equal(1001.2, synModel.Score)
+
+	genoItem := &anno.AnnotationSuggestion{
+		EntryId:     "DBS0236126",
+		Field:       anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_GENOTYPE,
+		DisplayText: "axeA1,axeB1",
+		Score:       0.8,
+	}
+	genoRes := convertAnnotationSuggestionItem(genoItem)
+	require.True(E.IsRight(genoRes))
+	genoModel := F.Pipe1(
+		genoRes,
+		E.GetOrElse(F.Constant1[error](&models.StockSuggestion{})),
+	)
+	require.Equal("DBS0236126", genoModel.ID)
+	require.Equal(models.StockEntityTypeStrain, genoModel.Entity)
+	require.Equal(models.StockSearchFieldEnumGenotype, genoModel.Field)
+
+	badItem := &anno.AnnotationSuggestion{
+		EntryId:     "DBS0236126",
+		Field:       anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_PHENOTYPE,
+		DisplayText: "delayed culmination",
+		Score:       0.5,
+	}
+	badRes := convertAnnotationSuggestionItem(badItem)
+	require.True(E.IsLeft(badRes))
+}
+
+func TestMergeSuggestionsDeduplicatesByIDKeepingHighestScore(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	stockItems := []*models.StockSuggestion{
+		{
+			ID:          "DBS0236126",
+			Entity:      models.StockEntityTypeStrain,
+			Field:       models.StockSearchFieldEnumLabel,
+			DisplayText: "AX4",
+			Score:       0.5,
+		},
+		{
+			ID:          "DBP0236126",
+			Entity:      models.StockEntityTypePlasmid,
+			Field:       models.StockSearchFieldEnumName,
+			DisplayText: "pDV4",
+			Score:       0.25,
+		},
+	}
+	annoItems := []*models.StockSuggestion{
+		{
+			ID:          "DBS0236126",
+			Entity:      models.StockEntityTypeStrain,
+			Field:       models.StockSearchFieldEnumSynonym,
+			DisplayText: "axenic-4",
+			Score:       1001.0,
+		},
+	}
+
+	merged := mergeSuggestionsFromState(listStockSuggestionsContext{
+		stockSuggestions: stockItems,
+		annoSuggestions:  annoItems,
+		effectiveLimit:   5,
+	})
+	require.Len(merged, 2)
+	require.Equal("DBS0236126", merged[0].ID)
+	require.Equal(models.StockSearchFieldEnumSynonym, merged[0].Field)
+	require.Equal(1001.0, merged[0].Score)
+	require.Equal("DBP0236126", merged[1].ID)
+}
+
+func TestMergeSuggestionsTieBreakingAndLimitTruncation(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	stockItems := []*models.StockSuggestion{
+		{
+			ID:          "DBS000002",
+			Entity:      models.StockEntityTypeStrain,
+			Field:       models.StockSearchFieldEnumLabel,
+			DisplayText: "beta",
+			Score:       1.0,
+		},
+	}
+	annoItems := []*models.StockSuggestion{
+		{
+			ID:          "DBS000001",
+			Entity:      models.StockEntityTypeStrain,
+			Field:       models.StockSearchFieldEnumSynonym,
+			DisplayText: "alpha",
+			Score:       1.0,
+		},
+		{
+			ID:          "DBS000003",
+			Entity:      models.StockEntityTypeStrain,
+			Field:       models.StockSearchFieldEnumGenotype,
+			DisplayText: "gamma",
+			Score:       0.5,
+		},
+	}
+
+	merged := mergeSuggestionsFromState(listStockSuggestionsContext{
+		stockSuggestions: stockItems,
+		annoSuggestions:  annoItems,
+		effectiveLimit:   2,
+	})
+	require.Len(merged, 2)
+	require.Equal("DBS000001", merged[0].ID, "equal score breaks tie by ID ASC")
+	require.Equal("DBS000002", merged[1].ID)
+
+	empty := mergeSuggestionsFromState(listStockSuggestionsContext{
+		effectiveLimit: 5,
+	})
+	require.Empty(empty)
 }
 
 func TestSearchStocksInvalidFieldEnum(t *testing.T) {
