@@ -3,6 +3,8 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"strings"
+	"unicode/utf8"
 
 	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
@@ -29,6 +31,9 @@ import (
 const (
 	defaultSearchLimit       = 50
 	maxAnnotationSearchLimit = int64(50)
+	// minAnnotationSearchQueryRunes is the minimum trimmed query length, in
+	// runes, that modware-annotation accepts for a full search.
+	minAnnotationSearchQueryRunes = 2
 )
 
 // strainSearchMetadata holds the stored summary and strain label fetched
@@ -184,8 +189,7 @@ var (
 
 // ── enum conversions ────────────────────────────────────────────────────────
 
-// protoToGQLFullAnnotationSearchField maps all 10 full-search annotation
-// fields onto their GraphQL StockSearchFieldEnum counterparts.
+// Proto annotation search fields emitted by SearchAnnotation.
 const (
 	annoFieldSynonym     = anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_SYNONYM
 	annoFieldGenotype    = anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_GENOTYPE
@@ -199,6 +203,8 @@ const (
 	annoFieldPublicNote  = anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_PUBLIC_NOTE
 )
 
+// protoToGQLFullAnnotationSearchField maps all 10 full-search annotation
+// fields onto their GraphQL StockSearchFieldEnum counterparts.
 var protoToGQLFullAnnotationSearchField = map[anno.AnnotationSearchField]models.StockSearchFieldEnum{
 	annoFieldSynonym:     models.StockSearchFieldEnumSynonym,
 	annoFieldGenotype:    models.StockSearchFieldEnumGenotype,
@@ -231,15 +237,20 @@ func toGQLFullAnnotationSearchField(
 
 // ── limit helpers ───────────────────────────────────────────────────────────
 
-// zeroSearchLimit lets the stock and annotation services apply their own
-// default of 50 when the GraphQL query omits the limit.
 var (
-	zeroSearchLimit                 = int64(0)
-	int64Ord                        = ORD.FromStrictCompare[int64]()
+	// zeroSearchLimit lets the stock and annotation services apply their own
+	// default of 50 when the GraphQL query omits the limit.
+	zeroSearchLimit = int64(0)
+	// int64Ord orders int64 limits.
+	int64Ord = ORD.FromStrictCompare[int64]()
+	// isAboveAnnotationSearchMaxLimit holds for limits that exceed the
+	// annotation service cap.
 	isAboveAnnotationSearchMaxLimit = F.Pipe1(
 		maxAnnotationSearchLimit,
 		ORD.Gt(int64Ord),
 	)
+	// clampAnnotationSearchLimit keeps an absent limit at zero, caps limits
+	// above maxAnnotationSearchLimit and passes every other limit through.
 	clampAnnotationSearchLimit = MO.Match(
 		zeroSearchLimit,
 		[]O.Kleisli[int64, int64]{
@@ -490,17 +501,43 @@ func searchProtoEntity(s listStockSearchContext) pb.StockEntity {
 	return s.params.Data.Attributes.Entity
 }
 
+// trimmedSearchQueryRuneCount counts the runes of the query once surrounding
+// whitespace is trimmed.
+func trimmedSearchQueryRuneCount(s listStockSearchContext) int {
+	return F.Pipe2(
+		s.query,
+		strings.TrimSpace,
+		utf8.RuneCountInString,
+	)
+}
+
 var (
+	// isPlasmidSearchRequest holds when the request filters to PLASMID.
 	isPlasmidSearchRequest = F.Pipe1(
 		isPlasmidProtoEntity,
 		P.ContraMap(searchProtoEntity),
 	)
 
+	// isShortSearchQuery holds when the trimmed query is shorter than
+	// modware-annotation accepts, even though modware-stock does.
+	isShortSearchQuery = F.Pipe2(
+		minAnnotationSearchQueryRunes,
+		ORD.Lt(predord.IntOrd),
+		P.ContraMap(trimmedSearchQueryRuneCount),
+	)
+
+	// skipsAnnotationSearch holds when SearchAnnotation must not be called.
+	skipsAnnotationSearch = F.Pipe1(
+		isPlasmidSearchRequest,
+		P.Or(isShortSearchQuery),
+	)
+
 	// fetchAnnotationSearchForEntity skips SearchAnnotation when the request
 	// filters to PLASMID, because annotation full search only indexes strain
-	// annotations.
+	// annotations, or when the query is too short for annotation full search,
+	// so stock-only hits still come back instead of an InvalidArgument error.
 	fetchAnnotationSearchForEntity = F.Pipe1(
-		isPlasmidSearchRequest,
+		skipsAnnotationSearch,
 		P.Fold(
 			fetchAnnotationSearchCollection,
 			emptyAnnotationSearchCollection,
