@@ -767,18 +767,26 @@ export declare enum StockEntityType {
     Strain = "STRAIN"
 }
 export declare enum StockSearchFieldEnum {
+    Assay = "ASSAY",
+    Characteristic = "CHARACTERISTIC",
     Dbxrefs = "DBXREFS",
     Depositor = "DEPOSITOR",
+    Environment = "ENVIRONMENT",
     Genes = "GENES",
+    GeneticModification = "GENETIC_MODIFICATION",
     Genotype = "GENOTYPE",
     Label = "LABEL",
+    MutagenesisMethod = "MUTAGENESIS_METHOD",
     Name = "NAME",
     Names = "NAMES",
+    Phenotype = "PHENOTYPE",
     Plasmid = "PLASMID",
+    PublicNote = "PUBLIC_NOTE",
     Species = "SPECIES",
     StockId = "STOCK_ID",
     Summary = "SUMMARY",
-    Synonym = "SYNONYM"
+    Synonym = "SYNONYM",
+    SystematicName = "SYSTEMATIC_NAME"
 }
 export type StockSearchResult = {
     __typename?: 'StockSearchResult';

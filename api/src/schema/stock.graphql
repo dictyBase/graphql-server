@@ -267,6 +267,14 @@ enum StockSearchFieldEnum {
   DEPOSITOR
   SYNONYM
   GENOTYPE
+  SYSTEMATIC_NAME
+  GENETIC_MODIFICATION
+  MUTAGENESIS_METHOD
+  PHENOTYPE
+  ENVIRONMENT
+  ASSAY
+  CHARACTERISTIC
+  PUBLIC_NOTE
 }
 
 # StockSuggestion is one type-ahead autocomplete match.
