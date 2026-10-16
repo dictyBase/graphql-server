@@ -1386,6 +1386,44 @@ func TestSearchStocksPlasmidSkipsAnnotationSearch(t *testing.T) {
 	mockedStockClient.AssertNotCalled(t, "ListStrainsByIds")
 }
 
+func TestSearchStocksShortQuerySkipsAnnotationSearch(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.MatchedBy(func(params *pb.StockSearchParameters) bool {
+				return params.Data.Attributes.Query == "x "
+			}),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"x ",
+		nil,
+		nil,
+	)
+	require.NoError(err)
+	require.Len(result.Results, 3, "should return stock-only hits")
+	require.Equal(mocks.MockStockSearchID, result.Results[0].ID)
+	require.Equal("DBS0236127", result.Results[1].ID)
+	require.Equal("DBP0236126", result.Results[2].ID)
+	mockedAnnoClient.AssertNotCalled(t, "SearchAnnotation")
+	mockedStockClient.AssertNotCalled(t, "ListStrainsByIds")
+}
+
 func TestSearchStocksPassesExpectedParams(t *testing.T) {
 	t.Parallel()
 	require := require.New(t)
