@@ -7249,6 +7249,18 @@
         "interfaces": null,
         "enumValues": [
           {
+            "name": "ASSAY",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CHARACTERISTIC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "DBXREFS",
             "description": null,
             "isDeprecated": false,
@@ -7261,7 +7273,19 @@
             "deprecationReason": null
           },
           {
+            "name": "ENVIRONMENT",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "GENES",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "GENETIC_MODIFICATION",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -7279,6 +7303,12 @@
             "deprecationReason": null
           },
           {
+            "name": "MUTAGENESIS_METHOD",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "NAME",
             "description": null,
             "isDeprecated": false,
@@ -7291,7 +7321,19 @@
             "deprecationReason": null
           },
           {
+            "name": "PHENOTYPE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "PLASMID",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PUBLIC_NOTE",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -7316,6 +7358,12 @@
           },
           {
             "name": "SYNONYM",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SYSTEMATIC_NAME",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

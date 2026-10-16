@@ -23,18 +23,26 @@ var StockEntityType;
 })(StockEntityType || (exports.StockEntityType = StockEntityType = {}));
 var StockSearchFieldEnum;
 (function (StockSearchFieldEnum) {
+    StockSearchFieldEnum["Assay"] = "ASSAY";
+    StockSearchFieldEnum["Characteristic"] = "CHARACTERISTIC";
     StockSearchFieldEnum["Dbxrefs"] = "DBXREFS";
     StockSearchFieldEnum["Depositor"] = "DEPOSITOR";
+    StockSearchFieldEnum["Environment"] = "ENVIRONMENT";
     StockSearchFieldEnum["Genes"] = "GENES";
+    StockSearchFieldEnum["GeneticModification"] = "GENETIC_MODIFICATION";
     StockSearchFieldEnum["Genotype"] = "GENOTYPE";
     StockSearchFieldEnum["Label"] = "LABEL";
+    StockSearchFieldEnum["MutagenesisMethod"] = "MUTAGENESIS_METHOD";
     StockSearchFieldEnum["Name"] = "NAME";
     StockSearchFieldEnum["Names"] = "NAMES";
+    StockSearchFieldEnum["Phenotype"] = "PHENOTYPE";
     StockSearchFieldEnum["Plasmid"] = "PLASMID";
+    StockSearchFieldEnum["PublicNote"] = "PUBLIC_NOTE";
     StockSearchFieldEnum["Species"] = "SPECIES";
     StockSearchFieldEnum["StockId"] = "STOCK_ID";
     StockSearchFieldEnum["Summary"] = "SUMMARY";
     StockSearchFieldEnum["Synonym"] = "SYNONYM";
+    StockSearchFieldEnum["SystematicName"] = "SYSTEMATIC_NAME";
 })(StockSearchFieldEnum || (exports.StockSearchFieldEnum = StockSearchFieldEnum = {}));
 var StrainType;
 (function (StrainType) {
