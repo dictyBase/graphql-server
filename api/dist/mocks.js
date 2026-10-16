@@ -26,6 +26,7 @@ var StockSearchFieldEnum;
     StockSearchFieldEnum["Dbxrefs"] = "DBXREFS";
     StockSearchFieldEnum["Depositor"] = "DEPOSITOR";
     StockSearchFieldEnum["Genes"] = "GENES";
+    StockSearchFieldEnum["Genotype"] = "GENOTYPE";
     StockSearchFieldEnum["Label"] = "LABEL";
     StockSearchFieldEnum["Name"] = "NAME";
     StockSearchFieldEnum["Names"] = "NAMES";
@@ -33,6 +34,7 @@ var StockSearchFieldEnum;
     StockSearchFieldEnum["Species"] = "SPECIES";
     StockSearchFieldEnum["StockId"] = "STOCK_ID";
     StockSearchFieldEnum["Summary"] = "SUMMARY";
+    StockSearchFieldEnum["Synonym"] = "SYNONYM";
 })(StockSearchFieldEnum || (exports.StockSearchFieldEnum = StockSearchFieldEnum = {}));
 var StrainType;
 (function (StrainType) {
