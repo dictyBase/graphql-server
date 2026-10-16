@@ -54,7 +54,7 @@ func MockTagGroupAnno(
 		Id:   "99999999",
 		Attributes: &annotation.TaggedAnnotationAttributes{
 			Version:   1,
-			EntryId:   "DBS0235559",
+			EntryId:   MockAnnoSearchStrainID,
 			CreatedBy: "art@vandelay.org",
 			CreatedAt: timestamppb.Now(),
 			Ontology:  onto,
@@ -244,7 +244,7 @@ func MockAnnotationSuggestionCollection() *annotation.AnnotationSuggestionCollec
 	return &annotation.AnnotationSuggestionCollection{
 		Data: []*annotation.AnnotationSuggestion{
 			{
-				EntryId:     "DBS0235559",
+				EntryId:     MockAnnoSearchStrainID,
 				Field:       annotation.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_SYNONYM,
 				DisplayText: "catenin null",
 				Score:       0.75,
@@ -263,17 +263,49 @@ func MockAnnotationSuggestionCollection() *annotation.AnnotationSuggestionCollec
 	}
 }
 
+func MockAnnotationSearchResultCollection() *annotation.AnnotationSearchResultCollection {
+	return &annotation.AnnotationSearchResultCollection{
+		Data: []*annotation.AnnotationSearchResult{
+			{
+				EntryId:     MockAnnoSearchStrainID,
+				Field:       annotation.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_PHENOTYPE,
+				DisplayText: delayedCulmination,
+				Score:       0.75,
+			},
+			{
+				EntryId:     "DBS0236126",
+				Field:       annotation.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_GENOTYPE,
+				DisplayText: "axeA1,axeB1",
+				Score:       0.4,
+			},
+		},
+		Meta: &annotation.Meta{
+			Limit: 50,
+			Total: 2,
+		},
+	}
+}
+
 func MockedAnnotationClient() *clients.TaggedAnnotationServiceClient {
 	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
-	mockedAnnoClient.On(
-		"ListAnnotations",
-		mock.Anything,
-		mock.AnythingOfType("*annotation.ListParameters"),
-	).Return(MockPhenotypeListAnno(), nil).On(
-		"AutocompleteAnnotation",
-		mock.Anything,
-		mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
-	).Return(MockAnnotationSuggestionCollection(), nil)
+	mockedAnnoClient.EXPECT().
+		ListAnnotations(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.ListParameters"),
+		).
+		Return(MockPhenotypeListAnno(), nil)
+	mockedAnnoClient.EXPECT().
+		AutocompleteAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
+		).
+		Return(MockAnnotationSuggestionCollection(), nil)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(MockAnnotationSearchResultCollection(), nil)
 	return mockedAnnoClient
 }
 

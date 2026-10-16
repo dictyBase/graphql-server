@@ -245,7 +245,8 @@ const (
 	MockStockSearchID = "DBS0236126"
 	// mockStockSearchLabel is the strain label carried by the strain
 	// search result fixtures below.
-	mockStockSearchLabel = "AX4"
+	mockStockSearchLabel   = "AX4"
+	mockStockSearchSummary = "GWDI strain carrying a csA deletion."
 )
 
 func MockStockSearchResultCollection() *stock.StockSearchResultCollection {
@@ -257,16 +258,16 @@ func MockStockSearchResultCollection() *stock.StockSearchResultCollection {
 				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_STOCK_ID,
 				DisplayText: MockStockSearchID,
 				Score:       1,
-				Summary:     "GWDI strain carrying a csA deletion.",
+				Summary:     mockStockSearchSummary,
 				StrainLabel: mockStockSearchLabel,
 			},
 			{
-				Id:          MockStockSearchID,
+				Id:          "DBS0236127",
 				Entity:      stock.StockEntity_STOCK_ENTITY_STRAIN,
 				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_SUMMARY,
 				DisplayText: "csA deletion strain",
 				Score:       0.5,
-				Summary:     "GWDI strain carrying a csA deletion.",
+				Summary:     mockStockSearchSummary,
 				StrainLabel: mockStockSearchLabel,
 			},
 			{
@@ -282,6 +283,29 @@ func MockStockSearchResultCollection() *stock.StockSearchResultCollection {
 		Meta: &stock.Meta{
 			Limit: 50,
 			Total: 3,
+		},
+	}
+}
+
+func MockSearchStrainList() *stock.StrainList {
+	return &stock.StrainList{
+		Data: []*stock.StrainList_Data{
+			{
+				Type: strainType,
+				Id:   MockAnnoSearchStrainID,
+				Attributes: &stock.StrainAttributes{
+					Summary: "Catenin null mutant strain.",
+					Label:   "aarA-",
+				},
+			},
+			{
+				Type: strainType,
+				Id:   MockStockSearchID,
+				Attributes: &stock.StrainAttributes{
+					Summary: mockStockSearchSummary,
+					Label:   mockStockSearchLabel,
+				},
+			},
 		},
 	}
 }
@@ -347,6 +371,11 @@ func MockedStockClient() *clients.StockServiceClient {
 			mock.AnythingOfType("*stock.StrainUpdate"),
 		).
 		Return(mockUpdateStrain(), nil).
+		On("ListStrainsByIds",
+			mock.MatchedBy(func(ctx context.Context) bool { return true }),
+			&stock.StockIdList{Id: []string{MockAnnoSearchStrainID, MockStockSearchID}},
+		).
+		Return(MockSearchStrainList(), nil).
 		On("ListStrainsByIds",
 			mock.MatchedBy(func(ctx context.Context) bool { return true }),
 			mock.AnythingOfType("*stock.StockIdList"),
