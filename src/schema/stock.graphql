@@ -251,9 +251,9 @@ enum StockEntityType {
   PLASMID
 }
 
-# StockSearchFieldEnum names the stock field that produced a match.
-# SUMMARY and DEPOSITOR mirror the shared search field enum but the
-# autocomplete search does not currently emit them.
+# StockSearchFieldEnum names the stock or strain-annotation field that
+# produced a match. SUMMARY and DEPOSITOR mirror the shared search field
+# enum but the autocomplete search does not currently emit them.
 enum StockSearchFieldEnum {
   STOCK_ID
   GENES
@@ -265,6 +265,8 @@ enum StockSearchFieldEnum {
   NAME
   SUMMARY
   DEPOSITOR
+  SYNONYM
+  GENOTYPE
 }
 
 # StockSuggestion is one type-ahead autocomplete match.

@@ -6309,7 +6309,7 @@
           },
           {
             "name": "listStrains",
-            "description": null,
+            "description": "Returns a cursor-paginated list of strains, optionally filtered by\nStrainListFilter.\n\n**Deduplication and pagination contract**\n\nThe resolver deduplicates strain records after fetching them from the backing\nstore. As a result, the number of items returned in a single page may be\nstrictly less than the requested `limit`, even when additional pages exist.\nDo NOT treat `len(strains) < limit` as a signal that the last page has been\nreached.\n\nPagination termination MUST be determined solely by the `nextCursor` field\nof the returned `StrainListWithCursor`:\n- If `nextCursor` is non-zero, a subsequent page is available; pass its\n  value as the `cursor` argument on the next request.\n- If `nextCursor` is `0`, no further pages exist and iteration must stop.",
             "args": [
               {
                 "name": "cursor",
@@ -7267,6 +7267,12 @@
             "deprecationReason": null
           },
           {
+            "name": "GENOTYPE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "LABEL",
             "description": null,
             "isDeprecated": false,
@@ -7304,6 +7310,12 @@
           },
           {
             "name": "SUMMARY",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SYNONYM",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
