@@ -590,6 +590,24 @@ export type Query = {
     listRecentStrains?: Maybe<Array<Strain>>;
     listRoles?: Maybe<Array<Role>>;
     listStockSuggestions: StockSuggestionList;
+    /**
+     * Returns a cursor-paginated list of strains, optionally filtered by
+     * StrainListFilter.
+     *
+     * **Deduplication and pagination contract**
+     *
+     * The resolver deduplicates strain records after fetching them from the backing
+     * store. As a result, the number of items returned in a single page may be
+     * strictly less than the requested `limit`, even when additional pages exist.
+     * Do NOT treat `len(strains) < limit` as a signal that the last page has been
+     * reached.
+     *
+     * Pagination termination MUST be determined solely by the `nextCursor` field
+     * of the returned `StrainListWithCursor`:
+     * - If `nextCursor` is non-zero, a subsequent page is available; pass its
+     *   value as the `cursor` argument on the next request.
+     * - If `nextCursor` is `0`, no further pages exist and iteration must stop.
+     */
     listStrains?: Maybe<StrainListWithCursor>;
     listStrainsWithAnnotation?: Maybe<StrainListWithCursor>;
     listStrainsWithGene?: Maybe<Array<Strain>>;
@@ -752,13 +770,15 @@ export declare enum StockSearchFieldEnum {
     Dbxrefs = "DBXREFS",
     Depositor = "DEPOSITOR",
     Genes = "GENES",
+    Genotype = "GENOTYPE",
     Label = "LABEL",
     Name = "NAME",
     Names = "NAMES",
     Plasmid = "PLASMID",
     Species = "SPECIES",
     StockId = "STOCK_ID",
-    Summary = "SUMMARY"
+    Summary = "SUMMARY",
+    Synonym = "SYNONYM"
 }
 export type StockSearchResult = {
     __typename?: 'StockSearchResult';

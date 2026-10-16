@@ -4,29 +4,54 @@ import (
 	"context"
 	"fmt"
 
+	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
+	EQ "github.com/IBM/fp-go/v2/eq"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
 	L "github.com/IBM/fp-go/v2/optics/lens"
 	O "github.com/IBM/fp-go/v2/option"
+	ORD "github.com/IBM/fp-go/v2/ord"
+	PR "github.com/IBM/fp-go/v2/pair"
+	P "github.com/IBM/fp-go/v2/predicate"
 	R "github.com/IBM/fp-go/v2/record"
 	T "github.com/IBM/fp-go/v2/tuple"
+	MO "github.com/dictyBase/fp-go-loom/matchopt"
+	predord "github.com/dictyBase/fp-go-loom/predicate/ord"
+	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 )
 
+const defaultSuggestionLimit = 5
+
 // listStockSuggestionsContext carries the autocomplete request through
 // the suggestion pipeline. Only the caller-supplied fields are set at
-// the seed; the params and collection are attached by the lens setters.
+// the seed; all intermediate and derived fields are attached by lenses
+// so every pipeline step receives a single state parameter.
 type listStockSuggestionsContext struct {
-	client     pb.StockServiceClient
-	gctx       context.Context
-	query      string
-	limit      *int
-	entity     *models.StockEntityType
-	params     *pb.StockAutocompleteParameters
-	collection *pb.StockSuggestionCollection
+	client            pb.StockServiceClient
+	annoClient        anno.TaggedAnnotationServiceClient
+	gctx              context.Context
+	query             string
+	limit             *int
+	entity            *models.StockEntityType
+	params            *pb.StockAutocompleteParameters
+	annoParams        *anno.AnnotationAutocompleteParameters
+	collection        *pb.StockSuggestionCollection
+	annoCollection    *anno.AnnotationSuggestionCollection
+	stockSuggestions  []*models.StockSuggestion
+	annoSuggestions   []*models.StockSuggestion
+	effectiveLimit    int
+	mergedSuggestions []*models.StockSuggestion
 }
+
+type (
+	stockSuggestionEnums = T.Tuple2[models.StockEntityType, models.StockSearchFieldEnum]
+	stockSuggestionPair  = PR.Pair[*pb.StockSuggestion, stockSuggestionEnums]
+	annoSuggestionPair   = PR.Pair[*anno.AnnotationSuggestion, models.StockSearchFieldEnum]
+	suggestionParamPair  = PR.Pair[listStockSuggestionsContext, pb.StockEntity]
+)
 
 // ── state lenses ────────────────────────────────────────────────────────────
 
@@ -52,6 +77,78 @@ var (
 			coll *pb.StockSuggestionCollection,
 		) listStockSuggestionsContext {
 			s.collection = coll
+			return s
+		},
+	)
+	annoSuggestionParamsLens = L.MakeLens(
+		func(s listStockSuggestionsContext) *anno.AnnotationAutocompleteParameters {
+			return s.annoParams
+		},
+		func(
+			s listStockSuggestionsContext,
+			params *anno.AnnotationAutocompleteParameters,
+		) listStockSuggestionsContext {
+			s.annoParams = params
+			return s
+		},
+	)
+	annoSuggestionCollectionLens = L.MakeLens(
+		func(s listStockSuggestionsContext) *anno.AnnotationSuggestionCollection {
+			return s.annoCollection
+		},
+		func(
+			s listStockSuggestionsContext,
+			coll *anno.AnnotationSuggestionCollection,
+		) listStockSuggestionsContext {
+			s.annoCollection = coll
+			return s
+		},
+	)
+	stockSuggestionsLens = L.MakeLens(
+		func(s listStockSuggestionsContext) []*models.StockSuggestion {
+			return s.stockSuggestions
+		},
+		func(
+			s listStockSuggestionsContext,
+			items []*models.StockSuggestion,
+		) listStockSuggestionsContext {
+			s.stockSuggestions = items
+			return s
+		},
+	)
+	annoSuggestionsLens = L.MakeLens(
+		func(s listStockSuggestionsContext) []*models.StockSuggestion {
+			return s.annoSuggestions
+		},
+		func(
+			s listStockSuggestionsContext,
+			items []*models.StockSuggestion,
+		) listStockSuggestionsContext {
+			s.annoSuggestions = items
+			return s
+		},
+	)
+	effectiveLimitLens = L.MakeLens(
+		func(s listStockSuggestionsContext) int {
+			return s.effectiveLimit
+		},
+		func(
+			s listStockSuggestionsContext,
+			limit int,
+		) listStockSuggestionsContext {
+			s.effectiveLimit = limit
+			return s
+		},
+	)
+	mergedSuggestionsLens = L.MakeLens(
+		func(s listStockSuggestionsContext) []*models.StockSuggestion {
+			return s.mergedSuggestions
+		},
+		func(
+			s listStockSuggestionsContext,
+			items []*models.StockSuggestion,
+		) listStockSuggestionsContext {
+			s.mergedSuggestions = items
 			return s
 		},
 	)
@@ -87,6 +184,13 @@ var (
 		pb.StockSearchField_STOCK_SEARCH_FIELD_NAME:      models.StockSearchFieldEnumName,
 		pb.StockSearchField_STOCK_SEARCH_FIELD_SUMMARY:   models.StockSearchFieldEnumSummary,
 		pb.StockSearchField_STOCK_SEARCH_FIELD_DEPOSITOR: models.StockSearchFieldEnumDepositor,
+	}
+
+	// protoToGQLAnnotationSearchField maps a matched annotation field
+	// back to the GraphQL enum.
+	protoToGQLAnnotationSearchField = map[anno.AnnotationSearchField]models.StockSearchFieldEnum{
+		anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_SYNONYM:  models.StockSearchFieldEnumSynonym,
+		anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_GENOTYPE: models.StockSearchFieldEnumGenotype,
 	}
 )
 
@@ -142,6 +246,24 @@ func toGQLSearchField(
 	)
 }
 
+// toGQLAnnotationSearchField maps a matched annotation field back to the
+// GraphQL enum. AutocompleteAnnotation only emits SYNONYM and GENOTYPE, so
+// any other value is an error rather than a silent default.
+func toGQLAnnotationSearchField(
+	field anno.AnnotationSearchField,
+) E.Either[error, models.StockSearchFieldEnum] {
+	return F.Pipe2(
+		protoToGQLAnnotationSearchField,
+		R.Lookup[models.StockSearchFieldEnum](field),
+		E.FromOption[models.StockSearchFieldEnum](func() error {
+			return fmt.Errorf(
+				"unexpected annotation search field %s in stock suggestion",
+				field,
+			)
+		}),
+	)
+}
+
 func toInt64(value int) int64 { return int64(value) }
 
 // zeroSuggestionLimit lets the stock service apply its own default of 5
@@ -173,104 +295,363 @@ func onStockSuggestionListSuccess(
 	return T.MakeTuple2[error](nil, data)
 }
 
+// ── PR.Pair builders ────────────────────────────────────────────────────────
+
+func buildStockSuggestion(
+	p stockSuggestionPair,
+) *models.StockSuggestion {
+	item := PR.Head(p)
+	enums := PR.Tail(p)
+
+	return &models.StockSuggestion{
+		ID:          item.Id,
+		Entity:      enums.F1,
+		Field:       enums.F2,
+		DisplayText: item.DisplayText,
+		Score:       item.Score,
+	}
+}
+
 // convertSuggestionItem projects one protobuf suggestion onto the GraphQL
-// type. Both enum fields must resolve, otherwise the whole result fails.
+// type by pairing the item with its resolved (entity, field) tuple, sequencing
+// the Pair into Either, and mapping buildStockSuggestion.
 func convertSuggestionItem(
 	item *pb.StockSuggestion,
 ) E.Either[error, *models.StockSuggestion] {
-	return F.Pipe1(
-		toGQLEntity(item.Entity),
-		E.Chain(func(entity models.StockEntityType) E.Either[error, *models.StockSuggestion] {
-			return F.Pipe1(
-				toGQLSearchField(item.Field),
-				E.Map[error](func(field models.StockSearchFieldEnum) *models.StockSuggestion {
-					return &models.StockSuggestion{
-						ID:          item.Id,
-						Entity:      entity,
-						Field:       field,
-						DisplayText: item.DisplayText,
-						Score:       item.Score,
-					}
-				}),
-			)
-		}),
+	entity := toGQLEntity(item.Entity)
+	field := toGQLSearchField(item.Field)
+	enums := E.SequenceT2(entity, field)
+
+	return F.Pipe2(
+		PR.MakePair(item, enums),
+		PR.Sequence(E.Map[error, stockSuggestionEnums, stockSuggestionPair]),
+		E.Map[error](buildStockSuggestion),
+	)
+}
+
+func buildAnnotationStockSuggestion(
+	p annoSuggestionPair,
+) *models.StockSuggestion {
+	item := PR.Head(p)
+	field := PR.Tail(p)
+
+	return &models.StockSuggestion{
+		ID:          item.EntryId,
+		Entity:      models.StockEntityTypeStrain,
+		Field:       field,
+		DisplayText: item.DisplayText,
+		Score:       item.Score,
+	}
+}
+
+// convertAnnotationSuggestionItem projects one protobuf annotation suggestion
+// onto the GraphQL StockSuggestion type by pairing the item with its resolved
+// field enum, sequencing the Pair into Either, and mapping
+// buildAnnotationStockSuggestion.
+func convertAnnotationSuggestionItem(
+	item *anno.AnnotationSuggestion,
+) E.Either[error, *models.StockSuggestion] {
+	field := toGQLAnnotationSearchField(item.Field)
+
+	return F.Pipe2(
+		PR.MakePair(item, field),
+		PR.Sequence(E.Map[error, models.StockSearchFieldEnum, annoSuggestionPair]),
+		E.Map[error](buildAnnotationStockSuggestion),
 	)
 }
 
 // ── pipeline steps ──────────────────────────────────────────────────────────
 
-var buildSuggestionParameters = F.Curry2(
-	func(
-		s listStockSuggestionsContext,
-		entity pb.StockEntity,
-	) *pb.StockAutocompleteParameters {
-		return &pb.StockAutocompleteParameters{
-			Data: &pb.StockAutocompleteParameters_Data{
-				Type: "stock",
-				Attributes: &pb.StockAutocompleteAttributes{
-					Query:  s.query,
-					Limit:  resolveSuggestionLimit(s.limit),
-					Entity: entity,
-				},
-			},
-		}
-	},
-)
-
-// suggestionParamsFromState derives the request params from the caller
-// supplied fields. It fails when the entity filter is unknown. The
-// Either lookup lifts straight into IOEither, so the resolver pipeline
-// stays in IOEither until the forced edge.
-func suggestionParamsFromState(
-	s listStockSuggestionsContext,
-) IOE.IOEither[error, *pb.StockAutocompleteParameters] {
-	return F.Pipe5(
-		s.entity,
+func resolveProtoEntity(
+	entity *models.StockEntityType,
+) E.Either[error, pb.StockEntity] {
+	return F.Pipe3(
+		entity,
 		O.FromNillable2[models.StockEntityType],
 		O.GetOrElse(F.Constant(models.StockEntityTypeAll)),
 		toKnownProtoEntity,
-		E.Map[error](buildSuggestionParameters(s)),
-		IOE.FromEither[error, *pb.StockAutocompleteParameters],
+	)
+}
+
+func buildSuggestionParameters(
+	p suggestionParamPair,
+) *pb.StockAutocompleteParameters {
+	s := PR.Head(p)
+	entity := PR.Tail(p)
+
+	return &pb.StockAutocompleteParameters{
+		Data: &pb.StockAutocompleteParameters_Data{
+			Type: "stock",
+			Attributes: &pb.StockAutocompleteAttributes{
+				Query:  s.query,
+				Limit:  resolveSuggestionLimit(s.limit),
+				Entity: entity,
+			},
+		},
+	}
+}
+
+// suggestionParamsFromState derives the stock request params from the caller
+// supplied fields by pairing state with the resolved proto entity, sequencing
+// the Pair into Either, and mapping buildSuggestionParameters.
+func suggestionParamsFromState(
+	s listStockSuggestionsContext,
+) E.Either[error, *pb.StockAutocompleteParameters] {
+	entity := resolveProtoEntity(s.entity)
+
+	return F.Pipe2(
+		PR.MakePair(s, entity),
+		PR.Sequence(E.Map[error, pb.StockEntity, suggestionParamPair]),
+		E.Map[error](buildSuggestionParameters),
+	)
+}
+
+func buildAnnotationSuggestionParameters(
+	s listStockSuggestionsContext,
+) *anno.AnnotationAutocompleteParameters {
+	return &anno.AnnotationAutocompleteParameters{
+		Data: &anno.AnnotationAutocompleteParameters_Data{
+			Type: "annotation",
+			Attributes: &anno.AnnotationAutocompleteAttributes{
+				Query: s.query,
+				Limit: resolveSuggestionLimit(s.limit),
+			},
+		},
+	}
+}
+
+// withSuggestionParams attaches both the stock and annotation request
+// parameters to the state in one flat Either pipe, lifted into the IOEither
+// pipeline with IOE.ChainEitherK.
+func withSuggestionParams(
+	s listStockSuggestionsContext,
+) E.Either[error, listStockSuggestionsContext] {
+	return F.Pipe3(
+		s,
+		E.Of[error, listStockSuggestionsContext],
+		E.Bind(suggestionParamsLens.Set, suggestionParamsFromState),
+		E.Let[error](
+			annoSuggestionParamsLens.Set,
+			buildAnnotationSuggestionParameters,
+		),
 	)
 }
 
 func fetchSuggestionCollection(
 	s listStockSuggestionsContext,
 ) IOE.IOEither[error, *pb.StockSuggestionCollection] {
+	rawFetch := func() (*pb.StockSuggestionCollection, error) {
+		return s.client.AutocompleteStock(s.gctx, s.params)
+	}
+
 	return F.Pipe1(
-		IOE.TryCatchError(func() (*pb.StockSuggestionCollection, error) {
-			return s.client.AutocompleteStock(s.gctx, s.params)
-		}),
+		IOE.TryCatchError(rawFetch),
 		IOE.MapLeft[*pb.StockSuggestionCollection](func(err error) error {
 			return fmt.Errorf("fetch stock suggestions for query %q: %w", s.query, err)
 		}),
 	)
 }
 
-var buildSuggestionList = F.Curry2(
-	func(
-		s listStockSuggestionsContext,
-		suggestions []*models.StockSuggestion,
-	) *models.StockSuggestionList {
-		meta := s.collection.Meta
-		lmt := int(meta.Limit)
-		return &models.StockSuggestionList{
-			Suggestions: suggestions,
-			Limit:       &lmt,
-			TotalCount:  int(meta.Total),
-		}
-	},
+func fetchAnnotationSuggestionCollection(
+	s listStockSuggestionsContext,
+) IOE.IOEither[error, *anno.AnnotationSuggestionCollection] {
+	rawFetch := func() (*anno.AnnotationSuggestionCollection, error) {
+		return s.annoClient.AutocompleteAnnotation(s.gctx, s.annoParams)
+	}
+
+	return F.Pipe1(
+		IOE.TryCatchError(rawFetch),
+		IOE.MapLeft[*anno.AnnotationSuggestionCollection](func(err error) error {
+			return fmt.Errorf(
+				"fetch annotation suggestions for query %q: %w",
+				s.query,
+				err,
+			)
+		}),
+	)
+}
+
+func emptyAnnotationSuggestionCollection(
+	s listStockSuggestionsContext,
+) IOE.IOEither[error, *anno.AnnotationSuggestionCollection] {
+	return IOE.Of[error](&anno.AnnotationSuggestionCollection{
+		Data: []*anno.AnnotationSuggestion{},
+		Meta: &anno.Meta{
+			Limit: s.annoParams.Data.Attributes.Limit,
+			Total: 0,
+		},
+	})
+}
+
+func suggestionProtoEntity(s listStockSuggestionsContext) pb.StockEntity {
+	return s.params.Data.Attributes.Entity
+}
+
+var (
+	protoEntityEq = EQ.FromStrictEquals[pb.StockEntity]()
+
+	isPlasmidProtoEntity = F.Pipe1(
+		pb.StockEntity_STOCK_ENTITY_PLASMID,
+		EQ.Equals(protoEntityEq),
+	)
+
+	isPlasmidSuggestionRequest = F.Pipe1(
+		isPlasmidProtoEntity,
+		P.ContraMap(suggestionProtoEntity),
+	)
+
+	// fetchAnnotationSuggestionsForEntity skips AutocompleteAnnotation when
+	// the request filters to PLASMID, because annotation autocomplete only
+	// indexes strain synonyms and genotypes.
+	fetchAnnotationSuggestionsForEntity = F.Pipe1(
+		isPlasmidSuggestionRequest,
+		P.Fold(
+			fetchAnnotationSuggestionCollection,
+			emptyAnnotationSuggestionCollection,
+		),
+	)
 )
 
-// toStockSuggestionList projects the fetched collection onto the GraphQL
-// list type. One bad suggestion fails the whole result, because the
-// GraphQL enums carry no invalid value to fall back to.
+func convertStockSuggestionsFromState(
+	s listStockSuggestionsContext,
+) E.Either[error, []*models.StockSuggestion] {
+	return F.Pipe1(
+		s.collection.GetData(),
+		E.TraverseArray(convertSuggestionItem),
+	)
+}
+
+func convertAnnoSuggestionsFromState(
+	s listStockSuggestionsContext,
+) E.Either[error, []*models.StockSuggestion] {
+	return F.Pipe1(
+		s.annoCollection.GetData(),
+		E.TraverseArray(convertAnnotationSuggestionItem),
+	)
+}
+
+// ── ordering and limit helpers ───────────────────────────────────────────────
+
+func suggestionScore(item *models.StockSuggestion) float64 {
+	return item.Score
+}
+
+func suggestionID(item *models.StockSuggestion) string {
+	return item.ID
+}
+
+func suggestionField(item *models.StockSuggestion) string {
+	return item.Field.String()
+}
+
+func suggestionDisplayText(item *models.StockSuggestion) string {
+	return item.DisplayText
+}
+
+func intFromInt64(value int64) int {
+	return int(value)
+}
+
+func requestedSuggestionLimit(s listStockSuggestionsContext) O.Option[int] {
+	return F.Pipe2(
+		s.limit,
+		O.FromNillable2[int],
+		O.Chain(O.FromPredicate(isPositiveInt)),
+	)
+}
+
+func metaSuggestionLimit(s listStockSuggestionsContext) O.Option[int] {
+	return F.Pipe2(
+		s.collection.GetMeta().GetLimit(),
+		intFromInt64,
+		O.FromPredicate(isPositiveInt),
+	)
+}
+
+var (
+	isPositiveInt = F.Pipe1(0, ORD.Gt(predord.IntOrd))
+
+	effectiveSuggestionLimit = MO.Match(
+		defaultSuggestionLimit,
+		[]O.Kleisli[listStockSuggestionsContext, int]{
+			requestedSuggestionLimit,
+			metaSuggestionLimit,
+		},
+	)
+
+	stringOrd = ORD.FromStrictCompare[string]()
+
+	byScoreDesc = F.Pipe2(
+		predord.Float64Ord,
+		ORD.ContraMap(suggestionScore),
+		ORD.Reverse[*models.StockSuggestion],
+	)
+	byIDAsc = F.Pipe1(
+		stringOrd,
+		ORD.ContraMap(suggestionID),
+	)
+	byFieldAsc = F.Pipe1(
+		stringOrd,
+		ORD.ContraMap(suggestionField),
+	)
+	byDisplayTextAsc = F.Pipe1(
+		stringOrd,
+		ORD.ContraMap(suggestionDisplayText),
+	)
+	suggestionOrderings = []ORD.Ord[*models.StockSuggestion]{
+		byScoreDesc,
+		byIDAsc,
+		byFieldAsc,
+		byDisplayTextAsc,
+	}
+)
+
+// mergeSuggestionsFromState concatenates stock and annotation suggestions on
+// the state struct, sorts them by (score DESC, id ASC, field ASC, display_text
+// ASC), deduplicates by stock ID keeping the highest-ranked suggestion, and
+// truncates to s.effectiveLimit.
+func mergeSuggestionsFromState(
+	s listStockSuggestionsContext,
+) []*models.StockSuggestion {
+	return F.Pipe5(
+		s.stockSuggestions,
+		A.Concat(s.annoSuggestions),
+		A.SortBy(suggestionOrderings),
+		A.Uniq(suggestionID),
+		A.Slice[*models.StockSuggestion](0, s.effectiveLimit),
+		A.Match(
+			A.Empty[*models.StockSuggestion],
+			F.Identity[[]*models.StockSuggestion],
+		),
+	)
+}
+
+func buildMergedSuggestionList(
+	s listStockSuggestionsContext,
+) *models.StockSuggestionList {
+	limit := s.effectiveLimit
+
+	return &models.StockSuggestionList{
+		Suggestions: s.mergedSuggestions,
+		Limit:       &limit,
+		TotalCount:  len(s.mergedSuggestions),
+	}
+}
+
+// toStockSuggestionList converts both collections, resolves the effective
+// limit, merges and deduplicates the suggestions, and projects the final
+// GraphQL list in a single flat point-free Either pipe, chained into the
+// IOEither pipeline via IOE.ChainEitherK.
 func toStockSuggestionList(
 	s listStockSuggestionsContext,
 ) E.Either[error, *models.StockSuggestionList] {
-	return F.Pipe2(
-		s.collection.Data,
-		E.TraverseArray(convertSuggestionItem),
-		E.Map[error](buildSuggestionList(s)),
+	return F.Pipe6(
+		s,
+		E.Of[error, listStockSuggestionsContext],
+		E.Bind(stockSuggestionsLens.Set, convertStockSuggestionsFromState),
+		E.Bind(annoSuggestionsLens.Set, convertAnnoSuggestionsFromState),
+		E.Let[error](effectiveLimitLens.Set, effectiveSuggestionLimit),
+		E.Let[error](mergedSuggestionsLens.Set, mergeSuggestionsFromState),
+		E.Map[error](buildMergedSuggestionList),
 	)
 }

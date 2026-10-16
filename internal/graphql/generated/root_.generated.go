@@ -3129,8 +3129,8 @@ type Author {
   #
   # Returns short type-ahead suggestions for a partial stock search
   # text. The match runs against stock_id, genes, dbxrefs, the strain
-  # label, the strain names, the species, the strain plasmid and the
-  # plasmid name.
+  # label, the strain names, the species, the strain plasmid, the
+  # plasmid name, and strain synonym and genotype annotations.
   #
   # Constraints:
   # - query must be at least 3 characters. The server trims the text
@@ -3477,9 +3477,9 @@ enum StockEntityType {
   PLASMID
 }
 
-# StockSearchFieldEnum names the stock field that produced a match.
-# SUMMARY and DEPOSITOR mirror the shared search field enum but the
-# autocomplete search does not currently emit them.
+# StockSearchFieldEnum names the stock or strain-annotation field that
+# produced a match. SUMMARY and DEPOSITOR mirror the shared search field
+# enum but the autocomplete search does not currently emit them.
 enum StockSearchFieldEnum {
   STOCK_ID
   GENES
@@ -3491,6 +3491,8 @@ enum StockSearchFieldEnum {
   NAME
   SUMMARY
   DEPOSITOR
+  SYNONYM
+  GENOTYPE
 }
 
 # StockSuggestion is one type-ahead autocomplete match.
