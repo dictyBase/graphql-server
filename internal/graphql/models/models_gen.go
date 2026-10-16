@@ -689,18 +689,26 @@ func (e StockEntityType) MarshalJSON() ([]byte, error) {
 type StockSearchFieldEnum string
 
 const (
-	StockSearchFieldEnumStockID   StockSearchFieldEnum = "STOCK_ID"
-	StockSearchFieldEnumGenes     StockSearchFieldEnum = "GENES"
-	StockSearchFieldEnumDbxrefs   StockSearchFieldEnum = "DBXREFS"
-	StockSearchFieldEnumLabel     StockSearchFieldEnum = "LABEL"
-	StockSearchFieldEnumNames     StockSearchFieldEnum = "NAMES"
-	StockSearchFieldEnumSpecies   StockSearchFieldEnum = "SPECIES"
-	StockSearchFieldEnumPlasmid   StockSearchFieldEnum = "PLASMID"
-	StockSearchFieldEnumName      StockSearchFieldEnum = "NAME"
-	StockSearchFieldEnumSummary   StockSearchFieldEnum = "SUMMARY"
-	StockSearchFieldEnumDepositor StockSearchFieldEnum = "DEPOSITOR"
-	StockSearchFieldEnumSynonym   StockSearchFieldEnum = "SYNONYM"
-	StockSearchFieldEnumGenotype  StockSearchFieldEnum = "GENOTYPE"
+	StockSearchFieldEnumStockID             StockSearchFieldEnum = "STOCK_ID"
+	StockSearchFieldEnumGenes               StockSearchFieldEnum = "GENES"
+	StockSearchFieldEnumDbxrefs             StockSearchFieldEnum = "DBXREFS"
+	StockSearchFieldEnumLabel               StockSearchFieldEnum = "LABEL"
+	StockSearchFieldEnumNames               StockSearchFieldEnum = "NAMES"
+	StockSearchFieldEnumSpecies             StockSearchFieldEnum = "SPECIES"
+	StockSearchFieldEnumPlasmid             StockSearchFieldEnum = "PLASMID"
+	StockSearchFieldEnumName                StockSearchFieldEnum = "NAME"
+	StockSearchFieldEnumSummary             StockSearchFieldEnum = "SUMMARY"
+	StockSearchFieldEnumDepositor           StockSearchFieldEnum = "DEPOSITOR"
+	StockSearchFieldEnumSynonym             StockSearchFieldEnum = "SYNONYM"
+	StockSearchFieldEnumGenotype            StockSearchFieldEnum = "GENOTYPE"
+	StockSearchFieldEnumSystematicName      StockSearchFieldEnum = "SYSTEMATIC_NAME"
+	StockSearchFieldEnumGeneticModification StockSearchFieldEnum = "GENETIC_MODIFICATION"
+	StockSearchFieldEnumMutagenesisMethod   StockSearchFieldEnum = "MUTAGENESIS_METHOD"
+	StockSearchFieldEnumPhenotype           StockSearchFieldEnum = "PHENOTYPE"
+	StockSearchFieldEnumEnvironment         StockSearchFieldEnum = "ENVIRONMENT"
+	StockSearchFieldEnumAssay               StockSearchFieldEnum = "ASSAY"
+	StockSearchFieldEnumCharacteristic      StockSearchFieldEnum = "CHARACTERISTIC"
+	StockSearchFieldEnumPublicNote          StockSearchFieldEnum = "PUBLIC_NOTE"
 )
 
 var AllStockSearchFieldEnum = []StockSearchFieldEnum{
@@ -716,11 +724,19 @@ var AllStockSearchFieldEnum = []StockSearchFieldEnum{
 	StockSearchFieldEnumDepositor,
 	StockSearchFieldEnumSynonym,
 	StockSearchFieldEnumGenotype,
+	StockSearchFieldEnumSystematicName,
+	StockSearchFieldEnumGeneticModification,
+	StockSearchFieldEnumMutagenesisMethod,
+	StockSearchFieldEnumPhenotype,
+	StockSearchFieldEnumEnvironment,
+	StockSearchFieldEnumAssay,
+	StockSearchFieldEnumCharacteristic,
+	StockSearchFieldEnumPublicNote,
 }
 
 func (e StockSearchFieldEnum) IsValid() bool {
 	switch e {
-	case StockSearchFieldEnumStockID, StockSearchFieldEnumGenes, StockSearchFieldEnumDbxrefs, StockSearchFieldEnumLabel, StockSearchFieldEnumNames, StockSearchFieldEnumSpecies, StockSearchFieldEnumPlasmid, StockSearchFieldEnumName, StockSearchFieldEnumSummary, StockSearchFieldEnumDepositor, StockSearchFieldEnumSynonym, StockSearchFieldEnumGenotype:
+	case StockSearchFieldEnumStockID, StockSearchFieldEnumGenes, StockSearchFieldEnumDbxrefs, StockSearchFieldEnumLabel, StockSearchFieldEnumNames, StockSearchFieldEnumSpecies, StockSearchFieldEnumPlasmid, StockSearchFieldEnumName, StockSearchFieldEnumSummary, StockSearchFieldEnumDepositor, StockSearchFieldEnumSynonym, StockSearchFieldEnumGenotype, StockSearchFieldEnumSystematicName, StockSearchFieldEnumGeneticModification, StockSearchFieldEnumMutagenesisMethod, StockSearchFieldEnumPhenotype, StockSearchFieldEnumEnvironment, StockSearchFieldEnumAssay, StockSearchFieldEnumCharacteristic, StockSearchFieldEnumPublicNote:
 		return true
 	}
 	return false
