@@ -845,15 +845,28 @@ func TestListStockSuggestions(t *testing.T) {
 	require.Equal("DBS0235559", second.ID, "should include annotation suggestion")
 	require.Equal(models.StockEntityTypeStrain, second.Entity)
 	require.Equal(models.StockSearchFieldEnumSynonym, second.Field)
+	require.Equal(
+		"catenin null",
+		second.DisplayText,
+		"should preserve annotation display text",
+	)
+	require.Equal(0.75, second.Score, "should preserve annotation score")
 
+	third := result.Suggestions[2]
+	require.Equal("DBS0236127", third.ID, "should include distinct strain row")
+	require.Equal(models.StockEntityTypeStrain, third.Entity)
+	require.Equal(models.StockSearchFieldEnumLabel, third.Field)
+
+	fourth := result.Suggestions[3]
+	require.Equal("DBP0236126", fourth.ID, "should include plasmid suggestion")
 	require.Equal(
 		models.StockEntityTypePlasmid,
-		result.Suggestions[3].Entity,
+		fourth.Entity,
 		"should map plasmid entity",
 	)
 	require.Equal(
 		models.StockSearchFieldEnumName,
-		result.Suggestions[3].Field,
+		fourth.Field,
 		"should map plasmid name field",
 	)
 }
