@@ -7,6 +7,7 @@ import (
 	"github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/stretchr/testify/mock"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -37,6 +38,7 @@ var MockStrainAttributes = &stock.StrainAttributes{
 	UpdatedBy:       createdByEmail,
 	Summary:         "test summary",
 	EditableSummary: "editable test summary",
+	Depositor:       "kenny@bania.com",
 	Genes:           []string{"DDB_G0285425"},
 	Dbxrefs:         []string{dbxrefTest},
 	Publications:    []string{"99999"},
@@ -59,14 +61,14 @@ func MockStrain() *stock.Strain {
 func MockStrainInputWithParams(
 	depositor, parent string,
 ) *stock.StrainAttributes {
-	s := MockStrainAttributes
+	s := proto.Clone(MockStrainAttributes).(*stock.StrainAttributes)
 	s.Depositor = depositor
 	s.Parent = parent
 	return s
 }
 
 func MockPlasmidInputWithParams(depositor string) *stock.PlasmidAttributes {
-	p := MockPlasmidAttributes
+	p := proto.Clone(MockPlasmidAttributes).(*stock.PlasmidAttributes)
 	p.Depositor = depositor
 	return p
 }
@@ -157,7 +159,7 @@ func MockPlasmidCollection() *stock.PlasmidCollection {
 }
 
 func mockPlasmidWithParams(depositor string) *stock.Plasmid {
-	attr := MockPlasmidAttributes
+	attr := proto.Clone(MockPlasmidAttributes).(*stock.PlasmidAttributes)
 	attr.Depositor = depositor
 	return &stock.Plasmid{
 		Data: &stock.Plasmid_Data{
@@ -169,7 +171,7 @@ func mockPlasmidWithParams(depositor string) *stock.Plasmid {
 }
 
 func mockStrainWithParams(depositor, parent string) *stock.Strain {
-	attr := MockStrainAttributes
+	attr := proto.Clone(MockStrainAttributes).(*stock.StrainAttributes)
 	attr.Depositor = depositor
 	attr.Parent = parent
 	return &stock.Strain{

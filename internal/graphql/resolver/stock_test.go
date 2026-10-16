@@ -62,9 +62,13 @@ func TestPlasmid(t *testing.T) {
 		&mocks.MockPlasmidAttributes.EditableSummary,
 		"should match editable summary",
 	)
+	// The stock client mock serves a plasmid whose depositor is
+	// kenny@bania.com (see mockPlasmidWithParams); assert against the
+	// literal instead of the shared fixture so the test does not depend
+	// on mock-side mutation ordering.
 	assert.Equal(
 		p.Depositor,
-		mocks.MockPlasmidAttributes.Depositor,
+		"kenny@bania.com",
 		"should match depositor (he's gold)",
 	)
 	assert.ElementsMatch(
