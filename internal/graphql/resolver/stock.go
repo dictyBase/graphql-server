@@ -428,8 +428,11 @@ func (qrs *QueryResolver) ListStockSuggestions(
 // SearchStocks resolves the searchStocks GraphQL query. It returns the
 // results of a full stock search. The match runs against stock_id, genes,
 // dbxrefs, the strain label, the strain names, the species, the strain
-// plasmid, the plasmid name, the summary and the depositor. The search
-// does not use editable_summary.
+// plasmid, the plasmid name, the summary, the depositor, and strain
+// synonym, genotype, systematic_name, genetic_modification,
+// mutagenesis_method, phenotype, environment, assay, characteristic, and
+// public_note annotations. The search does not use editable_summary or
+// editable_value.
 //
 // The query must be at least 2 characters, because gene names such as csA
 // are short. The limit defaults to 50 on the service when omitted and
@@ -443,18 +446,29 @@ func (qrs *QueryResolver) SearchStocks(
 	limit *int,
 	entity *models.StockEntityType,
 ) (*models.StockSearchResultList, error) {
-	result := F.Pipe5(
+	stockClient := qrs.GetStockClient(registry.STOCK)
+	annoClient := qrs.GetAnnotationClient(registry.ANNOTATION)
+	result := F.Pipe7(
 		IOE.Of[error](listStockSearchContext{
-			client: qrs.GetStockClient(registry.STOCK),
-			gctx:   ctx,
-			query:  query,
-			limit:  limit,
-			entity: entity,
+			client:     stockClient,
+			annoClient: annoClient,
+			gctx:       ctx,
+			query:      query,
+			limit:      limit,
+			entity:     entity,
 		}),
-		IOE.Bind(searchParamsLens.Set, searchParamsFromState),
+		IOE.ChainEitherK(withSearchParams),
 		IOE.Bind(searchCollectionLens.Set, fetchSearchCollection),
-		ioeutils.ToEither[error, listStockSearchContext],
-		E.Chain(toStockSearchList),
+		IOE.Bind(
+			annoSearchCollectionLens.Set,
+			fetchAnnotationSearchForEntity,
+		),
+		IOE.Bind(
+			strainMetaByIDLens.Set,
+			fetchStrainMetadataForAnnotationHits,
+		),
+		IOE.ChainEitherK(toStockSearchList),
+		ioeutils.ToEither[error, *models.StockSearchResultList],
 		E.Fold(onStockSearchListError, onStockSearchListSuccess),
 	)
 

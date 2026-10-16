@@ -1282,13 +1282,13 @@ func TestSearchStocks(t *testing.T) {
 		nil,
 	)
 	require.NoError(err)
-	require.Equal(3, result.TotalCount, "should match total count")
+	require.Equal(4, result.TotalCount, "should match merged unique count")
 	require.NotNil(result.Limit, "should resolve limit from meta")
 	require.Equal(50, *result.Limit, "should match effective limit from meta")
-	require.Len(result.Results, 3, "should have three results")
+	require.Len(result.Results, 4, "should have four merged results")
 
 	first := result.Results[0]
-	require.Equal(mocks.MockStockSearchID, first.ID, "should match stock id")
+	require.Equal(mocks.MockStockSearchID, first.ID, "should keep highest score for duplicate DBS0236126")
 	require.Equal(
 		models.StockEntityTypeStrain,
 		first.Entity,
@@ -1308,16 +1308,36 @@ func TestSearchStocks(t *testing.T) {
 	)
 	require.Equal("AX4", first.StrainLabel, "should match strain label")
 
-	plasmid := result.Results[2]
+	second := result.Results[1]
+	require.Equal("DBS0235559", second.ID, "should include enriched annotation result")
+	require.Equal(models.StockEntityTypeStrain, second.Entity)
+	require.Equal(models.StockSearchFieldEnumPhenotype, second.Field)
+	require.Equal("delayed culmination", second.DisplayText)
+	require.Equal(0.75, second.Score)
+	require.Equal(
+		"Catenin null mutant strain.",
+		second.Summary,
+		"should enrich summary from ListStrainsByIds",
+	)
+	require.Equal(
+		"aarA-",
+		second.StrainLabel,
+		"should enrich strain label from ListStrainsByIds",
+	)
+
+	third := result.Results[2]
+	require.Equal("DBS0236127", third.ID)
+	require.Equal(
+		models.StockSearchFieldEnumSummary,
+		third.Field,
+		"should map summary field",
+	)
+
+	plasmid := result.Results[3]
 	require.Equal(
 		models.StockEntityTypePlasmid,
 		plasmid.Entity,
 		"should map plasmid entity",
-	)
-	require.Equal(
-		models.StockSearchFieldEnumSummary,
-		result.Results[1].Field,
-		"should map summary field",
 	)
 	require.Empty(plasmid.StrainLabel, "plasmid results carry no strain label")
 	require.Empty(plasmid.Summary, "should keep empty summary")
@@ -1340,6 +1360,12 @@ func TestSearchStocksPassesExpectedParams(t *testing.T) {
 		}),
 	).Return(mocks.MockStockSearchResultCollection(), nil)
 
+	mockedStockClient.On(
+		"ListStrainsByIds",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockIdList"),
+	).Return(mocks.MockSearchStrainList(), nil)
+
 	reg := &stockClientRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
@@ -1355,7 +1381,7 @@ func TestSearchStocksPassesExpectedParams(t *testing.T) {
 		&entity,
 	)
 	require.NoError(err)
-	require.Len(result.Results, 3)
+	require.Len(result.Results, 4)
 	mockedStockClient.AssertExpectations(t)
 }
 
@@ -1375,6 +1401,12 @@ func TestSearchStocksDefaultsToBothEntities(t *testing.T) {
 		}),
 	).Return(mocks.MockStockSearchResultCollection(), nil)
 
+	mockedStockClient.On(
+		"ListStrainsByIds",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockIdList"),
+	).Return(mocks.MockSearchStrainList(), nil)
+
 	reg := &stockClientRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
@@ -1389,7 +1421,7 @@ func TestSearchStocksDefaultsToBothEntities(t *testing.T) {
 		&entity,
 	)
 	require.NoError(err)
-	require.Len(result.Results, 3)
+	require.Len(result.Results, 4)
 	mockedStockClient.AssertExpectations(t)
 }
 
@@ -1444,6 +1476,12 @@ func TestSearchStocksInvalidEntityEnum(t *testing.T) {
 		},
 		Meta: &pb.Meta{Limit: 50, Total: 1},
 	}, nil)
+
+	mockedStockClient.On(
+		"ListStrainsByIds",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockIdList"),
+	).Return(mocks.MockSearchStrainList(), nil)
 
 	reg := &stockClientRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
@@ -1619,6 +1657,12 @@ func TestSearchStocksInvalidFieldEnum(t *testing.T) {
 		Meta: &pb.Meta{Limit: 50, Total: 1},
 	}, nil)
 
+	mockedStockClient.On(
+		"ListStrainsByIds",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockIdList"),
+	).Return(mocks.MockSearchStrainList(), nil)
+
 	reg := &stockClientRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
 		stockClient:  mockedStockClient,
@@ -1634,4 +1678,262 @@ func TestSearchStocksInvalidFieldEnum(t *testing.T) {
 	require.Error(err)
 	require.ErrorContains(err, "unexpected search field")
 	mockedStockClient.AssertExpectations(t)
+}
+
+func TestConvertAnnotationSearchResultAllTenFields(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	cases := []struct {
+		protoField anno.AnnotationSearchField
+		gqlField   models.StockSearchFieldEnum
+		display    string
+	}{
+		{
+			protoField: anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_SYNONYM,
+			gqlField:   models.StockSearchFieldEnumSynonym,
+			display:    "catenin null",
+		},
+		{
+			protoField: anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_GENOTYPE,
+			gqlField:   models.StockSearchFieldEnumGenotype,
+			display:    "axeA1,axeB1",
+		},
+		{
+			protoField: anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_SYSTEMATIC_NAME,
+			gqlField:   models.StockSearchFieldEnumSystematicName,
+			display:    "AX4",
+		},
+		{
+			protoField: anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_GENETIC_MODIFICATION,
+			gqlField:   models.StockSearchFieldEnumGeneticModification,
+			display:    "endogenous deletion",
+		},
+		{
+			protoField: anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_MUTAGENESIS_METHOD,
+			gqlField:   models.StockSearchFieldEnumMutagenesisMethod,
+			display:    "Homologous Recombination",
+		},
+		{
+			protoField: anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_PHENOTYPE,
+			gqlField:   models.StockSearchFieldEnumPhenotype,
+			display:    "delayed culmination",
+		},
+		{
+			protoField: anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_ENVIRONMENT,
+			gqlField:   models.StockSearchFieldEnumEnvironment,
+			display:    "in the presence of caffeine",
+		},
+		{
+			protoField: anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_ASSAY,
+			gqlField:   models.StockSearchFieldEnumAssay,
+			display:    "confocal microscopy",
+		},
+		{
+			protoField: anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_CHARACTERISTIC,
+			gqlField:   models.StockSearchFieldEnumCharacteristic,
+			display:    "axenic",
+		},
+		{
+			protoField: anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_PUBLIC_NOTE,
+			gqlField:   models.StockSearchFieldEnumPublicNote,
+			display:    "fruiting body note",
+		},
+	}
+
+	metaByID := map[string]strainSearchMetadata{
+		"DBS0235559": {
+			summary:     "Catenin null mutant strain.",
+			strainLabel: "aarA-",
+		},
+	}
+
+	for _, tc := range cases {
+		res := convertAnnoSearchResultsFromState(listStockSearchContext{
+			annoCollection: &anno.AnnotationSearchResultCollection{
+				Data: []*anno.AnnotationSearchResult{
+					{
+						EntryId:     "DBS0235559",
+						Field:       tc.protoField,
+						DisplayText: tc.display,
+						Score:       504.2,
+					},
+				},
+			},
+			strainMetaByID: metaByID,
+		})
+		require.True(E.IsRight(res))
+		items := F.Pipe1(
+			res,
+			E.GetOrElse(F.Constant1[error]([]*models.StockSearchResult(nil))),
+		)
+		require.Len(items, 1)
+		require.Equal("DBS0235559", items[0].ID)
+		require.Equal(models.StockEntityTypeStrain, items[0].Entity)
+		require.Equal(tc.gqlField, items[0].Field)
+		require.Equal(tc.display, items[0].DisplayText)
+		require.Equal(504.2, items[0].Score)
+		require.Equal("Catenin null mutant strain.", items[0].Summary)
+		require.Equal("aarA-", items[0].StrainLabel)
+	}
+
+	badRes := validateAnnotationSearchItem(&anno.AnnotationSearchResult{
+		EntryId:     "DBS0235559",
+		Field:       anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_UNSPECIFIED,
+		DisplayText: "unknown",
+		Score:       0.1,
+	})
+	require.True(E.IsLeft(badRes))
+}
+
+func TestConvertAnnoSearchResultsDropsStaleStrainID(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	res := convertAnnoSearchResultsFromState(listStockSearchContext{
+		annoCollection: &anno.AnnotationSearchResultCollection{
+			Data: []*anno.AnnotationSearchResult{
+				{
+					EntryId:     "DBS9999999",
+					Field:       anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_PHENOTYPE,
+					DisplayText: "delayed culmination",
+					Score:       500.0,
+				},
+				{
+					EntryId:     "DBS0235559",
+					Field:       anno.AnnotationSearchField_ANNOTATION_SEARCH_FIELD_SYNONYM,
+					DisplayText: "catenin null",
+					Score:       1000.0,
+				},
+			},
+		},
+		strainMetaByID: map[string]strainSearchMetadata{
+			"DBS0235559": {
+				summary:     "Catenin null mutant strain.",
+				strainLabel: "aarA-",
+			},
+		},
+	})
+	require.True(E.IsRight(res))
+	items := F.Pipe1(
+		res,
+		E.GetOrElse(F.Constant1[error]([]*models.StockSearchResult(nil))),
+	)
+	require.Len(items, 1)
+	require.Equal("DBS0235559", items[0].ID)
+}
+
+func TestResolveAnnotationSearchLimitClampsAtFifty(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	nilLimit := resolveAnnotationSearchLimit(nil)
+	require.Equal(int64(0), nilLimit)
+
+	withinCap := 25
+	withinLimit := resolveAnnotationSearchLimit(&withinCap)
+	require.Equal(int64(25), withinLimit)
+
+	atCap := 50
+	atCapLimit := resolveAnnotationSearchLimit(&atCap)
+	require.Equal(int64(50), atCapLimit)
+
+	aboveCap := 75
+	clampedAnnoLimit := resolveAnnotationSearchLimit(&aboveCap)
+	stockLimit := resolveSearchLimit(&aboveCap)
+	require.Equal(int64(50), clampedAnnoLimit)
+	require.Equal(int64(75), stockLimit)
+}
+
+func TestMergeSearchResultsDeduplicatesByIDKeepingHighestScore(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	stockItems := []*models.StockSearchResult{
+		{
+			ID:          "DBS0236126",
+			Entity:      models.StockEntityTypeStrain,
+			Field:       models.StockSearchFieldEnumLabel,
+			DisplayText: "AX4",
+			Score:       0.5,
+			Summary:     "GWDI strain carrying a csA deletion.",
+			StrainLabel: "AX4",
+		},
+		{
+			ID:          "DBP0236126",
+			Entity:      models.StockEntityTypePlasmid,
+			Field:       models.StockSearchFieldEnumName,
+			DisplayText: "pDV4",
+			Score:       0.25,
+		},
+	}
+	annoItems := []*models.StockSearchResult{
+		{
+			ID:          "DBS0236126",
+			Entity:      models.StockEntityTypeStrain,
+			Field:       models.StockSearchFieldEnumPhenotype,
+			DisplayText: "delayed culmination",
+			Score:       504.2,
+			Summary:     "GWDI strain carrying a csA deletion.",
+			StrainLabel: "AX4",
+		},
+	}
+
+	merged := mergeSearchResultsFromState(listStockSearchContext{
+		stockResults:   stockItems,
+		annoResults:    annoItems,
+		effectiveLimit: 50,
+	})
+	require.Len(merged, 2)
+	require.Equal("DBS0236126", merged[0].ID)
+	require.Equal(models.StockSearchFieldEnumPhenotype, merged[0].Field)
+	require.Equal(504.2, merged[0].Score)
+	require.Equal("GWDI strain carrying a csA deletion.", merged[0].Summary)
+	require.Equal("AX4", merged[0].StrainLabel)
+	require.Equal("DBP0236126", merged[1].ID)
+}
+
+func TestMergeSearchResultsTieBreakingAndLimitTruncation(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	stockItems := []*models.StockSearchResult{
+		{
+			ID:          "DBS000002",
+			Entity:      models.StockEntityTypeStrain,
+			Field:       models.StockSearchFieldEnumLabel,
+			DisplayText: "beta",
+			Score:       1.0,
+		},
+	}
+	annoItems := []*models.StockSearchResult{
+		{
+			ID:          "DBS000001",
+			Entity:      models.StockEntityTypeStrain,
+			Field:       models.StockSearchFieldEnumSynonym,
+			DisplayText: "alpha",
+			Score:       1.0,
+		},
+		{
+			ID:          "DBS000003",
+			Entity:      models.StockEntityTypeStrain,
+			Field:       models.StockSearchFieldEnumGenotype,
+			DisplayText: "gamma",
+			Score:       0.5,
+		},
+	}
+
+	merged := mergeSearchResultsFromState(listStockSearchContext{
+		stockResults:   stockItems,
+		annoResults:    annoItems,
+		effectiveLimit: 2,
+	})
+	require.Len(merged, 2)
+	require.Equal("DBS000001", merged[0].ID, "equal score breaks tie by ID ASC")
+	require.Equal("DBS000002", merged[1].ID)
+
+	empty := mergeSearchResultsFromState(listStockSearchContext{
+		effectiveLimit: 50,
+	})
+	require.Empty(empty)
 }
