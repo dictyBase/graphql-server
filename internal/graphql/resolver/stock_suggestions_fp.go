@@ -12,7 +12,6 @@ import (
 	L "github.com/IBM/fp-go/v2/optics/lens"
 	O "github.com/IBM/fp-go/v2/option"
 	ORD "github.com/IBM/fp-go/v2/ord"
-	PR "github.com/IBM/fp-go/v2/pair"
 	P "github.com/IBM/fp-go/v2/predicate"
 	R "github.com/IBM/fp-go/v2/record"
 	T "github.com/IBM/fp-go/v2/tuple"
@@ -48,9 +47,6 @@ type listStockSuggestionsContext struct {
 
 type (
 	stockSuggestionEnums = T.Tuple2[models.StockEntityType, models.StockSearchFieldEnum]
-	stockSuggestionPair  = PR.Pair[*pb.StockSuggestion, stockSuggestionEnums]
-	annoSuggestionPair   = PR.Pair[*anno.AnnotationSuggestion, models.StockSearchFieldEnum]
-	suggestionParamPair  = PR.Pair[listStockSuggestionsContext, pb.StockEntity]
 )
 
 // ── state lenses ────────────────────────────────────────────────────────────
@@ -295,68 +291,69 @@ func onStockSuggestionListSuccess(
 	return T.MakeTuple2[error](nil, data)
 }
 
-// ── PR.Pair builders ────────────────────────────────────────────────────────
+// ── curried builders ───────────────────────────────────────────────────────
 
-func buildStockSuggestion(
-	p stockSuggestionPair,
-) *models.StockSuggestion {
-	item := PR.Head(p)
-	enums := PR.Tail(p)
-
-	return &models.StockSuggestion{
-		ID:          item.Id,
-		Entity:      enums.F1,
-		Field:       enums.F2,
-		DisplayText: item.DisplayText,
-		Score:       item.Score,
-	}
-}
+// buildStockSuggestion is a curried builder: partial application with the
+// stock item yields a function of the resolved (entity, field) enums, so the
+// pipeline stays data-last without a pair carrier.
+var buildStockSuggestion = F.Curry2(
+	func(
+		item *pb.StockSuggestion,
+		enums stockSuggestionEnums,
+	) *models.StockSuggestion {
+		return &models.StockSuggestion{
+			ID:          item.Id,
+			Entity:      enums.F1,
+			Field:       enums.F2,
+			DisplayText: item.DisplayText,
+			Score:       item.Score,
+		}
+	},
+)
 
 // convertSuggestionItem projects one protobuf suggestion onto the GraphQL
-// type by pairing the item with its resolved (entity, field) tuple, sequencing
-// the Pair into Either, and mapping buildStockSuggestion.
+// type by sequencing the resolved (entity, field) enum lookups into a tuple
+// Either and mapping the curried builder over it.
 func convertSuggestionItem(
 	item *pb.StockSuggestion,
 ) E.Either[error, *models.StockSuggestion] {
 	entity := toGQLEntity(item.Entity)
 	field := toGQLSearchField(item.Field)
-	enums := E.SequenceT2(entity, field)
 
-	return F.Pipe2(
-		PR.MakePair(item, enums),
-		PR.Sequence(E.Map[error, stockSuggestionEnums, stockSuggestionPair]),
-		E.Map[error](buildStockSuggestion),
+	return F.Pipe1(
+		E.SequenceT2(entity, field),
+		E.Map[error](buildStockSuggestion(item)),
 	)
 }
 
-func buildAnnotationStockSuggestion(
-	p annoSuggestionPair,
-) *models.StockSuggestion {
-	item := PR.Head(p)
-	field := PR.Tail(p)
-
-	return &models.StockSuggestion{
-		ID:          item.EntryId,
-		Entity:      models.StockEntityTypeStrain,
-		Field:       field,
-		DisplayText: item.DisplayText,
-		Score:       item.Score,
-	}
-}
+// buildAnnotationStockSuggestion is a curried builder: partial application
+// with the annotation item yields a function of the resolved field enum, so
+// the pipeline stays data-last without a pair carrier.
+var buildAnnotationStockSuggestion = F.Curry2(
+	func(
+		item *anno.AnnotationSuggestion,
+		field models.StockSearchFieldEnum,
+	) *models.StockSuggestion {
+		return &models.StockSuggestion{
+			ID:          item.EntryId,
+			Entity:      models.StockEntityTypeStrain,
+			Field:       field,
+			DisplayText: item.DisplayText,
+			Score:       item.Score,
+		}
+	},
+)
 
 // convertAnnotationSuggestionItem projects one protobuf annotation suggestion
-// onto the GraphQL StockSuggestion type by pairing the item with its resolved
-// field enum, sequencing the Pair into Either, and mapping
-// buildAnnotationStockSuggestion.
+// onto the GraphQL StockSuggestion type by resolving its field enum and
+// mapping the curried builder over it.
 func convertAnnotationSuggestionItem(
 	item *anno.AnnotationSuggestion,
 ) E.Either[error, *models.StockSuggestion] {
-	field := toGQLAnnotationSearchField(item.Field)
-
 	return F.Pipe2(
-		PR.MakePair(item, field),
-		PR.Sequence(E.Map[error, models.StockSearchFieldEnum, annoSuggestionPair]),
-		E.Map[error](buildAnnotationStockSuggestion),
+		item.Field,
+		toGQLAnnotationSearchField,
+		E.Map[error](buildAnnotationStockSuggestion(item)),
 	)
 }
 
@@ -373,36 +370,37 @@ func resolveProtoEntity(
 	)
 }
 
-func buildSuggestionParameters(
-	p suggestionParamPair,
-) *pb.StockAutocompleteParameters {
-	s := PR.Head(p)
-	entity := PR.Tail(p)
-
-	return &pb.StockAutocompleteParameters{
-		Data: &pb.StockAutocompleteParameters_Data{
-			Type: "stock",
-			Attributes: &pb.StockAutocompleteAttributes{
-				Query:  s.query,
-				Limit:  resolveSuggestionLimit(s.limit),
-				Entity: entity,
+// buildSuggestionParameters is a curried builder: partial application with
+// the request state yields a function of the resolved proto entity, so the
+// pipeline stays data-last without a pair carrier.
+var buildSuggestionParameters = F.Curry2(
+	func(
+		s listStockSuggestionsContext,
+		entity pb.StockEntity,
+	) *pb.StockAutocompleteParameters {
+		return &pb.StockAutocompleteParameters{
+			Data: &pb.StockAutocompleteParameters_Data{
+				Type: "stock",
+				Attributes: &pb.StockAutocompleteAttributes{
+					Query:  s.query,
+					Limit:  resolveSuggestionLimit(s.limit),
+					Entity: entity,
+				},
 			},
-		},
-	}
-}
+		}
+	},
+)
 
 // suggestionParamsFromState derives the stock request params from the caller
-// supplied fields by pairing state with the resolved proto entity, sequencing
-// the Pair into Either, and mapping buildSuggestionParameters.
+// supplied fields by resolving the proto entity and mapping the curried
+// builder over it.
 func suggestionParamsFromState(
 	s listStockSuggestionsContext,
 ) E.Either[error, *pb.StockAutocompleteParameters] {
-	entity := resolveProtoEntity(s.entity)
-
 	return F.Pipe2(
-		PR.MakePair(s, entity),
-		PR.Sequence(E.Map[error, pb.StockEntity, suggestionParamPair]),
-		E.Map[error](buildSuggestionParameters),
+		s.entity,
+		resolveProtoEntity,
+		E.Map[error](buildSuggestionParameters(s)),
 	)
 }
 
