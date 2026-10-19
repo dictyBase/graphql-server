@@ -123,7 +123,10 @@ func (srs *StrainResolver) Parent(
 	obj *models.Strain,
 ) (*models.Strain, error) {
 	parent := obj.Parent
-	if parent == nil {
+	// The protobuf Parent attribute deserializes to a pointer to an empty
+	// string when the stored parent is unset, so a bare nil check would call
+	// GetStrain with Id: "" and surface a spurious InvalidArgument RPC.
+	if parent == nil || *parent == "" {
 		return &models.Strain{}, nil
 	}
 	n, err := srs.Client.GetStrain(ctx, &pb.StockId{Id: *parent})
