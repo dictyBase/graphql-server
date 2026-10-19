@@ -392,7 +392,7 @@ func (qrs *QueryResolver) ListStockSuggestions(
 ) (*models.StockSuggestionList, error) {
 	stockClient := qrs.GetStockClient(registry.STOCK)
 	annoClient := qrs.GetAnnotationClient(registry.ANNOTATION)
-	result := F.Pipe6(
+	result := F.Pipe5(
 		IOE.Of[error](listStockSuggestionsContext{
 			client:     stockClient,
 			annoClient: annoClient,
@@ -402,11 +402,7 @@ func (qrs *QueryResolver) ListStockSuggestions(
 			entity:     entity,
 		}),
 		IOE.ChainEitherK(withSuggestionParams),
-		IOE.Bind(suggestionCollectionLens.Set, fetchSuggestionCollection),
-		IOE.Bind(
-			annoSuggestionCollectionLens.Set,
-			fetchAnnotationSuggestionsForEntity,
-		),
+		IOE.Chain(fetchSuggestionCollections),
 		IOE.ChainEitherK(toStockSuggestionList),
 		ioeutils.ToEither[error, *models.StockSuggestionList],
 		E.Fold(onStockSuggestionListError, onStockSuggestionListSuccess),
