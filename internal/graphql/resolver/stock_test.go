@@ -1823,6 +1823,12 @@ func TestSearchStocksError(t *testing.T) {
 		Return(nil, fmt.Errorf("stock service unavailable"))
 
 	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(mocks.MockAnnotationSearchResultCollection(), nil)
 
 	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
@@ -1841,7 +1847,7 @@ func TestSearchStocksError(t *testing.T) {
 	require.ErrorContains(err, "stock service unavailable")
 	require.ErrorContains(err, "search stocks for query")
 	require.NotNil(result, "should return empty search list on error")
-	mockedAnnoClient.AssertNotCalled(t, "SearchAnnotation")
+	mockedStockClient.AssertNotCalled(t, "ListStrainsByIds")
 }
 
 func TestSearchStocksAnnotationError(t *testing.T) {
@@ -2088,6 +2094,56 @@ func TestSearchStocksInvalidAnnotationFieldEnum(t *testing.T) {
 	)
 	require.Error(err)
 	require.ErrorContains(err, "unexpected annotation search field")
+}
+
+func TestSearchStocksConcurrentFetch(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	stockEntered := make(chan struct{})
+	annoEntered := make(chan struct{})
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.On(
+		"SearchStock",
+		mock.Anything,
+		mock.AnythingOfType("*stock.StockSearchParameters"),
+	).Run(func(_ mock.Arguments) {
+		close(stockEntered)
+		<-annoEntered
+	}).Return(mocks.MockStockSearchResultCollection(), nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			&pb.StockIdList{Id: []string{mocks.MockAnnoSearchStrainID, mocks.MockStockSearchID}},
+		).
+		Return(mocks.MockSearchStrainList(), nil)
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.On(
+		"SearchAnnotation",
+		mock.Anything,
+		mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+	).Run(func(_ mock.Arguments) {
+		close(annoEntered)
+		<-stockEntered
+	}).Return(mocks.MockAnnotationSearchResultCollection(), nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.NoError(err)
+	require.Len(result.Results, 4)
 }
 
 func TestConvertAnnotationSuggestionItem(t *testing.T) {
