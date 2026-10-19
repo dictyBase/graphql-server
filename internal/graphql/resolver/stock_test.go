@@ -973,6 +973,11 @@ func TestListStockSuggestionsError(t *testing.T) {
 	).Return(nil, fmt.Errorf("stock service unavailable"))
 
 	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+	mockedAnnoClient.On(
+		"AutocompleteAnnotation",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
+	).Return(mocks.MockAnnotationSuggestionCollection(), nil)
 
 	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
@@ -991,6 +996,7 @@ func TestListStockSuggestionsError(t *testing.T) {
 	require.ErrorContains(err, "stock service unavailable")
 	require.NotNil(result, "should return empty suggestion list on error")
 	mockedStockClient.AssertExpectations(t)
+	mockedAnnoClient.AssertExpectations(t)
 }
 
 func TestListStockSuggestionsInvalidEntityEnum(t *testing.T) {
@@ -1264,6 +1270,52 @@ func TestListStockSuggestionsInvalidAnnotationFieldEnum(t *testing.T) {
 	)
 	require.Error(err)
 	require.ErrorContains(err, "unexpected annotation search field")
+	mockedStockClient.AssertExpectations(t)
+	mockedAnnoClient.AssertExpectations(t)
+}
+
+func TestListStockSuggestionsConcurrentFetch(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	stockEntered := make(chan struct{})
+	annoEntered := make(chan struct{})
+
+	mockedStockClient := new(clients.StockServiceClient)
+	mockedStockClient.On(
+		"AutocompleteStock",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*stock.StockAutocompleteParameters"),
+	).Run(func(_ mock.Arguments) {
+		close(stockEntered)
+		<-annoEntered
+	}).Return(mocks.MockStockSuggestionCollection(), nil)
+
+	mockedAnnoClient := new(clients.TaggedAnnotationServiceClient)
+	mockedAnnoClient.On(
+		"AutocompleteAnnotation",
+		mock.MatchedBy(func(ctx context.Context) bool { return true }),
+		mock.AnythingOfType("*annotation.AnnotationAutocompleteParameters"),
+	).Run(func(_ mock.Arguments) {
+		close(annoEntered)
+		<-stockEntered
+	}).Return(mocks.MockAnnotationSuggestionCollection(), nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.ListStockSuggestions(
+		context.Background(),
+		"ax4",
+		nil,
+		nil,
+	)
+	require.NoError(err)
+	require.Len(result.Suggestions, 4)
 	mockedStockClient.AssertExpectations(t)
 	mockedAnnoClient.AssertExpectations(t)
 }

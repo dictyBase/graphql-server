@@ -510,6 +510,21 @@ var (
 	)
 )
 
+// fetchSuggestionCollections runs the stock and annotation autocomplete RPCs
+// concurrently and attaches both collections to the state struct.
+func fetchSuggestionCollections(
+	s listStockSuggestionsContext,
+) IOE.IOEither[error, listStockSuggestionsContext] {
+	stockSuggestions := fetchSuggestionCollection(s)
+	annoSuggestions := fetchAnnotationSuggestionsForEntity(s)
+
+	return F.Pipe2(
+		IOE.Of[error](s),
+		IOE.ApSL(suggestionCollectionLens, stockSuggestions),
+		IOE.ApSL(annoSuggestionCollectionLens, annoSuggestions),
+	)
+}
+
 func convertStockSuggestionsFromState(
 	s listStockSuggestionsContext,
 ) E.Either[error, []*models.StockSuggestion] {
