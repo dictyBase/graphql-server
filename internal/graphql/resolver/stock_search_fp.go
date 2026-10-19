@@ -545,6 +545,21 @@ var (
 	)
 )
 
+// fetchSearchCollections runs the stock and annotation full-search RPCs
+// concurrently and attaches both collections to the state struct.
+func fetchSearchCollections(
+	s listStockSearchContext,
+) IOE.IOEither[error, listStockSearchContext] {
+	stockSearch := fetchSearchCollection(s)
+	annoSearch := fetchAnnotationSearchForEntity(s)
+
+	return F.Pipe2(
+		IOE.Of[error](s),
+		IOE.ApSL(searchCollectionLens, stockSearch),
+		IOE.ApSL(annoSearchCollectionLens, annoSearch),
+	)
+}
+
 func annoSearchEntryID(item *anno.AnnotationSearchResult) string {
 	return item.GetEntryId()
 }

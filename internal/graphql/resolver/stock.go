@@ -444,7 +444,7 @@ func (qrs *QueryResolver) SearchStocks(
 ) (*models.StockSearchResultList, error) {
 	stockClient := qrs.GetStockClient(registry.STOCK)
 	annoClient := qrs.GetAnnotationClient(registry.ANNOTATION)
-	result := F.Pipe7(
+	result := F.Pipe6(
 		IOE.Of[error](listStockSearchContext{
 			client:     stockClient,
 			annoClient: annoClient,
@@ -454,11 +454,7 @@ func (qrs *QueryResolver) SearchStocks(
 			entity:     entity,
 		}),
 		IOE.ChainEitherK(withSearchParams),
-		IOE.Bind(searchCollectionLens.Set, fetchSearchCollection),
-		IOE.Bind(
-			annoSearchCollectionLens.Set,
-			fetchAnnotationSearchForEntity,
-		),
+		IOE.Chain(fetchSearchCollections),
 		IOE.Bind(
 			strainMetaByIDLens.Set,
 			fetchStrainMetadataForAnnotationHits,
