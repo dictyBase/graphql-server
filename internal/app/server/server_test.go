@@ -2,7 +2,9 @@ package server
 
 import (
 	"flag"
+	"net/http"
 	"testing"
+	"time"
 
 	"github.com/urfave/cli"
 )
@@ -69,5 +71,15 @@ func TestValidateAuthFlagsEnabledComplete(t *testing.T) {
 	})
 	if err := validateAuthFlags(ctx, true); err != nil {
 		t.Fatalf("expected no error with all flags set, got %s", err)
+	}
+}
+
+// TestNewGraphQLServerWriteTimeout pins the write timeout to the ingress
+// proxy-read-timeout (nginx default 60s) so slow stock/annotation searches
+// return GraphQL responses instead of 502s from a truncated server write.
+func TestNewGraphQLServerWriteTimeout(t *testing.T) {
+	srv := newGraphQLServer(http.NotFoundHandler())
+	if want := 60 * time.Second; srv.WriteTimeout != want {
+		t.Fatalf("expected WriteTimeout %s, got %s", want, srv.WriteTimeout)
 	}
 }
