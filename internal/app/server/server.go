@@ -65,12 +65,7 @@ func RunGraphQLServer(cltx *cli.Context) error {
 	router.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	router.Handle("/graphql", srv)
 	log.Debugf("connect to port 8080 for GraphQL playground")
-	hsrv := &http.Server{
-		Addr:         ":8080",
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		Handler:      router,
-	}
+	hsrv := newGraphQLServer(router)
 	log.Infof(
 		"going to start graphql server with authentication enabled %t, jwt-audience %s and jwt-issuer %s",
 		authEnabled,
@@ -80,6 +75,23 @@ func RunGraphQLServer(cltx *cli.Context) error {
 	log.Fatal(hsrv.ListenAndServe())
 
 	return nil
+}
+
+// graphqlServerWriteTimeout matches the ingress proxy-read-timeout (the
+// nginx default, 60s). Strain and stock GraphQL queries regularly run
+// 10-15s against ArangoDB; a 10s server write deadline truncates those
+// responses and surfaces as upstream 502s at the ingress.
+const graphqlServerWriteTimeout = 60 * time.Second
+
+// newGraphQLServer builds the HTTP server bound to :8080. The write timeout
+// is extracted so the timeout contract stays pinned by a unit test.
+func newGraphQLServer(handler http.Handler) *http.Server {
+	return &http.Server{
+		Addr:         ":8080",
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: graphqlServerWriteTimeout,
+		Handler:      handler,
+	}
 }
 
 // validateAuthFlags ensures the logto related flags are present when
