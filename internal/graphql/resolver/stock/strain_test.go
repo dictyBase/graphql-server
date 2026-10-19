@@ -238,3 +238,21 @@ func TestStrainInStockError(t *testing.T) {
 	require.ErrorContains(err, "from inventory")
 	require.False(inStock, "should return false on an inventory service failure")
 }
+
+// TestParentEmptyString pins the guard: a strain whose protobuf parent
+// attribute deserialized to a pointer to an empty string must short-circuit
+// to the empty Strain model instead of calling GetStrain with Id: "".
+func TestParentEmptyString(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	r := strainResolver(mocks.MockedAnnotationClient())
+	empty := ""
+	obj := ConvertToStrainModel(
+		"DBS123456",
+		mocks.MockStrainInputWithParams("kenny@bania.com", ""),
+	)
+	obj.Parent = &empty
+	p, err := r.Parent(context.Background(), obj)
+	assert.NoError(err, "expect no error for an empty parent string")
+	assert.Empty(p.ID, "expect the empty Strain model, no RPC for an empty parent")
+}
