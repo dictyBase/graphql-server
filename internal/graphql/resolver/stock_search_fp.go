@@ -24,6 +24,7 @@ import (
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -32,14 +33,20 @@ import (
 const (
 	defaultSearchLimit       = 50
 	maxAnnotationSearchLimit = int64(50)
+	// bacterialSearchAnnoLimit caps the single ListAnnotations query that
+	// resolves bacterial food source strains for full search results.
+	bacterialSearchAnnoLimit = int64(100)
 	// minAnnotationSearchQueryRunes is the minimum trimmed query length, in
 	// runes, that modware-annotation accepts for a full search.
 	minAnnotationSearchQueryRunes = 2
-	// searchStockTypeRegular is the GraphQL stock_type for non-GWDI and
-	// non-GoldenBraid stocks.
+	// searchStockTypeRegular is the GraphQL stock_type for non-GWDI,
+	// non-bacterial, and non-GoldenBraid stocks.
 	searchStockTypeRegular = "regular"
 	// searchStockTypeGwdi is the GraphQL stock_type for REMI-seq strains.
 	searchStockTypeGwdi = "gwdi"
+	// searchStockTypeBacterial is the GraphQL stock_type for bacterial
+	// strains.
+	searchStockTypeBacterial = "bacterial"
 	// searchStockTypeGoldenBraid is the GraphQL stock_type for GB vector
 	// plasmids.
 	searchStockTypeGoldenBraid = "goldenbraid"
@@ -74,6 +81,7 @@ type listStockSearchContext struct {
 	annoResults    []*models.StockSearchResult
 	effectiveLimit int
 	mergedResults  []*models.StockSearchResult
+	bacterialIDs   map[string]bool
 }
 
 type (
@@ -196,6 +204,18 @@ var (
 			return s
 		},
 	)
+	bacterialIDsLens = L.MakeLens(
+		func(s listStockSearchContext) map[string]bool {
+			return s.bacterialIDs
+		},
+		func(
+			s listStockSearchContext,
+			ids map[string]bool,
+		) listStockSearchContext {
+			s.bacterialIDs = ids
+			return s
+		},
+	)
 )
 
 // ── enum conversions ────────────────────────────────────────────────────────
@@ -233,6 +253,7 @@ var protoToGQLFullAnnotationSearchField = map[anno.AnnotationSearchField]models.
 // GraphQL stock_type strings. Any other term defaults to searchStockTypeRegular.
 var ontologyTermToSearchStockType = map[string]string{
 	registry.GwdiStrainTag:         searchStockTypeGwdi,
+	registry.BacterialStrainTag:    searchStockTypeBacterial,
 	registry.GoldenBraidPlasmidTag: searchStockTypeGoldenBraid,
 }
 
@@ -748,6 +769,18 @@ func searchResultDisplayText(item *models.StockSearchResult) string {
 	return item.DisplayText
 }
 
+func searchResultEntity(item *models.StockSearchResult) models.StockEntityType {
+	return item.Entity
+}
+
+func searchResultStockType(item *models.StockSearchResult) string {
+	return item.StockType
+}
+
+func mergedSearchResults(s listStockSearchContext) []*models.StockSearchResult {
+	return s.mergedResults
+}
+
 func requestedSearchLimit(s listStockSearchContext) O.Option[int] {
 	return F.Pipe2(
 		s.limit,
@@ -818,32 +851,186 @@ func mergeSearchResultsFromState(
 	)
 }
 
+var (
+	searchEntityEq = EQ.FromStrictEquals[models.StockEntityType]()
+	stockTypeStrEq = EQ.FromStrictEquals[string]()
+
+	isStrainSearchResult = F.Pipe1(
+		models.StockEntityTypeStrain,
+		EQ.Equals(searchEntityEq),
+	)
+	isRegularStockType = F.Pipe1(
+		searchStockTypeRegular,
+		EQ.Equals(stockTypeStrEq),
+	)
+	isStrainResultItem = F.Pipe1(
+		isStrainSearchResult,
+		P.ContraMap(searchResultEntity),
+	)
+	isRegularResultItem = F.Pipe1(
+		isRegularStockType,
+		P.ContraMap(searchResultStockType),
+	)
+	isRegularStrainResultItem = F.Pipe1(
+		isStrainResultItem,
+		P.And(isRegularResultItem),
+	)
+	hasRegularStrainResult   = A.Any(isRegularStrainResultItem)
+	hasRegularStrainInMerged = F.Pipe1(
+		hasRegularStrainResult,
+		P.ContraMap(mergedSearchResults),
+	)
+	isNotPlasmidSearchRequest = F.Pipe1(
+		isPlasmidSearchRequest,
+		P.Not,
+	)
+	needsBacterialStrainLookup = F.Pipe1(
+		isNotPlasmidSearchRequest,
+		P.And(hasRegularStrainInMerged),
+	)
+	recoverBacterialListNotFound = F.Pipe1(
+		isSearchNotFoundStatus,
+		P.Fold(
+			IOE.Left[*anno.TaggedAnnotationCollection, error],
+			func(error) IOE.IOEither[error, *anno.TaggedAnnotationCollection] {
+				return IOE.Of[error](&anno.TaggedAnnotationCollection{})
+			},
+		),
+	)
+	fetchBacterialStrainIDsForSearch = F.Pipe1(
+		needsBacterialStrainLookup,
+		P.Fold(
+			emptyBacterialIDMap,
+			fetchBacterialStrainIDMap,
+		),
+	)
+)
+
+func toBacterialIDEntry(
+	item *anno.TaggedAnnotationCollection_Data,
+) R.Entry[string, bool] {
+	id := item.GetAttributes().GetEntryId()
+
+	return PR.MakePair(id, true)
+}
+
+func buildBacterialIDMap(
+	coll *anno.TaggedAnnotationCollection,
+) map[string]bool {
+	return F.Pipe2(
+		coll.GetData(),
+		A.Map(toBacterialIDEntry),
+		R.FromEntries[string, bool],
+	)
+}
+
+func emptyBacterialIDMap(
+	_ listStockSearchContext,
+) IOE.IOEither[error, map[string]bool] {
+	empty := R.Empty[string, bool]()
+
+	return IOE.Of[error](empty)
+}
+
+func fetchBacterialStrainIDMap(
+	s listStockSearchContext,
+) IOE.IOEither[error, map[string]bool] {
+	req := &anno.ListParameters{
+		Limit:  bacterialSearchAnnoLimit,
+		Filter: resolverutils.BacterialAnnotationFilter(),
+	}
+	rawFetch := func() (*anno.TaggedAnnotationCollection, error) {
+		return s.annoClient.ListAnnotations(s.gctx, req)
+	}
+
+	return F.Pipe3(
+		IOE.TryCatchError(rawFetch),
+		IOE.OrElse(recoverBacterialListNotFound),
+		IOE.MapLeft[*anno.TaggedAnnotationCollection](func(err error) error {
+			return fmt.Errorf(
+				"fetch bacterial strain annotations for query %q: %w",
+				s.query,
+				err,
+			)
+		}),
+		IOE.Map[error](buildBacterialIDMap),
+	)
+}
+
+func withBacterialStockType(
+	item *models.StockSearchResult,
+) *models.StockSearchResult {
+	copied := *item
+	copied.StockType = searchStockTypeBacterial
+
+	return &copied
+}
+
+func hasBacterialEntryID(
+	bacterialIDs map[string]bool,
+) P.Predicate[*models.StockSearchResult] {
+	hasID := func(id string) bool {
+		return F.Pipe2(
+			bacterialIDs,
+			R.Lookup[bool](id),
+			O.GetOrElse(F.Constant(false)),
+		)
+	}
+
+	return F.Pipe1(
+		hasID,
+		P.ContraMap(searchResultID),
+	)
+}
+
+func promoteBacterialStrainItem(
+	bacterialIDs map[string]bool,
+) func(*models.StockSearchResult) *models.StockSearchResult {
+	isMember := hasBacterialEntryID(bacterialIDs)
+	isTarget := F.Pipe1(
+		isRegularStrainResultItem,
+		P.And(isMember),
+	)
+
+	return F.Pipe1(
+		isTarget,
+		P.Fold(
+			F.Identity[*models.StockSearchResult],
+			withBacterialStockType,
+		),
+	)
+}
+
 func buildMergedSearchResultList(
 	s listStockSearchContext,
 ) *models.StockSearchResultList {
 	limit := s.effectiveLimit
+	promote := promoteBacterialStrainItem(s.bacterialIDs)
+	results := F.Pipe1(
+		s.mergedResults,
+		A.Map(promote),
+	)
 
 	return &models.StockSearchResultList{
-		Results:    s.mergedResults,
+		Results:    results,
 		Limit:      &limit,
-		TotalCount: len(s.mergedResults),
+		TotalCount: len(results),
 	}
 }
 
-// toStockSearchList converts both collections, resolves the effective limit,
-// merges and deduplicates the search results, and projects the final GraphQL
-// list in a single flat point-free Either pipe, chained into the IOEither
-// pipeline via IOE.ChainEitherK.
-func toStockSearchList(
+// withMergedSearchResults converts both collections, resolves the effective
+// limit, and merges and deduplicates the search results on the state struct in
+// a single flat point-free Either pipe, chained into the IOEither pipeline via
+// IOE.ChainEitherK.
+func withMergedSearchResults(
 	s listStockSearchContext,
-) E.Either[error, *models.StockSearchResultList] {
-	return F.Pipe6(
+) E.Either[error, listStockSearchContext] {
+	return F.Pipe5(
 		s,
 		E.Of[error, listStockSearchContext],
 		E.Bind(stockResultsLens.Set, convertStockSearchResultsFromState),
 		E.Bind(annoResultsLens.Set, convertAnnoSearchResultsFromState),
 		E.Let[error](effectiveSearchLimitLens.Set, effectiveSearchLimit),
 		E.Let[error](mergedResultsLens.Set, mergeSearchResultsFromState),
-		E.Map[error](buildMergedSearchResultList),
 	)
 }

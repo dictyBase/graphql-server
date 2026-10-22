@@ -1465,6 +1465,15 @@ func TestSearchStocksShortQuerySkipsAnnotationSearch(t *testing.T) {
 		Return(mocks.MockStockSearchResultCollection(), nil)
 
 	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		ListAnnotations(
+			mock.Anything,
+			&anno.ListParameters{
+				Limit:  100,
+				Filter: resolverutils.BacterialAnnotationFilter(),
+			},
+		).
+		Return(mocks.MockBacterialStrainListAnno(), nil)
 
 	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
@@ -1524,6 +1533,15 @@ func TestSearchStocksPassesExpectedParams(t *testing.T) {
 			}),
 		).
 		Return(mocks.MockAnnotationSearchResultCollection(), nil)
+	mockedAnnoClient.EXPECT().
+		ListAnnotations(
+			mock.Anything,
+			&anno.ListParameters{
+				Limit:  100,
+				Filter: resolverutils.BacterialAnnotationFilter(),
+			},
+		).
+		Return(mocks.MockBacterialStrainListAnno(), nil)
 
 	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
@@ -1580,6 +1598,15 @@ func TestSearchStocksDefaultsToBothEntities(t *testing.T) {
 			}),
 		).
 		Return(mocks.MockAnnotationSearchResultCollection(), nil)
+	mockedAnnoClient.EXPECT().
+		ListAnnotations(
+			mock.Anything,
+			&anno.ListParameters{
+				Limit:  100,
+				Filter: resolverutils.BacterialAnnotationFilter(),
+			},
+		).
+		Return(mocks.MockBacterialStrainListAnno(), nil)
 
 	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
@@ -1632,6 +1659,15 @@ func TestSearchStocksClampsAnnotationLimitAboveFifty(t *testing.T) {
 			}),
 		).
 		Return(mocks.MockAnnotationSearchResultCollection(), nil)
+	mockedAnnoClient.EXPECT().
+		ListAnnotations(
+			mock.Anything,
+			&anno.ListParameters{
+				Limit:  100,
+				Filter: resolverutils.BacterialAnnotationFilter(),
+			},
+		).
+		Return(mocks.MockBacterialStrainListAnno(), nil)
 
 	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
@@ -1674,6 +1710,15 @@ func TestSearchStocksEmptyAnnotationSkipsListStrainsByIds(t *testing.T) {
 			Data: []*anno.AnnotationSearchResult{},
 			Meta: &anno.Meta{Limit: 50, Total: 0},
 		}, nil)
+	mockedAnnoClient.EXPECT().
+		ListAnnotations(
+			mock.Anything,
+			&anno.ListParameters{
+				Limit:  100,
+				Filter: resolverutils.BacterialAnnotationFilter(),
+			},
+		).
+		Return(mocks.MockBacterialStrainListAnno(), nil)
 
 	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
@@ -1748,6 +1793,15 @@ func TestSearchStocksDropsStaleAnnotationStrainID(t *testing.T) {
 			},
 			Meta: &anno.Meta{Limit: 50, Total: 2},
 		}, nil)
+	mockedAnnoClient.EXPECT().
+		ListAnnotations(
+			mock.Anything,
+			&anno.ListParameters{
+				Limit:  100,
+				Filter: resolverutils.BacterialAnnotationFilter(),
+			},
+		).
+		Return(mocks.MockBacterialStrainListAnno(), nil)
 
 	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
@@ -1804,6 +1858,15 @@ func TestSearchStocksAllStaleAnnotationIDsNotFound(t *testing.T) {
 			},
 			Meta: &anno.Meta{Limit: 50, Total: 1},
 		}, nil)
+	mockedAnnoClient.EXPECT().
+		ListAnnotations(
+			mock.Anything,
+			&anno.ListParameters{
+				Limit:  100,
+				Filter: resolverutils.BacterialAnnotationFilter(),
+			},
+		).
+		Return(mocks.MockBacterialStrainListAnno(), nil)
 
 	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
@@ -2141,6 +2204,15 @@ func TestSearchStocksConcurrentFetch(t *testing.T) {
 		close(annoEntered)
 		<-stockEntered
 	}).Return(mocks.MockAnnotationSearchResultCollection(), nil)
+	mockedAnnoClient.EXPECT().
+		ListAnnotations(
+			mock.Anything,
+			&anno.ListParameters{
+				Limit:  100,
+				Filter: resolverutils.BacterialAnnotationFilter(),
+			},
+		).
+		Return(mocks.MockBacterialStrainListAnno(), nil)
 
 	reg := &bacterialStrainRegistry{
 		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
@@ -2557,8 +2629,126 @@ func TestResolveSearchStockType(t *testing.T) {
 	require := require.New(t)
 
 	require.Equal("gwdi", resolveSearchStockType(registry.GwdiStrainTag))
+	require.Equal("bacterial", resolveSearchStockType(registry.BacterialStrainTag))
 	require.Equal("goldenbraid", resolveSearchStockType(registry.GoldenBraidPlasmidTag))
 	require.Equal("regular", resolveSearchStockType(registry.GeneralStrainTag))
 	require.Equal("regular", resolveSearchStockType(registry.RegularPlasmidTag))
 	require.Equal("regular", resolveSearchStockType(""))
+}
+
+func TestSearchStocksPromotesBacterialStrainsFromCharacteristics(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			&pb.StockIdList{Id: []string{mocks.MockAnnoSearchStrainID, mocks.MockStockSearchID}},
+		).
+		Return(mocks.MockSearchStrainList(), nil)
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(mocks.MockAnnotationSearchResultCollection(), nil)
+	mockedAnnoClient.EXPECT().
+		ListAnnotations(
+			mock.Anything,
+			&anno.ListParameters{
+				Limit:  100,
+				Filter: resolverutils.BacterialAnnotationFilter(),
+			},
+		).
+		Return(&anno.TaggedAnnotationCollection{
+			Data: []*anno.TaggedAnnotationCollection_Data{
+				mocks.MockBacterialAnnoEntry("DBS0236127"),
+				mocks.MockBacterialAnnoEntry(mocks.MockAnnoSearchStrainID),
+				mocks.MockBacterialAnnoEntry(mocks.MockStockSearchID),
+			},
+			Meta: &anno.Meta{Limit: 100},
+		}, nil)
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.NoError(err)
+	require.Len(result.Results, 4)
+	require.Equal("gwdi", result.Results[0].StockType, "GWDI strain stays gwdi")
+	require.Equal("bacterial", result.Results[1].StockType, "annotation hit with bacterial characteristic becomes bacterial")
+	require.Equal("bacterial", result.Results[2].StockType, "stock hit with bacterial characteristic becomes bacterial")
+	require.Equal("goldenbraid", result.Results[3].StockType, "GoldenBraid plasmid stays goldenbraid")
+}
+
+func TestSearchStocksBacterialLookupNotFoundKeepsRegular(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	mockedStockClient := clients.NewStockServiceClient(t)
+	mockedStockClient.EXPECT().
+		SearchStock(
+			mock.Anything,
+			mock.AnythingOfType("*stock.StockSearchParameters"),
+		).
+		Return(mocks.MockStockSearchResultCollection(), nil)
+	mockedStockClient.EXPECT().
+		ListStrainsByIds(
+			mock.Anything,
+			&pb.StockIdList{Id: []string{mocks.MockAnnoSearchStrainID, mocks.MockStockSearchID}},
+		).
+		Return(mocks.MockSearchStrainList(), nil)
+
+	mockedAnnoClient := clients.NewTaggedAnnotationServiceClient(t)
+	mockedAnnoClient.EXPECT().
+		SearchAnnotation(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
+		).
+		Return(mocks.MockAnnotationSearchResultCollection(), nil)
+	mockedAnnoClient.EXPECT().
+		ListAnnotations(
+			mock.Anything,
+			&anno.ListParameters{
+				Limit:  100,
+				Filter: resolverutils.BacterialAnnotationFilter(),
+			},
+		).
+		Return(nil, status.Error(codes.NotFound, "no bacterial annotations"))
+
+	reg := &bacterialStrainRegistry{
+		MockRegistry: &mocks.MockRegistry{ConnMap: nil},
+		stockClient:  mockedStockClient,
+		annoClient:   mockedAnnoClient,
+	}
+	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+
+	result, err := resolver.SearchStocks(
+		context.Background(),
+		"csa",
+		nil,
+		nil,
+	)
+	require.NoError(err)
+	require.Len(result.Results, 4)
+	require.Equal("regular", result.Results[1].StockType)
+	require.Equal("regular", result.Results[2].StockType)
 }
