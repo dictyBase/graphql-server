@@ -423,6 +423,7 @@ export const SearchStocks = gql`
       summary
       strain_label
       in_stock
+      stock_type
     }
     limit
     totalCount
