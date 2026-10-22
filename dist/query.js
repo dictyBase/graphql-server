@@ -425,6 +425,7 @@ exports.SearchStocks = (0, graphql_tag_1.default) `
       summary
       strain_label
       in_stock
+      stock_type
     }
     limit
     totalCount

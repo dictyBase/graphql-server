@@ -796,6 +796,7 @@ export type StockSearchResult = {
     id: Scalars['ID']['output'];
     in_stock: Scalars['Boolean']['output'];
     score: Scalars['Float']['output'];
+    stock_type: Scalars['String']['output'];
     strain_label: Scalars['String']['output'];
     summary: Scalars['String']['output'];
 };
@@ -1567,6 +1568,7 @@ export type SearchStocksQuery = {
             summary: string;
             strain_label: string;
             in_stock: boolean;
+            stock_type: string;
         }>;
     };
 };

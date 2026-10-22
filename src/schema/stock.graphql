@@ -324,6 +324,9 @@ type StockSearchResult {
   # Whether the stock is in the stock center inventory. Same meaning
   # as the in_stock field of Strain and Plasmid.
   in_stock: Boolean!
+  # Stock type mapped from the ontology term ("gwdi" for REMI-seq
+  # strains, "goldenbraid" for GB vector plasmids, "regular" otherwise).
+  stock_type: String!
 }
 
 # StockSearchResultList returns the results of a full search request.

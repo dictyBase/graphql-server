@@ -13,6 +13,7 @@ query SearchStocks(
       summary
       strain_label
       in_stock
+      stock_type
     }
     limit
     totalCount

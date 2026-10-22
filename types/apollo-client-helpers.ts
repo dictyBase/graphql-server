@@ -346,7 +346,7 @@ export type StockFieldPolicy = {
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_by?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type StockSearchResultKeySpecifier = ('display_text' | 'entity' | 'field' | 'id' | 'in_stock' | 'score' | 'strain_label' | 'summary' | StockSearchResultKeySpecifier)[];
+export type StockSearchResultKeySpecifier = ('display_text' | 'entity' | 'field' | 'id' | 'in_stock' | 'score' | 'stock_type' | 'strain_label' | 'summary' | StockSearchResultKeySpecifier)[];
 export type StockSearchResultFieldPolicy = {
 	display_text?: FieldPolicy<any> | FieldReadFunction<any>,
 	entity?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -354,6 +354,7 @@ export type StockSearchResultFieldPolicy = {
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	in_stock?: FieldPolicy<any> | FieldReadFunction<any>,
 	score?: FieldPolicy<any> | FieldReadFunction<any>,
+	stock_type?: FieldPolicy<any> | FieldReadFunction<any>,
 	strain_label?: FieldPolicy<any> | FieldReadFunction<any>,
 	summary?: FieldPolicy<any> | FieldReadFunction<any>
 };
