@@ -444,7 +444,7 @@ func (qrs *QueryResolver) SearchStocks(
 ) (*models.StockSearchResultList, error) {
 	stockClient := qrs.GetStockClient(registry.STOCK)
 	annoClient := qrs.GetAnnotationClient(registry.ANNOTATION)
-	result := F.Pipe6(
+	result := F.Pipe8(
 		IOE.Of[error](listStockSearchContext{
 			client:     stockClient,
 			annoClient: annoClient,
@@ -459,7 +459,12 @@ func (qrs *QueryResolver) SearchStocks(
 			strainMetaByIDLens.Set,
 			fetchStrainMetadataForAnnotationHits,
 		),
-		IOE.ChainEitherK(toStockSearchList),
+		IOE.ChainEitherK(withMergedSearchResults),
+		IOE.Bind(
+			bacterialIDsLens.Set,
+			fetchBacterialStrainIDsForSearch,
+		),
+		IOE.Map[error](buildMergedSearchResultList),
 		ioeutils.ToEither[error, *models.StockSearchResultList],
 		E.Fold(onStockSearchListError, onStockSearchListSuccess),
 	)
