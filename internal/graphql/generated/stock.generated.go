@@ -977,6 +977,29 @@ func (ec *executionContext) fieldContext_StockSearchResult_in_stock(_ context.Co
 	return graphql.NewScalarFieldContext("StockSearchResult", field, true, true, errors.New("field of type Boolean does not have child fields"))
 }
 
+func (ec *executionContext) _StockSearchResult_stock_type(ctx context.Context, field graphql.CollectedField, obj *models.StockSearchResult) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_StockSearchResult_stock_type(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.StockType, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_StockSearchResult_stock_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("StockSearchResult", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
 func (ec *executionContext) _StockSearchResultList_results(ctx context.Context, field graphql.CollectedField, obj *models.StockSearchResultList) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3564,6 +3587,11 @@ func (ec *executionContext) _StockSearchResult(ctx context.Context, sel ast.Sele
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "stock_type":
+			out.Values[i] = ec._StockSearchResult_stock_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

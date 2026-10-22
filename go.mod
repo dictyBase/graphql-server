@@ -6,7 +6,7 @@ require (
 	github.com/Jeffail/gabs/v2 v2.7.0
 	github.com/dictyBase/aphgrpc v1.4.2
 	github.com/dictyBase/fp-go-loom v0.0.0-20261003160438-079ef0095a48
-	github.com/dictyBase/go-genproto v0.0.0-20261015184742-b50113c639f4
+	github.com/dictyBase/go-genproto v0.0.0-20261022140202-b96fdbebdfbf
 	github.com/emirpasic/gods v1.18.1
 	github.com/fatih/structs v1.1.0
 	github.com/go-chi/chi v4.1.2+incompatible

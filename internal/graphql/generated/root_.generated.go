@@ -363,6 +363,7 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		InStock     func(childComplexity int) int
 		Score       func(childComplexity int) int
+		StockType   func(childComplexity int) int
 		StrainLabel func(childComplexity int) int
 		Summary     func(childComplexity int) int
 	}
@@ -2155,6 +2156,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.StockSearchResult.Score(childComplexity), true
+	case "StockSearchResult.stock_type":
+		if e.ComplexityRoot.StockSearchResult.StockType == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResult.StockType(childComplexity), true
 	case "StockSearchResult.strain_label":
 		if e.ComplexityRoot.StockSearchResult.StrainLabel == nil {
 			break
@@ -3553,6 +3560,9 @@ type StockSearchResult {
   # Whether the stock is in the stock center inventory. Same meaning
   # as the in_stock field of Strain and Plasmid.
   in_stock: Boolean!
+  # Stock type mapped from the ontology term ("gwdi" for REMI-seq
+  # strains, "goldenbraid" for GB vector plasmids, "regular" otherwise).
+  stock_type: String!
 }
 
 # StockSearchResultList returns the results of a full search request.
@@ -4199,6 +4209,8 @@ func (ec *executionContext) childFields_StockSearchResult(ctx context.Context, f
 		return ec.fieldContext_StockSearchResult_strain_label(ctx, field)
 	case "in_stock":
 		return ec.fieldContext_StockSearchResult_in_stock(ctx, field)
+	case "stock_type":
+		return ec.fieldContext_StockSearchResult_stock_type(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type StockSearchResult", field.Name)
 }

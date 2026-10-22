@@ -1361,6 +1361,7 @@ func TestSearchStocks(t *testing.T) {
 		"should match summary",
 	)
 	require.Equal("AX4", first.StrainLabel, "should match strain label")
+	require.Equal("gwdi", first.StockType, "should map REMI-seq strain to gwdi")
 
 	second := result.Results[1]
 	require.Equal("DBS0235559", second.ID, "should include enriched annotation result")
@@ -1378,6 +1379,11 @@ func TestSearchStocks(t *testing.T) {
 		second.StrainLabel,
 		"should enrich strain label from ListStrainsByIds",
 	)
+	require.Equal(
+		"regular",
+		second.StockType,
+		"should map general strain annotation hit to regular",
+	)
 
 	third := result.Results[2]
 	require.Equal("DBS0236127", third.ID)
@@ -1386,6 +1392,7 @@ func TestSearchStocks(t *testing.T) {
 		third.Field,
 		"should map summary field",
 	)
+	require.Equal("regular", third.StockType, "should map general strain to regular")
 
 	plasmid := result.Results[3]
 	require.Equal(
@@ -1395,6 +1402,11 @@ func TestSearchStocks(t *testing.T) {
 	)
 	require.Empty(plasmid.StrainLabel, "plasmid results carry no strain label")
 	require.Empty(plasmid.Summary, "should keep empty summary")
+	require.Equal(
+		"goldenbraid",
+		plasmid.StockType,
+		"should map GB vector plasmid to goldenbraid",
+	)
 }
 
 func TestSearchStocksPlasmidSkipsAnnotationSearch(t *testing.T) {
@@ -1753,6 +1765,7 @@ func TestSearchStocksDropsStaleAnnotationStrainID(t *testing.T) {
 	require.NoError(err)
 	require.Len(result.Results, 1)
 	require.Equal(mocks.MockAnnoSearchStrainID, result.Results[0].ID)
+	require.Equal("regular", result.Results[0].StockType)
 	require.Equal(1, result.TotalCount)
 }
 
@@ -2537,4 +2550,15 @@ func TestMergeSearchResultsTieBreakingAndLimitTruncation(t *testing.T) {
 		effectiveLimit: 50,
 	})
 	require.Empty(empty)
+}
+
+func TestResolveSearchStockType(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+
+	require.Equal("gwdi", resolveSearchStockType(registry.GwdiStrainTag))
+	require.Equal("goldenbraid", resolveSearchStockType(registry.GoldenBraidPlasmidTag))
+	require.Equal("regular", resolveSearchStockType(registry.GeneralStrainTag))
+	require.Equal("regular", resolveSearchStockType(registry.RegularPlasmidTag))
+	require.Equal("regular", resolveSearchStockType(""))
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -260,6 +261,7 @@ func MockStockSearchResultCollection() *stock.StockSearchResultCollection {
 				Score:       1,
 				Summary:     mockStockSearchSummary,
 				StrainLabel: mockStockSearchLabel,
+				StockType:   registry.GwdiStrainTag,
 			},
 			{
 				Id:          "DBS0236127",
@@ -269,6 +271,7 @@ func MockStockSearchResultCollection() *stock.StockSearchResultCollection {
 				Score:       0.5,
 				Summary:     mockStockSearchSummary,
 				StrainLabel: mockStockSearchLabel,
+				StockType:   registry.GeneralStrainTag,
 			},
 			{
 				Id:          "DBP0236126",
@@ -278,6 +281,7 @@ func MockStockSearchResultCollection() *stock.StockSearchResultCollection {
 				Score:       0.25,
 				Summary:     "",
 				StrainLabel: "",
+				StockType:   registry.GoldenBraidPlasmidTag,
 			},
 		},
 		Meta: &stock.Meta{
@@ -294,16 +298,18 @@ func MockSearchStrainList() *stock.StrainList {
 				Type: strainType,
 				Id:   MockAnnoSearchStrainID,
 				Attributes: &stock.StrainAttributes{
-					Summary: "Catenin null mutant strain.",
-					Label:   "aarA-",
+					Summary:             "Catenin null mutant strain.",
+					Label:               "aarA-",
+					DictyStrainProperty: registry.GeneralStrainTag,
 				},
 			},
 			{
 				Type: strainType,
 				Id:   MockStockSearchID,
 				Attributes: &stock.StrainAttributes{
-					Summary: mockStockSearchSummary,
-					Label:   mockStockSearchLabel,
+					Summary:             mockStockSearchSummary,
+					Label:               mockStockSearchLabel,
+					DictyStrainProperty: registry.GwdiStrainTag,
 				},
 			},
 		},

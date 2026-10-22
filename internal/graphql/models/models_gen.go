@@ -345,6 +345,7 @@ type StockSearchResult struct {
 	Summary     string               `json:"summary"`
 	StrainLabel string               `json:"strain_label"`
 	InStock     bool                 `json:"in_stock"`
+	StockType   string               `json:"stock_type"`
 }
 
 type StockSearchResultList struct {
