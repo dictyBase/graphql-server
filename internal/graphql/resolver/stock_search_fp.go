@@ -24,6 +24,7 @@ import (
 	anno "github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/stock"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -34,13 +35,23 @@ const (
 	// minAnnotationSearchQueryRunes is the minimum trimmed query length, in
 	// runes, that modware-annotation accepts for a full search.
 	minAnnotationSearchQueryRunes = 2
+	// searchStockTypeRegular is the GraphQL stock_type for non-GWDI and
+	// non-GoldenBraid stocks.
+	searchStockTypeRegular = "regular"
+	// searchStockTypeGwdi is the GraphQL stock_type for REMI-seq strains.
+	searchStockTypeGwdi = "gwdi"
+	// searchStockTypeGoldenBraid is the GraphQL stock_type for GB vector
+	// plasmids.
+	searchStockTypeGoldenBraid = "goldenbraid"
 )
 
-// strainSearchMetadata holds the stored summary and strain label fetched
-// in batch from the stock service for annotation search hits.
+// strainSearchMetadata holds the stored summary, strain label, and mapped
+// stock type fetched in batch from the stock service for annotation search
+// hits.
 type strainSearchMetadata struct {
 	summary     string
 	strainLabel string
+	stockType   string
 }
 
 // listStockSearchContext carries the full search request through the
@@ -218,6 +229,23 @@ var protoToGQLFullAnnotationSearchField = map[anno.AnnotationSearchField]models.
 	annoFieldPublicNote:  models.StockSearchFieldEnumPublicNote,
 }
 
+// ontologyTermToSearchStockType maps special ontology term labels onto their
+// GraphQL stock_type strings. Any other term defaults to searchStockTypeRegular.
+var ontologyTermToSearchStockType = map[string]string{
+	registry.GwdiStrainTag:         searchStockTypeGwdi,
+	registry.GoldenBraidPlasmidTag: searchStockTypeGoldenBraid,
+}
+
+// resolveSearchStockType maps an ontology term label onto its GraphQL
+// stock_type string, defaulting to "regular".
+func resolveSearchStockType(term string) string {
+	return F.Pipe2(
+		ontologyTermToSearchStockType,
+		R.Lookup[string](term),
+		O.GetOrElse(F.Constant(searchStockTypeRegular)),
+	)
+}
+
 // toGQLFullAnnotationSearchField maps a matched annotation full-search field
 // back to the GraphQL enum. Any unspecified or unknown value fails.
 func toGQLFullAnnotationSearchField(
@@ -313,6 +341,7 @@ func buildStockSearchResult(
 		Score:       item.Score,
 		Summary:     item.Summary,
 		StrainLabel: item.StrainLabel,
+		StockType:   resolveSearchStockType(item.StockType),
 	}
 }
 
@@ -362,6 +391,7 @@ func buildAnnotationStockSearchResult(
 		Score:       item.Score,
 		Summary:     meta.summary,
 		StrainLabel: meta.strainLabel,
+		StockType:   meta.stockType,
 	}
 }
 
@@ -578,9 +608,11 @@ func uniqueAnnotationEntryIDs(
 func toStrainMetaEntry(item *pb.StrainList_Data) strainMetaEntry {
 	id := item.GetId()
 	attrs := item.GetAttributes()
+	prop := attrs.GetDictyStrainProperty()
 	meta := strainSearchMetadata{
 		summary:     attrs.GetSummary(),
 		strainLabel: attrs.GetLabel(),
+		stockType:   resolveSearchStockType(prop),
 	}
 
 	return PR.MakePair(id, meta)

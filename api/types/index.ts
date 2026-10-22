@@ -928,6 +928,7 @@ export type StockSearchResult = {
   id: Scalars['ID']['output'];
   in_stock: Scalars['Boolean']['output'];
   score: Scalars['Float']['output'];
+  stock_type: Scalars['String']['output'];
   strain_label: Scalars['String']['output'];
   summary: Scalars['String']['output'];
 };
@@ -1358,7 +1359,7 @@ export type SearchStocksQueryVariables = Exact<{
 }>;
 
 
-export type SearchStocksQuery = { __typename?: 'Query', searchStocks: { __typename?: 'StockSearchResultList', limit?: number | null, totalCount: number, results: Array<{ __typename?: 'StockSearchResult', id: string, entity: StockEntityType, field: StockSearchFieldEnum, display_text: string, score: number, summary: string, strain_label: string, in_stock: boolean }> } };
+export type SearchStocksQuery = { __typename?: 'Query', searchStocks: { __typename?: 'StockSearchResultList', limit?: number | null, totalCount: number, results: Array<{ __typename?: 'StockSearchResult', id: string, entity: StockEntityType, field: StockSearchFieldEnum, display_text: string, score: number, summary: string, strain_label: string, in_stock: boolean, stock_type: string }> } };
 
 export type ListStockSuggestionsQueryVariables = Exact<{
   query: Scalars['String']['input'];
@@ -2577,6 +2578,7 @@ export const SearchStocksDocument = gql`
       summary
       strain_label
       in_stock
+      stock_type
     }
     limit
     totalCount

@@ -36,8 +36,8 @@ github.com/dictyBase/aphgrpc v1.4.2 h1:jkNyIpUBATNVNTM99TfAHln8UEpzyvNNNuM2+UY6t
 github.com/dictyBase/aphgrpc v1.4.2/go.mod h1:rzi2U95QntAuS6XpqespgZmQ8Ujo2Sq2R5FyhW5adA8=
 github.com/dictyBase/fp-go-loom v0.0.0-20261003160438-079ef0095a48 h1:XJS51U+8Msj96R5MisC9vVxZjWzTJqR5vUQHI2KWhuk=
 github.com/dictyBase/fp-go-loom v0.0.0-20261003160438-079ef0095a48/go.mod h1:ssuMOYMQatT/H4RoicYVt3xZugdXyBDGShHHuperRRM=
-github.com/dictyBase/go-genproto v0.0.0-20261015184742-b50113c639f4 h1:0Cqlye0B3ZYW8WnW4HAoESBYMgwyJaqpCjRnLBorw/w=
-github.com/dictyBase/go-genproto v0.0.0-20261015184742-b50113c639f4/go.mod h1:rlUPhBs4duDUE73MswuLGW9UzbkcTWqQsbpsp/pGqTg=
+github.com/dictyBase/go-genproto v0.0.0-20261022140202-b96fdbebdfbf h1:WB4Gog5jFjhUuV5A4h7pQ5BzsSjeWVEofnYSrRUqKAM=
+github.com/dictyBase/go-genproto v0.0.0-20261022140202-b96fdbebdfbf/go.mod h1:rlUPhBs4duDUE73MswuLGW9UzbkcTWqQsbpsp/pGqTg=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
 github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=
