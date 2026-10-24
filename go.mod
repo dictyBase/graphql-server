@@ -2,7 +2,7 @@ module github.com/dictyBase/graphql-server
 
 require (
 	github.com/99designs/gqlgen v0.17.95
-	github.com/IBM/fp-go/v2 v2.5.2
+	github.com/IBM/fp-go/v2 v2.10.0
 	github.com/Jeffail/gabs/v2 v2.7.0
 	github.com/dictyBase/aphgrpc v1.4.2
 	github.com/dictyBase/fp-go-loom v0.0.0-20261003160438-079ef0095a48
