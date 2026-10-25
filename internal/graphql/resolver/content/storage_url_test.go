@@ -91,6 +91,26 @@ func TestContentStorageURLNormalization(t *testing.T) {
 			expected: `{"a":"https://slimestorage.dictycr.org/editor/assets/2024-10-25/first","b":"https://dictybase.org/papers/123","c":"https://storage.dictybase.dev/other-bucket/file.png","d":"https://slimestorage.dictycr.org/editor/assets/2024-10-25/second"}`,
 		},
 		{
+			name: "leaves external URLs containing the bucket path deeper in the path",
+			resolver: &ContentResolver{
+				StorageURL: "https://slimestorage.dictycr.org",
+				Bucket:     "editor",
+				BucketPath: "assets",
+			},
+			input:    `{"a":"https://doi.org/10.1000/editor/assets/paper","b":"https://github.com/dictybase/editor/assets/code"}`,
+			expected: `{"a":"https://doi.org/10.1000/editor/assets/paper","b":"https://github.com/dictybase/editor/assets/code"}`,
+		},
+		{
+			name: "rewrites only the first bucket prefix of a repeated path",
+			resolver: &ContentResolver{
+				StorageURL: "https://slimestorage.dictycr.org",
+				Bucket:     "editor",
+				BucketPath: "assets",
+			},
+			input:    `{"src":"https://storage.dictybase.dev/editor/assets/sub/editor/assets/uuid"}`,
+			expected: `{"src":"https://slimestorage.dictycr.org/editor/assets/sub/editor/assets/uuid"}`,
+		},
+		{
 			name: "returns input unchanged when storage config is incomplete",
 			resolver: &ContentResolver{
 				StorageURL: "",
