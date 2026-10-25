@@ -9,15 +9,15 @@ import (
 	O "github.com/IBM/fp-go/v2/option"
 	P "github.com/IBM/fp-go/v2/predicate"
 	S "github.com/IBM/fp-go/v2/string"
+	predord "github.com/dictyBase/fp-go-loom/predicate/ord"
 	"github.com/dictyBase/fp-go-loom/strutils"
 )
 
-// absoluteURLPattern matches one complete absolute http(s) URL. The character
-// class stops at the characters that end a URL inside the stored Lexical JSON,
-// so the whole URL including its path arrives in the replacer.
-var absoluteURLPattern = regexp.MustCompile(`https?://[^"'\s)\\]+`)
-
-const urlSchemeSeparator = "://"
+// storageOriginPattern matches the scheme and authority of an absolute URL up
+// to the S3 bucket segment that follows it. The character class excludes `/`
+// so an external URL that happens to contain the bucket prefix deeper in its
+// path is never rewritten.
+const storageOriginPattern = `https?://[^/"'\s)\\]+`
 
 // contentStorageState carries the caller-supplied S3 configuration and raw
 // Lexical JSON content through the URL normalization pipeline. All derived
@@ -29,6 +29,8 @@ type contentStorageState struct {
 	bucketPath    string
 	rawContent    string
 	segmentPrefix string
+	targetPrefix  string
+	pattern       *regexp.Regexp
 	replacer      func(string) string
 }
 
@@ -66,6 +68,24 @@ var (
 		},
 		func(s contentStorageState, value string) contentStorageState {
 			s.segmentPrefix = value
+			return s
+		},
+	)
+	targetPrefixLens = L.MakeLens(
+		func(s contentStorageState) string {
+			return s.targetPrefix
+		},
+		func(s contentStorageState, value string) contentStorageState {
+			s.targetPrefix = value
+			return s
+		},
+	)
+	patternLens = L.MakeLens(
+		func(s contentStorageState) *regexp.Regexp {
+			return s.pattern
+		},
+		func(s contentStorageState, value *regexp.Regexp) contentStorageState {
+			s.pattern = value
 			return s
 		},
 	)
@@ -108,33 +128,27 @@ func buildSegmentPrefix(s contentStorageState) string {
 	return strutils.JoinStrings("/", s.bucket, "/", s.bucketPath, "/")
 }
 
-// pathOfURL returns the path of an absolute URL. The search runs on a copy
-// with an appended "/" so a URL without a path yields an empty path instead of
-// an out-of-range slice.
-func pathOfURL(raw string) string {
-	rest := raw[strings.Index(raw, urlSchemeSeparator)+len(urlSchemeSeparator):]
-	separatorIndex := F.Bind2nd(strings.Index, "/")
-	pathStart := F.Pipe1(rest, F.Flow2(S.Append("/"), separatorIndex))
-	return rest[pathStart:]
+func buildTargetPrefix(s contentStorageState) string {
+	return strutils.JoinStrings(s.storageURL, s.segmentPrefix)
 }
 
-// buildURLReplacer rewrites the authority only when the path starts with
-// /<bucket>/<bucketPath>/, and keeps every other URL byte-identical.
-func buildURLReplacer(s contentStorageState) func(string) string {
-	hasSegmentPath := F.Bind2nd(strings.HasPrefix, s.segmentPrefix)
-	toStorageURL := F.Flow2(
-		O.FromPredicate(hasSegmentPath),
-		O.Map(S.Prepend(s.storageURL)),
+func compileStorageURLPattern(s contentStorageState) *regexp.Regexp {
+	return F.Pipe3(
+		s.segmentPrefix,
+		regexp.QuoteMeta,
+		S.Prepend(storageOriginPattern),
+		regexp.MustCompile,
 	)
-	return func(raw string) string {
-		return F.Pipe2(
-			pathOfURL(raw),
-			toStorageURL,
-			O.GetOrElse(F.Constant(raw)),
-		)
-	}
+}
+
+func buildPrefixReplacer(s contentStorageState) func(string) string {
+	isTargetPrefix := predord.StrEq(s.targetPrefix)
+	return F.Flow2(
+		O.FromPredicate(isTargetPrefix),
+		O.GetOrElse(F.Constant(s.targetPrefix)),
+	)
 }
 
 func rewriteStorageURLsInState(s contentStorageState) string {
-	return absoluteURLPattern.ReplaceAllStringFunc(s.rawContent, s.replacer)
+	return s.pattern.ReplaceAllStringFunc(s.rawContent, s.replacer)
 }

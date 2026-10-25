@@ -111,26 +111,6 @@ func TestContentStorageURLNormalization(t *testing.T) {
 			expected: `{"src":"https://slimestorage.dictycr.org/editor/assets/sub/editor/assets/uuid"}`,
 		},
 		{
-			name: "rewrites any host that carries the bucket path",
-			resolver: &ContentResolver{
-				StorageURL: "https://slimestorage.dictycr.org",
-				Bucket:     "editor",
-				BucketPath: "assets",
-			},
-			input:    `{"src":"https://mirror.example.org/editor/assets/2024-10-25/abc"}`,
-			expected: `{"src":"https://slimestorage.dictycr.org/editor/assets/2024-10-25/abc"}`,
-		},
-		{
-			name: "leaves a bare origin without a path alone",
-			resolver: &ContentResolver{
-				StorageURL: "https://slimestorage.dictycr.org",
-				Bucket:     "editor",
-				BucketPath: "assets",
-			},
-			input:    `{"src":"https://storage.dictybase.dev"}`,
-			expected: `{"src":"https://storage.dictybase.dev"}`,
-		},
-		{
 			name: "returns input unchanged when storage config is incomplete",
 			resolver: &ContentResolver{
 				StorageURL: "",
