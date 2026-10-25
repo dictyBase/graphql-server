@@ -14,8 +14,10 @@ import (
 )
 
 // storageOriginPattern matches the scheme and authority of an absolute URL up
-// to the S3 bucket segment that follows it.
-const storageOriginPattern = `https?://[^"'\s)\\]+`
+// to the S3 bucket segment that follows it. The character class excludes `/`
+// so an external URL that happens to contain the bucket prefix deeper in its
+// path is never rewritten.
+const storageOriginPattern = `https?://[^/"'\s)\\]+`
 
 // contentStorageState carries the caller-supplied S3 configuration and raw
 // Lexical JSON content through the URL normalization pipeline. All derived
