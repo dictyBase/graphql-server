@@ -130,6 +130,16 @@ func TestContentStorageURLNormalization(t *testing.T) {
 			input:    `{"src":"https://storage.dictybase.dev/editor/assets/2024-10-25/333dc249"}`,
 			expected: `{"src":"https://storage.dictybase.dev/editor/assets/2024-10-25/333dc249"}`,
 		},
+		{
+			name: "returns input unchanged when bucket contains invalid UTF-8",
+			resolver: &ContentResolver{
+				StorageURL: "https://slimestorage.dictycr.org",
+				Bucket:     string([]byte{0xff, 0xfe}),
+				BucketPath: "assets",
+			},
+			input:    `{"src":"https://storage.dictybase.dev/editor/assets/2024-10-25/333dc249"}`,
+			expected: `{"src":"https://storage.dictybase.dev/editor/assets/2024-10-25/333dc249"}`,
+		},
 	}
 
 	for _, tc := range tests {
