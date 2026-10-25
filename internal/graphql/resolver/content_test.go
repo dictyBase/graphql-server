@@ -7,6 +7,8 @@ import (
 	"github.com/dictyBase/go-genproto/dictybaseapis/content"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
+	contentres "github.com/dictyBase/graphql-server/internal/graphql/resolver/content"
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -112,4 +114,30 @@ func TestListContentByNamespaceEmpty(t *testing.T) {
 	require.NoError(err)
 	assert.Empty(result)
 	mockedContent.AssertExpectations(t)
+}
+
+func TestResolverContentWiresStorageConfig(t *testing.T) {
+	t.Parallel()
+	reg := registry.NewRegistry()
+	reg.AddAPIEndpoint(registry.S3STORAGE, "https://slimestorage.dictycr.org")
+	reg.AddRecord(registry.S3Bucket, "editor")
+	reg.AddRecord(registry.S3BucketPath, "assets")
+	reg.AddAPIConnection(registry.CONTENT, nil)
+	reg.AddAuthClient(registry.AUTH, nil)
+
+	r := NewResolver(reg, nil, mocks.TestLogger())
+	cr, ok := r.Content().(*contentres.ContentResolver)
+	require.True(t, ok)
+	require.Equal(t, "https://slimestorage.dictycr.org", cr.StorageURL)
+	require.Equal(t, "editor", cr.Bucket)
+	require.Equal(t, "assets", cr.BucketPath)
+}
+
+func TestResolverContentEmptyRegistryDoesNotPanic(t *testing.T) {
+	t.Parallel()
+	reg := &mocks.MockRegistry{}
+	r := NewResolver(reg, nil, mocks.TestLogger())
+	require.NotPanics(t, func() {
+		_ = r.Content()
+	})
 }
