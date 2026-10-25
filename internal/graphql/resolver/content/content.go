@@ -143,7 +143,7 @@ func (rcs *ContentResolver) Content(
 	obj *pb.Content,
 ) (string, error) {
 	rawContent := obj.GetData().GetAttributes().GetContent()
-	return F.Pipe10(
+	return F.Pipe8(
 		contentStorageState{
 			storageURL: rcs.StorageURL,
 			bucket:     rcs.Bucket,
@@ -155,9 +155,7 @@ func (rcs *ContentResolver) Content(
 		bucketPathLens.Modify(trimSlashes),
 		O.FromPredicate(isStorageConfigComplete),
 		O.Let(segmentPrefixLens.Set, buildSegmentPrefix),
-		O.Let(targetPrefixLens.Set, buildTargetPrefix),
-		O.Let(patternLens.Set, compileStorageURLPattern),
-		O.Let(replacerLens.Set, buildPrefixReplacer),
+		O.Let(replacerLens.Set, buildURLReplacer),
 		O.Map(rewriteStorageURLsInState),
 		O.GetOrElse(F.Constant(rawContent)),
 	), nil
