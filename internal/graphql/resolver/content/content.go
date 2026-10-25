@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	F "github.com/IBM/fp-go/v2/function"
+	O "github.com/IBM/fp-go/v2/option"
 	"github.com/dictyBase/aphgrpc"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/content"
 	"github.com/dictyBase/go-genproto/dictybaseapis/user"
@@ -22,6 +24,9 @@ type ContentResolver struct {
 	Client     pb.ContentServiceClient
 	UserClient authentication.LogtoClient
 	Logger     *logrus.Entry
+	StorageURL string
+	Bucket     string
+	BucketPath string
 }
 
 func (rcs *ContentResolver) ID(
@@ -134,10 +139,28 @@ func (rcs *ContentResolver) UpdatedAt(
 }
 
 func (rcs *ContentResolver) Content(
-	ctx context.Context,
+	_ context.Context,
 	obj *pb.Content,
 ) (string, error) {
-	return obj.Data.Attributes.Content, nil
+	rawContent := obj.GetData().GetAttributes().GetContent()
+	return F.Pipe10(
+		contentStorageState{
+			storageURL: rcs.StorageURL,
+			bucket:     rcs.Bucket,
+			bucketPath: rcs.BucketPath,
+			rawContent: rawContent,
+		},
+		storageURLLens.Modify(trimTrailingSlash),
+		bucketLens.Modify(trimSlashes),
+		bucketPathLens.Modify(trimSlashes),
+		O.FromPredicate(isStorageConfigComplete),
+		O.Let(segmentPrefixLens.Set, buildSegmentPrefix),
+		O.Let(targetPrefixLens.Set, buildTargetPrefix),
+		O.Let(patternLens.Set, compileStorageURLPattern),
+		O.Let(replacerLens.Set, buildPrefixReplacer),
+		O.Map(rewriteStorageURLsInState),
+		O.GetOrElse(F.Constant(rawContent)),
+	), nil
 }
 
 func (rcs *ContentResolver) Namespace(

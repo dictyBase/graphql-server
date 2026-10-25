@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	F "github.com/IBM/fp-go/v2/function"
+	O "github.com/IBM/fp-go/v2/option"
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	"github.com/dictyBase/go-genproto/dictybaseapis/content"
 	feature "github.com/dictyBase/go-genproto/dictybaseapis/feature_annotation"
@@ -92,6 +94,9 @@ func (mr *MockRegistry) GetOrderClient(key string) order.OrderServiceClient {
 func (mr *MockRegistry) GetContentClient(
 	key string,
 ) content.ContentServiceClient {
+	if mr.ConnMap == nil {
+		return MockedContentClient()
+	}
 	v, ok := mr.ConnMap.Get(key)
 	if !ok {
 		return MockedContentClient()
@@ -132,19 +137,28 @@ func (mr *MockRegistry) AddRecord(key, value string) {
 	mr.ConnMap.Put(key, value)
 }
 
+var optionGetFromMockMap = O.Optionize2((*hashmap.Map).Get)
+
 func (mr *MockRegistry) GetRecord(key string) string {
-	val, ok := mr.ConnMap.Get(key)
-	if !ok {
-		panic("could not get the value using the given key")
-	}
-	output, _ := val.(string)
-	return output
+	lookupKey := F.Bind2nd(optionGetFromMockMap, any(key))
+	return F.Pipe4(
+		mr.ConnMap,
+		O.FromNonZero[*hashmap.Map](),
+		O.Chain(lookupKey),
+		O.Chain(O.InstanceOf[string]),
+		O.GetOrElse(F.Constant("")),
+	)
 }
 
 func (mr MockRegistry) GetAPIEndpoint(key string) string {
-	v, _ := mr.ConnMap.Get(key)
-	endpoint, _ := v.(string)
-	return endpoint
+	lookupKey := F.Bind2nd(optionGetFromMockMap, any(key))
+	return F.Pipe4(
+		mr.ConnMap,
+		O.FromNonZero[*hashmap.Map](),
+		O.Chain(lookupKey),
+		O.Chain(O.InstanceOf[string]),
+		O.GetOrElse(F.Constant("")),
+	)
 }
 
 func (mr *MockRegistry) AddS3Client(key string, s3c *minio.Client) {

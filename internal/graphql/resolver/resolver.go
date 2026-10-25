@@ -123,6 +123,9 @@ func (rrs *Resolver) Content() generated.ContentResolver {
 		Client:     rrs.GetContentClient(registry.CONTENT),
 		UserClient: rrs.GetAuthClient(registry.AUTH),
 		Logger:     rrs.Logger,
+		StorageURL: rrs.GetAPIEndpoint(registry.S3STORAGE),
+		Bucket:     rrs.GetRecord(registry.S3Bucket),
+		BucketPath: rrs.GetRecord(registry.S3BucketPath),
 	}
 }
 

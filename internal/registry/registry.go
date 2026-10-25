@@ -1,6 +1,8 @@
 package registry
 
 import (
+	F "github.com/IBM/fp-go/v2/function"
+	O "github.com/IBM/fp-go/v2/option"
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
 	"github.com/dictyBase/go-genproto/dictybaseapis/content"
 	feature "github.com/dictyBase/go-genproto/dictybaseapis/feature_annotation"
@@ -114,13 +116,17 @@ func (coll *collection) AddRecord(key, value string) {
 	coll.connMap.Put(key, value)
 }
 
+var optionGetFromMap = O.Optionize2((*hashmap.Map).Get)
+
 func (coll *collection) GetRecord(key string) string {
-	val, ok := coll.connMap.Get(key)
-	if !ok {
-		panic("could not get the value using the given key")
-	}
-	output, _ := val.(string)
-	return output
+	lookupKey := F.Bind2nd(optionGetFromMap, any(key))
+	return F.Pipe4(
+		coll.connMap,
+		O.FromNonZero[*hashmap.Map](),
+		O.Chain(lookupKey),
+		O.Chain(O.InstanceOf[string]),
+		O.GetOrElse(F.Constant("")),
+	)
 }
 
 func (coll *collection) AddAuthClient(
@@ -227,9 +233,14 @@ func (coll *collection) GetIdentityClient(
 }
 
 func (coll *collection) GetAPIEndpoint(key string) string {
-	v, _ := coll.connMap.Get(key)
-	endpoint, _ := v.(string)
-	return endpoint
+	lookupKey := F.Bind2nd(optionGetFromMap, any(key))
+	return F.Pipe4(
+		coll.connMap,
+		O.FromNonZero[*hashmap.Map](),
+		O.Chain(lookupKey),
+		O.Chain(O.InstanceOf[string]),
+		O.GetOrElse(F.Constant("")),
+	)
 }
 
 func (coll *collection) GetRedisRepository(key string) repository.Repository {
