@@ -156,7 +156,7 @@ func (rcs *ContentResolver) Content(
 		O.FromPredicate(isStorageConfigComplete),
 		O.Let(segmentPrefixLens.Set, buildSegmentPrefix),
 		O.Let(targetPrefixLens.Set, buildTargetPrefix),
-		O.Let(patternLens.Set, compileStorageURLPattern),
+		O.Bind(patternLens.Set, compileStorageURLPattern),
 		O.Let(replacerLens.Set, buildPrefixReplacer),
 		O.Map(rewriteStorageURLsInState),
 		O.GetOrElse(F.Constant(rawContent)),
