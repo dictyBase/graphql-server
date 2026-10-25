@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 
+	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	L "github.com/IBM/fp-go/v2/optics/lens"
 	O "github.com/IBM/fp-go/v2/option"
@@ -132,12 +133,13 @@ func buildTargetPrefix(s contentStorageState) string {
 	return strutils.JoinStrings(s.storageURL, s.segmentPrefix)
 }
 
-func compileStorageURLPattern(s contentStorageState) *regexp.Regexp {
-	return F.Pipe3(
+func compileStorageURLPattern(s contentStorageState) O.Option[*regexp.Regexp] {
+	return F.Pipe4(
 		s.segmentPrefix,
 		regexp.QuoteMeta,
 		S.Prepend(storageOriginPattern),
-		regexp.MustCompile,
+		E.Eitherize1(regexp.Compile),
+		E.ToOption[error, *regexp.Regexp],
 	)
 }
 
