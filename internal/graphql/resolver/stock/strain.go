@@ -3,7 +3,6 @@ package stock
 import (
 	"context"
 	"fmt"
-	"regexp"
 
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
@@ -23,8 +22,6 @@ import (
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/sirupsen/logrus"
 )
-
-var doiRgxp = regexp.MustCompile(`^(doi:)?10.\d{4,9}/[-._;()/:A-Z0-9]+$`)
 
 type StrainResolver struct {
 	Client           pb.StockServiceClient
@@ -91,29 +88,13 @@ func (srs *StrainResolver) Publications(
 	redis := srs.Registry.GetRedisRepository(cache.RedisKey)
 	pubs := make([]*models.Publication, 0)
 	for _, id := range obj.Publications {
-		// GWDI IDs come back as 10.1101/582072 or doi:10.1101/582072
-		if doiRgxp.MatchString(id) {
-			p, err := fetch.FetchDOI(ctx, fmt.Sprintf("https://doi.org/%s", id))
-			if err != nil {
-				errorutils.AddGQLError(ctx, err)
-				srs.Logger.Error(err)
-				return pubs, err
-			}
-			pubs = append(pubs, p)
-		} else {
-			p, err := fetch.FetchPublication(
-				ctx,
-				redis,
-				srs.Registry.GetAPIEndpoint(registry.PUBLICATION),
-				id,
-			)
-			if err != nil {
-				errorutils.AddGQLError(ctx, err)
-				srs.Logger.Error(err)
-				return pubs, fmt.Errorf("error in fetching publication %s for strain %s", id, err)
-			}
-			pubs = append(pubs, p)
+		p, err := fetch.FetchPublication(ctx, redis, id)
+		if err != nil {
+			errorutils.AddGQLError(ctx, err)
+			srs.Logger.Error(err)
+			return pubs, fmt.Errorf("error in fetching publication %s for strain %s", id, err)
 		}
+		pubs = append(pubs, p)
 	}
 	return pubs, nil
 }
@@ -362,7 +343,6 @@ func getPhenotypes(
 					pub, err := fetch.FetchPublication(
 						ctx,
 						redis,
-						r.Registry.GetAPIEndpoint(registry.PUBLICATION),
 						gntype.Attributes.Value,
 					)
 					if err != nil {

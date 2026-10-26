@@ -3,10 +3,10 @@ module github.com/dictyBase/graphql-server
 require (
 	github.com/99designs/gqlgen v0.17.95
 	github.com/IBM/fp-go/v2 v2.10.0
-	github.com/Jeffail/gabs/v2 v2.7.0
 	github.com/dictyBase/aphgrpc v1.4.2
 	github.com/dictyBase/fp-go-loom v0.2.0
 	github.com/dictyBase/go-genproto v0.0.0-20261022140202-b96fdbebdfbf
+	github.com/dictybase/literature v0.3.0
 	github.com/emirpasic/gods v1.18.1
 	github.com/fatih/structs v1.1.0
 	github.com/go-chi/chi v4.1.2+incompatible
@@ -35,7 +35,6 @@ require (
 	github.com/coder/websocket v1.8.15 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1 // indirect
-	github.com/dictybase/literature v0.3.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
