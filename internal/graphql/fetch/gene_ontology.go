@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
@@ -170,4 +171,18 @@ func getExtensions(
 		}
 	}
 	return ext
+}
+
+func GetResp(rawURL string) (*http.Response, error) {
+	res, err := http.Get(rawURL) //nolint:gosec
+	if err != nil {
+		return res, fmt.Errorf("error in http get request with %s", err)
+	}
+	if res.StatusCode != http.StatusOK {
+		return res, fmt.Errorf(
+			"error fetching data with status code %d",
+			res.StatusCode,
+		)
+	}
+	return res, nil
 }

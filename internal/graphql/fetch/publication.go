@@ -390,17 +390,3 @@ func StorePublicationInCache(
 func makeRedisKey(id string) string {
 	return fmt.Sprintf("%s/%s", RedisKey, id)
 }
-
-func GetResp(url string) (*http.Response, error) {
-	res, err := http.Get(url) //nolint:gosec
-	if err != nil {
-		return res, fmt.Errorf("error in http get request with %s", err)
-	}
-	if res.StatusCode != 200 {
-		return res, fmt.Errorf(
-			"error fetching data with status code %d",
-			res.StatusCode,
-		)
-	}
-	return res, nil
-}

@@ -5,7 +5,7 @@ require (
 	github.com/IBM/fp-go/v2 v2.10.0
 	github.com/Jeffail/gabs/v2 v2.7.0
 	github.com/dictyBase/aphgrpc v1.4.2
-	github.com/dictyBase/fp-go-loom v0.0.0-20261003160438-079ef0095a48
+	github.com/dictyBase/fp-go-loom v0.2.0
 	github.com/dictyBase/go-genproto v0.0.0-20261022140202-b96fdbebdfbf
 	github.com/emirpasic/gods v1.18.1
 	github.com/fatih/structs v1.1.0
@@ -35,7 +35,12 @@ require (
 	github.com/coder/websocket v1.8.15 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1 // indirect
+	github.com/dictybase/literature v0.3.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
+	github.com/go-playground/locales v0.14.1 // indirect
+	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-playground/validator/v10 v10.30.5 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/goccy/go-json v0.10.6 // indirect
 	github.com/goccy/go-yaml v1.19.2 // indirect
@@ -44,6 +49,7 @@ require (
 	github.com/klauspost/compress v1.19.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
 	github.com/klauspost/crc32 v1.3.0 // indirect
+	github.com/leodido/go-urn v1.5.0 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.4 // indirect
 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
 	github.com/lestrrat-go/httprc v1.0.6 // indirect
