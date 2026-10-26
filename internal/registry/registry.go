@@ -51,21 +51,20 @@ const (
 )
 
 const (
-	USER        = "user"
-	ROLE        = "role"
-	PERMISSION  = "permission"
-	PUBLICATION = "publication"
-	STOCK       = "stock"
-	ORDER       = "order"
-	CONTENT     = "content"
-	FeatAnno    = "feature-annotation"
-	ANNOTATION  = "annotation"
-	AUTH        = "auth"
-	IDENTITY    = "identity"
-	ORGANISM    = "organism"
-	REDISREPO   = "redis"
-	S3CLIENT    = "s3client"
-	S3STORAGE   = "s3storage"
+	USER       = "user"
+	ROLE       = "role"
+	PERMISSION = "permission"
+	STOCK      = "stock"
+	ORDER      = "order"
+	CONTENT    = "content"
+	FeatAnno   = "feature-annotation"
+	ANNOTATION = "annotation"
+	AUTH       = "auth"
+	IDENTITY   = "identity"
+	ORGANISM   = "organism"
+	REDISREPO  = "redis"
+	S3CLIENT   = "s3client"
+	S3STORAGE  = "s3storage"
 )
 
 type collection struct {

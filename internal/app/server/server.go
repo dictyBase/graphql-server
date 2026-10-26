@@ -163,7 +163,6 @@ func connectToGrpcService(
 }
 
 func addEndpoints(ctx *cli.Context, nreg registry.Registry) {
-	nreg.AddAPIEndpoint(registry.PUBLICATION, ctx.String("publication-api"))
 	nreg.AddAPIEndpoint(registry.ORGANISM, ctx.String("organism-api"))
 	nreg.AddAPIEndpoint(registry.S3STORAGE, ctx.String("s3-storage-api"))
 	if ctx.Bool("auth-enabled") {

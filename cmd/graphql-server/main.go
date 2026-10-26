@@ -184,10 +184,9 @@ func contentFlags() []cli.Flag {
 func nonGRPCFlags() []cli.Flag {
 	return []cli.Flag{
 		cli.StringFlag{
-			Name:     "publication-api, pub",
-			EnvVar:   "PUBLICATION_API_ENDPOINT",
-			Usage:    "publication api endpoint",
-			Required: true,
+			Name:   "publication-api, pub",
+			EnvVar: "PUBLICATION_API_ENDPOINT",
+			Usage:  "deprecated and unused publication api endpoint",
 		},
 		cli.StringFlag{
 			Name:   "organism-api, org",

@@ -89,8 +89,9 @@ func (prs *PlasmidResolver) Publications(
 	pubs := make([]*models.Publication, 0)
 	for _, id := range obj.Publications {
 		pub, err := fetch.FetchPublication(
-			ctx, prs.Registry.GetRedisRepository(cache.RedisKey),
-			prs.Registry.GetAPIEndpoint(registry.PUBLICATION), id,
+			ctx,
+			prs.Registry.GetRedisRepository(cache.RedisKey),
+			id,
 		)
 		if err != nil {
 			errorutils.AddGQLError(ctx, err)

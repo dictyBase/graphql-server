@@ -4,389 +4,595 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/url"
+	"regexp"
+	"strings"
 	"time"
 
-	"github.com/Jeffail/gabs/v2"
+	A "github.com/IBM/fp-go/v2/array"
+	E "github.com/IBM/fp-go/v2/either"
+	F "github.com/IBM/fp-go/v2/function"
+	IOE "github.com/IBM/fp-go/v2/ioeither"
+	L "github.com/IBM/fp-go/v2/optics/lens"
+	O "github.com/IBM/fp-go/v2/option"
+	P "github.com/IBM/fp-go/v2/predicate"
+	S "github.com/IBM/fp-go/v2/string"
+	T "github.com/IBM/fp-go/v2/tuple"
+	arrutils "github.com/dictyBase/fp-go-loom/array"
+	ioeutils "github.com/dictyBase/fp-go-loom/ioeitherutils"
+	"github.com/dictyBase/fp-go-loom/strutils"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/publication"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/repository"
-	"github.com/fatih/structs"
+	"github.com/dictybase/literature"
 )
 
 const (
-	RedisKey = "PUBLICATION_KEY"
+	RedisKey     = "PUBLICATION_KEY"
+	pubMedSource = "MED"
 )
 
-var Status string = "published"
+var Status = "published"
 
-type EuroPMC struct {
-	HitCount       int64  `json:"hitCount"`
-	NextCursorMark string `json:"nextCursorMark"`
-	Request        struct {
-		CursorMark string `json:"cursorMark"`
-		PageSize   int64  `json:"pageSize"`
-		Query      string `json:"query"`
-		ResultType string `json:"resultType"`
-		Sort       string `json:"sort"`
-		Synonym    bool   `json:"synonym"`
-	} `json:"request"`
-	ResultList struct {
-		Result []struct {
-			AbstractText string `json:"abstractText"`
-			Affiliation  string `json:"affiliation"`
-			AuthMan      string `json:"authMan"`
-			AuthorList   struct {
-				Author []struct {
-					Affiliation string `json:"affiliation"`
-					FirstName   string `json:"firstName"`
-					FullName    string `json:"fullName"`
-					Initials    string `json:"initials"`
-					LastName    string `json:"lastName"`
-				} `json:"author"`
-			} `json:"authorList"`
-			AuthorString              string `json:"authorString"`
-			CitedByCount              int64  `json:"citedByCount"`
-			DateOfCreation            string `json:"dateOfCreation"`
-			DateOfRevision            string `json:"dateOfRevision"`
-			Doi                       string `json:"doi"`
-			ElectronicPublicationDate string `json:"electronicPublicationDate"`
-			EpmcAuthMan               string `json:"epmcAuthMan"`
-			FirstPublicationDate      string `json:"firstPublicationDate"`
-			FullTextURLList           struct {
-				FullTextURL []struct {
-					Availability     string `json:"availability"`
-					AvailabilityCode string `json:"availabilityCode"`
-					DocumentStyle    string `json:"documentStyle"`
-					Site             string `json:"site"`
-					URL              string `json:"url"`
-				} `json:"fullTextUrl"`
-			} `json:"fullTextUrlList"`
-			HasBook               string `json:"hasBook"`
-			HasDBCrossReferences  string `json:"hasDbCrossReferences"`
-			HasLabsLinks          string `json:"hasLabsLinks"`
-			HasPDF                string `json:"hasPDF"`
-			HasReferences         string `json:"hasReferences"`
-			HasTMAccessionNumbers string `json:"hasTMAccessionNumbers"`
-			HasTextMinedTerms     string `json:"hasTextMinedTerms"`
-			ID                    string `json:"id"`
-			InEPMC                string `json:"inEPMC"`
-			InPMC                 string `json:"inPMC"`
-			IsOpenAccess          string `json:"isOpenAccess"`
-			JournalInfo           struct {
-				DateOfPublication string `json:"dateOfPublication"`
-				Journal           struct {
-					Essn                string `json:"essn"`
-					Isoabbreviation     string `json:"isoabbreviation"`
-					Issn                string `json:"issn"`
-					MedlineAbbreviation string `json:"medlineAbbreviation"`
-					Nlmid               string `json:"nlmid"`
-					Title               string `json:"title"`
-				} `json:"journal"`
-				JournalIssueID       int64  `json:"journalIssueId"`
-				MonthOfPublication   int64  `json:"monthOfPublication"`
-				PrintPublicationDate string `json:"printPublicationDate"`
-				YearOfPublication    int64  `json:"yearOfPublication"`
-				Issue                string `json:"issue"`
-				Volume               string `json:"volume"`
-			} `json:"journalInfo"`
-			KeywordList struct {
-				Keyword []string `json:"keyword"`
-			} `json:"keywordList"`
-			Language    string `json:"language"`
-			NihAuthMan  string `json:"nihAuthMan"`
-			PageInfo    string `json:"pageInfo"`
-			Pmid        string `json:"pmid"`
-			PubModel    string `json:"pubModel"`
-			PubTypeList struct {
-				PubType []string `json:"pubType"`
-			} `json:"pubTypeList"`
-			PubYear string `json:"pubYear"`
-			Source  string `json:"source"`
-			Title   string `json:"title"`
-		} `json:"result"`
-	} `json:"resultList"`
-	Version string `json:"version"`
+// nilTime is the zero-valued optional publication date.
+var nilTime *time.Time
+
+// pubMedClient is the narrow seam over the NCBI eUtils client.
+type pubMedClient interface {
+	GetArticle(pmid string) (*literature.Article, error)
 }
 
-type PubJSONAPI struct {
-	Data  *PubData `json:"data"`
-	Links *Links   `json:"links"`
+// europePMCClient is the narrow seam over the EuropePMC client.
+type europePMCClient interface {
+	GetArticle(pmid string) (*literature.EuropePMCArticle, error)
+	GetArticleByDOI(doi string) (*literature.EuropePMCArticle, error)
 }
 
-type Links struct {
-	Self string `json:"self"`
+// PublicationParams carries optional NCBI and EuropePMC request identity values.
+type PublicationParams struct {
+	APIKey string
+	Tool   string
+	Email  string
 }
 
-type PubData struct {
-	Type       string       `json:"type"`
-	ID         string       `json:"id"`
-	Attributes *Publication `json:"attributes"`
-}
-
+// Publication resolves PMIDs (NCBI first, EuropePMC fallback) and DOIs
+// (EuropePMC) into GraphQL publication models.
 type Publication struct {
-	Abstract      string    `json:"abstract"`
-	Doi           string    `json:"doi,omitempty"`
-	FullTextURL   string    `json:"full_text_url,omitempty"`
-	PubmedURL     string    `json:"pubmed_url"`
-	Journal       string    `json:"journal"`
-	Issn          string    `json:"issn,omitempty"`
-	Page          string    `json:"page,omitempty"`
-	Pubmed        string    `json:"pubmed"`
-	Title         string    `json:"title"`
-	Source        string    `json:"source"`
-	Status        string    `json:"status"`
-	PubType       string    `json:"pub_type"`
-	Issue         string    `json:"issue"`
-	Volume        string    `json:"volume"`
-	PublishedDate string    `json:"publication_date"`
-	Authors       []*Author `json:"authors"`
+	pubMed    pubMedClient
+	europePMC europePMCClient
 }
 
-type Author struct {
-	FirstName string `json:"first_name,omitempty"`
-	LastName  string `json:"last_name"`
-	FullName  string `json:"full_name"`
-	Initials  string `json:"initials"`
+type clientBuildState struct {
+	params    *PublicationParams
+	pubMed    *literature.Client
+	europePMC *literature.EuropePMCClient
 }
 
-func EuroPMC2Pub(pmc *EuroPMC, id string) (*models.Publication, error) {
-	if len(pmc.ResultList.Result) == 0 {
-		return nil, fmt.Errorf("no publication found with id %s", id)
-	}
-	result := pmc.ResultList.Result[0]
-	pub := &models.Publication{
-		ID:       result.Pmid,
-		Title:    result.Title,
-		Abstract: result.AbstractText,
-		Journal:  result.JournalInfo.Journal.Title,
-		Source:   result.Source,
-		Doi:      &result.Doi,
-		Issue:    &result.JournalInfo.Issue,
-		Status:   &Status,
-		Volume:   &result.JournalInfo.Volume,
-		Pages:    &result.PageInfo,
-		Issn:     &result.JournalInfo.Journal.Issn,
-	}
-	pdate, err := time.Parse(time.DateOnly, result.FirstPublicationDate)
-	if err != nil {
-		return pub, fmt.Errorf("error in parsing date %s", err)
-	}
-	pub.PubDate = &pdate
-	rstruct := structs.New(result)
-	if !rstruct.Field("PubTypeList").IsZero() {
-		pub.PubType = result.PubTypeList.PubType[0]
-	}
-	for i, a := range result.AuthorList.Author {
-		pub.Authors = append(pub.Authors, &pb.Author{
-			FirstName: a.FirstName,
-			LastName:  a.LastName,
-			Rank:      int64(i),
-			Initials:  a.Initials,
-		})
-	}
-	return pub, nil
+type pubFetchState struct {
+	identifier string
+	repo       repository.Repository
+	source     *Publication
+	redisKey   string
+	cached     bool
+	rawCached  string
+	pub        *models.Publication
 }
 
-func FetchPublicationFromEuroPMC(
-	ctx context.Context,
-	endpoint, id string,
-) (*models.Publication, error) {
-	pmodel := new(models.Publication)
-	res, err := GetResp(fmt.Sprintf(
-		"%s?format=json&resultType=core&query=ext_id:%s",
-		endpoint, id,
-	))
-	if err != nil {
-		return pmodel, fmt.Errorf("error in fetching data %s", err)
-	}
-	defer res.Body.Close()
-	epmc := &EuroPMC{}
-	err = json.NewDecoder(res.Body).Decode(epmc)
-	if err != nil {
-		return pmodel, fmt.Errorf("error in decoding data %s", err)
-	}
-	return EuroPMC2Pub(epmc, id)
+var (
+	buildPubMedLens = L.MakeLens(
+		func(s clientBuildState) *literature.Client { return s.pubMed },
+		func(s clientBuildState, v *literature.Client) clientBuildState {
+			s.pubMed = v
+			return s
+		},
+	)
+	buildEuropeLens = L.MakeLens(
+		func(s clientBuildState) *literature.EuropePMCClient {
+			return s.europePMC
+		},
+		func(
+			s clientBuildState,
+			v *literature.EuropePMCClient,
+		) clientBuildState {
+			s.europePMC = v
+			return s
+		},
+	)
+
+	identifierLens = L.MakeLens(
+		func(s pubFetchState) string { return s.identifier },
+		func(s pubFetchState, v string) pubFetchState {
+			s.identifier = v
+			return s
+		},
+	)
+	repoLens = L.MakeLens(
+		func(s pubFetchState) repository.Repository { return s.repo },
+		func(s pubFetchState, v repository.Repository) pubFetchState {
+			s.repo = v
+			return s
+		},
+	)
+	sourceLens = L.MakeLens(
+		func(s pubFetchState) *Publication { return s.source },
+		func(s pubFetchState, v *Publication) pubFetchState {
+			s.source = v
+			return s
+		},
+	)
+	redisKeyLens = L.MakeLens(
+		func(s pubFetchState) string { return s.redisKey },
+		func(s pubFetchState, v string) pubFetchState {
+			s.redisKey = v
+			return s
+		},
+	)
+	cachedLens = L.MakeLens(
+		func(s pubFetchState) bool { return s.cached },
+		func(s pubFetchState, v bool) pubFetchState {
+			s.cached = v
+			return s
+		},
+	)
+	rawCachedLens = L.MakeLens(
+		func(s pubFetchState) string { return s.rawCached },
+		func(s pubFetchState, v string) pubFetchState {
+			s.rawCached = v
+			return s
+		},
+	)
+	pubLens = L.MakeLens(
+		func(s pubFetchState) *models.Publication { return s.pub },
+		func(s pubFetchState, v *models.Publication) pubFetchState {
+			s.pub = v
+			return s
+		},
+	)
+
+	trimHTTPSDOI = F.Bind2nd(strings.TrimPrefix, "https://doi.org/")
+	trimHTTPDOI  = F.Bind2nd(strings.TrimPrefix, "http://doi.org/")
+	trimDOIColon = F.Bind2nd(strings.TrimPrefix, "doi:")
+
+	pmidPattern   = regexp.MustCompile(`^[1-9][0-9]*$`)
+	validatePMID  = E.FromPredicate(validPMID, invalidPMIDError)
+	isNonZeroTime = P.Not(time.Time.IsZero)
+
+	isDOIStr = F.Pipe1(
+		S.Includes("/"),
+		P.Or(S.HasPrefix("10.")),
+	)
+	isDOI = F.Pipe1(
+		isDOIStr,
+		P.ContraMap(identifierLens.Get),
+	)
+	resolveArticleFetch = F.Pipe1(
+		isDOI,
+		P.Fold(fetchByPMID, fetchEuropeByDOI),
+	)
+	validateIdentifierBranch = F.Pipe1(
+		isDOI,
+		P.Fold(validateStatePMID, E.Of[error, pubFetchState]),
+	)
+
+	hasRepo = F.Pipe1(
+		P.IsNonZero[repository.Repository](),
+		P.ContraMap(repoLens.Get),
+	)
+	branchByRepo = F.Pipe1(
+		hasRepo,
+		P.Fold(resolveArticleFetch, fetchWithCache),
+	)
+	branchByCache = F.Pipe1(
+		cachedLens.Get,
+		P.Fold(fetchAndStoreArticle, loadFromCache),
+	)
+)
+
+func someOption[T any](
+	apply func(string) T,
+	value string,
+) O.Option[T] {
+	return F.Pipe2(
+		value,
+		O.FromPredicate(S.IsNonEmpty),
+		O.Map(apply),
+	)
 }
 
-func FetchPublication(
-	ctx context.Context,
-	repo repository.Repository,
-	endpoint, id string,
-) (*models.Publication, error) {
-	ok, pubeuro, err := FetchPublicationFromCache(repo, id)
-	if err != nil {
-		return nil, fmt.Errorf(
-			"error in fetching publication from cache %s",
-			err,
-		)
-	}
-	if ok {
-		return pubeuro, nil
-	}
-	pubeuro, err = FetchPublicationFromEuroPMC(ctx, endpoint, id)
-	if err != nil {
-		return nil, fmt.Errorf("error in fetching publication %s", err)
-	}
-	if err := StorePublicationInCache(id, repo, pubeuro); err != nil {
-		return nil, fmt.Errorf("error in storing publication in cache %s", err)
-	}
-	return pubeuro, nil
+func pubMedOptions(p *PublicationParams) []literature.Option {
+	return F.Pipe1(
+		[]O.Option[literature.Option]{
+			someOption(literature.WithAPIKey, p.APIKey),
+			someOption(literature.WithTool, p.Tool),
+			someOption(literature.WithEmail, p.Email),
+		},
+		arrutils.Compact[literature.Option],
+	)
 }
 
-func FetchDOI(ctx context.Context, doi string) (*models.Publication, error) {
-	res, err := getDOIResp(doi)
-	if err != nil {
-		return nil, fmt.Errorf("error in getting response for doi %s", err)
+func europePMCOptions(p *PublicationParams) []literature.EuropePMCOption {
+	return F.Pipe1(
+		[]O.Option[literature.EuropePMCOption]{
+			someOption(literature.WithEuropePMCEmail, p.Email),
+			someOption(literature.WithEuropePMCUserAgent, p.Tool),
+		},
+		arrutils.Compact[literature.EuropePMCOption],
+	)
+}
+
+func createPubMedFromState(
+	s clientBuildState,
+) IOE.IOEither[error, *literature.Client] {
+	opts := pubMedOptions(s.params)
+	newClient := func() (*literature.Client, error) {
+		return literature.New(opts...)
 	}
-	defer res.Body.Close()
-	jstruct, err := gabs.ParseJSONDecoder(json.NewDecoder(res.Body))
-	if err != nil {
-		return nil, fmt.Errorf("error in decoding json %s", err)
+	return F.Pipe1(
+		IOE.TryCatchError(newClient),
+		IOE.MapLeft[*literature.Client](func(err error) error {
+			return fmt.Errorf(
+				"error creating literature pubmed client: %w",
+				err,
+			)
+		}),
+	)
+}
+
+func createEuropeFromState(
+	s clientBuildState,
+) IOE.IOEither[error, *literature.EuropePMCClient] {
+	opts := europePMCOptions(s.params)
+	newClient := func() (*literature.EuropePMCClient, error) {
+		return literature.NewEuropePMCClient(opts...)
 	}
-	authors := getDOIAuthors(jstruct.Search("author").Children())
-	dateStr, ok := jstruct.Search("created", "date-time").Data().(string)
-	if !ok {
-		return nil, fmt.Errorf(
-			"error in converting date time to string %s",
-			err,
-		)
+	return F.Pipe1(
+		IOE.TryCatchError(newClient),
+		IOE.MapLeft[*literature.EuropePMCClient](func(err error) error {
+			return fmt.Errorf(
+				"error creating literature europepmc client: %w",
+				err,
+			)
+		}),
+	)
+}
+
+func assemblePublication(s clientBuildState) *Publication {
+	return &Publication{
+		pubMed:    s.pubMed,
+		europePMC: s.europePMC,
 	}
-	pd, err := time.Parse(time.RFC3339, dateStr)
-	if err != nil {
-		return nil, fmt.Errorf("could not parse published date %s", err)
-	}
-	mpub := &models.Publication{
-		ID:       "",
-		Doi:      &doi,
-		Title:    verifyStringProperty(jstruct, "title"),
-		Abstract: verifyStringProperty(jstruct, "abstract"),
-		Journal: verifyStringProperty(
-			jstruct,
-			"container-title-short",
+}
+
+// NewPublication builds the publication source with both NCBI PubMed and
+// EuropePMC clients.
+func NewPublication(
+	p *PublicationParams,
+) IOE.IOEither[error, *Publication] {
+	return F.Pipe3(
+		IOE.Of[error](clientBuildState{params: p}),
+		IOE.Bind(buildPubMedLens.Set, createPubMedFromState),
+		IOE.Bind(buildEuropeLens.Set, createEuropeFromState),
+		IOE.Map[error](assemblePublication),
+	)
+}
+
+func validPMID(pmid string) bool {
+	return pmidPattern.MatchString(pmid)
+}
+
+func invalidPMIDError(pmid string) error {
+	return fmt.Errorf(
+		"error fetching publication %s: %w",
+		pmid,
+		literature.NewErrorWithPMID(
+			literature.ErrorTypeInvalidInput,
+			pmid,
+			"pmid must contain decimal digits",
 		),
-		Source:  verifyStringProperty(jstruct, "source"),
-		PubType: verifyStringProperty(jstruct, "type"),
-		Issue:   verifyStringPointerProperty(jstruct, "issue"),
-		Status:  verifyStringPointerProperty(jstruct, "subtype"),
-		Volume:  verifyStringPointerProperty(jstruct, "volume"),
-		Pages:   verifyStringPointerProperty(jstruct, "page"),
-		Issn:    verifyStringPointerProperty(jstruct, "ISSN"),
-		Authors: authors,
-		PubDate: &pd,
-	}
-	return mpub, nil
+	)
 }
 
-// getDOIResp makes HTTP request with necessary
-// headers for DOI and returns the response
-func getDOIResp(doi string) (*http.Response, error) {
-	url, err := url.Parse(doi)
-	if err != nil {
-		return nil, fmt.Errorf("error in parsing doi url %s", err)
+func toPBAuthor(idx int, a literature.Author) *pb.Author {
+	return &pb.Author{
+		FirstName: a.FirstName,
+		LastName:  a.LastName,
+		Rank:      int64(idx),
 	}
-	res, err := http.DefaultClient.Do(
-		&http.Request{
-			Method: "GET",
-			URL:    url,
-			Header: map[string][]string{
-				"Accept": {"application/vnd.citationstyles.csl+json"},
-			},
-		})
-	if err != nil {
-		return res, fmt.Errorf("error in doi http request %s", err)
-	}
-	return res, nil
 }
 
-// getDOIAuthors converts DOI authors data into expected Author format
-func getDOIAuthors(authors []*gabs.Container) []*pb.Author {
-	a := []*pb.Author{}
-	for _, v := range authors {
-		n := &pb.Author{}
-		for key, val := range v.ChildrenMap() {
-			if key == "given" {
-				n.FirstName = val.Data().(string)
-			}
-			if key == "family" {
-				n.LastName = val.Data().(string)
-			}
-		}
-		a = append(a, n)
+func toPBEuropeAuthor(idx int, a literature.EuropePMCAuthor) *pb.Author {
+	return &pb.Author{
+		FirstName: a.FirstName,
+		LastName:  a.LastName,
+		Initials:  a.Initials,
+		Rank:      int64(idx),
 	}
-	return a
 }
 
-func verifyStringPointerProperty(jstruct *gabs.Container, val string) *string {
-	emptyStr := ""
-	if !jstruct.Exists(val) {
-		return &emptyStr
+func pubMedArticleToPublication(a *literature.Article) *models.Publication {
+	emptyIssn := ""
+	toTimePtr := func(t time.Time) *time.Time { return &t }
+	authors := F.Pipe1(a.Authors, A.MapWithIndex(toPBAuthor))
+	pubDate := F.Pipe3(
+		a.PublishDate,
+		O.FromPredicate(isNonZeroTime),
+		O.Map(toTimePtr),
+		O.GetOrElse(F.Constant(nilTime)),
+	)
+
+	return &models.Publication{
+		ID:       a.PMID,
+		Title:    a.Title,
+		Abstract: a.Abstract,
+		Journal:  a.Journal,
+		PubDate:  pubDate,
+		Doi:      &a.DOI,
+		Volume:   &a.Volume,
+		Issue:    &a.Issue,
+		Pages:    &a.Pages,
+		Issn:     &emptyIssn,
+		PubType:  "",
+		Source:   pubMedSource,
+		Status:   &Status,
+		Authors:  authors,
 	}
-	str, ok := jstruct.Search(val).Data().(string)
-	if !ok {
-		return &emptyStr
-	}
-	return &str
 }
 
-// verifyStringProperty checks if a property exists in the JSON and returns the
-// value if true
-func verifyStringProperty(jstruct *gabs.Container, val string) string {
-	if !jstruct.Exists(val) {
-		return ""
+func europeArticleToPublication(
+	a *literature.EuropePMCArticle,
+) *models.Publication {
+	authors := F.Pipe1(a.Authors, A.MapWithIndex(toPBEuropeAuthor))
+	pubType := F.Pipe2(
+		a.PubTypes,
+		A.Head[string],
+		O.GetOrElse(F.Constant("")),
+	)
+	id := F.Pipe2(
+		a.PMID,
+		O.FromPredicate(S.IsNonEmpty),
+		O.GetOrElse(F.Constant(a.ID)),
+	)
+
+	return &models.Publication{
+		ID:       id,
+		Title:    a.Title,
+		Abstract: a.Abstract,
+		Journal:  a.Journal.Title,
+		PubDate:  a.PublishDate,
+		Doi:      &a.DOI,
+		Volume:   &a.Journal.Volume,
+		Issue:    &a.Journal.Issue,
+		Pages:    &a.PageInfo,
+		Issn:     &a.Journal.ISSN,
+		PubType:  pubType,
+		Source:   a.Source,
+		Status:   &Status,
+		Authors:  authors,
 	}
-	str, ok := jstruct.Search(val).Data().(string)
-	if !ok {
-		return ""
-	}
-	return str
 }
 
-func FetchPublicationFromCache(
+func validateStatePMID(s pubFetchState) E.Either[error, pubFetchState] {
+	return F.Pipe1(
+		validatePMID(s.identifier),
+		E.Map[error](F.Constant1[string](s)),
+	)
+}
+
+func callPubMedByPMID(
+	s pubFetchState,
+) IOE.IOEither[error, *models.Publication] {
+	rawFetch := func() (*literature.Article, error) {
+		return s.source.pubMed.GetArticle(s.identifier)
+	}
+	return F.Pipe2(
+		IOE.TryCatchError(rawFetch),
+		IOE.MapLeft[*literature.Article](func(err error) error {
+			return fmt.Errorf(
+				"error fetching publication %s: %w",
+				s.identifier,
+				err,
+			)
+		}),
+		IOE.Map[error](pubMedArticleToPublication),
+	)
+}
+
+func callEuropeByPMID(
+	s pubFetchState,
+) IOE.IOEither[error, *models.Publication] {
+	rawFetch := func() (*literature.EuropePMCArticle, error) {
+		return s.source.europePMC.GetArticle(s.identifier)
+	}
+	return F.Pipe2(
+		IOE.TryCatchError(rawFetch),
+		IOE.MapLeft[*literature.EuropePMCArticle](func(err error) error {
+			return fmt.Errorf(
+				"error fetching publication %s: %w",
+				s.identifier,
+				err,
+			)
+		}),
+		IOE.Map[error](europeArticleToPublication),
+	)
+}
+
+func fetchByPMID(
+	s pubFetchState,
+) IOE.IOEither[error, *models.Publication] {
+	fallback := func() IOE.IOEither[error, *models.Publication] {
+		return callEuropeByPMID(s)
+	}
+	return F.Pipe2(
+		s,
+		callPubMedByPMID,
+		IOE.Alt(fallback),
+	)
+}
+
+func fetchEuropeByDOI(
+	s pubFetchState,
+) IOE.IOEither[error, *models.Publication] {
+	rawFetch := func() (*literature.EuropePMCArticle, error) {
+		return s.source.europePMC.GetArticleByDOI(s.identifier)
+	}
+	return F.Pipe2(
+		IOE.TryCatchError(rawFetch),
+		IOE.MapLeft[*literature.EuropePMCArticle](func(err error) error {
+			return fmt.Errorf("error fetching doi %s: %w", s.identifier, err)
+		}),
+		IOE.Map[error](europeArticleToPublication),
+	)
+}
+
+func deriveRedisKey(s pubFetchState) string {
+	prefix := strutils.JoinStrings(RedisKey, "/")
+	return strutils.JoinStrings(prefix, s.identifier)
+}
+
+func checkCacheExists(s pubFetchState) IOE.IOEither[error, bool] {
+	keyExists := func() (bool, error) {
+		return s.repo.Exists(s.redisKey)
+	}
+	return F.Pipe1(
+		IOE.TryCatchError(keyExists),
+		IOE.MapLeft[bool](func(err error) error {
+			return fmt.Errorf("error in checking for key %w", err)
+		}),
+	)
+}
+
+func unmarshalPublication(
+	raw string,
+) E.Either[error, *models.Publication] {
+	pub := &models.Publication{}
+	err := json.Unmarshal([]byte(raw), pub)
+	return F.Pipe1(
+		E.TryCatchError(pub, err),
+		E.MapLeft[*models.Publication](func(err error) error {
+			return fmt.Errorf("error in decoding json %w", err)
+		}),
+	)
+}
+
+func loadFromCache(
+	s pubFetchState,
+) IOE.IOEither[error, *models.Publication] {
+	rawGet := func() (string, error) {
+		return s.repo.Get(s.redisKey)
+	}
+	return F.Pipe2(
+		IOE.TryCatchError(rawGet),
+		IOE.MapLeft[string](func(err error) error {
+			return fmt.Errorf("error in getting existing key %w", err)
+		}),
+		IOE.ChainEitherK(unmarshalPublication),
+	)
+}
+
+func encodeStatePublication(s pubFetchState) E.Either[error, pubFetchState] {
+	setRaw := F.Pipe1(s, F.Flip(rawCachedLens.Set))
+	b, err := json.Marshal(s.pub)
+	return F.Pipe3(
+		E.TryCatchError(b, err),
+		E.MapLeft[[]byte](func(err error) error {
+			return fmt.Errorf("error in converting json to byte %w", err)
+		}),
+		E.Map[error](func(b []byte) string { return string(b) }),
+		E.Map[error](setRaw),
+	)
+}
+
+func storeCachedString(s pubFetchState) IOE.IOEither[error, string] {
+	rawSet := func() (bool, error) {
+		return true, s.repo.Set(s.redisKey, s.rawCached)
+	}
+	return F.Pipe2(
+		IOE.TryCatchError(rawSet),
+		IOE.MapLeft[bool](func(err error) error {
+			return fmt.Errorf("error in setting key in redis %w", err)
+		}),
+		IOE.Map[error](F.Constant1[bool](s.rawCached)),
+	)
+}
+
+func fetchAndStoreArticle(
+	s pubFetchState,
+) IOE.IOEither[error, *models.Publication] {
+	return F.Pipe4(
+		IOE.Of[error](s),
+		IOE.Bind(pubLens.Set, resolveArticleFetch),
+		IOE.ChainEitherK(encodeStatePublication),
+		IOE.ChainFirst(storeCachedString),
+		IOE.Map[error](pubLens.Get),
+	)
+}
+
+func fetchWithCache(
+	s pubFetchState,
+) IOE.IOEither[error, *models.Publication] {
+	return F.Pipe2(
+		IOE.Of[error](s),
+		IOE.Bind(cachedLens.Set, checkCacheExists),
+		IOE.Chain(branchByCache),
+	)
+}
+
+// FetchCachedArticle normalizes and validates id, checks Redis when repo is
+// non-nil, and fetches from NCBI/EuropePMC on a cache miss.
+func (p *Publication) FetchCachedArticle(
 	repo repository.Repository,
 	id string,
-) (bool, *models.Publication, error) {
-	pmodel := &models.Publication{}
-	rkey := makeRedisKey(id)
-	ok, err := repo.Exists(rkey)
-	if err != nil {
-		return ok, pmodel, fmt.Errorf(
-			"error in checking for key %s",
-			err,
-		)
-	}
-	if !ok {
-		return ok, pmodel, nil
-	}
-	pubr, err := repo.Get(rkey)
-	if err != nil {
-		return ok, pmodel, fmt.Errorf(
-			"error in getting existing key %s",
-			err,
-		)
-	}
-	if err := json.Unmarshal([]byte(pubr), pmodel); err != nil {
-		return ok, pmodel, fmt.Errorf("error in decoding json %s", err)
-	}
-	return ok, pmodel, nil
+) IOE.IOEither[error, *models.Publication] {
+	return F.Pipe7(
+		pubFetchState{
+			identifier: id,
+			repo:       repo,
+			source:     p,
+		},
+		identifierLens.Modify(trimHTTPSDOI),
+		identifierLens.Modify(trimHTTPDOI),
+		identifierLens.Modify(trimDOIColon),
+		IOE.Of[error, pubFetchState],
+		IOE.ChainEitherK(validateIdentifierBranch),
+		IOE.Let[error](redisKeyLens.Set, deriveRedisKey),
+		IOE.Chain(branchByRepo),
+	)
 }
 
-func StorePublicationInCache(
-	id string,
-	repo repository.Repository,
+func onPublicationError(
+	err error,
+) T.Tuple2[error, *models.Publication] {
+	return T.MakeTuple2[error, *models.Publication](err, nil)
+}
+
+func onPublicationSuccess(
 	pub *models.Publication,
-) error {
-	cnt, err := json.Marshal(pub)
-	if err != nil {
-		return fmt.Errorf("error in converting json to byte %s", err)
-	}
-	if err := repo.Set(makeRedisKey(id), string(cnt)); err != nil {
-		return fmt.Errorf("error in setting key in redis %s", err)
-	}
-	return nil
+) T.Tuple2[error, *models.Publication] {
+	return T.MakeTuple2[error](nil, pub)
 }
 
-func makeRedisKey(id string) string {
-	return fmt.Sprintf("%s/%s", RedisKey, id)
+// FetchPublication fetches a publication by PMID or DOI using Redis caching
+// and the literature NCBI and EuropePMC clients.
+func FetchPublication(
+	_ context.Context,
+	repo repository.Repository,
+	id string,
+) (*models.Publication, error) {
+	newSource := NewPublication(&PublicationParams{})
+	result := F.Pipe10(
+		pubFetchState{
+			identifier: id,
+			repo:       repo,
+		},
+		identifierLens.Modify(trimHTTPSDOI),
+		identifierLens.Modify(trimHTTPDOI),
+		identifierLens.Modify(trimDOIColon),
+		IOE.Of[error, pubFetchState],
+		IOE.ChainEitherK(validateIdentifierBranch),
+		IOE.Bind(sourceLens.Set, F.Constant1[pubFetchState](newSource)),
+		IOE.Let[error](redisKeyLens.Set, deriveRedisKey),
+		IOE.Chain(branchByRepo),
+		ioeutils.ToEither[error, *models.Publication],
+		E.Fold(onPublicationError, onPublicationSuccess),
+	)
+	return result.F2, result.F1
 }
