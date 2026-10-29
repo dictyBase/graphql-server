@@ -552,6 +552,29 @@ export type Phenotype = {
   publication?: Maybe<Publication>;
 };
 
+export enum PhenotypeSearchFieldEnum {
+  Comment = 'COMMENT',
+  Definition = 'DEFINITION',
+  Label = 'LABEL',
+  Synonym = 'SYNONYM'
+}
+
+export type PhenotypeSearchResult = {
+  __typename?: 'PhenotypeSearchResult';
+  definition: Scalars['String']['output'];
+  field: PhenotypeSearchFieldEnum;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  score: Scalars['Float']['output'];
+};
+
+export type PhenotypeSearchResultList = {
+  __typename?: 'PhenotypeSearchResultList';
+  limit?: Maybe<Scalars['Int']['output']>;
+  results: Array<PhenotypeSearchResult>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type Plasmid = Stock & {
   __typename?: 'Plasmid';
   created_at: Scalars['Timestamp']['output'];
@@ -682,6 +705,7 @@ export type Query = {
   plasmid?: Maybe<Plasmid>;
   publication?: Maybe<Publication>;
   role?: Maybe<Role>;
+  searchPhenotypes: PhenotypeSearchResultList;
   searchStocks: StockSearchResultList;
   strain?: Maybe<Strain>;
   user?: Maybe<User>;
@@ -833,6 +857,12 @@ export type QueryPublicationArgs = {
 
 export type QueryRoleArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QuerySearchPhenotypesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  query: Scalars['String']['input'];
 };
 
 
@@ -1266,6 +1296,14 @@ export type UpdateUserMutationVariables = Exact<{
 
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typename?: 'User', id: string } | null };
+
+export type SearchPhenotypesQueryVariables = Exact<{
+  query: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SearchPhenotypesQuery = { __typename?: 'Query', searchPhenotypes: { __typename?: 'PhenotypeSearchResultList', limit?: number | null, totalCount: number, results: Array<{ __typename?: 'PhenotypeSearchResult', id: string, field: PhenotypeSearchFieldEnum, name: string, definition: string, score: number }> } };
 
 export type ListContentByNamespaceQueryVariables = Exact<{
   namespace: Scalars['String']['input'];
@@ -1755,6 +1793,28 @@ export const mockCreateUserMutation = (resolver: GraphQLResponseResolver<CreateU
 export const mockUpdateUserMutation = (resolver: GraphQLResponseResolver<UpdateUserMutation, UpdateUserMutationVariables>, options?: RequestHandlerOptions) =>
   graphql.mutation<UpdateUserMutation, UpdateUserMutationVariables>(
     'UpdateUser',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockSearchPhenotypesQuery(
+ *   ({ query, variables }) => {
+ *     const { query, limit } = variables;
+ *     return HttpResponse.json({
+ *       data: { searchPhenotypes }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockSearchPhenotypesQuery = (resolver: GraphQLResponseResolver<SearchPhenotypesQuery, SearchPhenotypesQueryVariables>, options?: RequestHandlerOptions) =>
+  graphql.query<SearchPhenotypesQuery, SearchPhenotypesQueryVariables>(
+    'SearchPhenotypes',
     resolver,
     options
   )

@@ -223,6 +223,20 @@ export type PhenotypeFieldPolicy = {
 	phenotype?: FieldPolicy<any> | FieldReadFunction<any>,
 	publication?: FieldPolicy<any> | FieldReadFunction<any>
 };
+export type PhenotypeSearchResultKeySpecifier = ('definition' | 'field' | 'id' | 'name' | 'score' | PhenotypeSearchResultKeySpecifier)[];
+export type PhenotypeSearchResultFieldPolicy = {
+	definition?: FieldPolicy<any> | FieldReadFunction<any>,
+	field?: FieldPolicy<any> | FieldReadFunction<any>,
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	name?: FieldPolicy<any> | FieldReadFunction<any>,
+	score?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type PhenotypeSearchResultListKeySpecifier = ('limit' | 'results' | 'totalCount' | PhenotypeSearchResultListKeySpecifier)[];
+export type PhenotypeSearchResultListFieldPolicy = {
+	limit?: FieldPolicy<any> | FieldReadFunction<any>,
+	results?: FieldPolicy<any> | FieldReadFunction<any>,
+	totalCount?: FieldPolicy<any> | FieldReadFunction<any>
+};
 export type PlasmidKeySpecifier = ('created_at' | 'created_by' | 'dbxrefs' | 'depositor' | 'editable_summary' | 'genbank_accession' | 'genes' | 'id' | 'image_map' | 'in_stock' | 'keywords' | 'name' | 'publications' | 'sequence' | 'summary' | 'updated_at' | 'updated_by' | PlasmidKeySpecifier)[];
 export type PlasmidFieldPolicy = {
 	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -286,7 +300,7 @@ export type PublicationWithGeneFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	volume?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPhenotypeAssays' | 'listPhenotypeEnvironments' | 'listPhenotypes' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStockSuggestions' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'searchStocks' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPhenotypeAssays' | 'listPhenotypeEnvironments' | 'listPhenotypes' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStockSuggestions' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'searchPhenotypes' | 'searchStocks' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	content?: FieldPolicy<any> | FieldReadFunction<any>,
 	contentBySlug?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -317,6 +331,7 @@ export type QueryFieldPolicy = {
 	plasmid?: FieldPolicy<any> | FieldReadFunction<any>,
 	publication?: FieldPolicy<any> | FieldReadFunction<any>,
 	role?: FieldPolicy<any> | FieldReadFunction<any>,
+	searchPhenotypes?: FieldPolicy<any> | FieldReadFunction<any>,
 	searchStocks?: FieldPolicy<any> | FieldReadFunction<any>,
 	strain?: FieldPolicy<any> | FieldReadFunction<any>,
 	user?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -566,6 +581,14 @@ export type StrictTypedTypePolicies = {
 	Phenotype?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | PhenotypeKeySpecifier | (() => undefined | PhenotypeKeySpecifier),
 		fields?: PhenotypeFieldPolicy,
+	},
+	PhenotypeSearchResult?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | PhenotypeSearchResultKeySpecifier | (() => undefined | PhenotypeSearchResultKeySpecifier),
+		fields?: PhenotypeSearchResultFieldPolicy,
+	},
+	PhenotypeSearchResultList?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | PhenotypeSearchResultListKeySpecifier | (() => undefined | PhenotypeSearchResultListKeySpecifier),
+		fields?: PhenotypeSearchResultListFieldPolicy,
 	},
 	Plasmid?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | PlasmidKeySpecifier | (() => undefined | PlasmidKeySpecifier),

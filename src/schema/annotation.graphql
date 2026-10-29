@@ -1,0 +1,39 @@
+# PhenotypeSearchFieldEnum names the cvterm field that produced a
+# phenotype search match.
+enum PhenotypeSearchFieldEnum {
+  # label of an active cvterm in a phenotype ontology.
+  LABEL
+  # metadata.synonyms.value of an active cvterm in a phenotype ontology.
+  SYNONYM
+  # metadata.definition.value of an active cvterm in a phenotype ontology.
+  DEFINITION
+  # metadata.comments of an active cvterm in a phenotype ontology.
+  COMMENT
+}
+
+# PhenotypeSearchResult is one full phenotype search match,
+# deduplicated by entry_id.
+type PhenotypeSearchResult {
+  # entry_id of the matched strain, for example DBS0236126.
+  id: ID!
+  # Field that produced the match.
+  field: PhenotypeSearchFieldEnum!
+  # Name of the matched phenotype ontology term (cvterm label).
+  name: String!
+  # Definition of the matched phenotype ontology term.
+  definition: String!
+  # Rank score. A prefix match scores above a phrase match, a phrase
+  # match scores above a token match, and a token match scores above a
+  # fuzzy match.
+  score: Float!
+}
+
+# PhenotypeSearchResultList returns the results of a phenotype search
+# request. An empty list is valid, because a query can match no term.
+type PhenotypeSearchResultList {
+  results: [PhenotypeSearchResult!]!
+  # Effective limit of the request.
+  limit: Int
+  # Number of rows in results.
+  totalCount: Int!
+}

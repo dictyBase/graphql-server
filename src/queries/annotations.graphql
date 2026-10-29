@@ -1,0 +1,13 @@
+query SearchPhenotypes($query: String!, $limit: Int) {
+  searchPhenotypes(query: $query, limit: $limit) {
+    results {
+      id
+      field
+      name
+      definition
+      score
+    }
+    limit
+    totalCount
+  }
+}

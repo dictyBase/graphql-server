@@ -101,6 +101,20 @@ type Query {
   # List strain query that is by default is sorted by strain
   # date in descendent order
   listRecentStrains(limit: Int!): [Strain!]
+  # Phenotype queries
+  #
+  # Returns the results of a full phenotype search over strain
+  # phenotype annotations. The match runs against the cvterm label,
+  # the synonyms, the definition, and the comments of active terms in
+  # the Dicty Phenotypes, Dicty Environment, and Dictyostelium Assay
+  # ontologies. Results are ranked and deduplicated by entry_id.
+  #
+  # Constraints:
+  # - query must be at least 2 characters after normalization and must
+  #   contain at least one word that is not a stopword. The server
+  #   trims the text and lowercases it.
+  # - limit defaults to 50 when omitted and never exceeds 50.
+  searchPhenotypes(query: String!, limit: Int): PhenotypeSearchResultList!
   # List Phenotypes that match the provided search string
   listPhenotypes(search: String!): [String!]!
   # List Phenotype Environments that match the provided search string

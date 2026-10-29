@@ -554,6 +554,29 @@ export type Phenotype = {
   publication?: Maybe<Publication>;
 };
 
+export enum PhenotypeSearchFieldEnum {
+  Comment = 'COMMENT',
+  Definition = 'DEFINITION',
+  Label = 'LABEL',
+  Synonym = 'SYNONYM'
+}
+
+export type PhenotypeSearchResult = {
+  __typename?: 'PhenotypeSearchResult';
+  definition: Scalars['String']['output'];
+  field: PhenotypeSearchFieldEnum;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  score: Scalars['Float']['output'];
+};
+
+export type PhenotypeSearchResultList = {
+  __typename?: 'PhenotypeSearchResultList';
+  limit?: Maybe<Scalars['Int']['output']>;
+  results: Array<PhenotypeSearchResult>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type Plasmid = Stock & {
   __typename?: 'Plasmid';
   created_at: Scalars['Timestamp']['output'];
@@ -684,6 +707,7 @@ export type Query = {
   plasmid?: Maybe<Plasmid>;
   publication?: Maybe<Publication>;
   role?: Maybe<Role>;
+  searchPhenotypes: PhenotypeSearchResultList;
   searchStocks: StockSearchResultList;
   strain?: Maybe<Strain>;
   user?: Maybe<User>;
@@ -835,6 +859,12 @@ export type QueryPublicationArgs = {
 
 export type QueryRoleArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QuerySearchPhenotypesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  query: Scalars['String']['input'];
 };
 
 
@@ -1268,6 +1298,14 @@ export type UpdateUserMutationVariables = Exact<{
 
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typename?: 'User', id: string } | null };
+
+export type SearchPhenotypesQueryVariables = Exact<{
+  query: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SearchPhenotypesQuery = { __typename?: 'Query', searchPhenotypes: { __typename?: 'PhenotypeSearchResultList', limit?: number | null, totalCount: number, results: Array<{ __typename?: 'PhenotypeSearchResult', id: string, field: PhenotypeSearchFieldEnum, name: string, definition: string, score: number }> } };
 
 export type ListContentByNamespaceQueryVariables = Exact<{
   namespace: Scalars['String']['input'];
@@ -1977,6 +2015,50 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
+export const SearchPhenotypesDocument = gql`
+    query SearchPhenotypes($query: String!, $limit: Int) {
+  searchPhenotypes(query: $query, limit: $limit) {
+    results {
+      id
+      field
+      name
+      definition
+      score
+    }
+    limit
+    totalCount
+  }
+}
+    `;
+
+/**
+ * __useSearchPhenotypesQuery__
+ *
+ * To run a query within a React component, call `useSearchPhenotypesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchPhenotypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchPhenotypesQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useSearchPhenotypesQuery(baseOptions: Apollo.QueryHookOptions<SearchPhenotypesQuery, SearchPhenotypesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchPhenotypesQuery, SearchPhenotypesQueryVariables>(SearchPhenotypesDocument, options);
+      }
+export function useSearchPhenotypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPhenotypesQuery, SearchPhenotypesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchPhenotypesQuery, SearchPhenotypesQueryVariables>(SearchPhenotypesDocument, options);
+        }
+export type SearchPhenotypesQueryHookResult = ReturnType<typeof useSearchPhenotypesQuery>;
+export type SearchPhenotypesLazyQueryHookResult = ReturnType<typeof useSearchPhenotypesLazyQuery>;
+export type SearchPhenotypesQueryResult = Apollo.QueryResult<SearchPhenotypesQuery, SearchPhenotypesQueryVariables>;
 export const ListContentByNamespaceDocument = gql`
     query ListContentByNamespace($namespace: String!, $limit: Int) {
   listContentByNamespace(namespace: $namespace, limit: $limit) {

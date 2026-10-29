@@ -158,6 +158,21 @@ export const UpdateUser = gql`
   }
 }
     `;
+export const SearchPhenotypes = gql`
+    query SearchPhenotypes($query: String!, $limit: Int) {
+  searchPhenotypes(query: $query, limit: $limit) {
+    results {
+      id
+      field
+      name
+      definition
+      score
+    }
+    limit
+    totalCount
+  }
+}
+    `;
 export const ListContentByNamespace = gql`
     query ListContentByNamespace($namespace: String!, $limit: Int) {
   listContentByNamespace(namespace: $namespace, limit: $limit) {

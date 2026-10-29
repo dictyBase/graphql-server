@@ -11,6 +11,7 @@ export declare const UpdateStrainPhenotype: import("graphql").DocumentNode;
 export declare const UploadFile: import("graphql").DocumentNode;
 export declare const CreateUser: import("graphql").DocumentNode;
 export declare const UpdateUser: import("graphql").DocumentNode;
+export declare const SearchPhenotypes: import("graphql").DocumentNode;
 export declare const ListContentByNamespace: import("graphql").DocumentNode;
 export declare const ContentBySlug: import("graphql").DocumentNode;
 export declare const Content: import("graphql").DocumentNode;
