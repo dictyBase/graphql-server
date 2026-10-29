@@ -12,20 +12,37 @@ enum PhenotypeSearchFieldEnum {
 }
 
 # PhenotypeSearchResult is one full phenotype search match,
-# deduplicated by entry_id.
+# deduplicated by entry_id. It carries the same data as
+# StockSearchResult, so the user interface can show one result row shape
+# for both searches.
 type PhenotypeSearchResult {
   # entry_id of the matched strain, for example DBS0236126.
   id: ID!
+  # Kind of the matched stock. Always STRAIN here.
+  entity: StockEntityType!
   # Field that produced the match.
   field: PhenotypeSearchFieldEnum!
-  # Name of the matched phenotype ontology term (cvterm label).
-  name: String!
-  # Definition of the matched phenotype ontology term.
-  definition: String!
+  # Text shown for the matched field in the user interface. It is the
+  # cvterm label for LABEL and SYNONYM matches and the cvterm definition
+  # for DEFINITION and COMMENT matches. The protobuf response carries no
+  # comment text, so a COMMENT match shows the definition.
+  display_text: String!
   # Rank score. A prefix match scores above a phrase match, a phrase
   # match scores above a token match, and a token match scores above a
   # fuzzy match.
   score: Float!
+  # Complete stored summary of the strain document. It is not a snippet,
+  # and it is not highlighted. Empty when the strain has no summary.
+  summary: String!
+  # Strain label, shown as Descriptor in the stock center. Empty for
+  # strains without a label.
+  strain_label: String!
+  # Whether the strain is in the stock center inventory. Same meaning
+  # as the in_stock field of Strain.
+  in_stock: Boolean!
+  # Strain type mapped from the ontology term ("gwdi" for REMI-seq
+  # strains, "bacterial" for bacterial strains, "regular" otherwise).
+  stock_type: String!
 }
 
 # PhenotypeSearchResultList returns the results of a phenotype search

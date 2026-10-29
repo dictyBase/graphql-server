@@ -223,13 +223,17 @@ export type PhenotypeFieldPolicy = {
 	phenotype?: FieldPolicy<any> | FieldReadFunction<any>,
 	publication?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type PhenotypeSearchResultKeySpecifier = ('definition' | 'field' | 'id' | 'name' | 'score' | PhenotypeSearchResultKeySpecifier)[];
+export type PhenotypeSearchResultKeySpecifier = ('display_text' | 'entity' | 'field' | 'id' | 'in_stock' | 'score' | 'stock_type' | 'strain_label' | 'summary' | PhenotypeSearchResultKeySpecifier)[];
 export type PhenotypeSearchResultFieldPolicy = {
-	definition?: FieldPolicy<any> | FieldReadFunction<any>,
+	display_text?: FieldPolicy<any> | FieldReadFunction<any>,
+	entity?: FieldPolicy<any> | FieldReadFunction<any>,
 	field?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	name?: FieldPolicy<any> | FieldReadFunction<any>,
-	score?: FieldPolicy<any> | FieldReadFunction<any>
+	in_stock?: FieldPolicy<any> | FieldReadFunction<any>,
+	score?: FieldPolicy<any> | FieldReadFunction<any>,
+	stock_type?: FieldPolicy<any> | FieldReadFunction<any>,
+	strain_label?: FieldPolicy<any> | FieldReadFunction<any>,
+	summary?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type PhenotypeSearchResultListKeySpecifier = ('limit' | 'results' | 'totalCount' | PhenotypeSearchResultListKeySpecifier)[];
 export type PhenotypeSearchResultListFieldPolicy = {

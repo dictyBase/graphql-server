@@ -165,10 +165,14 @@ exports.SearchPhenotypes = (0, graphql_tag_1.default) `
   searchPhenotypes(query: $query, limit: $limit) {
     results {
       id
+      entity
       field
-      name
-      definition
+      display_text
       score
+      summary
+      strain_label
+      in_stock
+      stock_type
     }
     limit
     totalCount

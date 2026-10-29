@@ -563,11 +563,15 @@ export enum PhenotypeSearchFieldEnum {
 
 export type PhenotypeSearchResult = {
   __typename?: 'PhenotypeSearchResult';
-  definition: Scalars['String']['output'];
+  display_text: Scalars['String']['output'];
+  entity: StockEntityType;
   field: PhenotypeSearchFieldEnum;
   id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
+  in_stock: Scalars['Boolean']['output'];
   score: Scalars['Float']['output'];
+  stock_type: Scalars['String']['output'];
+  strain_label: Scalars['String']['output'];
+  summary: Scalars['String']['output'];
 };
 
 export type PhenotypeSearchResultList = {
@@ -1305,7 +1309,7 @@ export type SearchPhenotypesQueryVariables = Exact<{
 }>;
 
 
-export type SearchPhenotypesQuery = { __typename?: 'Query', searchPhenotypes: { __typename?: 'PhenotypeSearchResultList', limit?: number | null, totalCount: number, results: Array<{ __typename?: 'PhenotypeSearchResult', id: string, field: PhenotypeSearchFieldEnum, name: string, definition: string, score: number }> } };
+export type SearchPhenotypesQuery = { __typename?: 'Query', searchPhenotypes: { __typename?: 'PhenotypeSearchResultList', limit?: number | null, totalCount: number, results: Array<{ __typename?: 'PhenotypeSearchResult', id: string, entity: StockEntityType, field: PhenotypeSearchFieldEnum, display_text: string, score: number, summary: string, strain_label: string, in_stock: boolean, stock_type: string }> } };
 
 export type ListContentByNamespaceQueryVariables = Exact<{
   namespace: Scalars['String']['input'];
@@ -2020,10 +2024,14 @@ export const SearchPhenotypesDocument = gql`
   searchPhenotypes(query: $query, limit: $limit) {
     results {
       id
+      entity
       field
-      name
-      definition
+      display_text
       score
+      summary
+      strain_label
+      in_stock
+      stock_type
     }
     limit
     totalCount

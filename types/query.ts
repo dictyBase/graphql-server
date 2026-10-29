@@ -163,10 +163,14 @@ export const SearchPhenotypes = gql`
   searchPhenotypes(query: $query, limit: $limit) {
     results {
       id
+      entity
       field
-      name
-      definition
+      display_text
       score
+      summary
+      strain_label
+      in_stock
+      stock_type
     }
     limit
     totalCount
