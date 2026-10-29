@@ -502,11 +502,15 @@ export declare enum PhenotypeSearchFieldEnum {
 }
 export type PhenotypeSearchResult = {
     __typename?: 'PhenotypeSearchResult';
-    definition: Scalars['String']['output'];
+    display_text: Scalars['String']['output'];
+    entity: StockEntityType;
     field: PhenotypeSearchFieldEnum;
     id: Scalars['ID']['output'];
-    name: Scalars['String']['output'];
+    in_stock: Scalars['Boolean']['output'];
     score: Scalars['Float']['output'];
+    stock_type: Scalars['String']['output'];
+    strain_label: Scalars['String']['output'];
+    summary: Scalars['String']['output'];
 };
 export type PhenotypeSearchResultList = {
     __typename?: 'PhenotypeSearchResultList';
@@ -1274,10 +1278,14 @@ export type SearchPhenotypesQuery = {
         results: Array<{
             __typename?: 'PhenotypeSearchResult';
             id: string;
+            entity: StockEntityType;
             field: PhenotypeSearchFieldEnum;
-            name: string;
-            definition: string;
+            display_text: string;
             score: number;
+            summary: string;
+            strain_label: string;
+            in_stock: boolean;
+            stock_type: string;
         }>;
     };
 };
