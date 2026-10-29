@@ -552,33 +552,6 @@ export type Phenotype = {
   publication?: Maybe<Publication>;
 };
 
-export enum PhenotypeSearchFieldEnum {
-  Comment = 'COMMENT',
-  Definition = 'DEFINITION',
-  Label = 'LABEL',
-  Synonym = 'SYNONYM'
-}
-
-export type PhenotypeSearchResult = {
-  __typename?: 'PhenotypeSearchResult';
-  display_text: Scalars['String']['output'];
-  entity: StockEntityType;
-  field: PhenotypeSearchFieldEnum;
-  id: Scalars['ID']['output'];
-  in_stock: Scalars['Boolean']['output'];
-  score: Scalars['Float']['output'];
-  stock_type: Scalars['String']['output'];
-  strain_label: Scalars['String']['output'];
-  summary: Scalars['String']['output'];
-};
-
-export type PhenotypeSearchResultList = {
-  __typename?: 'PhenotypeSearchResultList';
-  limit?: Maybe<Scalars['Int']['output']>;
-  results: Array<PhenotypeSearchResult>;
-  totalCount: Scalars['Int']['output'];
-};
-
 export type Plasmid = Stock & {
   __typename?: 'Plasmid';
   created_at: Scalars['Timestamp']['output'];
@@ -709,7 +682,7 @@ export type Query = {
   plasmid?: Maybe<Plasmid>;
   publication?: Maybe<Publication>;
   role?: Maybe<Role>;
-  searchPhenotypes: PhenotypeSearchResultList;
+  searchPhenotypes: StockSearchResultList;
   searchStocks: StockSearchResultList;
   strain?: Maybe<Strain>;
   user?: Maybe<User>;
@@ -949,7 +922,11 @@ export enum StockSearchFieldEnum {
   StockId = 'STOCK_ID',
   Summary = 'SUMMARY',
   Synonym = 'SYNONYM',
-  SystematicName = 'SYSTEMATIC_NAME'
+  SystematicName = 'SYSTEMATIC_NAME',
+  TermComment = 'TERM_COMMENT',
+  TermDefinition = 'TERM_DEFINITION',
+  TermLabel = 'TERM_LABEL',
+  TermSynonym = 'TERM_SYNONYM'
 }
 
 export type StockSearchResult = {
@@ -1301,14 +1278,6 @@ export type UpdateUserMutationVariables = Exact<{
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typename?: 'User', id: string } | null };
 
-export type SearchPhenotypesQueryVariables = Exact<{
-  query: Scalars['String']['input'];
-  limit?: InputMaybe<Scalars['Int']['input']>;
-}>;
-
-
-export type SearchPhenotypesQuery = { __typename?: 'Query', searchPhenotypes: { __typename?: 'PhenotypeSearchResultList', limit?: number | null, totalCount: number, results: Array<{ __typename?: 'PhenotypeSearchResult', id: string, entity: StockEntityType, field: PhenotypeSearchFieldEnum, display_text: string, score: number, summary: string, strain_label: string, in_stock: boolean, stock_type: string }> } };
-
 export type ListContentByNamespaceQueryVariables = Exact<{
   namespace: Scalars['String']['input'];
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -1400,6 +1369,14 @@ export type SearchStocksQueryVariables = Exact<{
 
 
 export type SearchStocksQuery = { __typename?: 'Query', searchStocks: { __typename?: 'StockSearchResultList', limit?: number | null, totalCount: number, results: Array<{ __typename?: 'StockSearchResult', id: string, entity: StockEntityType, field: StockSearchFieldEnum, display_text: string, score: number, summary: string, strain_label: string, in_stock: boolean, stock_type: string }> } };
+
+export type SearchPhenotypesQueryVariables = Exact<{
+  query: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SearchPhenotypesQuery = { __typename?: 'Query', searchPhenotypes: { __typename?: 'StockSearchResultList', limit?: number | null, totalCount: number, results: Array<{ __typename?: 'StockSearchResult', id: string, entity: StockEntityType, field: StockSearchFieldEnum, display_text: string, score: number, summary: string, strain_label: string, in_stock: boolean, stock_type: string }> } };
 
 export type ListStockSuggestionsQueryVariables = Exact<{
   query: Scalars['String']['input'];
@@ -1806,28 +1783,6 @@ export const mockUpdateUserMutation = (resolver: GraphQLResponseResolver<UpdateU
  * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
  * @see https://mswjs.io/docs/basics/response-resolver
  * @example
- * mockSearchPhenotypesQuery(
- *   ({ query, variables }) => {
- *     const { query, limit } = variables;
- *     return HttpResponse.json({
- *       data: { searchPhenotypes }
- *     })
- *   },
- *   requestOptions
- * )
- */
-export const mockSearchPhenotypesQuery = (resolver: GraphQLResponseResolver<SearchPhenotypesQuery, SearchPhenotypesQueryVariables>, options?: RequestHandlerOptions) =>
-  graphql.query<SearchPhenotypesQuery, SearchPhenotypesQueryVariables>(
-    'SearchPhenotypes',
-    resolver,
-    options
-  )
-
-/**
- * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
- * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
- * @see https://mswjs.io/docs/basics/response-resolver
- * @example
  * mockListContentByNamespaceQuery(
  *   ({ query, variables }) => {
  *     const { namespace, limit } = variables;
@@ -2104,6 +2059,28 @@ export const mockListPublicationsWithGeneQuery = (resolver: GraphQLResponseResol
 export const mockSearchStocksQuery = (resolver: GraphQLResponseResolver<SearchStocksQuery, SearchStocksQueryVariables>, options?: RequestHandlerOptions) =>
   graphql.query<SearchStocksQuery, SearchStocksQueryVariables>(
     'SearchStocks',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockSearchPhenotypesQuery(
+ *   ({ query, variables }) => {
+ *     const { query, limit } = variables;
+ *     return HttpResponse.json({
+ *       data: { searchPhenotypes }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockSearchPhenotypesQuery = (resolver: GraphQLResponseResolver<SearchPhenotypesQuery, SearchPhenotypesQueryVariables>, options?: RequestHandlerOptions) =>
+  graphql.query<SearchPhenotypesQuery, SearchPhenotypesQueryVariables>(
+    'SearchPhenotypes',
     resolver,
     options
   )

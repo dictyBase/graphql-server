@@ -158,25 +158,6 @@ export const UpdateUser = gql`
   }
 }
     `;
-export const SearchPhenotypes = gql`
-    query SearchPhenotypes($query: String!, $limit: Int) {
-  searchPhenotypes(query: $query, limit: $limit) {
-    results {
-      id
-      entity
-      field
-      display_text
-      score
-      summary
-      strain_label
-      in_stock
-      stock_type
-    }
-    limit
-    totalCount
-  }
-}
-    `;
 export const ListContentByNamespace = gql`
     query ListContentByNamespace($namespace: String!, $limit: Int) {
   listContentByNamespace(namespace: $namespace, limit: $limit) {
@@ -433,6 +414,25 @@ export const ListPublicationsWithGene = gql`
 export const SearchStocks = gql`
     query SearchStocks($query: String!, $limit: Int, $entity: StockEntityType) {
   searchStocks(query: $query, limit: $limit, entity: $entity) {
+    results {
+      id
+      entity
+      field
+      display_text
+      score
+      summary
+      strain_label
+      in_stock
+      stock_type
+    }
+    limit
+    totalCount
+  }
+}
+    `;
+export const SearchPhenotypes = gql`
+    query SearchPhenotypes($query: String!, $limit: Int) {
+  searchPhenotypes(query: $query, limit: $limit) {
     results {
       id
       entity

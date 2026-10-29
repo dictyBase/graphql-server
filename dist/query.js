@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserByEmail = exports.ListPhenotypeAssays = exports.ListPhenotypeEnvironments = exports.ListPhenotypes = exports.ListRecentStrains = exports.ListRecentPlasmids = exports.Strain = exports.Plasmid = exports.PlasmidListFilter = exports.ListPlasmidsInventory = exports.ListStrainsInventory = exports.ListBacterialStrains = exports.ListStrainsWithPhenotype = exports.StrainList = exports.ListStockSuggestions = exports.SearchStocks = exports.ListPublicationsWithGene = exports.ListRecentPublications = exports.Publication = exports.ListStrainsWithGene = exports.GeneOntologyAnnotation = exports.ListPublicationsWithGeneSummary = exports.GeneOntologyAnnotationSummary = exports.GeneGeneralInformationSummary = exports.ListOrganisms = exports.Content = exports.ContentBySlug = exports.ListContentByNamespace = exports.SearchPhenotypes = exports.UpdateUser = exports.CreateUser = exports.UploadFile = exports.UpdateStrainPhenotype = exports.AddStrainPhenotype = exports.CreateOrder = exports.UpdateGeneGeneralInfo = exports.CreateGeneGeneralInfo = exports.DeleteContent = exports.UpdateContent = exports.CreateContent = exports.Logout = exports.Login = void 0;
+exports.UserByEmail = exports.ListPhenotypeAssays = exports.ListPhenotypeEnvironments = exports.ListPhenotypes = exports.ListRecentStrains = exports.ListRecentPlasmids = exports.Strain = exports.Plasmid = exports.PlasmidListFilter = exports.ListPlasmidsInventory = exports.ListStrainsInventory = exports.ListBacterialStrains = exports.ListStrainsWithPhenotype = exports.StrainList = exports.ListStockSuggestions = exports.SearchPhenotypes = exports.SearchStocks = exports.ListPublicationsWithGene = exports.ListRecentPublications = exports.Publication = exports.ListStrainsWithGene = exports.GeneOntologyAnnotation = exports.ListPublicationsWithGeneSummary = exports.GeneOntologyAnnotationSummary = exports.GeneGeneralInformationSummary = exports.ListOrganisms = exports.Content = exports.ContentBySlug = exports.ListContentByNamespace = exports.UpdateUser = exports.CreateUser = exports.UploadFile = exports.UpdateStrainPhenotype = exports.AddStrainPhenotype = exports.CreateOrder = exports.UpdateGeneGeneralInfo = exports.CreateGeneGeneralInfo = exports.DeleteContent = exports.UpdateContent = exports.CreateContent = exports.Logout = exports.Login = void 0;
 const graphql_tag_1 = require("graphql-tag");
 exports.Login = (0, graphql_tag_1.default) `
     mutation Login($input: LoginInput!) {
@@ -157,25 +157,6 @@ exports.UpdateUser = (0, graphql_tag_1.default) `
     mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {
   updateUser(id: $id, input: $input) {
     id
-  }
-}
-    `;
-exports.SearchPhenotypes = (0, graphql_tag_1.default) `
-    query SearchPhenotypes($query: String!, $limit: Int) {
-  searchPhenotypes(query: $query, limit: $limit) {
-    results {
-      id
-      entity
-      field
-      display_text
-      score
-      summary
-      strain_label
-      in_stock
-      stock_type
-    }
-    limit
-    totalCount
   }
 }
     `;
@@ -435,6 +416,25 @@ exports.ListPublicationsWithGene = (0, graphql_tag_1.default) `
 exports.SearchStocks = (0, graphql_tag_1.default) `
     query SearchStocks($query: String!, $limit: Int, $entity: StockEntityType) {
   searchStocks(query: $query, limit: $limit, entity: $entity) {
+    results {
+      id
+      entity
+      field
+      display_text
+      score
+      summary
+      strain_label
+      in_stock
+      stock_type
+    }
+    limit
+    totalCount
+  }
+}
+    `;
+exports.SearchPhenotypes = (0, graphql_tag_1.default) `
+    query SearchPhenotypes($query: String!, $limit: Int) {
+  searchPhenotypes(query: $query, limit: $limit) {
     results {
       id
       entity

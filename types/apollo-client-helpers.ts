@@ -223,24 +223,6 @@ export type PhenotypeFieldPolicy = {
 	phenotype?: FieldPolicy<any> | FieldReadFunction<any>,
 	publication?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type PhenotypeSearchResultKeySpecifier = ('display_text' | 'entity' | 'field' | 'id' | 'in_stock' | 'score' | 'stock_type' | 'strain_label' | 'summary' | PhenotypeSearchResultKeySpecifier)[];
-export type PhenotypeSearchResultFieldPolicy = {
-	display_text?: FieldPolicy<any> | FieldReadFunction<any>,
-	entity?: FieldPolicy<any> | FieldReadFunction<any>,
-	field?: FieldPolicy<any> | FieldReadFunction<any>,
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	in_stock?: FieldPolicy<any> | FieldReadFunction<any>,
-	score?: FieldPolicy<any> | FieldReadFunction<any>,
-	stock_type?: FieldPolicy<any> | FieldReadFunction<any>,
-	strain_label?: FieldPolicy<any> | FieldReadFunction<any>,
-	summary?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type PhenotypeSearchResultListKeySpecifier = ('limit' | 'results' | 'totalCount' | PhenotypeSearchResultListKeySpecifier)[];
-export type PhenotypeSearchResultListFieldPolicy = {
-	limit?: FieldPolicy<any> | FieldReadFunction<any>,
-	results?: FieldPolicy<any> | FieldReadFunction<any>,
-	totalCount?: FieldPolicy<any> | FieldReadFunction<any>
-};
 export type PlasmidKeySpecifier = ('created_at' | 'created_by' | 'dbxrefs' | 'depositor' | 'editable_summary' | 'genbank_accession' | 'genes' | 'id' | 'image_map' | 'in_stock' | 'keywords' | 'name' | 'publications' | 'sequence' | 'summary' | 'updated_at' | 'updated_by' | PlasmidKeySpecifier)[];
 export type PlasmidFieldPolicy = {
 	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -585,14 +567,6 @@ export type StrictTypedTypePolicies = {
 	Phenotype?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | PhenotypeKeySpecifier | (() => undefined | PhenotypeKeySpecifier),
 		fields?: PhenotypeFieldPolicy,
-	},
-	PhenotypeSearchResult?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | PhenotypeSearchResultKeySpecifier | (() => undefined | PhenotypeSearchResultKeySpecifier),
-		fields?: PhenotypeSearchResultFieldPolicy,
-	},
-	PhenotypeSearchResultList?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | PhenotypeSearchResultListKeySpecifier | (() => undefined | PhenotypeSearchResultListKeySpecifier),
-		fields?: PhenotypeSearchResultListFieldPolicy,
 	},
 	Plasmid?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | PlasmidKeySpecifier | (() => undefined | PlasmidKeySpecifier),
