@@ -221,26 +221,25 @@ func phenotypeSearchCollectionData(
 
 // fetchPhenotypeStrainMetadataMap fetches the summary, the strain label,
 // and the stock type of the matched strains in one ListStrainsByIds
-// call.
+// call. One flat pipe derives the sorted, deduplicated strain ids, runs
+// the rpc, recovers a missing strain list, and enriches errors.
 func fetchPhenotypeStrainMetadataMap(
 	s phenotypeSearchContext,
 ) IOE.IOEither[error, map[string]strainSearchMetadata] {
-	ids := F.Pipe3(
+	return F.Pipe9(
 		s.collection.GetData(),
 		A.Map(phenotypeSearchEntryID),
 		A.StrictUniq[string],
 		A.Sort(stringOrd),
-	)
-	req := &pb.StockIdList{Id: ids}
-
-	return F.Pipe3(
-		IOE.TryCatchError(
-			func() (*pb.StrainList, error) {
-				return s.stockClient.ListStrainsByIds(
-					s.gctx,
-					req,
-				)
-			}),
+		IOE.Of[error, []string],
+		IOE.Map[error](func(ids []string) *pb.StockIdList {
+			return &pb.StockIdList{Id: ids}
+		}),
+		IOE.Chain(func(req *pb.StockIdList) IOE.IOEither[error, *pb.StrainList] {
+			return IOE.TryCatchError(func() (*pb.StrainList, error) {
+				return s.stockClient.ListStrainsByIds(s.gctx, req)
+			})
+		}),
 		IOE.OrElse(recoverStrainListNotFound),
 		IOE.MapLeft[*pb.StrainList](func(err error) error {
 			return fmt.Errorf(
