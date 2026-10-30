@@ -306,6 +306,12 @@ func MockedAnnotationClient() *clients.TaggedAnnotationServiceClient {
 			mock.AnythingOfType("*annotation.AnnotationSearchParameters"),
 		).
 		Return(MockAnnotationSearchResultCollection(), nil)
+	mockedAnnoClient.EXPECT().
+		SearchPhenotypes(
+			mock.Anything,
+			mock.AnythingOfType("*annotation.PhenotypeSearchParameters"),
+		).
+		Return(MockPhenotypeSearchResultCollection(), nil)
 	return mockedAnnoClient
 }
 
@@ -410,4 +416,45 @@ func MockedCharacteristicsClient() *clients.TaggedAnnotationServiceClient {
 		mock.AnythingOfType("*annotation.ListParameters"),
 	).Return(MockCharacteristicsAnno(), nil)
 	return mockedAnnoClient
+}
+
+// MockPhenotypeSearchResultCollection returns two ranked phenotype search
+// rows over distinct strain entries. It reuses the stock search id
+// constant and the shared delayedCulmination constant, so the mocks
+// package holds each literal once.
+func MockPhenotypeSearchResultCollection() *annotation.PhenotypeSearchResultCollection {
+	return &annotation.PhenotypeSearchResultCollection{
+		Data: []*annotation.PhenotypeSearchResult{
+			{
+				EntryId:    MockStockSearchID,
+				Field:      annotation.PhenotypeSearchField_PHENOTYPE_SEARCH_FIELD_LABEL,
+				Name:       delayedCulmination,
+				Definition: "Strain completes development later than wild type.",
+				Score:      1250.5,
+			},
+			{
+				EntryId:    MockAnnoSearchStrainID,
+				Field:      annotation.PhenotypeSearchField_PHENOTYPE_SEARCH_FIELD_DEFINITION,
+				Name:       "aberrant morphology",
+				Definition: "Cell shape differs from the wild-type shape.",
+				Score:      300.25,
+			},
+		},
+		Meta: &annotation.Meta{
+			Limit: 50,
+			Total: 2,
+		},
+	}
+}
+
+// MockEmptyPhenotypeSearchResultCollection returns a valid empty phenotype
+// search answer.
+func MockEmptyPhenotypeSearchResultCollection() *annotation.PhenotypeSearchResultCollection {
+	return &annotation.PhenotypeSearchResultCollection{
+		Data: []*annotation.PhenotypeSearchResult{},
+		Meta: &annotation.Meta{
+			Limit: 50,
+			Total: 0,
+		},
+	}
 }
