@@ -5,7 +5,7 @@ require (
 	github.com/IBM/fp-go/v2 v2.10.0
 	github.com/dictyBase/aphgrpc v1.4.2
 	github.com/dictyBase/fp-go-loom v0.2.0
-	github.com/dictyBase/go-genproto v0.0.0-20261022140202-b96fdbebdfbf
+	github.com/dictyBase/go-genproto v0.0.0-20261029035135-a46038587034
 	github.com/dictybase/literature v0.3.0
 	github.com/emirpasic/gods v1.18.1
 	github.com/fatih/structs v1.1.0
