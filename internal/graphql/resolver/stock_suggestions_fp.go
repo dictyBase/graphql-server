@@ -438,12 +438,10 @@ func withSuggestionParams(
 func fetchSuggestionCollection(
 	s listStockSuggestionsContext,
 ) IOE.IOEither[error, *pb.StockSuggestionCollection] {
-	rawFetch := func() (*pb.StockSuggestionCollection, error) {
-		return s.client.AutocompleteStock(s.gctx, s.params)
-	}
-
 	return F.Pipe1(
-		IOE.TryCatchError(rawFetch),
+		IOE.TryCatchError(func() (*pb.StockSuggestionCollection, error) {
+			return s.client.AutocompleteStock(s.gctx, s.params)
+		}),
 		IOE.MapLeft[*pb.StockSuggestionCollection](func(err error) error {
 			return fmt.Errorf("fetch stock suggestions for query %q: %w", s.query, err)
 		}),
@@ -453,12 +451,10 @@ func fetchSuggestionCollection(
 func fetchAnnotationSuggestionCollection(
 	s listStockSuggestionsContext,
 ) IOE.IOEither[error, *anno.AnnotationSuggestionCollection] {
-	rawFetch := func() (*anno.AnnotationSuggestionCollection, error) {
-		return s.annoClient.AutocompleteAnnotation(s.gctx, s.annoParams)
-	}
-
 	return F.Pipe1(
-		IOE.TryCatchError(rawFetch),
+		IOE.TryCatchError(func() (*anno.AnnotationSuggestionCollection, error) {
+			return s.annoClient.AutocompleteAnnotation(s.gctx, s.annoParams)
+		}),
 		IOE.MapLeft[*anno.AnnotationSuggestionCollection](func(err error) error {
 			return fmt.Errorf(
 				"fetch annotation suggestions for query %q: %w",

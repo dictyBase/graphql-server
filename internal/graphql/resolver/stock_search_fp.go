@@ -505,12 +505,10 @@ func withSearchParams(
 func fetchSearchCollection(
 	s listStockSearchContext,
 ) IOE.IOEither[error, *pb.StockSearchResultCollection] {
-	rawFetch := func() (*pb.StockSearchResultCollection, error) {
-		return s.client.SearchStock(s.gctx, s.params)
-	}
-
 	return F.Pipe1(
-		IOE.TryCatchError(rawFetch),
+		IOE.TryCatchError(func() (*pb.StockSearchResultCollection, error) {
+			return s.client.SearchStock(s.gctx, s.params)
+		}),
 		IOE.MapLeft[*pb.StockSearchResultCollection](func(err error) error {
 			return fmt.Errorf("search stocks for query %q: %w", s.query, err)
 		}),
@@ -520,12 +518,10 @@ func fetchSearchCollection(
 func fetchAnnotationSearchCollection(
 	s listStockSearchContext,
 ) IOE.IOEither[error, *anno.AnnotationSearchResultCollection] {
-	rawFetch := func() (*anno.AnnotationSearchResultCollection, error) {
-		return s.annoClient.SearchAnnotation(s.gctx, s.annoParams)
-	}
-
 	return F.Pipe1(
-		IOE.TryCatchError(rawFetch),
+		IOE.TryCatchError(func() (*anno.AnnotationSearchResultCollection, error) {
+			return s.annoClient.SearchAnnotation(s.gctx, s.annoParams)
+		}),
 		IOE.MapLeft[*anno.AnnotationSearchResultCollection](func(err error) error {
 			return fmt.Errorf(
 				"search annotations for query %q: %w",
@@ -652,12 +648,11 @@ func fetchStrainMetadataMap(
 ) IOE.IOEither[error, map[string]strainSearchMetadata] {
 	ids := uniqueAnnotationEntryIDs(s)
 	req := &pb.StockIdList{Id: ids}
-	rawFetch := func() (*pb.StrainList, error) {
-		return s.client.ListStrainsByIds(s.gctx, req)
-	}
 
 	return F.Pipe3(
-		IOE.TryCatchError(rawFetch),
+		IOE.TryCatchError(func() (*pb.StrainList, error) {
+			return s.client.ListStrainsByIds(s.gctx, req)
+		}),
 		IOE.OrElse(recoverStrainListNotFound),
 		IOE.MapLeft[*pb.StrainList](func(err error) error {
 			return fmt.Errorf(
@@ -939,12 +934,10 @@ func fetchBacterialStrainIDMap(
 		Limit:  bacterialSearchAnnoLimit,
 		Filter: resolverutils.BacterialAnnotationFilter(),
 	}
-	rawFetch := func() (*anno.TaggedAnnotationCollection, error) {
-		return s.annoClient.ListAnnotations(s.gctx, req)
-	}
-
 	return F.Pipe3(
-		IOE.TryCatchError(rawFetch),
+		IOE.TryCatchError(func() (*anno.TaggedAnnotationCollection, error) {
+			return s.annoClient.ListAnnotations(s.gctx, req)
+		}),
 		IOE.OrElse(recoverBacterialListNotFound),
 		IOE.MapLeft[*anno.TaggedAnnotationCollection](func(err error) error {
 			return fmt.Errorf(

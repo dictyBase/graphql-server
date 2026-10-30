@@ -223,11 +223,11 @@ func createPubMedFromState(
 	s clientBuildState,
 ) IOE.IOEither[error, *literature.Client] {
 	opts := pubMedOptions(s.params)
-	newClient := func() (*literature.Client, error) {
-		return literature.New(opts...)
-	}
+
 	return F.Pipe1(
-		IOE.TryCatchError(newClient),
+		IOE.TryCatchError(func() (*literature.Client, error) {
+			return literature.New(opts...)
+		}),
 		IOE.MapLeft[*literature.Client](func(err error) error {
 			return fmt.Errorf(
 				"error creating literature pubmed client: %w",
@@ -241,11 +241,11 @@ func createEuropeFromState(
 	s clientBuildState,
 ) IOE.IOEither[error, *literature.EuropePMCClient] {
 	opts := europePMCOptions(s.params)
-	newClient := func() (*literature.EuropePMCClient, error) {
-		return literature.NewEuropePMCClient(opts...)
-	}
+
 	return F.Pipe1(
-		IOE.TryCatchError(newClient),
+		IOE.TryCatchError(func() (*literature.EuropePMCClient, error) {
+			return literature.NewEuropePMCClient(opts...)
+		}),
 		IOE.MapLeft[*literature.EuropePMCClient](func(err error) error {
 			return fmt.Errorf(
 				"error creating literature europepmc client: %w",
@@ -380,11 +380,10 @@ func validateStatePMID(s pubFetchState) E.Either[error, pubFetchState] {
 func callPubMedByPMID(
 	s pubFetchState,
 ) IOE.IOEither[error, *models.Publication] {
-	rawFetch := func() (*literature.Article, error) {
-		return s.source.pubMed.GetArticle(s.identifier)
-	}
 	return F.Pipe2(
-		IOE.TryCatchError(rawFetch),
+		IOE.TryCatchError(func() (*literature.Article, error) {
+			return s.source.pubMed.GetArticle(s.identifier)
+		}),
 		IOE.MapLeft[*literature.Article](func(err error) error {
 			return fmt.Errorf(
 				"error fetching publication %s: %w",
@@ -399,11 +398,10 @@ func callPubMedByPMID(
 func callEuropeByPMID(
 	s pubFetchState,
 ) IOE.IOEither[error, *models.Publication] {
-	rawFetch := func() (*literature.EuropePMCArticle, error) {
-		return s.source.europePMC.GetArticle(s.identifier)
-	}
 	return F.Pipe2(
-		IOE.TryCatchError(rawFetch),
+		IOE.TryCatchError(func() (*literature.EuropePMCArticle, error) {
+			return s.source.europePMC.GetArticle(s.identifier)
+		}),
 		IOE.MapLeft[*literature.EuropePMCArticle](func(err error) error {
 			return fmt.Errorf(
 				"error fetching publication %s: %w",
@@ -431,11 +429,10 @@ func fetchByPMID(
 func fetchEuropeByDOI(
 	s pubFetchState,
 ) IOE.IOEither[error, *models.Publication] {
-	rawFetch := func() (*literature.EuropePMCArticle, error) {
-		return s.source.europePMC.GetArticleByDOI(s.identifier)
-	}
 	return F.Pipe2(
-		IOE.TryCatchError(rawFetch),
+		IOE.TryCatchError(func() (*literature.EuropePMCArticle, error) {
+			return s.source.europePMC.GetArticleByDOI(s.identifier)
+		}),
 		IOE.MapLeft[*literature.EuropePMCArticle](func(err error) error {
 			return fmt.Errorf("error fetching doi %s: %w", s.identifier, err)
 		}),
@@ -449,11 +446,10 @@ func deriveRedisKey(s pubFetchState) string {
 }
 
 func checkCacheExists(s pubFetchState) IOE.IOEither[error, bool] {
-	keyExists := func() (bool, error) {
-		return s.repo.Exists(s.redisKey)
-	}
 	return F.Pipe1(
-		IOE.TryCatchError(keyExists),
+		IOE.TryCatchError(func() (bool, error) {
+			return s.repo.Exists(s.redisKey)
+		}),
 		IOE.MapLeft[bool](func(err error) error {
 			return fmt.Errorf("error in checking for key %w", err)
 		}),
@@ -476,11 +472,10 @@ func unmarshalPublication(
 func loadFromCache(
 	s pubFetchState,
 ) IOE.IOEither[error, *models.Publication] {
-	rawGet := func() (string, error) {
-		return s.repo.Get(s.redisKey)
-	}
 	return F.Pipe2(
-		IOE.TryCatchError(rawGet),
+		IOE.TryCatchError(func() (string, error) {
+			return s.repo.Get(s.redisKey)
+		}),
 		IOE.MapLeft[string](func(err error) error {
 			return fmt.Errorf("error in getting existing key %w", err)
 		}),
@@ -502,11 +497,10 @@ func encodeStatePublication(s pubFetchState) E.Either[error, pubFetchState] {
 }
 
 func storeCachedString(s pubFetchState) IOE.IOEither[error, string] {
-	rawSet := func() (bool, error) {
-		return true, s.repo.Set(s.redisKey, s.rawCached)
-	}
 	return F.Pipe2(
-		IOE.TryCatchError(rawSet),
+		IOE.TryCatchError(func() (bool, error) {
+			return true, s.repo.Set(s.redisKey, s.rawCached)
+		}),
 		IOE.MapLeft[bool](func(err error) error {
 			return fmt.Errorf("error in setting key in redis %w", err)
 		}),
