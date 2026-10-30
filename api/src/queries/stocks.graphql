@@ -20,6 +20,24 @@ query SearchStocks(
   }
 }
 
+query SearchPhenotypes($query: String!, $limit: Int) {
+  searchPhenotypes(query: $query, limit: $limit) {
+    results {
+      id
+      entity
+      field
+      display_text
+      score
+      summary
+      strain_label
+      in_stock
+      stock_type
+    }
+    limit
+    totalCount
+  }
+}
+
 query ListStockSuggestions(
   $query: String!
   $limit: Int

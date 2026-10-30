@@ -430,6 +430,25 @@ export const SearchStocks = gql`
   }
 }
     `;
+export const SearchPhenotypes = gql`
+    query SearchPhenotypes($query: String!, $limit: Int) {
+  searchPhenotypes(query: $query, limit: $limit) {
+    results {
+      id
+      entity
+      field
+      display_text
+      score
+      summary
+      strain_label
+      in_stock
+      stock_type
+    }
+    limit
+    totalCount
+  }
+}
+    `;
 export const ListStockSuggestions = gql`
     query ListStockSuggestions($query: String!, $limit: Int, $entity: StockEntityType) {
   listStockSuggestions(query: $query, limit: $limit, entity: $entity) {

@@ -253,7 +253,9 @@ enum StockEntityType {
 
 # StockSearchFieldEnum names the stock or strain-annotation field that
 # produced a match. SUMMARY and DEPOSITOR mirror the shared search field
-# enum but the autocomplete search does not currently emit them.
+# enum but the autocomplete search does not currently emit them. The
+# TERM_* values name the phenotype ontology term field that produced a
+# phenotype search match.
 enum StockSearchFieldEnum {
   STOCK_ID
   GENES
@@ -275,6 +277,10 @@ enum StockSearchFieldEnum {
   ASSAY
   CHARACTERISTIC
   PUBLIC_NOTE
+  TERM_LABEL
+  TERM_SYNONYM
+  TERM_DEFINITION
+  TERM_COMMENT
 }
 
 # StockSuggestion is one type-ahead autocomplete match.

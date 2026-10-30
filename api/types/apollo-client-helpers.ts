@@ -286,7 +286,7 @@ export type PublicationWithGeneFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	volume?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPhenotypeAssays' | 'listPhenotypeEnvironments' | 'listPhenotypes' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStockSuggestions' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'searchStocks' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('content' | 'contentBySlug' | 'geneGeneralInformation' | 'geneOntologyAnnotation' | 'listContentByNamespace' | 'listOrders' | 'listOrganisms' | 'listPermissions' | 'listPhenotypeAssays' | 'listPhenotypeEnvironments' | 'listPhenotypes' | 'listPlasmids' | 'listPlasmidsWithAnnotation' | 'listPublicationsWithGene' | 'listRecentPlasmids' | 'listRecentPublications' | 'listRecentStrains' | 'listRoles' | 'listStockSuggestions' | 'listStrains' | 'listStrainsWithAnnotation' | 'listStrainsWithGene' | 'listUsers' | 'order' | 'organism' | 'permission' | 'plasmid' | 'publication' | 'role' | 'searchPhenotypes' | 'searchStocks' | 'strain' | 'user' | 'userByEmail' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	content?: FieldPolicy<any> | FieldReadFunction<any>,
 	contentBySlug?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -317,6 +317,7 @@ export type QueryFieldPolicy = {
 	plasmid?: FieldPolicy<any> | FieldReadFunction<any>,
 	publication?: FieldPolicy<any> | FieldReadFunction<any>,
 	role?: FieldPolicy<any> | FieldReadFunction<any>,
+	searchPhenotypes?: FieldPolicy<any> | FieldReadFunction<any>,
 	searchStocks?: FieldPolicy<any> | FieldReadFunction<any>,
 	strain?: FieldPolicy<any> | FieldReadFunction<any>,
 	user?: FieldPolicy<any> | FieldReadFunction<any>,
