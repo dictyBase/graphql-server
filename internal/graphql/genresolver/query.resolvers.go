@@ -131,6 +131,11 @@ func (r *queryResolver) ListRecentStrains(ctx context.Context, limit int) ([]*mo
 	panic(fmt.Errorf("not implemented: ListRecentStrains - listRecentStrains"))
 }
 
+// SearchPhenotypes is the resolver for the searchPhenotypes field.
+func (r *queryResolver) SearchPhenotypes(ctx context.Context, query string, limit *int) (*models.StockSearchResultList, error) {
+	panic(fmt.Errorf("not implemented: SearchPhenotypes - searchPhenotypes"))
+}
+
 // ListPhenotypes is the resolver for the listPhenotypes field.
 func (r *queryResolver) ListPhenotypes(ctx context.Context, search string) ([]string, error) {
 	panic(fmt.Errorf("not implemented: ListPhenotypes - listPhenotypes"))
