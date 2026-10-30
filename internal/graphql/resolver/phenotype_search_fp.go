@@ -47,10 +47,14 @@ type phenotypeSearchContext struct {
 	effectiveLimit int
 }
 
-type (
-	phenotypeSearchFieldPair = PR.Pair[*anno.PhenotypeSearchResult, models.StockSearchFieldEnum]
-	phenotypeSearchMetaPair  = PR.Pair[phenotypeSearchFieldPair, strainSearchMetadata]
-)
+// phenotypeFieldSpec holds the GraphQL field enum of one matched term
+// field and the extractor of the text the user interface shows for it.
+type phenotypeFieldSpec struct {
+	field models.StockSearchFieldEnum
+	text  func(*anno.PhenotypeSearchResult) string
+}
+
+type phenotypeSearchFieldPair = PR.Pair[*anno.PhenotypeSearchResult, phenotypeFieldSpec]
 
 // ── state lenses ────────────────────────────────────────────────────────────
 
@@ -123,14 +127,28 @@ var (
 
 // ── field enum mapping ──────────────────────────────────────────────────────
 
-// protoToGQLPhenotypeSearchField maps the four phenotype term fields
-// onto their GraphQL StockSearchFieldEnum counterparts. The unspecified
-// value is absent on purpose, so the lookup below fails.
-var protoToGQLPhenotypeSearchField = map[anno.PhenotypeSearchField]models.StockSearchFieldEnum{
-	anno.PhenotypeSearchField_PHENOTYPE_SEARCH_FIELD_LABEL:      models.StockSearchFieldEnumTermLabel,
-	anno.PhenotypeSearchField_PHENOTYPE_SEARCH_FIELD_SYNONYM:    models.StockSearchFieldEnumTermSynonym,
-	anno.PhenotypeSearchField_PHENOTYPE_SEARCH_FIELD_DEFINITION: models.StockSearchFieldEnumTermDefinition,
-	anno.PhenotypeSearchField_PHENOTYPE_SEARCH_FIELD_COMMENT:    models.StockSearchFieldEnumTermComment,
+// phenotypeFieldSpecs maps the four phenotype term fields onto their
+// GraphQL StockSearchFieldEnum counterparts and display text. The
+// unspecified value is absent on purpose, so the lookup below fails. A
+// TERM_COMMENT match shows the definition, because the protobuf response
+// carries no comment text.
+var phenotypeFieldSpecs = map[anno.PhenotypeSearchField]phenotypeFieldSpec{
+	anno.PhenotypeSearchField_PHENOTYPE_SEARCH_FIELD_LABEL: {
+		field: models.StockSearchFieldEnumTermLabel,
+		text:  (*anno.PhenotypeSearchResult).GetName,
+	},
+	anno.PhenotypeSearchField_PHENOTYPE_SEARCH_FIELD_SYNONYM: {
+		field: models.StockSearchFieldEnumTermSynonym,
+		text:  (*anno.PhenotypeSearchResult).GetName,
+	},
+	anno.PhenotypeSearchField_PHENOTYPE_SEARCH_FIELD_DEFINITION: {
+		field: models.StockSearchFieldEnumTermDefinition,
+		text:  (*anno.PhenotypeSearchResult).GetDefinition,
+	},
+	anno.PhenotypeSearchField_PHENOTYPE_SEARCH_FIELD_COMMENT: {
+		field: models.StockSearchFieldEnumTermComment,
+		text:  (*anno.PhenotypeSearchResult).GetDefinition,
+	},
 }
 
 // ── query validation ────────────────────────────────────────────────────────
@@ -284,52 +302,15 @@ var (
 
 // ── result projection ───────────────────────────────────────────────────────
 
-// phenotypeResultName returns the cvterm label of the matched term.
-func phenotypeResultName(item *anno.PhenotypeSearchResult) string {
-	return item.Name
-}
-
-// phenotypeResultDefinition returns the definition of the matched term.
-func phenotypeResultDefinition(item *anno.PhenotypeSearchResult) string {
-	return item.Definition
-}
-
-// phenotypeDisplayTextByField maps each matched term field onto the text
-// the user interface shows. A TERM_COMMENT match shows the definition,
-// because the protobuf response carries no comment text.
-var phenotypeDisplayTextByField = map[models.StockSearchFieldEnum]func(*anno.PhenotypeSearchResult) string{
-	models.StockSearchFieldEnumTermLabel:      phenotypeResultName,
-	models.StockSearchFieldEnumTermSynonym:    phenotypeResultName,
-	models.StockSearchFieldEnumTermDefinition: phenotypeResultDefinition,
-	models.StockSearchFieldEnumTermComment:    phenotypeResultDefinition,
-}
-
-// phenotypeDisplayText resolves the text the user interface shows for
-// one validated match. The name is the fallback, because the field enum
-// is validated before this lookup runs.
-func phenotypeDisplayText(
-	field models.StockSearchFieldEnum,
-	item *anno.PhenotypeSearchResult,
-) string {
-	extract := F.Pipe2(
-		phenotypeDisplayTextByField,
-		R.Lookup[func(*anno.PhenotypeSearchResult) string](field),
-		O.GetOrElse(F.Constant(phenotypeResultName)),
-	)
-
-	return extract(item)
-}
-
 // validatePhenotypeSearchItem pairs one protobuf phenotype search result
-// with its validated GraphQL field enum. Any unspecified or unknown
-// field value fails.
+// with its field spec. Any unspecified or unknown field value fails.
 func validatePhenotypeSearchItem(
 	item *anno.PhenotypeSearchResult,
 ) E.Either[error, phenotypeSearchFieldPair] {
-	field := F.Pipe2(
-		protoToGQLPhenotypeSearchField,
-		R.Lookup[models.StockSearchFieldEnum](item.Field),
-		E.FromOption[models.StockSearchFieldEnum](func() error {
+	spec := F.Pipe2(
+		phenotypeFieldSpecs,
+		R.Lookup[phenotypeFieldSpec](item.Field),
+		E.FromOption[phenotypeFieldSpec](func() error {
 			return fmt.Errorf(
 				"unexpected phenotype search field %s in phenotype search result",
 				item.Field,
@@ -338,79 +319,56 @@ func validatePhenotypeSearchItem(
 	)
 
 	return F.Pipe1(
-		PR.MakePair(item, field),
-		PR.Sequence(E.Map[error, models.StockSearchFieldEnum, phenotypeSearchFieldPair]),
+		PR.MakePair(item, spec),
+		PR.Sequence(E.Map[error, phenotypeFieldSpec, phenotypeSearchFieldPair]),
 	)
 }
 
-// enrichPhenotypeSearchPair pairs a validated phenotype search hit with
-// the strain metadata from metaByID. Hits whose strain ID is absent from
-// metaByID yield None and are dropped by A.FilterMap.
-func enrichPhenotypeSearchPair(
+// buildPhenotypeSearchResult joins one validated hit with its strain
+// metadata and projects both onto the shared full search result type.
+// A hit whose strain id is absent from metaByID yields None and is
+// dropped by A.FilterMap, because a result row cannot show data of a
+// strain that no longer exists. The in_stock field stays zero here,
+// because the StockSearchResult field resolver computes it.
+func buildPhenotypeSearchResult(
 	metaByID map[string]strainSearchMetadata,
-	fieldPair phenotypeSearchFieldPair,
+	p phenotypeSearchFieldPair,
 ) O.Option[*models.StockSearchResult] {
-	item := PR.Head(fieldPair)
-	metaOpt := F.Pipe1(
-		metaByID,
-		R.Lookup[strainSearchMetadata](item.EntryId),
-	)
+	item := PR.Head(p)
+	spec := PR.Tail(p)
 
 	return F.Pipe2(
-		PR.MakePair(fieldPair, metaOpt),
-		PR.Sequence(O.Map[strainSearchMetadata, phenotypeSearchMetaPair]),
-		O.Map(buildPhenotypeSearchResult),
+		metaByID,
+		R.Lookup[strainSearchMetadata](item.EntryId),
+		O.Map(func(meta strainSearchMetadata) *models.StockSearchResult {
+			return &models.StockSearchResult{
+				ID:          item.EntryId,
+				Entity:      models.StockEntityTypeStrain,
+				Field:       spec.field,
+				DisplayText: spec.text(item),
+				Score:       item.Score,
+				Summary:     meta.summary,
+				StrainLabel: meta.strainLabel,
+				StockType:   meta.stockType,
+			}
+		}),
 	)
 }
 
-// buildPhenotypeSearchResult projects one validated and enriched match
-// onto the shared full search result type. The in_stock field stays
-// zero here, because the StockSearchResult field resolver computes it.
-func buildPhenotypeSearchResult(
-	p phenotypeSearchMetaPair,
-) *models.StockSearchResult {
-	fieldPair := PR.Head(p)
-	meta := PR.Tail(p)
-	item := PR.Head(fieldPair)
-	field := PR.Tail(fieldPair)
-
-	return &models.StockSearchResult{
-		ID:          item.EntryId,
-		Entity:      models.StockEntityTypeStrain,
-		Field:       field,
-		DisplayText: phenotypeDisplayText(field, item),
-		Score:       item.Score,
-		Summary:     meta.summary,
-		StrainLabel: meta.strainLabel,
-		StockType:   meta.stockType,
-	}
-}
-
-// convertPhenotypeSearchResultsFromState converts the matched rows with
-// their strain metadata into full search results. A hit whose strain id
-// is absent from the metadata map yields None and is dropped, because a
-// result row cannot show data of a strain that no longer exists.
+// convertPhenotypeSearchResultsFromState validates every matched row,
+// then joins the valid rows with their strain metadata. It fails when
+// one row carries an unknown field enum.
 func convertPhenotypeSearchResultsFromState(
 	s phenotypeSearchContext,
 ) E.Either[error, []*models.StockSearchResult] {
-	enrich := F.Bind1st(enrichPhenotypeSearchPair, s.strainMetaByID)
-	filterEnriched := A.FilterMap(enrich)
-
 	return F.Pipe2(
 		s.collection.GetData(),
 		E.TraverseArray(validatePhenotypeSearchItem),
-		E.Map[error](filterEnriched),
+		E.Map[error](A.FilterMap(
+			F.Bind1st(buildPhenotypeSearchResult, s.strainMetaByID),
+		)),
 	)
 }
-
-// attachPhenotypeSearchResults threads the mapped rows onto the state.
-// It fails when one row carries an unknown field enum. E.Bind is an
-// Either do-notation step, so it composes after E.Of into a plain
-// Either Kleisli for IOE.ChainEitherK.
-var attachPhenotypeSearchResults = F.Flow2(
-	E.Of[error, phenotypeSearchContext],
-	E.Bind(phenotypeSearchResultsLens.Set, convertPhenotypeSearchResultsFromState),
-)
 
 // phenotypeMetaSearchLimit reads the effective limit the service
 // reports in meta when it is positive.
@@ -495,7 +453,13 @@ func (qrs *QueryResolver) SearchPhenotypes(
 			fetchPhenotypeSearchCollection,
 		),
 		IOE.Bind(phenotypeStrainMetaLens.Set, fetchPhenotypeStrainMetadata),
-		IOE.ChainEitherK(attachPhenotypeSearchResults),
+		IOE.ChainEitherK(F.Flow2(
+			E.Of[error, phenotypeSearchContext],
+			E.Bind(
+				phenotypeSearchResultsLens.Set,
+				convertPhenotypeSearchResultsFromState,
+			),
+		)),
 		IOE.Let[error](
 			phenotypeSearchLimitLens.Set,
 			effectivePhenotypeSearchLimit,
