@@ -24,6 +24,7 @@ export declare const Publication: import("graphql").DocumentNode;
 export declare const ListRecentPublications: import("graphql").DocumentNode;
 export declare const ListPublicationsWithGene: import("graphql").DocumentNode;
 export declare const SearchStocks: import("graphql").DocumentNode;
+export declare const SearchPhenotypes: import("graphql").DocumentNode;
 export declare const ListStockSuggestions: import("graphql").DocumentNode;
 export declare const StrainList: import("graphql").DocumentNode;
 export declare const ListStrainsWithPhenotype: import("graphql").DocumentNode;

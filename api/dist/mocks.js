@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mockUserByEmailQuery = exports.mockListPhenotypeAssaysQuery = exports.mockListPhenotypeEnvironmentsQuery = exports.mockListPhenotypesQuery = exports.mockListRecentStrainsQuery = exports.mockListRecentPlasmidsQuery = exports.mockStrainQuery = exports.mockPlasmidQuery = exports.mockPlasmidListFilterQuery = exports.mockListPlasmidsInventoryQuery = exports.mockListStrainsInventoryQuery = exports.mockListBacterialStrainsQuery = exports.mockListStrainsWithPhenotypeQuery = exports.mockStrainListQuery = exports.mockListStockSuggestionsQuery = exports.mockSearchStocksQuery = exports.mockListPublicationsWithGeneQuery = exports.mockListRecentPublicationsQuery = exports.mockPublicationQuery = exports.mockListStrainsWithGeneQuery = exports.mockGeneOntologyAnnotationQuery = exports.mockListPublicationsWithGeneSummaryQuery = exports.mockGeneOntologyAnnotationSummaryQuery = exports.mockGeneGeneralInformationSummaryQuery = exports.mockListOrganismsQuery = exports.mockContentQuery = exports.mockContentBySlugQuery = exports.mockListContentByNamespaceQuery = exports.mockUpdateUserMutation = exports.mockCreateUserMutation = exports.mockUploadFileMutation = exports.mockUpdateStrainPhenotypeMutation = exports.mockAddStrainPhenotypeMutation = exports.mockCreateOrderMutation = exports.mockUpdateGeneGeneralInfoMutation = exports.mockCreateGeneGeneralInfoMutation = exports.mockDeleteContentMutation = exports.mockUpdateContentMutation = exports.mockCreateContentMutation = exports.mockLogoutMutation = exports.mockLoginMutation = exports.StrainType = exports.StockSearchFieldEnum = exports.StockEntityType = exports.StatusEnum = exports.PlasmidType = void 0;
+exports.mockUserByEmailQuery = exports.mockListPhenotypeAssaysQuery = exports.mockListPhenotypeEnvironmentsQuery = exports.mockListPhenotypesQuery = exports.mockListRecentStrainsQuery = exports.mockListRecentPlasmidsQuery = exports.mockStrainQuery = exports.mockPlasmidQuery = exports.mockPlasmidListFilterQuery = exports.mockListPlasmidsInventoryQuery = exports.mockListStrainsInventoryQuery = exports.mockListBacterialStrainsQuery = exports.mockListStrainsWithPhenotypeQuery = exports.mockStrainListQuery = exports.mockListStockSuggestionsQuery = exports.mockSearchPhenotypesQuery = exports.mockSearchStocksQuery = exports.mockListPublicationsWithGeneQuery = exports.mockListRecentPublicationsQuery = exports.mockPublicationQuery = exports.mockListStrainsWithGeneQuery = exports.mockGeneOntologyAnnotationQuery = exports.mockListPublicationsWithGeneSummaryQuery = exports.mockGeneOntologyAnnotationSummaryQuery = exports.mockGeneGeneralInformationSummaryQuery = exports.mockListOrganismsQuery = exports.mockContentQuery = exports.mockContentBySlugQuery = exports.mockListContentByNamespaceQuery = exports.mockUpdateUserMutation = exports.mockCreateUserMutation = exports.mockUploadFileMutation = exports.mockUpdateStrainPhenotypeMutation = exports.mockAddStrainPhenotypeMutation = exports.mockCreateOrderMutation = exports.mockUpdateGeneGeneralInfoMutation = exports.mockCreateGeneGeneralInfoMutation = exports.mockDeleteContentMutation = exports.mockUpdateContentMutation = exports.mockCreateContentMutation = exports.mockLogoutMutation = exports.mockLoginMutation = exports.StrainType = exports.StockSearchFieldEnum = exports.StockEntityType = exports.StatusEnum = exports.PlasmidType = void 0;
 const msw_1 = require("msw");
 var PlasmidType;
 (function (PlasmidType) {
@@ -43,6 +43,10 @@ var StockSearchFieldEnum;
     StockSearchFieldEnum["Summary"] = "SUMMARY";
     StockSearchFieldEnum["Synonym"] = "SYNONYM";
     StockSearchFieldEnum["SystematicName"] = "SYSTEMATIC_NAME";
+    StockSearchFieldEnum["TermComment"] = "TERM_COMMENT";
+    StockSearchFieldEnum["TermDefinition"] = "TERM_DEFINITION";
+    StockSearchFieldEnum["TermLabel"] = "TERM_LABEL";
+    StockSearchFieldEnum["TermSynonym"] = "TERM_SYNONYM";
 })(StockSearchFieldEnum || (exports.StockSearchFieldEnum = StockSearchFieldEnum = {}));
 var StrainType;
 (function (StrainType) {
@@ -491,6 +495,23 @@ exports.mockListPublicationsWithGeneQuery = mockListPublicationsWithGeneQuery;
  */
 const mockSearchStocksQuery = (resolver, options) => msw_1.graphql.query('SearchStocks', resolver, options);
 exports.mockSearchStocksQuery = mockSearchStocksQuery;
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockSearchPhenotypesQuery(
+ *   ({ query, variables }) => {
+ *     const { query, limit } = variables;
+ *     return HttpResponse.json({
+ *       data: { searchPhenotypes }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+const mockSearchPhenotypesQuery = (resolver, options) => msw_1.graphql.query('SearchPhenotypes', resolver, options);
+exports.mockSearchPhenotypesQuery = mockSearchPhenotypesQuery;
 /**
  * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
  * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
