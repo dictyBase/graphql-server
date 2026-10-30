@@ -359,12 +359,15 @@ func buildPhenotypeSearchResult(
 func convertPhenotypeSearchResultsFromState(
 	s phenotypeSearchContext,
 ) E.Either[error, []*models.StockSearchResult] {
+	// buildRow fixes the metadata map, so it takes one validated pair.
+	buildRow := F.Bind1st(buildPhenotypeSearchResult, s.strainMetaByID)
+	// buildRows applies buildRow to every pair and drops the None rows.
+	buildRows := A.FilterMap(buildRow)
+
 	return F.Pipe2(
 		s.collection.GetData(),
 		E.TraverseArray(validatePhenotypeSearchItem),
-		E.Map[error](A.FilterMap(
-			F.Bind1st(buildPhenotypeSearchResult, s.strainMetaByID),
-		)),
+		E.Map[error](buildRows),
 	)
 }
 
