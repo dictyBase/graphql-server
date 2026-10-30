@@ -341,6 +341,7 @@ type ComplexityRoot struct {
 		Plasmid                    func(childComplexity int, id string) int
 		Publication                func(childComplexity int, id string) int
 		Role                       func(childComplexity int, id string) int
+		SearchPhenotypes           func(childComplexity int, query string, limit *int) int
 		SearchStocks               func(childComplexity int, query string, limit *int, entity *models.StockEntityType) int
 		Strain                     func(childComplexity int, id string) int
 		User                       func(childComplexity int, id string) int
@@ -2038,6 +2039,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Query.Role(childComplexity, args["id"].(string)), true
+	case "Query.searchPhenotypes":
+		if e.ComplexityRoot.Query.SearchPhenotypes == nil {
+			break
+		}
+
+		args, err := ec.field_Query_searchPhenotypes_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Query.SearchPhenotypes(childComplexity, args["query"].(string), args["limit"].(*int)), true
 	case "Query.searchStocks":
 		if e.ComplexityRoot.Query.SearchStocks == nil {
 			break
@@ -3215,6 +3227,27 @@ type Author {
   # List strain query that is by default is sorted by strain
   # date in descendent order
   listRecentStrains(limit: Int!): [Strain!]
+  # Phenotype queries
+  #
+  # Returns the results of a full phenotype search over strain
+  # phenotype annotations. The match runs against the cvterm label,
+  # the synonyms, the definition, and the comments of active terms in
+  # the Dicty Phenotypes, Dicty Environment, and Dictyostelium Assay
+  # ontologies. Results are ranked and deduplicated by entry_id. Every
+  # row carries the same data as a searchStocks row. The field value is
+  # TERM_LABEL or TERM_SYNONYM for a match on the term label or a term
+  # synonym and TERM_DEFINITION or TERM_COMMENT for a match on the term
+  # definition or a term comment. display_text carries the term label
+  # for TERM_LABEL and TERM_SYNONYM and the term definition for
+  # TERM_DEFINITION and TERM_COMMENT, because the protobuf response
+  # carries no comment text.
+  #
+  # Constraints:
+  # - query must be at least 2 characters after normalization and must
+  #   contain at least one word that is not a stopword. The server
+  #   trims the text and lowercases it.
+  # - limit defaults to 50 when omitted and never exceeds 50.
+  searchPhenotypes(query: String!, limit: Int): StockSearchResultList!
   # List Phenotypes that match the provided search string
   listPhenotypes(search: String!): [String!]!
   # List Phenotype Environments that match the provided search string
@@ -3489,7 +3522,9 @@ enum StockEntityType {
 
 # StockSearchFieldEnum names the stock or strain-annotation field that
 # produced a match. SUMMARY and DEPOSITOR mirror the shared search field
-# enum but the autocomplete search does not currently emit them.
+# enum but the autocomplete search does not currently emit them. The
+# TERM_* values name the phenotype ontology term field that produced a
+# phenotype search match.
 enum StockSearchFieldEnum {
   STOCK_ID
   GENES
@@ -3511,6 +3546,10 @@ enum StockSearchFieldEnum {
   ASSAY
   CHARACTERISTIC
   PUBLIC_NOTE
+  TERM_LABEL
+  TERM_SYNONYM
+  TERM_DEFINITION
+  TERM_COMMENT
 }
 
 # StockSuggestion is one type-ahead autocomplete match.

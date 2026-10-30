@@ -710,6 +710,10 @@ const (
 	StockSearchFieldEnumAssay               StockSearchFieldEnum = "ASSAY"
 	StockSearchFieldEnumCharacteristic      StockSearchFieldEnum = "CHARACTERISTIC"
 	StockSearchFieldEnumPublicNote          StockSearchFieldEnum = "PUBLIC_NOTE"
+	StockSearchFieldEnumTermLabel           StockSearchFieldEnum = "TERM_LABEL"
+	StockSearchFieldEnumTermSynonym         StockSearchFieldEnum = "TERM_SYNONYM"
+	StockSearchFieldEnumTermDefinition      StockSearchFieldEnum = "TERM_DEFINITION"
+	StockSearchFieldEnumTermComment         StockSearchFieldEnum = "TERM_COMMENT"
 )
 
 var AllStockSearchFieldEnum = []StockSearchFieldEnum{
@@ -733,11 +737,15 @@ var AllStockSearchFieldEnum = []StockSearchFieldEnum{
 	StockSearchFieldEnumAssay,
 	StockSearchFieldEnumCharacteristic,
 	StockSearchFieldEnumPublicNote,
+	StockSearchFieldEnumTermLabel,
+	StockSearchFieldEnumTermSynonym,
+	StockSearchFieldEnumTermDefinition,
+	StockSearchFieldEnumTermComment,
 }
 
 func (e StockSearchFieldEnum) IsValid() bool {
 	switch e {
-	case StockSearchFieldEnumStockID, StockSearchFieldEnumGenes, StockSearchFieldEnumDbxrefs, StockSearchFieldEnumLabel, StockSearchFieldEnumNames, StockSearchFieldEnumSpecies, StockSearchFieldEnumPlasmid, StockSearchFieldEnumName, StockSearchFieldEnumSummary, StockSearchFieldEnumDepositor, StockSearchFieldEnumSynonym, StockSearchFieldEnumGenotype, StockSearchFieldEnumSystematicName, StockSearchFieldEnumGeneticModification, StockSearchFieldEnumMutagenesisMethod, StockSearchFieldEnumPhenotype, StockSearchFieldEnumEnvironment, StockSearchFieldEnumAssay, StockSearchFieldEnumCharacteristic, StockSearchFieldEnumPublicNote:
+	case StockSearchFieldEnumStockID, StockSearchFieldEnumGenes, StockSearchFieldEnumDbxrefs, StockSearchFieldEnumLabel, StockSearchFieldEnumNames, StockSearchFieldEnumSpecies, StockSearchFieldEnumPlasmid, StockSearchFieldEnumName, StockSearchFieldEnumSummary, StockSearchFieldEnumDepositor, StockSearchFieldEnumSynonym, StockSearchFieldEnumGenotype, StockSearchFieldEnumSystematicName, StockSearchFieldEnumGeneticModification, StockSearchFieldEnumMutagenesisMethod, StockSearchFieldEnumPhenotype, StockSearchFieldEnumEnvironment, StockSearchFieldEnumAssay, StockSearchFieldEnumCharacteristic, StockSearchFieldEnumPublicNote, StockSearchFieldEnumTermLabel, StockSearchFieldEnumTermSynonym, StockSearchFieldEnumTermDefinition, StockSearchFieldEnumTermComment:
 		return true
 	}
 	return false
