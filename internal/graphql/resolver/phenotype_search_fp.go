@@ -307,7 +307,7 @@ var (
 func validatePhenotypeSearchItem(
 	item *anno.PhenotypeSearchResult,
 ) E.Either[error, phenotypeSearchFieldPair] {
-	spec := F.Pipe2(
+	return F.Pipe3(
 		phenotypeFieldSpecs,
 		R.Lookup[phenotypeFieldSpec](item.Field),
 		E.FromOption[phenotypeFieldSpec](func() error {
@@ -316,11 +316,9 @@ func validatePhenotypeSearchItem(
 				item.Field,
 			)
 		}),
-	)
-
-	return F.Pipe1(
-		PR.MakePair(item, spec),
-		PR.Sequence(E.Map[error, phenotypeFieldSpec, phenotypeSearchFieldPair]),
+		E.Map[error](func(sp phenotypeFieldSpec) phenotypeSearchFieldPair {
+			return PR.MakePair(item, sp)
+		}),
 	)
 }
 
