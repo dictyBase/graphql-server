@@ -197,12 +197,10 @@ func buildPhenotypeSearchParameters(
 func fetchPhenotypeSearchCollection(
 	s phenotypeSearchContext,
 ) IOE.IOEither[error, *anno.PhenotypeSearchResultCollection] {
-	rawFetch := func() (*anno.PhenotypeSearchResultCollection, error) {
-		return s.client.SearchPhenotypes(s.gctx, s.params)
-	}
-
 	return F.Pipe1(
-		IOE.TryCatchError(rawFetch),
+		IOE.TryCatchError(func() (*anno.PhenotypeSearchResultCollection, error) {
+			return s.client.SearchPhenotypes(s.gctx, s.params)
+		}),
 		IOE.MapLeft[*anno.PhenotypeSearchResultCollection](func(err error) error {
 			return fmt.Errorf("search phenotypes for query %q: %w", s.query, err)
 		}),
@@ -234,12 +232,15 @@ func fetchPhenotypeStrainMetadataMap(
 		A.Sort(stringOrd),
 	)
 	req := &pb.StockIdList{Id: ids}
-	rawFetch := func() (*pb.StrainList, error) {
-		return s.stockClient.ListStrainsByIds(s.gctx, req)
-	}
 
 	return F.Pipe3(
-		IOE.TryCatchError(rawFetch),
+		IOE.TryCatchError(
+			func() (*pb.StrainList, error) {
+				return s.stockClient.ListStrainsByIds(
+					s.gctx,
+					req,
+				)
+			}),
 		IOE.OrElse(recoverStrainListNotFound),
 		IOE.MapLeft[*pb.StrainList](func(err error) error {
 			return fmt.Errorf(
