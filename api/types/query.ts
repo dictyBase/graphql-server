@@ -421,7 +421,7 @@ export const SearchStocks = gql`
       display_text
       score
       summary
-      strain_label
+      stock_label
       in_stock
       stock_type
     }
@@ -440,7 +440,7 @@ export const SearchPhenotypes = gql`
       display_text
       score
       summary
-      strain_label
+      stock_label
       in_stock
       stock_type
     }
