@@ -1360,7 +1360,7 @@ func TestSearchStocks(t *testing.T) {
 		first.Summary,
 		"should match summary",
 	)
-	require.Equal("AX4", first.StrainLabel, "should match strain label")
+	require.Equal("AX4", first.StockLabel, "should match stock label")
 	require.Equal("gwdi", first.StockType, "should map REMI-seq strain to gwdi")
 
 	second := result.Results[1]
@@ -1376,8 +1376,8 @@ func TestSearchStocks(t *testing.T) {
 	)
 	require.Equal(
 		"aarA-",
-		second.StrainLabel,
-		"should enrich strain label from ListStrainsByIds",
+		second.StockLabel,
+		"should enrich stock label from ListStrainsByIds",
 	)
 	require.Equal(
 		"regular",
@@ -1400,7 +1400,7 @@ func TestSearchStocks(t *testing.T) {
 		plasmid.Entity,
 		"should map plasmid entity",
 	)
-	require.Empty(plasmid.StrainLabel, "plasmid results carry no strain label")
+	require.Equal("pDV4", plasmid.StockLabel, "plasmid results carry plasmid name as stock label")
 	require.Empty(plasmid.Summary, "should keep empty summary")
 	require.Equal(
 		"goldenbraid",
@@ -2460,7 +2460,7 @@ func TestConvertAnnotationSearchResultAllTenFields(t *testing.T) {
 		require.Equal(tc.display, items[0].DisplayText)
 		require.Equal(504.2, items[0].Score)
 		require.Equal("Catenin null mutant strain.", items[0].Summary)
-		require.Equal("aarA-", items[0].StrainLabel)
+		require.Equal("aarA-", items[0].StockLabel)
 	}
 
 	badRes := validateAnnotationSearchItem(&anno.AnnotationSearchResult{
@@ -2543,7 +2543,7 @@ func TestMergeSearchResultsDeduplicatesByIDKeepingHighestScore(t *testing.T) {
 			DisplayText: "AX4",
 			Score:       0.5,
 			Summary:     "GWDI strain carrying a csA deletion.",
-			StrainLabel: "AX4",
+			StockLabel:  "AX4",
 		},
 		{
 			ID:          "DBP0236126",
@@ -2561,7 +2561,7 @@ func TestMergeSearchResultsDeduplicatesByIDKeepingHighestScore(t *testing.T) {
 			DisplayText: "delayed culmination",
 			Score:       504.2,
 			Summary:     "GWDI strain carrying a csA deletion.",
-			StrainLabel: "AX4",
+			StockLabel:  "AX4",
 		},
 	}
 
@@ -2575,7 +2575,7 @@ func TestMergeSearchResultsDeduplicatesByIDKeepingHighestScore(t *testing.T) {
 	require.Equal(models.StockSearchFieldEnumPhenotype, merged[0].Field)
 	require.Equal(504.2, merged[0].Score)
 	require.Equal("GWDI strain carrying a csA deletion.", merged[0].Summary)
-	require.Equal("AX4", merged[0].StrainLabel)
+	require.Equal("AX4", merged[0].StockLabel)
 	require.Equal("DBP0236126", merged[1].ID)
 }
 

@@ -229,7 +229,7 @@ func MockStockSuggestionCollection() *stock.StockSuggestionCollection {
 				Id:          "DBP0236126",
 				Entity:      stock.StockEntity_STOCK_ENTITY_PLASMID,
 				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_NAME,
-				DisplayText: "pDV4",
+				DisplayText: mockPlasmidSearchName,
 				Score:       0.25,
 			},
 		},
@@ -246,7 +246,10 @@ const (
 	MockStockSearchID = "DBS0236126"
 	// mockStockSearchLabel is the strain label carried by the strain
 	// search result fixtures below.
-	mockStockSearchLabel   = "AX4"
+	mockStockSearchLabel = "AX4"
+	// mockPlasmidSearchName is the plasmid name carried by the plasmid
+	// search result fixtures below.
+	mockPlasmidSearchName  = "pDV4"
 	mockStockSearchSummary = "GWDI strain carrying a csA deletion."
 )
 
@@ -260,7 +263,7 @@ func MockStockSearchResultCollection() *stock.StockSearchResultCollection {
 				DisplayText: MockStockSearchID,
 				Score:       1,
 				Summary:     mockStockSearchSummary,
-				StrainLabel: mockStockSearchLabel,
+				StockLabel:  mockStockSearchLabel,
 				StockType:   registry.GwdiStrainTag,
 			},
 			{
@@ -270,17 +273,17 @@ func MockStockSearchResultCollection() *stock.StockSearchResultCollection {
 				DisplayText: "csA deletion strain",
 				Score:       0.5,
 				Summary:     mockStockSearchSummary,
-				StrainLabel: mockStockSearchLabel,
+				StockLabel:  mockStockSearchLabel,
 				StockType:   registry.GeneralStrainTag,
 			},
 			{
 				Id:          "DBP0236126",
 				Entity:      stock.StockEntity_STOCK_ENTITY_PLASMID,
 				Field:       stock.StockSearchField_STOCK_SEARCH_FIELD_NAME,
-				DisplayText: "pDV4",
+				DisplayText: mockPlasmidSearchName,
 				Score:       0.25,
 				Summary:     "",
-				StrainLabel: "",
+				StockLabel:  mockPlasmidSearchName,
 				StockType:   registry.GoldenBraidPlasmidTag,
 			},
 		},

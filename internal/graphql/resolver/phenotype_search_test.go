@@ -75,7 +75,7 @@ func TestSearchPhenotypes(t *testing.T) {
 		first.Summary,
 		"should enrich summary from ListStrainsByIds",
 	)
-	require.Equal("AX4", first.StrainLabel, "should enrich strain label from ListStrainsByIds")
+	require.Equal("AX4", first.StockLabel, "should enrich stock label from ListStrainsByIds")
 	require.Equal("gwdi", first.StockType, "should map REMI-seq strain to gwdi")
 
 	second := result.Results[1]
@@ -92,7 +92,7 @@ func TestSearchPhenotypes(t *testing.T) {
 	)
 	require.Equal(300.25, second.Score)
 	require.Equal("Catenin null mutant strain.", second.Summary)
-	require.Equal("aarA-", second.StrainLabel)
+	require.Equal("aarA-", second.StockLabel)
 	require.Equal("regular", second.StockType, "should map general strain to regular")
 }
 

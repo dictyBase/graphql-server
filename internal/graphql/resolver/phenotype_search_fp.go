@@ -346,7 +346,7 @@ func buildPhenotypeSearchResult(
 				DisplayText: spec.text(item),
 				Score:       item.Score,
 				Summary:     meta.summary,
-				StrainLabel: meta.strainLabel,
+				StockLabel:  meta.strainLabel,
 				StockType:   meta.stockType,
 			}
 		}),

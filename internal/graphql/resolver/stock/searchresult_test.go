@@ -31,7 +31,7 @@ func mockSearchResult(entity models.StockEntityType) *models.StockSearchResult {
 		DisplayText: "DBS123456",
 		Score:       1,
 		Summary:     "GWDI strain carrying a csA deletion.",
-		StrainLabel: "AX4",
+		StockLabel:  "AX4",
 	}
 }
 
