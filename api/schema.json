@@ -7542,7 +7542,7 @@
             "deprecationReason": null
           },
           {
-            "name": "stock_type",
+            "name": "stock_label",
             "description": null,
             "args": [],
             "type": {
@@ -7558,7 +7558,7 @@
             "deprecationReason": null
           },
           {
-            "name": "strain_label",
+            "name": "stock_type",
             "description": null,
             "args": [],
             "type": {

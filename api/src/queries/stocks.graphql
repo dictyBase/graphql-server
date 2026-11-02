@@ -11,7 +11,7 @@ query SearchStocks(
       display_text
       score
       summary
-      strain_label
+      stock_label
       in_stock
       stock_type
     }
@@ -29,7 +29,7 @@ query SearchPhenotypes($query: String!, $limit: Int) {
       display_text
       score
       summary
-      strain_label
+      stock_label
       in_stock
       stock_type
     }

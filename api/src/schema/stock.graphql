@@ -324,9 +324,10 @@ type StockSearchResult {
   # Complete stored summary of the stock document. It is not a snippet,
   # and it is not highlighted. Empty when the stock has no summary.
   summary: String!
-  # Strain label, shown as Descriptor in the stock center. Empty for
-  # plasmid results and for strains without a label.
-  strain_label: String!
+  # Stock label: the strain property label (shown as Descriptor in the
+  # stock center) for strains, or the plasmid name for plasmids. Empty
+  # when the stock has no label.
+  stock_label: String!
   # Whether the stock is in the stock center inventory. Same meaning
   # as the in_stock field of Strain and Plasmid.
   in_stock: Boolean!

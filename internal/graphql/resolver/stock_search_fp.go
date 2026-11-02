@@ -361,7 +361,7 @@ func buildStockSearchResult(
 		DisplayText: item.DisplayText,
 		Score:       item.Score,
 		Summary:     item.Summary,
-		StrainLabel: item.StrainLabel,
+		StockLabel:  item.StockLabel,
 		StockType:   resolveSearchStockType(item.StockType),
 	}
 }
@@ -411,7 +411,7 @@ func buildAnnotationStockSearchResult(
 		DisplayText: item.DisplayText,
 		Score:       item.Score,
 		Summary:     meta.summary,
-		StrainLabel: meta.strainLabel,
+		StockLabel:  meta.strainLabel,
 		StockType:   meta.stockType,
 	}
 }

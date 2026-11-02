@@ -364,8 +364,8 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		InStock     func(childComplexity int) int
 		Score       func(childComplexity int) int
+		StockLabel  func(childComplexity int) int
 		StockType   func(childComplexity int) int
-		StrainLabel func(childComplexity int) int
 		Summary     func(childComplexity int) int
 	}
 
@@ -2168,18 +2168,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.StockSearchResult.Score(childComplexity), true
+	case "StockSearchResult.stock_label":
+		if e.ComplexityRoot.StockSearchResult.StockLabel == nil {
+			break
+		}
+
+		return e.ComplexityRoot.StockSearchResult.StockLabel(childComplexity), true
 	case "StockSearchResult.stock_type":
 		if e.ComplexityRoot.StockSearchResult.StockType == nil {
 			break
 		}
 
 		return e.ComplexityRoot.StockSearchResult.StockType(childComplexity), true
-	case "StockSearchResult.strain_label":
-		if e.ComplexityRoot.StockSearchResult.StrainLabel == nil {
-			break
-		}
-
-		return e.ComplexityRoot.StockSearchResult.StrainLabel(childComplexity), true
 	case "StockSearchResult.summary":
 		if e.ComplexityRoot.StockSearchResult.Summary == nil {
 			break
@@ -3593,9 +3593,10 @@ type StockSearchResult {
   # Complete stored summary of the stock document. It is not a snippet,
   # and it is not highlighted. Empty when the stock has no summary.
   summary: String!
-  # Strain label, shown as Descriptor in the stock center. Empty for
-  # plasmid results and for strains without a label.
-  strain_label: String!
+  # Stock label: the strain property label (shown as Descriptor in the
+  # stock center) for strains, or the plasmid name for plasmids. Empty
+  # when the stock has no label.
+  stock_label: String!
   # Whether the stock is in the stock center inventory. Same meaning
   # as the in_stock field of Strain and Plasmid.
   in_stock: Boolean!
@@ -4244,8 +4245,8 @@ func (ec *executionContext) childFields_StockSearchResult(ctx context.Context, f
 		return ec.fieldContext_StockSearchResult_score(ctx, field)
 	case "summary":
 		return ec.fieldContext_StockSearchResult_summary(ctx, field)
-	case "strain_label":
-		return ec.fieldContext_StockSearchResult_strain_label(ctx, field)
+	case "stock_label":
+		return ec.fieldContext_StockSearchResult_stock_label(ctx, field)
 	case "in_stock":
 		return ec.fieldContext_StockSearchResult_in_stock(ctx, field)
 	case "stock_type":

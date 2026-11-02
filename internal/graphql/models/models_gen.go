@@ -343,7 +343,7 @@ type StockSearchResult struct {
 	DisplayText string               `json:"display_text"`
 	Score       float64              `json:"score"`
 	Summary     string               `json:"summary"`
-	StrainLabel string               `json:"strain_label"`
+	StockLabel  string               `json:"stock_label"`
 	InStock     bool                 `json:"in_stock"`
 	StockType   string               `json:"stock_type"`
 }

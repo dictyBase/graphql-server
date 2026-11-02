@@ -423,7 +423,7 @@ exports.SearchStocks = (0, graphql_tag_1.default) `
       display_text
       score
       summary
-      strain_label
+      stock_label
       in_stock
       stock_type
     }
@@ -442,7 +442,7 @@ exports.SearchPhenotypes = (0, graphql_tag_1.default) `
       display_text
       score
       summary
-      strain_label
+      stock_label
       in_stock
       stock_type
     }
