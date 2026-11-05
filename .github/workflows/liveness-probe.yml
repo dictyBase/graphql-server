@@ -11,23 +11,24 @@ jobs:
     name: Liveness probe
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    continue-on-error: true
     steps:
       - name: check out graphql-client
-        continue-on-error: true
         uses: actions/checkout@v7
         with:
           repository: dictyBase/graphql-client
           ref: develop
       - name: set up golang
-        continue-on-error: true
         uses: actions/setup-go@v7
         with:
           go-version: 1.26
       - name: run liveness check
-        continue-on-error: true
-        run: go run . liveness-check --endpoint "${{ inputs.endpoint }}" --output liveness-report.md
+        run: |
+          rm -f liveness-report.md
+          go run . liveness-check --endpoint "$GRAPHQL_ENDPOINT" --output liveness-report.md
         env:
           GOPROXY: https://proxy.golang.org
+          GRAPHQL_ENDPOINT: ${{ inputs.endpoint }}
       - name: publish report to job summary
         if: always()
         run: |
@@ -38,10 +39,9 @@ jobs:
           fi
       - name: upload report artifact
         if: always()
-        continue-on-error: true
         uses: actions/upload-artifact@v7
         with:
           name: liveness-report
           path: liveness-report.md
-          retention-days: 90
+          retention-days: 10
           if-no-files-found: ignore
