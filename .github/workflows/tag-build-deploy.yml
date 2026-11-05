@@ -33,3 +33,9 @@ jobs:
       pulumi_version: ${{ vars.PROD_PULUMI_VERSION }}
       environment: production
       runner: backend
+  liveness-probe:
+    name: GraphQL liveness probe
+    needs: call-build-deploy
+    uses: ./.github/workflows/liveness-probe.yml
+    with:
+      endpoint: https://graphql.dictycr.org/graphql
