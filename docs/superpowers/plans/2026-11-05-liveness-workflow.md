@@ -4,7 +4,7 @@
 
 **Goal:** Run the `graphql-client` liveness probe after every graphql-server deployment and publish the Markdown report to the Actions job summary and as an artifact.
 
-**Architecture:** One reusable `workflow_call` workflow holds the probe logic. Both deploy workflows (`ci.yml`, `tag-build-deploy.yml`) add one job each that calls it after `call-build-deploy`. The probe step is `continue-on-error: true`, so the run stays green even when probes fail or the CLI errors.
+**Architecture:** One reusable `workflow_call` workflow holds the probe logic. Both deploy workflows (`ci.yml`, `tag-build-deploy.yml`) add one job each that calls it after `call-build-deploy`. The internal job carries `continue-on-error: true` (caller jobs cannot use that key), so step failures and probe failures do not fail the deploy run. Workflow-level validation errors and cancellation are not covered by this key.
 
 **Tech Stack:** GitHub Actions (reusable workflows, job summary, upload-artifact), Go 1.26, `graphql-client` CLI `liveness-check` subcommand.
 
@@ -23,7 +23,7 @@
 
 ## Review Focus
 
-1. **Report-only guarantee.** A probe failure, a CLI crash, or a missing report file must not fail the run. The probe step needs `continue-on-error: true`, and the caller jobs need `continue-on-error: true`, so even a checkout or setup failure in the liveness job cannot redden a deploy run.
+1. **Report-only guarantee.** A probe failure, a CLI crash, or a missing report file must not fail the run. The internal job carries `continue-on-error: true` (caller jobs cannot use that key; verified with actionlint). A stale `liveness-report.md` must never publish: delete it before the probe runs.
 2. **Report file missing at summary time.** If the CLI dies before writing `liveness-report.md`, the summary step must not fail on `cat`. Guard with a file-existence check.
 3. **Reusable workflow call syntax.** A job that calls a local reusable workflow uses `uses: ./.github/workflows/<file>` with `with:` inputs and cannot also have `runs-on` or `steps`.
 4. **`needs` chaining.** The liveness job must start only after `call-build-deploy` succeeds, in both workflows.
@@ -61,6 +61,7 @@ jobs:
     name: Liveness probe
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    continue-on-error: true
     steps:
       - name: check out graphql-client
         uses: actions/checkout@v7
@@ -72,10 +73,12 @@ jobs:
         with:
           go-version: 1.26
       - name: run liveness check
-        continue-on-error: true
-        run: go run . liveness-check --endpoint "${{ inputs.endpoint }}" --output liveness-report.md
+        run: |
+          rm -f liveness-report.md
+          go run . liveness-check --endpoint "$GRAPHQL_ENDPOINT" --output liveness-report.md
         env:
           GOPROXY: https://proxy.golang.org
+          GRAPHQL_ENDPOINT: ${{ inputs.endpoint }}
       - name: publish report to job summary
         if: always()
         run: |
@@ -96,8 +99,8 @@ jobs:
 
 - [ ] **Step 2: Lint the workflow**
 
-Run: `cd ~/Projects/devenv/golang/graphql-server && go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/liveness-probe.yml`
-Expected: no output (exit 0).
+Run: `cd ~/Projects/devenv/golang/graphql-server && go run github.com/rhysd/actionlint/cmd/actionlint@latest`
+Expected: only the two pre-existing baseline errors (`ci.yml:25`, `testcov.yml:25`, the `ports[6379]` map access — present at the parent commit, out of scope). No error in `liveness-probe.yml`.
 
 - [ ] **Step 3: Commit**
 
@@ -126,15 +129,14 @@ Append this job after `call-build-deploy`:
     name: GraphQL liveness probe
     needs: call-build-deploy
     uses: ./.github/workflows/liveness-probe.yml
-    continue-on-error: true
     with:
       endpoint: https://graphql.dictybase.dev/graphql
 ```
 
 - [ ] **Step 2: Lint the workflow**
 
-Run: `cd ~/Projects/devenv/golang/graphql-server && go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/ci.yml`
-Expected: no output (exit 0).
+Run: `cd ~/Projects/devenv/golang/graphql-server && go run github.com/rhysd/actionlint/cmd/actionlint@latest`
+Expected: only the two pre-existing baseline errors (`ci.yml:25`, `testcov.yml:25`). No error in `ci.yml`'s `liveness-probe` job.
 
 - [ ] **Step 3: Commit**
 
@@ -163,15 +165,14 @@ Append this job after `call-build-deploy`:
     name: GraphQL liveness probe
     needs: call-build-deploy
     uses: ./.github/workflows/liveness-probe.yml
-    continue-on-error: true
     with:
       endpoint: https://graphql.dictycr.org/graphql
 ```
 
 - [ ] **Step 2: Lint all workflows**
 
-Run: `cd ~/Projects/devenv/golang/graphql-server && go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/`
-Expected: no output (exit 0).
+Run: `cd ~/Projects/devenv/golang/graphql-server && go run github.com/rhysd/actionlint/cmd/actionlint@latest`
+Expected: only the two pre-existing baseline errors (`ci.yml:25`, `testcov.yml:25`). No error in `tag-build-deploy.yml`.
 
 - [ ] **Step 3: Commit**
 

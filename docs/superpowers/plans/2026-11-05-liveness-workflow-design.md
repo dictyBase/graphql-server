@@ -23,7 +23,7 @@ where the team can see it. Probe failures must never block the pipeline.
 |---|---|
 | Trigger | After both deploys: `ci.yml` (dev/staging) and `tag-build-deploy.yml` (production) |
 | Visualization | Actions job summary (Markdown report rendered on the run page) + uploaded artifact |
-| Failure policy | Report-only. The workflow stays green even when probes fail |
+| Failure policy | Report-only. Step and probe failures do not fail the deploy run (workflow validation errors and cancellation are not covered by `continue-on-error`) |
 | CLI source | Build from source: check out `dictyBase/graphql-client` at `develop` and run `go run . liveness-check` |
 
 ## Endpoints
@@ -48,9 +48,13 @@ where the team can see it. Probe failures must never block the pipeline.
 ## Shape
 
 - `graphql-server/.github/workflows/liveness-probe.yml` — reusable workflow,
-  one `endpoint` input. Checks out `dictyBase/graphql-client` at `develop`,
-  sets up Go 1.26, runs `go run . liveness-check --endpoint <endpoint> --output
-  liveness-report.md` with `continue-on-error: true`, appends the report to
+  one `endpoint` input. Its internal job carries `continue-on-error: true`
+  (caller jobs cannot use that key), so step failures and probe failures do not
+  fail the deploy run. Workflow validation errors and cancellation are not
+  covered by this key. It checks out `dictyBase/graphql-client` at `develop`, sets up Go 1.26,
+  deletes any stale `liveness-report.md`, runs `go run . liveness-check
+  --endpoint "$GRAPHQL_ENDPOINT" --output liveness-report.md` (the input passes
+  through the `GRAPHQL_ENDPOINT` environment variable), appends the report to
   `$GITHUB_STEP_SUMMARY`, uploads the report as an artifact (90-day retention).
 - `graphql-server/.github/workflows/ci.yml` — add job `liveness-probe` with
   `needs: call-build-deploy`, endpoint = dev/staging URL.
