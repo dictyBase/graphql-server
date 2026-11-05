@@ -11,7 +11,7 @@ func TestPipelineCheck(t *testing.T) {
 	t.Parallel()
 
 	cfg := pipelinecheck.Config{
-		Roots:                     []string{"."},
+		Roots:                     []string{"publication.go"},
 		RequirePointFreeBranching: true,
 		RequireTrivialDelegate:    true,
 	}
@@ -20,6 +20,14 @@ func TestPipelineCheck(t *testing.T) {
 	pipelinecheck.RequireNoIfErrInTryCatch(t, cfg)
 	pipelinecheck.RequireBareIf(t, cfg)
 	pipelinecheck.RequireTrivialDelegate(t, cfg)
+	pipelinecheck.RequireNoImperativeLoop(t, cfg)
+	pipelinecheck.RequireNoImperativeBranch(t, cfg)
+	pipelinecheck.RequireNoDirectApply(t, cfg)
+	pipelinecheck.RequireNoPopulatedStruct(t, cfg)
+	pipelinecheck.RequireNoLocalPipeClosure(t, cfg)
+	pipelinecheck.RequireNoRedundantFold(t, cfg)
+	pipelinecheck.RequireSafePrintf(t, cfg)
+	pipelinecheck.RequireNoHandRolledFileJoinInArrayMap(t, cfg)
 }
 
 func TestLoomCheck(t *testing.T) {

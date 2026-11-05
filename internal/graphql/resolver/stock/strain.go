@@ -17,7 +17,6 @@ import (
 	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
-	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/sirupsen/logrus"
@@ -85,18 +84,15 @@ func (srs *StrainResolver) Publications(
 	ctx context.Context,
 	obj *models.Strain,
 ) ([]*models.Publication, error) {
-	redis := srs.Registry.GetRedisRepository(cache.RedisKey)
-	pubs := make([]*models.Publication, 0)
-	for _, id := range obj.Publications {
-		p, err := fetch.FetchPublication(ctx, redis, id)
-		if err != nil {
-			errorutils.AddGQLError(ctx, err)
-			srs.Logger.Error(err)
-			return pubs, fmt.Errorf("error in fetching publication %s for strain %s", id, err)
-		}
-		pubs = append(pubs, p)
-	}
-	return pubs, nil
+	return fetchStockPublications(
+		newStockPubsState(
+			ctx,
+			srs.Registry.GetRedisRepository(cache.RedisKey),
+			obj.ID,
+			srs.Logger,
+			obj.Publications,
+		),
+	)
 }
 
 func (srs *StrainResolver) Parent(
@@ -319,46 +315,6 @@ func (srs *StrainResolver) InStock(
 		return false, result.F1
 	}
 	return result.F2, nil
-}
-
-func getPhenotypes(
-	ctx context.Context,
-	r *StrainResolver,
-	data []*annotation.TaggedAnnotationGroupCollection_Data,
-) []*models.Phenotype {
-	redis := r.Registry.GetRedisRepository(cache.RedisKey)
-	p := []*models.Phenotype{}
-	for _, item := range data {
-		m := &models.Phenotype{}
-		for _, gntype := range item.Group.Data {
-			switch gntype.Attributes.Ontology {
-			case registry.PhenoOntology:
-				m.Phenotype = gntype.Attributes.Tag
-			case registry.EnvOntology:
-				m.Environment = &gntype.Attributes.Tag
-			case registry.AssayOntology:
-				m.Assay = &gntype.Attributes.Tag
-			case registry.DictyAnnoOntology:
-				if gntype.Attributes.Tag == registry.LiteratureTag {
-					pub, err := fetch.FetchPublication(
-						ctx,
-						redis,
-						gntype.Attributes.Value,
-					)
-					if err != nil {
-						r.Logger.Error(err)
-						errorutils.AddGQLError(ctx, err)
-					}
-					m.Publication = pub
-				}
-				if gntype.Attributes.Tag == registry.NoteTag {
-					m.Note = &gntype.Attributes.Value
-				}
-			}
-		}
-		p = append(p, m)
-	}
-	return p
 }
 
 func ConvertToStrainModel(id string, attr *pb.StrainAttributes) *models.Strain {

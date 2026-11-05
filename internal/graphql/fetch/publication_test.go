@@ -403,3 +403,23 @@ func TestNewPublicationEmptyParams(t *testing.T) {
 	req.NoError(result.F1)
 	req.NotNil(result.F2)
 }
+
+func TestIsResolvableIdentifier(t *testing.T) {
+	t.Parallel()
+	req := require.New(t)
+	for id, want := range map[string]bool{
+		"":                               false,
+		"   ":                            false,
+		"abc":                            false,
+		"123x":                           false,
+		"0":                              false,
+		"12062087":                       true,
+		"10.1016/s1534-5807(02)00186-7":  true,
+		"https://doi.org/10.1016/x/1":    true,
+		"http://doi.org/10.1016/x/1":     true,
+		"doi:10.1111/j.1469-8137.2004.x": true,
+		"https://doi.org/12062087":       true,
+	} {
+		req.Equal(want, IsResolvableIdentifier(id), id)
+	}
+}
