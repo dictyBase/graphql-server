@@ -1,0 +1,44 @@
+name: GraphQL Liveness Probe
+on:
+  workflow_call:
+    inputs:
+      endpoint:
+        description: GraphQL API endpoint URL to probe
+        required: true
+        type: string
+jobs:
+  liveness-probe:
+    name: Liveness probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: check out graphql-client
+        uses: actions/checkout@v7
+        with:
+          repository: dictyBase/graphql-client
+          ref: develop
+      - name: set up golang
+        uses: actions/setup-go@v7
+        with:
+          go-version: 1.26
+      - name: run liveness check
+        continue-on-error: true
+        run: go run . liveness-check --endpoint "${{ inputs.endpoint }}" --output liveness-report.md
+        env:
+          GOPROXY: https://proxy.golang.org
+      - name: publish report to job summary
+        if: always()
+        run: |
+          if [ -f liveness-report.md ]; then
+            cat liveness-report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No liveness report was produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: liveness-report
+          path: liveness-report.md
+          retention-days: 90
+          if-no-files-found: ignore
