@@ -18,7 +18,6 @@ import (
 	"github.com/dictyBase/graphql-server/internal/collection"
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
-	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/sirupsen/logrus"
@@ -86,25 +85,15 @@ func (prs *PlasmidResolver) Publications(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) ([]*models.Publication, error) {
-	pubs := make([]*models.Publication, 0)
-	for _, id := range obj.Publications {
-		pub, err := fetch.FetchPublication(
+	return fetchStockPublications(
+		newStockPubsState(
 			ctx,
 			prs.Registry.GetRedisRepository(cache.RedisKey),
-			id,
-		)
-		if err != nil {
-			errorutils.AddGQLError(ctx, err)
-			prs.Logger.Error(err)
-			return pubs, fmt.Errorf(
-				"error in fetching publication %s for plasmid %s",
-				id,
-				err,
-			)
-		}
-		pubs = append(pubs, pub)
-	}
-	return pubs, nil
+			obj.ID,
+			prs.Logger,
+			obj.Publications,
+		),
+	)
 }
 
 func (prs *PlasmidResolver) InStock(

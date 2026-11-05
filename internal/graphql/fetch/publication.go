@@ -2,16 +2,17 @@ package fetch
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
 	"time"
 
 	A "github.com/IBM/fp-go/v2/array"
+	B "github.com/IBM/fp-go/v2/bytes"
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
+	J "github.com/IBM/fp-go/v2/json"
 	L "github.com/IBM/fp-go/v2/optics/lens"
 	O "github.com/IBM/fp-go/v2/option"
 	P "github.com/IBM/fp-go/v2/predicate"
@@ -78,6 +79,13 @@ type pubFetchState struct {
 }
 
 var (
+	buildParamsLens = L.MakeLens(
+		func(s clientBuildState) *PublicationParams { return s.params },
+		func(s clientBuildState, v *PublicationParams) clientBuildState {
+			s.params = v
+			return s
+		},
+	)
 	buildPubMedLens = L.MakeLens(
 		func(s clientBuildState) *literature.Client { return s.pubMed },
 		func(s clientBuildState, v *literature.Client) clientBuildState {
@@ -95,6 +103,146 @@ var (
 		) clientBuildState {
 			s.europePMC = v
 			return s
+		},
+	)
+	pubMedClientLens = L.MakeLensRef(
+		func(p *Publication) pubMedClient { return p.pubMed },
+		func(p *Publication, v pubMedClient) *Publication {
+			p.pubMed = v
+			return p
+		},
+	)
+	europePMCClientLens = L.MakeLensRef(
+		func(p *Publication) europePMCClient { return p.europePMC },
+		func(p *Publication, v europePMCClient) *Publication {
+			p.europePMC = v
+			return p
+		},
+	)
+	authorFirstNameLens = L.MakeLensRef(
+		func(a *pb.Author) string { return a.FirstName },
+		func(a *pb.Author, v string) *pb.Author {
+			a.FirstName = v
+			return a
+		},
+	)
+	authorLastNameLens = L.MakeLensRef(
+		func(a *pb.Author) string { return a.LastName },
+		func(a *pb.Author, v string) *pb.Author {
+			a.LastName = v
+			return a
+		},
+	)
+	authorInitialsLens = L.MakeLensRef(
+		func(a *pb.Author) string { return a.Initials },
+		func(a *pb.Author, v string) *pb.Author {
+			a.Initials = v
+			return a
+		},
+	)
+	authorRankLens = L.MakeLensRef(
+		func(a *pb.Author) int64 { return a.Rank },
+		func(a *pb.Author, v int64) *pb.Author {
+			a.Rank = v
+			return a
+		},
+	)
+	pubModelIDLens = L.MakeLensRef(
+		func(p *models.Publication) string { return p.ID },
+		func(p *models.Publication, v string) *models.Publication {
+			p.ID = v
+			return p
+		},
+	)
+	pubModelTitleLens = L.MakeLensRef(
+		func(p *models.Publication) string { return p.Title },
+		func(p *models.Publication, v string) *models.Publication {
+			p.Title = v
+			return p
+		},
+	)
+	pubModelAbstractLens = L.MakeLensRef(
+		func(p *models.Publication) string { return p.Abstract },
+		func(p *models.Publication, v string) *models.Publication {
+			p.Abstract = v
+			return p
+		},
+	)
+	pubModelJournalLens = L.MakeLensRef(
+		func(p *models.Publication) string { return p.Journal },
+		func(p *models.Publication, v string) *models.Publication {
+			p.Journal = v
+			return p
+		},
+	)
+	pubModelPubDateLens = L.MakeLensRef(
+		func(p *models.Publication) *time.Time { return p.PubDate },
+		func(p *models.Publication, v *time.Time) *models.Publication {
+			p.PubDate = v
+			return p
+		},
+	)
+	pubModelDoiLens = L.MakeLensRef(
+		func(p *models.Publication) *string { return p.Doi },
+		func(p *models.Publication, v *string) *models.Publication {
+			p.Doi = v
+			return p
+		},
+	)
+	pubModelVolumeLens = L.MakeLensRef(
+		func(p *models.Publication) *string { return p.Volume },
+		func(p *models.Publication, v *string) *models.Publication {
+			p.Volume = v
+			return p
+		},
+	)
+	pubModelIssueLens = L.MakeLensRef(
+		func(p *models.Publication) *string { return p.Issue },
+		func(p *models.Publication, v *string) *models.Publication {
+			p.Issue = v
+			return p
+		},
+	)
+	pubModelPagesLens = L.MakeLensRef(
+		func(p *models.Publication) *string { return p.Pages },
+		func(p *models.Publication, v *string) *models.Publication {
+			p.Pages = v
+			return p
+		},
+	)
+	pubModelIssnLens = L.MakeLensRef(
+		func(p *models.Publication) *string { return p.Issn },
+		func(p *models.Publication, v *string) *models.Publication {
+			p.Issn = v
+			return p
+		},
+	)
+	pubModelPubTypeLens = L.MakeLensRef(
+		func(p *models.Publication) string { return p.PubType },
+		func(p *models.Publication, v string) *models.Publication {
+			p.PubType = v
+			return p
+		},
+	)
+	pubModelSourceLens = L.MakeLensRef(
+		func(p *models.Publication) string { return p.Source },
+		func(p *models.Publication, v string) *models.Publication {
+			p.Source = v
+			return p
+		},
+	)
+	pubModelStatusLens = L.MakeLensRef(
+		func(p *models.Publication) *string { return p.Status },
+		func(p *models.Publication, v *string) *models.Publication {
+			p.Status = v
+			return p
+		},
+	)
+	pubModelAuthorsLens = L.MakeLensRef(
+		func(p *models.Publication) []*pb.Author { return p.Authors },
+		func(p *models.Publication, v []*pb.Author) *models.Publication {
+			p.Authors = v
+			return p
 		},
 	)
 
@@ -160,6 +308,15 @@ var (
 		S.Includes("/"),
 		P.Or(S.HasPrefix("10.")),
 	)
+	normalizeIdentifier = F.Flow3(
+		trimHTTPSDOI,
+		trimHTTPDOI,
+		trimDOIColon,
+	)
+	isPMIDOrDOI = F.Pipe1(
+		isDOIStr,
+		P.Or(validPMID),
+	)
 	isDOI = F.Pipe1(
 		isDOIStr,
 		P.ContraMap(identifierLens.Get),
@@ -185,7 +342,33 @@ var (
 		cachedLens.Get,
 		P.Fold(fetchAndStoreArticle, loadFromCache),
 	)
+	decodeCachedPub = F.Flow3(
+		S.ToBytes,
+		J.Unmarshal[*models.Publication],
+		E.MapLeft[*models.Publication](wrapDecodeJSONError),
+	)
+	marshalCachedPub = F.Flow4(
+		pubLens.Get,
+		J.Marshal[*models.Publication],
+		E.MapLeft[[]byte](wrapEncodeJSONError),
+		E.Map[error](B.ToString),
+	)
+	encodeStatePublication = F.Flow2(
+		E.Of[error, pubFetchState],
+		E.Bind(rawCachedLens.Set, marshalCachedPub),
+	)
 )
+
+// IsResolvableIdentifier reports whether the publication pipeline can
+// resolve the stored identifier: a decimal PMID or a DOI-shaped string
+// after DOI prefix normalization.
+func IsResolvableIdentifier(id string) bool {
+	return F.Pipe2(
+		id,
+		normalizeIdentifier,
+		isPMIDOrDOI,
+	)
+}
 
 func someOption[T any](
 	apply func(string) T,
@@ -222,7 +405,7 @@ func europePMCOptions(p *PublicationParams) []literature.EuropePMCOption {
 func createPubMedFromState(
 	s clientBuildState,
 ) IOE.IOEither[error, *literature.Client] {
-	opts := pubMedOptions(s.params)
+	opts := F.Pipe2(s, buildParamsLens.Get, pubMedOptions)
 
 	return F.Pipe1(
 		IOE.TryCatchError(func() (*literature.Client, error) {
@@ -240,7 +423,7 @@ func createPubMedFromState(
 func createEuropeFromState(
 	s clientBuildState,
 ) IOE.IOEither[error, *literature.EuropePMCClient] {
-	opts := europePMCOptions(s.params)
+	opts := F.Pipe2(s, buildParamsLens.Get, europePMCOptions)
 
 	return F.Pipe1(
 		IOE.TryCatchError(func() (*literature.EuropePMCClient, error) {
@@ -256,10 +439,13 @@ func createEuropeFromState(
 }
 
 func assemblePublication(s clientBuildState) *Publication {
-	return &Publication{
-		pubMed:    s.pubMed,
-		europePMC: s.europePMC,
-	}
+	pubMed := buildPubMedLens.Get(s)
+	europe := buildEuropeLens.Get(s)
+	return F.Pipe2(
+		&Publication{},
+		pubMedClientLens.Set(pubMed),
+		europePMCClientLens.Set(europe),
+	)
 }
 
 // NewPublication builds the publication source with both NCBI PubMed and
@@ -267,8 +453,9 @@ func assemblePublication(s clientBuildState) *Publication {
 func NewPublication(
 	p *PublicationParams,
 ) IOE.IOEither[error, *Publication] {
-	return F.Pipe3(
-		IOE.Of[error](clientBuildState{params: p}),
+	return F.Pipe4(
+		F.Pipe1(clientBuildState{}, buildParamsLens.Set(p)),
+		IOE.Of[error, clientBuildState],
 		IOE.Bind(buildPubMedLens.Set, createPubMedFromState),
 		IOE.Bind(buildEuropeLens.Set, createEuropeFromState),
 		IOE.Map[error](assemblePublication),
@@ -292,49 +479,53 @@ func invalidPMIDError(pmid string) error {
 }
 
 func toPBAuthor(idx int, a literature.Author) *pb.Author {
-	return &pb.Author{
-		FirstName: a.FirstName,
-		LastName:  a.LastName,
-		Rank:      int64(idx),
-	}
+	rank := int64(idx)
+	return F.Pipe3(
+		&pb.Author{},
+		authorFirstNameLens.Set(a.FirstName),
+		authorLastNameLens.Set(a.LastName),
+		authorRankLens.Set(rank),
+	)
 }
 
 func toPBEuropeAuthor(idx int, a literature.EuropePMCAuthor) *pb.Author {
-	return &pb.Author{
-		FirstName: a.FirstName,
-		LastName:  a.LastName,
-		Initials:  a.Initials,
-		Rank:      int64(idx),
-	}
+	rank := int64(idx)
+	return F.Pipe4(
+		&pb.Author{},
+		authorFirstNameLens.Set(a.FirstName),
+		authorLastNameLens.Set(a.LastName),
+		authorInitialsLens.Set(a.Initials),
+		authorRankLens.Set(rank),
+	)
 }
 
 func pubMedArticleToPublication(a *literature.Article) *models.Publication {
 	emptyIssn := ""
-	toTimePtr := func(t time.Time) *time.Time { return &t }
 	authors := F.Pipe1(a.Authors, A.MapWithIndex(toPBAuthor))
 	pubDate := F.Pipe3(
 		a.PublishDate,
 		O.FromPredicate(isNonZeroTime),
-		O.Map(toTimePtr),
+		O.Map(func(t time.Time) *time.Time { return new(t) }),
 		O.GetOrElse(F.Constant(nilTime)),
 	)
 
-	return &models.Publication{
-		ID:       a.PMID,
-		Title:    a.Title,
-		Abstract: a.Abstract,
-		Journal:  a.Journal,
-		PubDate:  pubDate,
-		Doi:      &a.DOI,
-		Volume:   &a.Volume,
-		Issue:    &a.Issue,
-		Pages:    &a.Pages,
-		Issn:     &emptyIssn,
-		PubType:  "",
-		Source:   pubMedSource,
-		Status:   &Status,
-		Authors:  authors,
-	}
+	return F.Pipe14(
+		&models.Publication{},
+		pubModelIDLens.Set(a.PMID),
+		pubModelTitleLens.Set(a.Title),
+		pubModelAbstractLens.Set(a.Abstract),
+		pubModelJournalLens.Set(a.Journal),
+		pubModelPubDateLens.Set(pubDate),
+		pubModelDoiLens.Set(&a.DOI),
+		pubModelVolumeLens.Set(&a.Volume),
+		pubModelIssueLens.Set(&a.Issue),
+		pubModelPagesLens.Set(&a.Pages),
+		pubModelIssnLens.Set(&emptyIssn),
+		pubModelPubTypeLens.Set(""),
+		pubModelSourceLens.Set(pubMedSource),
+		pubModelStatusLens.Set(&Status),
+		pubModelAuthorsLens.Set(authors),
+	)
 }
 
 func europeArticleToPublication(
@@ -352,27 +543,29 @@ func europeArticleToPublication(
 		O.GetOrElse(F.Constant(a.ID)),
 	)
 
-	return &models.Publication{
-		ID:       id,
-		Title:    a.Title,
-		Abstract: a.Abstract,
-		Journal:  a.Journal.Title,
-		PubDate:  a.PublishDate,
-		Doi:      &a.DOI,
-		Volume:   &a.Journal.Volume,
-		Issue:    &a.Journal.Issue,
-		Pages:    &a.PageInfo,
-		Issn:     &a.Journal.ISSN,
-		PubType:  pubType,
-		Source:   a.Source,
-		Status:   &Status,
-		Authors:  authors,
-	}
+	return F.Pipe14(
+		&models.Publication{},
+		pubModelIDLens.Set(id),
+		pubModelTitleLens.Set(a.Title),
+		pubModelAbstractLens.Set(a.Abstract),
+		pubModelJournalLens.Set(a.Journal.Title),
+		pubModelPubDateLens.Set(a.PublishDate),
+		pubModelDoiLens.Set(&a.DOI),
+		pubModelVolumeLens.Set(&a.Journal.Volume),
+		pubModelIssueLens.Set(&a.Journal.Issue),
+		pubModelPagesLens.Set(&a.PageInfo),
+		pubModelIssnLens.Set(&a.Journal.ISSN),
+		pubModelPubTypeLens.Set(pubType),
+		pubModelSourceLens.Set(a.Source),
+		pubModelStatusLens.Set(&Status),
+		pubModelAuthorsLens.Set(authors),
+	)
 }
 
 func validateStatePMID(s pubFetchState) E.Either[error, pubFetchState] {
-	return F.Pipe1(
-		validatePMID(s.identifier),
+	return F.Pipe2(
+		identifierLens.Get(s),
+		validatePMID,
 		E.Map[error](F.Constant1[string](s)),
 	)
 }
@@ -387,7 +580,7 @@ func callPubMedByPMID(
 		IOE.MapLeft[*literature.Article](func(err error) error {
 			return fmt.Errorf(
 				"error fetching publication %s: %w",
-				s.identifier,
+				identifierLens.Get(s),
 				err,
 			)
 		}),
@@ -405,7 +598,7 @@ func callEuropeByPMID(
 		IOE.MapLeft[*literature.EuropePMCArticle](func(err error) error {
 			return fmt.Errorf(
 				"error fetching publication %s: %w",
-				s.identifier,
+				identifierLens.Get(s),
 				err,
 			)
 		}),
@@ -416,13 +609,11 @@ func callEuropeByPMID(
 func fetchByPMID(
 	s pubFetchState,
 ) IOE.IOEither[error, *models.Publication] {
-	fallback := func() IOE.IOEither[error, *models.Publication] {
-		return callEuropeByPMID(s)
-	}
+	europeAttempt := callEuropeByPMID(s)
 	return F.Pipe2(
 		s,
 		callPubMedByPMID,
-		IOE.Alt(fallback),
+		IOE.OrElse(F.Constant1[error](europeAttempt)),
 	)
 }
 
@@ -434,7 +625,11 @@ func fetchEuropeByDOI(
 			return s.source.europePMC.GetArticleByDOI(s.identifier)
 		}),
 		IOE.MapLeft[*literature.EuropePMCArticle](func(err error) error {
-			return fmt.Errorf("error fetching doi %s: %w", s.identifier, err)
+			return fmt.Errorf(
+				"error fetching doi %s: %w",
+				identifierLens.Get(s),
+				err,
+			)
 		}),
 		IOE.Map[error](europeArticleToPublication),
 	)
@@ -442,7 +637,7 @@ func fetchEuropeByDOI(
 
 func deriveRedisKey(s pubFetchState) string {
 	prefix := strutils.JoinStrings(RedisKey, "/")
-	return strutils.JoinStrings(prefix, s.identifier)
+	return strutils.JoinStrings(prefix, identifierLens.Get(s))
 }
 
 func checkCacheExists(s pubFetchState) IOE.IOEither[error, bool] {
@@ -456,17 +651,12 @@ func checkCacheExists(s pubFetchState) IOE.IOEither[error, bool] {
 	)
 }
 
-func unmarshalPublication(
-	raw string,
-) E.Either[error, *models.Publication] {
-	pub := &models.Publication{}
-	err := json.Unmarshal([]byte(raw), pub)
-	return F.Pipe1(
-		E.TryCatchError(pub, err),
-		E.MapLeft[*models.Publication](func(err error) error {
-			return fmt.Errorf("error in decoding json %w", err)
-		}),
-	)
+func wrapDecodeJSONError(err error) error {
+	return fmt.Errorf("error in decoding json %w", err)
+}
+
+func wrapEncodeJSONError(err error) error {
+	return fmt.Errorf("error in converting json to byte %w", err)
 }
 
 func loadFromCache(
@@ -479,20 +669,7 @@ func loadFromCache(
 		IOE.MapLeft[string](func(err error) error {
 			return fmt.Errorf("error in getting existing key %w", err)
 		}),
-		IOE.ChainEitherK(unmarshalPublication),
-	)
-}
-
-func encodeStatePublication(s pubFetchState) E.Either[error, pubFetchState] {
-	setRaw := F.Pipe1(s, F.Flip(rawCachedLens.Set))
-	b, err := json.Marshal(s.pub)
-	return F.Pipe3(
-		E.TryCatchError(b, err),
-		E.MapLeft[[]byte](func(err error) error {
-			return fmt.Errorf("error in converting json to byte %w", err)
-		}),
-		E.Map[error](func(b []byte) string { return string(b) }),
-		E.Map[error](setRaw),
+		IOE.ChainEitherK(decodeCachedPub),
 	)
 }
 
@@ -504,7 +681,7 @@ func storeCachedString(s pubFetchState) IOE.IOEither[error, string] {
 		IOE.MapLeft[bool](func(err error) error {
 			return fmt.Errorf("error in setting key in redis %w", err)
 		}),
-		IOE.Map[error](F.Constant1[bool](s.rawCached)),
+		IOE.Map[error](F.Constant1[bool](rawCachedLens.Get(s))),
 	)
 }
 
@@ -537,11 +714,12 @@ func (p *Publication) FetchCachedArticle(
 	id string,
 ) IOE.IOEither[error, *models.Publication] {
 	return F.Pipe7(
-		pubFetchState{
-			identifier: id,
-			repo:       repo,
-			source:     p,
-		},
+		F.Pipe3(
+			pubFetchState{},
+			identifierLens.Set(id),
+			repoLens.Set(repo),
+			sourceLens.Set(p),
+		),
 		identifierLens.Modify(trimHTTPSDOI),
 		identifierLens.Modify(trimHTTPDOI),
 		identifierLens.Modify(trimDOIColon),
@@ -564,19 +742,19 @@ func onPublicationSuccess(
 	return T.MakeTuple2[error](nil, pub)
 }
 
-// FetchPublication fetches a publication by PMID or DOI using Redis caching
-// and the literature NCBI and EuropePMC clients.
-func FetchPublication(
-	_ context.Context,
+// FetchPublicationIOE fetches a publication by PMID or DOI as a lazy IOEither
+// using Redis caching and the literature NCBI and EuropePMC clients.
+func FetchPublicationIOE(
 	repo repository.Repository,
 	id string,
-) (*models.Publication, error) {
+) IOE.IOEither[error, *models.Publication] {
 	newSource := NewPublication(&PublicationParams{})
-	result := F.Pipe10(
-		pubFetchState{
-			identifier: id,
-			repo:       repo,
-		},
+	return F.Pipe8(
+		F.Pipe2(
+			pubFetchState{},
+			identifierLens.Set(id),
+			repoLens.Set(repo),
+		),
 		identifierLens.Modify(trimHTTPSDOI),
 		identifierLens.Modify(trimHTTPDOI),
 		identifierLens.Modify(trimDOIColon),
@@ -585,6 +763,18 @@ func FetchPublication(
 		IOE.Bind(sourceLens.Set, F.Constant1[pubFetchState](newSource)),
 		IOE.Let[error](redisKeyLens.Set, deriveRedisKey),
 		IOE.Chain(branchByRepo),
+	)
+}
+
+// FetchPublication fetches a publication by PMID or DOI using Redis caching
+// and the literature NCBI and EuropePMC clients.
+func FetchPublication(
+	_ context.Context,
+	repo repository.Repository,
+	id string,
+) (*models.Publication, error) {
+	result := F.Pipe2(
+		FetchPublicationIOE(repo, id),
 		ioeutils.ToEither[error, *models.Publication],
 		E.Fold(onPublicationError, onPublicationSuccess),
 	)
