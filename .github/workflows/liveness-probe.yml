@@ -13,11 +13,13 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: check out graphql-client
+        continue-on-error: true
         uses: actions/checkout@v7
         with:
           repository: dictyBase/graphql-client
           ref: develop
       - name: set up golang
+        continue-on-error: true
         uses: actions/setup-go@v7
         with:
           go-version: 1.26
@@ -36,6 +38,7 @@ jobs:
           fi
       - name: upload report artifact
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v7
         with:
           name: liveness-report

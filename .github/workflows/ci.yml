@@ -42,3 +42,9 @@ jobs:
       docker_image: graphql-server
       cluster: ${{ vars.DEV_STAGING_CLUSTER }}
       cluster_state_storage: ${{ vars.DEV_STAGING_KOPS_STATE_STORAGE }}
+  liveness-probe:
+    name: GraphQL liveness probe
+    needs: call-build-deploy
+    uses: ./.github/workflows/liveness-probe.yml
+    with:
+      endpoint: https://graphql.dictybase.dev/graphql
