@@ -5,8 +5,8 @@ github.com/99designs/gqlgen v0.17.95 h1:882h7F5iJImgtyUVttc4MOK2NbzbMYc2oyNeHqkj
 github.com/99designs/gqlgen v0.17.95/go.mod h1:kHYPrpwOXDU1OQyxIg3Z7nVXSnlUoHVWBY7CMJCAM4M=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/toml v1.5.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
-github.com/IBM/fp-go/v2 v2.13.0 h1:MYYIIE96SjqQr7tK+EGR/LEolqnFXwzKB6KqTj/26KI=
-github.com/IBM/fp-go/v2 v2.13.0/go.mod h1:FOIrMSfoFLsaZ3tjFoo2EX1CjdbSm0l0047RcuLHGSw=
+github.com/IBM/fp-go/v2 v2.13.1 h1:qPXKhzAq1swAJ/48VG9ID+0ZB3XBQoht5XgZmjVnWPY=
+github.com/IBM/fp-go/v2 v2.13.1/go.mod h1:FOIrMSfoFLsaZ3tjFoo2EX1CjdbSm0l0047RcuLHGSw=
 github.com/agnivade/levenshtein v1.0.1/go.mod h1:CURSv5d9Uaml+FovSIICkLbAUZ9S4RqaHDIsdSBg7lM=
 github.com/agnivade/levenshtein v1.2.2 h1:fI8RgiztYX1Nn5pBHHqQ9EMCCklhrmXqPRIedFmx5M4=
 github.com/agnivade/levenshtein v1.2.2/go.mod h1:QVVI16kDrtSuwcpd0p1+xMC6Z/VfhtCyDIjcwga4/DU=
@@ -32,8 +32,8 @@ github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54 h1:SG7nF6SRlWhcT7c
 github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54/go.mod h1:if7Fbed8SFyPtHLHbg49SI7NAdJiC5WIA09pe59rfAA=
 github.com/dictyBase/aphgrpc v1.4.2 h1:jkNyIpUBATNVNTM99TfAHln8UEpzyvNNNuM2+UY6t2E=
 github.com/dictyBase/aphgrpc v1.4.2/go.mod h1:rzi2U95QntAuS6XpqespgZmQ8Ujo2Sq2R5FyhW5adA8=
-github.com/dictyBase/fp-go-loom v0.2.0 h1:z4hYGiDtO1mZ6Wym5TubeeBYQ3Ne5idhw2LWoPvJSWk=
-github.com/dictyBase/fp-go-loom v0.2.0/go.mod h1:4qGJYnGGFjg2hiG7ZyjcHK8qu4CZOloICFSNnb5W5sg=
+github.com/dictyBase/fp-go-loom v0.5.0 h1:uGa9V13Fx7jixcdzsYstnOUg1+Gba+XY1xJ7ar5qa9Y=
+github.com/dictyBase/fp-go-loom v0.5.0/go.mod h1:OJAl1gwqY0wJPp68ED2DeMQ8GLCeI34BM9FcQdxL5V0=
 github.com/dictyBase/go-genproto v0.0.0-20261102200223-10fc5fce0532 h1:a6wuUxv+g5AM482+5lRXJ1gR4G83cJK9N0k5Ho8S0gg=
 github.com/dictyBase/go-genproto v0.0.0-20261102200223-10fc5fce0532/go.mod h1:rlUPhBs4duDUE73MswuLGW9UzbkcTWqQsbpsp/pGqTg=
 github.com/dictybase/literature v0.3.0 h1:m7kVr68l7d9UfEFui+43werRaFBALp2Av5Jgobibo48=
