@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
@@ -16,6 +17,7 @@ func strainResolver(
 ) *StrainResolver {
 	return &StrainResolver{
 		Client:           mocks.MockedStockClient(),
+		UserClient:       authentication.NoopClient{},
 		AnnotationClient: annoClient,
 		Registry:         &mocks.MockRegistry{},
 		Logger:           mocks.TestLogger(),
@@ -179,28 +181,50 @@ func TestGenes(t *testing.T) {
 	assert.ElementsMatch(g, genes, "should match associated genes")
 }
 
-/* func TestStrainDepositor(t *testing.T) {
+func TestStrainDepositorAuthDisabledNonEmpty(t *testing.T) {
 	t.Parallel()
-	assert := assert.New(t)
+	req := require.New(t)
 	r := strainResolver(mocks.MockedAnnotationClient())
 	d, err := r.Depositor(context.Background(), mockStrainInput)
-	assert.NoError(err, "expect no error from getting depositor")
-	assert.Equal(
-		d.Data.Attributes.Email,
-		"kenny@bania.com",
-		"should match depositor email",
+	req.NoError(err)
+	req.NotNil(d)
+	attrs := d.GetData().GetAttributes()
+	req.Equal("Kenny", attrs.GetFirstName())
+	req.Empty(attrs.GetLastName())
+	req.Empty(attrs.GetEmail())
+	req.NotEqual("Dicty", attrs.GetFirstName())
+}
+
+func TestStrainDepositorAuthDisabledEmpty(t *testing.T) {
+	t.Parallel()
+	req := require.New(t)
+	r := strainResolver(mocks.MockedAnnotationClient())
+	obj := ConvertToStrainModel(
+		"DBS123456",
+		mocks.MockStrainInputWithParams("", ""),
 	)
-	assert.Equal(
-		d.Data.Attributes.FirstName,
-		"Kenny",
-		"should match depositor first name",
-	)
-	assert.Equal(
-		d.Data.Attributes.LastName,
-		"Bania",
-		"should match depositor last name",
-	)
-} */
+	d, err := r.Depositor(context.Background(), obj)
+	req.NoError(err)
+	req.NotNil(d)
+	attrs := d.GetData().GetAttributes()
+	req.Equal("Dicty", attrs.GetFirstName())
+	req.Equal("Stock Center", attrs.GetLastName())
+}
+
+func TestStrainCreatedByAndUpdatedByAuthDisabled(t *testing.T) {
+	t.Parallel()
+	req := require.New(t)
+	r := strainResolver(mocks.MockedAnnotationClient())
+	cb, err := r.CreatedBy(context.Background(), mockStrainInput)
+	req.NoError(err)
+	req.Equal("Dicty", cb.GetData().GetAttributes().GetFirstName())
+	req.Equal("Stock Center", cb.GetData().GetAttributes().GetLastName())
+
+	ub, err := r.UpdatedBy(context.Background(), mockStrainInput)
+	req.NoError(err)
+	req.Equal("Dicty", ub.GetData().GetAttributes().GetFirstName())
+	req.Equal("Stock Center", ub.GetData().GetAttributes().GetLastName())
+}
 
 func TestParent(t *testing.T) {
 	t.Parallel()

@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks/clients"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
@@ -16,6 +17,7 @@ func plasmidResolver(
 ) *PlasmidResolver {
 	return &PlasmidResolver{
 		Client:           mocks.MockedStockClient(),
+		UserClient:       authentication.NoopClient{},
 		AnnotationClient: annoClient,
 		Registry:         &mocks.MockRegistry{},
 		Logger:           mocks.TestLogger(),
@@ -54,33 +56,62 @@ func TestPlasmidGenes(t *testing.T) {
 	assert.ElementsMatch(g, genes, "should match associated genes")
 }
 
-/* func TestPlasmidDepositor(t *testing.T) {
+func TestPlasmidDepositorAuthDisabledNonEmpty(t *testing.T) {
 	t.Parallel()
-	assert := assert.New(t)
+	req := require.New(t)
 	r := plasmidResolver(mocks.MockedAnnotationClient())
-	d, err := r.Depositor(context.Background(),
+	d, err := r.Depositor(
+		context.Background(),
+		ConvertToPlasmidModel(
+			"DBP0391806",
+			mocks.MockPlasmidInputWithParams("gadi@bcm.edu"),
+		),
+	)
+	req.NoError(err)
+	req.NotNil(d)
+	attrs := d.GetData().GetAttributes()
+	req.Equal("Gadi", attrs.GetFirstName())
+	req.Empty(attrs.GetLastName())
+	req.Empty(attrs.GetEmail())
+	req.NotEqual("Dicty", attrs.GetFirstName())
+}
+
+func TestPlasmidDepositorAuthDisabledEmpty(t *testing.T) {
+	t.Parallel()
+	req := require.New(t)
+	r := plasmidResolver(mocks.MockedAnnotationClient())
+	d, err := r.Depositor(
+		context.Background(),
 		ConvertToPlasmidModel(
 			"DBP0000120",
-			mocks.MockPlasmidInputWithParams("kenny@bania.com"),
-		))
+			mocks.MockPlasmidInputWithParams(""),
+		),
+	)
+	req.NoError(err)
+	req.NotNil(d)
+	attrs := d.GetData().GetAttributes()
+	req.Equal("Dicty", attrs.GetFirstName())
+	req.Equal("Stock Center", attrs.GetLastName())
+}
 
-	assert.NoError(err, "expect no error from getting depositor")
-	assert.Equal(
-		d.Data.Attributes.Email,
-		"kenny@bania.com",
-		"should match depositor email",
+func TestPlasmidCreatedByAndUpdatedByAuthDisabled(t *testing.T) {
+	t.Parallel()
+	req := require.New(t)
+	r := plasmidResolver(mocks.MockedAnnotationClient())
+	obj := ConvertToPlasmidModel(
+		"DBP0391806",
+		mocks.MockPlasmidInputWithParams("gadi@bcm.edu"),
 	)
-	assert.Equal(
-		d.Data.Attributes.FirstName,
-		"Kenny",
-		"should match depositor first name",
-	)
-	assert.Equal(
-		d.Data.Attributes.LastName,
-		"Bania",
-		"should match depositor last name",
-	)
-} */
+	cb, err := r.CreatedBy(context.Background(), obj)
+	req.NoError(err)
+	req.Equal("Dicty", cb.GetData().GetAttributes().GetFirstName())
+	req.Equal("Stock Center", cb.GetData().GetAttributes().GetLastName())
+
+	ub, err := r.UpdatedBy(context.Background(), obj)
+	req.NoError(err)
+	req.Equal("Dicty", ub.GetData().GetAttributes().GetFirstName())
+	req.Equal("Stock Center", ub.GetData().GetAttributes().GetLastName())
+}
 
 func TestPlasmidNotInStock(t *testing.T) {
 	t.Parallel()

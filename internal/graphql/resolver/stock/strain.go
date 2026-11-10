@@ -18,6 +18,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/sirupsen/logrus"
 )
@@ -34,39 +35,45 @@ func (srs *StrainResolver) CreatedBy(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*user.User, error) {
-	u, err := userByEmail(ctx, obj.CreatedBy, srs.UserClient, srs.Logger)
-	if err != nil {
-		srs.Logger.Error(err)
-		return nil, err
-	}
-	return u, nil
+	res := F.Pipe5(
+		resolverutils.UserLookupState{},
+		resolverutils.LookupCtxLens.Set(ctx),
+		resolverutils.LookupQueryLens.Set(obj.CreatedBy),
+		resolverutils.LookupClientLens.Set(srs.UserClient),
+		resolverutils.LookupLoggerLens.Set(srs.Logger),
+		resolverutils.UserByEmail,
+	)
+	return res.F2, res.F1
 }
 
 func (srs *StrainResolver) UpdatedBy(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*user.User, error) {
-	u, err := userByEmail(ctx, obj.UpdatedBy, srs.UserClient, srs.Logger)
-	if err != nil {
-		srs.Logger.Error(err)
-		return nil, err
-	}
-	return u, nil
+	res := F.Pipe5(
+		resolverutils.UserLookupState{},
+		resolverutils.LookupCtxLens.Set(ctx),
+		resolverutils.LookupQueryLens.Set(obj.UpdatedBy),
+		resolverutils.LookupClientLens.Set(srs.UserClient),
+		resolverutils.LookupLoggerLens.Set(srs.Logger),
+		resolverutils.UserByEmail,
+	)
+	return res.F2, res.F1
 }
 
 func (srs *StrainResolver) Depositor(
 	ctx context.Context,
 	obj *models.Strain,
 ) (*user.User, error) {
-	if len(obj.Depositor) == 0 {
-		return fakeUser(), nil
-	}
-	d, err := userByEmail(ctx, obj.Depositor, srs.UserClient, srs.Logger)
-	if err != nil {
-		srs.Logger.Error(err)
-		return nil, err
-	}
-	return d, nil
+	res := F.Pipe5(
+		resolverutils.UserLookupState{},
+		resolverutils.LookupCtxLens.Set(ctx),
+		resolverutils.LookupQueryLens.Set(obj.Depositor),
+		resolverutils.LookupClientLens.Set(srs.UserClient),
+		resolverutils.LookupLoggerLens.Set(srs.Logger),
+		resolverutils.StockDepositor,
+	)
+	return res.F2, res.F1
 }
 
 func (srs *StrainResolver) Genes(
@@ -84,15 +91,16 @@ func (srs *StrainResolver) Publications(
 	ctx context.Context,
 	obj *models.Strain,
 ) ([]*models.Publication, error) {
-	return fetchStockPublications(
-		newStockPubsState(
-			ctx,
-			srs.Registry.GetRedisRepository(cache.RedisKey),
-			obj.ID,
-			srs.Logger,
-			obj.Publications,
-		),
+	res := F.Pipe6(
+		stockPubsState{},
+		stockPubsCtxLens.Set(ctx),
+		stockPubsRedisLens.Set(srs.Registry.GetRedisRepository(cache.RedisKey)),
+		stockPubsIDLens.Set(obj.ID),
+		stockPubsLoggerLens.Set(srs.Logger),
+		stockPubsRawIDsLens.Set(obj.Publications),
+		fetchStockPublications,
 	)
+	return res.F2, res.F1
 }
 
 func (srs *StrainResolver) Parent(

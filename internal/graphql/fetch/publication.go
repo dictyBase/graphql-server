@@ -453,8 +453,9 @@ func assemblePublication(s clientBuildState) *Publication {
 func NewPublication(
 	p *PublicationParams,
 ) IOE.IOEither[error, *Publication] {
-	return F.Pipe4(
-		F.Pipe1(clientBuildState{}, buildParamsLens.Set(p)),
+	return F.Pipe5(
+		clientBuildState{},
+		buildParamsLens.Set(p),
 		IOE.Of[error, clientBuildState],
 		IOE.Bind(buildPubMedLens.Set, createPubMedFromState),
 		IOE.Bind(buildEuropeLens.Set, createEuropeFromState),
@@ -713,13 +714,11 @@ func (p *Publication) FetchCachedArticle(
 	repo repository.Repository,
 	id string,
 ) IOE.IOEither[error, *models.Publication] {
-	return F.Pipe7(
-		F.Pipe3(
-			pubFetchState{},
-			identifierLens.Set(id),
-			repoLens.Set(repo),
-			sourceLens.Set(p),
-		),
+	return F.Pipe10(
+		pubFetchState{},
+		identifierLens.Set(id),
+		repoLens.Set(repo),
+		sourceLens.Set(p),
 		identifierLens.Modify(trimHTTPSDOI),
 		identifierLens.Modify(trimHTTPDOI),
 		identifierLens.Modify(trimDOIColon),
@@ -749,12 +748,10 @@ func FetchPublicationIOE(
 	id string,
 ) IOE.IOEither[error, *models.Publication] {
 	newSource := NewPublication(&PublicationParams{})
-	return F.Pipe8(
-		F.Pipe2(
-			pubFetchState{},
-			identifierLens.Set(id),
-			repoLens.Set(repo),
-		),
+	return F.Pipe10(
+		pubFetchState{},
+		identifierLens.Set(id),
+		repoLens.Set(repo),
 		identifierLens.Modify(trimHTTPSDOI),
 		identifierLens.Modify(trimHTTPDOI),
 		identifierLens.Modify(trimDOIColon),

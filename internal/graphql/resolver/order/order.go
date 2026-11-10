@@ -3,13 +3,9 @@ package order
 import (
 	"context"
 	"fmt"
-	"regexp"
-	"strconv"
-	"strings"
 	"time"
 
-	"github.com/dictyBase/graphql-server/internal/graphql/resolver/stock"
-
+	F "github.com/IBM/fp-go/v2/function"
 	"github.com/dictyBase/aphgrpc"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/order"
 	stockPB "github.com/dictyBase/go-genproto/dictybaseapis/stock"
@@ -17,10 +13,10 @@ import (
 	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/graphql/resolver/stock"
+	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/sirupsen/logrus"
 )
-
-var numRgx = regexp.MustCompile("[0-9]+")
 
 type OrderResolver struct {
 	Client      pb.OrderServiceClient
@@ -111,45 +107,45 @@ func (ord *OrderResolver) Consumer(
 	ctx context.Context,
 	obj *pb.Order,
 ) (*user.User, error) {
-	email := obj.Data.Attributes.Consumer
-	g, err := ord.userByEmail(ctx, email)
-	if err != nil {
-		errorutils.AddGQLError(ctx, err)
-		ord.Logger.Error(err)
-		return nil, err
-	}
-	ord.Logger.Debugf("successfully found user with email %s", email)
-	return g, nil
+	res := F.Pipe5(
+		resolverutils.UserLookupState{},
+		resolverutils.LookupCtxLens.Set(ctx),
+		resolverutils.LookupQueryLens.Set(obj.Data.Attributes.Consumer),
+		resolverutils.LookupClientLens.Set(ord.UserClient),
+		resolverutils.LookupLoggerLens.Set(ord.Logger),
+		resolverutils.UserByEmail,
+	)
+	return res.F2, res.F1
 }
 
 func (ord *OrderResolver) Payer(
 	ctx context.Context,
 	obj *pb.Order,
 ) (*user.User, error) {
-	email := obj.Data.Attributes.Payer
-	g, err := ord.userByEmail(ctx, email)
-	if err != nil {
-		errorutils.AddGQLError(ctx, err)
-		ord.Logger.Error(err)
-		return nil, err
-	}
-	ord.Logger.Debugf("successfully found user with email %s", email)
-	return g, nil
+	res := F.Pipe5(
+		resolverutils.UserLookupState{},
+		resolverutils.LookupCtxLens.Set(ctx),
+		resolverutils.LookupQueryLens.Set(obj.Data.Attributes.Payer),
+		resolverutils.LookupClientLens.Set(ord.UserClient),
+		resolverutils.LookupLoggerLens.Set(ord.Logger),
+		resolverutils.UserByEmail,
+	)
+	return res.F2, res.F1
 }
 
 func (ord *OrderResolver) Purchaser(
 	ctx context.Context,
 	obj *pb.Order,
 ) (*user.User, error) {
-	email := obj.Data.Attributes.Purchaser
-	g, err := ord.userByEmail(ctx, email)
-	if err != nil {
-		errorutils.AddGQLError(ctx, err)
-		ord.Logger.Error(err)
-		return nil, err
-	}
-	ord.Logger.Debugf("successfully found user with email %s", email)
-	return g, nil
+	res := F.Pipe5(
+		resolverutils.UserLookupState{},
+		resolverutils.LookupCtxLens.Set(ctx),
+		resolverutils.LookupQueryLens.Set(obj.Data.Attributes.Purchaser),
+		resolverutils.LookupClientLens.Set(ord.UserClient),
+		resolverutils.LookupLoggerLens.Set(ord.Logger),
+		resolverutils.UserByEmail,
+	)
+	return res.F2, res.F1
 }
 
 // ConsumerInfo resolves the shipper profile embedded in the order.
@@ -200,54 +196,4 @@ func (ord *OrderResolver) Items(
 		}
 	}
 	return stocks, nil
-}
-
-func (ord *OrderResolver) userByEmail(
-	ctx context.Context,
-	email string,
-) (*user.User, error) {
-	userResp, err := ord.UserClient.UserWithEmail(email)
-	if err != nil {
-		userErr := fmt.Errorf("unable to retreieve user %s", err)
-		errorutils.AddGQLError(ctx, userErr)
-		ord.Logger.Error(userErr)
-		return nil, userErr
-	}
-	matches := numRgx.FindAllString(userResp.ID, -1)
-	if len(matches) == 0 {
-		nonumErr := fmt.Errorf(
-			"cannot convert user id to number %s",
-			userResp.ID,
-		)
-		errorutils.AddGQLError(ctx, nonumErr)
-		ord.Logger.Error(nonumErr)
-		return nil, nonumErr
-	}
-	userID, err := strconv.ParseInt(strings.Join(matches, ""), 10, 64)
-	if err != nil {
-		parseErr := fmt.Errorf("unable to convert user id to integer %s", err)
-		errorutils.AddGQLError(ctx, parseErr)
-		ord.Logger.Error(parseErr)
-		return nil, parseErr
-	}
-	ord.Logger.Debugf("successfully found user with id %s", email)
-	return &user.User{
-		Data: &user.UserData{
-			Type: "user",
-			Id:   userID,
-			Attributes: &user.UserAttributes{
-				FirstName:    userResp.Username,
-				LastName:     userResp.Name,
-				Email:        userResp.PrimaryEmail,
-				Organization: userResp.CustomData.Institution,
-				FirstAddress: userResp.CustomData.Address,
-				City:         userResp.CustomData.City,
-				State:        userResp.CustomData.State,
-				Zipcode:      userResp.CustomData.Zipcode,
-				Country:      userResp.CustomData.Country,
-				Phone:        userResp.PrimaryPhone,
-				IsActive:     true,
-			},
-		},
-	}, nil
 }
