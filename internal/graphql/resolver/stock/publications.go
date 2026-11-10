@@ -211,23 +211,6 @@ func emptyPhenotypes() []*models.Phenotype {
 	return make([]*models.Phenotype, 0)
 }
 
-func newStockPubsState(
-	ctx context.Context,
-	redis repository.Repository,
-	stockID string,
-	logger *logrus.Entry,
-	ids []string,
-) stockPubsState {
-	return F.Pipe5(
-		stockPubsState{},
-		stockPubsCtxLens.Set(ctx),
-		stockPubsRedisLens.Set(redis),
-		stockPubsIDLens.Set(stockID),
-		stockPubsLoggerLens.Set(logger),
-		stockPubsRawIDsLens.Set(ids),
-	)
-}
-
 func logSkippedStockPubsIO(s stockPubsState) IO.IO[IO.Void] {
 	return IO.FromImpure(func() {
 		stockPubsLoggerLens.Get(s).Warnf(
@@ -275,10 +258,11 @@ func onPublicationsSuccess(
 // fetch error.
 func fetchStockPublications(
 	s stockPubsState,
-) ([]*models.Publication, error) {
+) T.Tuple2[error, []*models.Publication] {
 	redis := stockPubsRedisLens.Get(s)
-	result := F.Pipe10(
-		IOE.Of[error](s),
+	return F.Pipe11(
+		s,
+		IOE.Of[error, stockPubsState],
 		IOE.Let[error](stockPubsResolvableLens.Set, deriveResolvableIDs),
 		IOE.Let[error](stockPubsSkippedLens.Set, deriveSkippedIDs),
 		IOE.ChainFirstIOK[error](warnSkippedStockPubs),
@@ -298,7 +282,6 @@ func fetchStockPublications(
 		ioeutils.ToEither[error, []*models.Publication],
 		E.Fold(onPublicationsError, onPublicationsSuccess),
 	)
-	return result.F2, result.F1
 }
 
 func annoOntology(anno *annotation.TaggedAnnotationGroup_Data) string {
@@ -420,12 +403,11 @@ func getPhenotypes(
 	r *StrainResolver,
 	data []*annotation.TaggedAnnotationGroupCollection_Data,
 ) []*models.Phenotype {
-	state := newStockPubsState(
-		ctx,
-		r.Registry.GetRedisRepository(cache.RedisKey),
-		"",
-		r.Logger,
-		nil,
+	state := F.Pipe3(
+		stockPubsState{},
+		stockPubsCtxLens.Set(ctx),
+		stockPubsRedisLens.Set(r.Registry.GetRedisRepository(cache.RedisKey)),
+		stockPubsLoggerLens.Set(r.Logger),
 	)
 	return F.Pipe2(
 		data,

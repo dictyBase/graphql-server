@@ -5,6 +5,7 @@ import (
 	"context"
 	"testing"
 
+	F "github.com/IBM/fp-go/v2/function"
 	"github.com/dictyBase/fp-go-loom/loomcheck"
 	"github.com/dictyBase/fp-go-loom/pipelinecheck"
 	"github.com/dictyBase/go-genproto/dictybaseapis/annotation"
@@ -62,18 +63,17 @@ func TestFetchStockPublicationsSkipsInvalidIDs(t *testing.T) {
 	req := require.New(t)
 	logger, buf := newBufferLogger()
 
-	pubs, err := fetchStockPublications(
-		newStockPubsState(
-			context.Background(),
-			nil,
-			"DBS0305923",
-			logger,
-			[]string{"", "   ", "abc", "0"},
-		),
+	res := F.Pipe5(
+		stockPubsState{},
+		stockPubsCtxLens.Set(context.Background()),
+		stockPubsIDLens.Set("DBS0305923"),
+		stockPubsLoggerLens.Set(logger),
+		stockPubsRawIDsLens.Set([]string{"", "   ", "abc", "0"}),
+		fetchStockPublications,
 	)
-	req.NoError(err)
-	req.NotNil(pubs)
-	req.Empty(pubs)
+	req.NoError(res.F1)
+	req.NotNil(res.F2)
+	req.Empty(res.F2)
 	req.Contains(buf.String(), "skipping unresolvable publication identifiers")
 	req.Contains(buf.String(), "DBS0305923")
 }

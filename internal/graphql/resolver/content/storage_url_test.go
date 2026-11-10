@@ -7,6 +7,8 @@ import (
 	"github.com/dictyBase/fp-go-loom/loomcheck"
 	"github.com/dictyBase/fp-go-loom/pipelinecheck"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/content"
+	"github.com/dictyBase/graphql-server/internal/authentication"
+	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
 	"github.com/stretchr/testify/require"
 )
 
@@ -153,4 +155,26 @@ func TestContentStorageURLNormalization(t *testing.T) {
 			require.Equal(t, tc.expected, actual)
 		})
 	}
+}
+
+func TestContentCreatedByAndUpdatedByAuthDisabled(t *testing.T) {
+	t.Parallel()
+	req := require.New(t)
+	rcs := &ContentResolver{
+		UserClient: authentication.NoopClient{},
+		Logger:     mocks.TestLogger(),
+	}
+	obj := newPBContent("{}")
+	obj.Data.Attributes.CreatedBy = "editor@dictybase.org"
+	obj.Data.Attributes.UpdatedBy = "editor@dictybase.org"
+
+	cb, err := rcs.CreatedBy(context.Background(), obj)
+	req.NoError(err)
+	req.Equal("Dicty", cb.GetData().GetAttributes().GetFirstName())
+	req.Equal("Stock Center", cb.GetData().GetAttributes().GetLastName())
+
+	ub, err := rcs.UpdatedBy(context.Background(), obj)
+	req.NoError(err)
+	req.Equal("Dicty", ub.GetData().GetAttributes().GetFirstName())
+	req.Equal("Stock Center", ub.GetData().GetAttributes().GetLastName())
 }

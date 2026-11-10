@@ -5,8 +5,10 @@ import (
 	"testing"
 
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/order"
+	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUserInfoResolvers(t *testing.T) {
@@ -33,4 +35,33 @@ func TestUserInfoResolvers(t *testing.T) {
 	got, err = ord.PayerInfo(context.Background(), legacy)
 	assert.NoError(err, "expect no error on legacy order")
 	assert.Nil(got, "legacy order should have nil payer profile")
+}
+
+func TestOrderUserResolversAuthDisabled(t *testing.T) {
+	t.Parallel()
+	req := require.New(t)
+	ord := &OrderResolver{
+		UserClient: authentication.NoopClient{},
+		Logger:     mocks.TestLogger(),
+	}
+	obj := &pb.Order{Data: &pb.Order_Data{Attributes: &pb.OrderAttributes{
+		Consumer:  "consumer@example.org",
+		Payer:     "payer@example.org",
+		Purchaser: "purchaser@example.org",
+	}}}
+
+	consumer, err := ord.Consumer(context.Background(), obj)
+	req.NoError(err)
+	req.Equal("Dicty", consumer.GetData().GetAttributes().GetFirstName())
+	req.Equal("Stock Center", consumer.GetData().GetAttributes().GetLastName())
+
+	payer, err := ord.Payer(context.Background(), obj)
+	req.NoError(err)
+	req.Equal("Dicty", payer.GetData().GetAttributes().GetFirstName())
+	req.Equal("Stock Center", payer.GetData().GetAttributes().GetLastName())
+
+	purchaser, err := ord.Purchaser(context.Background(), obj)
+	req.NoError(err)
+	req.Equal("Dicty", purchaser.GetData().GetAttributes().GetFirstName())
+	req.Equal("Stock Center", purchaser.GetData().GetAttributes().GetLastName())
 }

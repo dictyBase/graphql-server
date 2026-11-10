@@ -6,14 +6,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/dictyBase/graphql-server/internal/authentication"
-
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/fatih/structs"
 	"github.com/mitchellh/mapstructure"
 
+	F "github.com/IBM/fp-go/v2/function"
 	"github.com/dictyBase/aphgrpc"
 	"github.com/dictyBase/go-genproto/dictybaseapis/api/jsonapi"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/user"
@@ -265,87 +265,30 @@ func (qrs *QueryResolver) User(
 	ctx context.Context,
 	id string,
 ) (*pb.User, error) {
-	if err := authentication.CheckReadUser(ctx); err != nil {
-		errorutils.AddGQLError(ctx, err)
-		qrs.Logger.Error(err)
-		return nil, err
-	}
-	userResp, err := qrs.GetAuthClient(registry.AUTH).User(id)
-	if err != nil {
-		errorutils.AddGQLError(ctx, err)
-		qrs.Logger.Error(err)
-		return nil, err
-	}
-	userID, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		errorutils.AddGQLError(
-			ctx,
-			fmt.Errorf("error in converting user id to int64"),
-		)
-		qrs.Logger.Error(err)
-		return nil, err
-	}
-	qrs.Logger.Debugf("successfully found user with ID %d", userID)
-	return &pb.User{
-		Data: &pb.UserData{
-			Type: typeUser,
-			Id:   userID,
-			Attributes: &pb.UserAttributes{
-				FirstName:    userResp.Username,
-				LastName:     userResp.Name,
-				Email:        userResp.PrimaryEmail,
-				Organization: userResp.CustomData.Institution,
-				FirstAddress: userResp.CustomData.Address,
-				City:         userResp.CustomData.City,
-				State:        userResp.CustomData.State,
-				Zipcode:      userResp.CustomData.Zipcode,
-				Country:      userResp.CustomData.Country,
-				Phone:        userResp.PrimaryPhone,
-				IsActive:     true,
-			},
-		},
-	}, nil
+	res := F.Pipe5(
+		resolverutils.UserLookupState{},
+		resolverutils.LookupCtxLens.Set(ctx),
+		resolverutils.LookupQueryLens.Set(id),
+		resolverutils.LookupClientLens.Set(qrs.GetAuthClient(registry.AUTH)),
+		resolverutils.LookupLoggerLens.Set(qrs.Logger),
+		resolverutils.UserByID,
+	)
+	return res.F2, res.F1
 }
 
 func (qrs *QueryResolver) UserByEmail(
 	ctx context.Context,
 	email string,
 ) (*pb.User, error) {
-	userResp, err := qrs.GetAuthClient(registry.AUTH).UserWithEmail(email)
-	if err != nil {
-		errorutils.AddGQLError(ctx, err)
-		qrs.Logger.Error(err)
-		return nil, err
-	}
-	userID, err := strconv.ParseInt(userResp.ID, 10, 64)
-	if err != nil {
-		errorutils.AddGQLError(
-			ctx,
-			fmt.Errorf("error in converting user id to int64"),
-		)
-		qrs.Logger.Error(err)
-		return nil, err
-	}
-	qrs.Logger.Debugf("successfully found user with ID %d", userID)
-	return &pb.User{
-		Data: &pb.UserData{
-			Type: typeUser,
-			Id:   userID,
-			Attributes: &pb.UserAttributes{
-				FirstName:    userResp.Username,
-				LastName:     userResp.Name,
-				Email:        userResp.PrimaryEmail,
-				Organization: userResp.CustomData.Institution,
-				FirstAddress: userResp.CustomData.Address,
-				City:         userResp.CustomData.City,
-				State:        userResp.CustomData.State,
-				Zipcode:      userResp.CustomData.Zipcode,
-				Country:      userResp.CustomData.Country,
-				Phone:        userResp.PrimaryPhone,
-				IsActive:     true,
-			},
-		},
-	}, nil
+	res := F.Pipe5(
+		resolverutils.UserLookupState{},
+		resolverutils.LookupCtxLens.Set(ctx),
+		resolverutils.LookupQueryLens.Set(email),
+		resolverutils.LookupClientLens.Set(qrs.GetAuthClient(registry.AUTH)),
+		resolverutils.LookupLoggerLens.Set(qrs.Logger),
+		resolverutils.QueryUserByEmail,
+	)
+	return res.F2, res.F1
 }
 
 func (qrs *QueryResolver) ListUsers(

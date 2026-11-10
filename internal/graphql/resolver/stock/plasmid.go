@@ -2,10 +2,6 @@ package stock
 
 import (
 	"context"
-	"fmt"
-	"regexp"
-	"strconv"
-	"strings"
 
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
@@ -19,11 +15,10 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/sirupsen/logrus"
 )
-
-var numRgx = regexp.MustCompile("[0-9]+")
 
 type PlasmidResolver struct {
 	Client           pb.StockServiceClient
@@ -37,39 +32,45 @@ func (prs *PlasmidResolver) CreatedBy(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (*user.User, error) {
-	u, err := userByEmail(ctx, obj.CreatedBy, prs.UserClient, prs.Logger)
-	if err != nil {
-		prs.Logger.Error(err)
-		return nil, err
-	}
-	return u, nil
+	res := F.Pipe5(
+		resolverutils.UserLookupState{},
+		resolverutils.LookupCtxLens.Set(ctx),
+		resolverutils.LookupQueryLens.Set(obj.CreatedBy),
+		resolverutils.LookupClientLens.Set(prs.UserClient),
+		resolverutils.LookupLoggerLens.Set(prs.Logger),
+		resolverutils.UserByEmail,
+	)
+	return res.F2, res.F1
 }
 
 func (prs *PlasmidResolver) UpdatedBy(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (*user.User, error) {
-	u, err := userByEmail(ctx, obj.UpdatedBy, prs.UserClient, prs.Logger)
-	if err != nil {
-		prs.Logger.Error(err)
-		return nil, err
-	}
-	return u, nil
+	res := F.Pipe5(
+		resolverutils.UserLookupState{},
+		resolverutils.LookupCtxLens.Set(ctx),
+		resolverutils.LookupQueryLens.Set(obj.UpdatedBy),
+		resolverutils.LookupClientLens.Set(prs.UserClient),
+		resolverutils.LookupLoggerLens.Set(prs.Logger),
+		resolverutils.UserByEmail,
+	)
+	return res.F2, res.F1
 }
 
 func (prs *PlasmidResolver) Depositor(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) (*user.User, error) {
-	if len(obj.Depositor) == 0 {
-		return fakeUser(), nil
-	}
-	u, err := userByEmail(ctx, obj.Depositor, prs.UserClient, prs.Logger)
-	if err != nil {
-		prs.Logger.Error(err)
-		return nil, err
-	}
-	return u, nil
+	res := F.Pipe5(
+		resolverutils.UserLookupState{},
+		resolverutils.LookupCtxLens.Set(ctx),
+		resolverutils.LookupQueryLens.Set(obj.Depositor),
+		resolverutils.LookupClientLens.Set(prs.UserClient),
+		resolverutils.LookupLoggerLens.Set(prs.Logger),
+		resolverutils.StockDepositor,
+	)
+	return res.F2, res.F1
 }
 
 func (prs *PlasmidResolver) Genes(
@@ -85,15 +86,16 @@ func (prs *PlasmidResolver) Publications(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) ([]*models.Publication, error) {
-	return fetchStockPublications(
-		newStockPubsState(
-			ctx,
-			prs.Registry.GetRedisRepository(cache.RedisKey),
-			obj.ID,
-			prs.Logger,
-			obj.Publications,
-		),
+	res := F.Pipe6(
+		stockPubsState{},
+		stockPubsCtxLens.Set(ctx),
+		stockPubsRedisLens.Set(prs.Registry.GetRedisRepository(cache.RedisKey)),
+		stockPubsIDLens.Set(obj.ID),
+		stockPubsLoggerLens.Set(prs.Logger),
+		stockPubsRawIDsLens.Set(obj.Publications),
+		fetchStockPublications,
 	)
+	return res.F2, res.F1
 }
 
 func (prs *PlasmidResolver) InStock(
@@ -157,74 +159,6 @@ func ConvertToPlasmidModel(
 			Depositor:    attr.Depositor,
 			Genes:        attr.Genes,
 			Publications: attr.Publications,
-		},
-	}
-}
-
-func userByEmail(
-	ctx context.Context,
-	email string,
-	client authentication.LogtoClient,
-	logger *logrus.Entry,
-) (*user.User, error) {
-	userResp, err := client.UserWithEmail(email)
-	if err != nil {
-		userErr := fmt.Errorf("unable to retreieve user %s", err)
-		errorutils.AddGQLError(ctx, userErr)
-		logger.Error(userErr)
-		return nil, userErr
-	}
-	matches := numRgx.FindAllString(userResp.ID, -1)
-	if len(matches) == 0 {
-		nonumErr := fmt.Errorf(
-			"cannot convert user id to number %s",
-			userResp.ID,
-		)
-		errorutils.AddGQLError(ctx, nonumErr)
-		logger.Error(nonumErr)
-		return nil, nonumErr
-	}
-	userID, err := strconv.ParseInt(strings.Join(matches, ""), 10, 64)
-	if err != nil {
-		parseErr := fmt.Errorf("unable to convert user id to integer %s", err)
-		errorutils.AddGQLError(ctx, parseErr)
-		logger.Error(parseErr)
-		return nil, parseErr
-	}
-	logger.Debugf("successfully found user with id %s", email)
-	return &user.User{
-		Data: &user.UserData{
-			Type: "user",
-			Id:   userID,
-			Attributes: &user.UserAttributes{
-				FirstName:    userResp.Username,
-				LastName:     userResp.Name,
-				Email:        userResp.PrimaryEmail,
-				Organization: userResp.CustomData.Institution,
-				FirstAddress: userResp.CustomData.Address,
-				City:         userResp.CustomData.City,
-				State:        userResp.CustomData.State,
-				Zipcode:      userResp.CustomData.Zipcode,
-				Country:      userResp.CustomData.Country,
-				Phone:        userResp.PrimaryPhone,
-				IsActive:     true,
-			},
-		},
-	}, nil
-}
-
-func fakeUser() *user.User {
-	return &user.User{
-		Data: &user.UserData{
-			Type: "user",
-			Id:   2375,
-			Attributes: &user.UserAttributes{
-				FirstName:    "Dicty",
-				LastName:     "Stock Center",
-				Email:        "dictystocks@northwestern.edu",
-				Organization: "Northwestern University",
-				IsActive:     true,
-			},
 		},
 	}
 }
