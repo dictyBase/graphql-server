@@ -109,9 +109,9 @@ var (
 			return m
 		},
 	)
-	// toScoredMembers maps the go-redis members and gives an empty
+	// scoredMembersOrEmpty maps the go-redis members and gives an empty
 	// non-nil slice for an empty input, because A.Map returns nil then.
-	toScoredMembers = F.Flow2(
+	scoredMembersOrEmpty = F.Flow2(
 		A.Map(toScoredMember),
 		A.Match(
 			func() []repository.ScoredMember { return []repository.ScoredMember{} },
@@ -208,6 +208,6 @@ func (rs *RedisStorage) readRecent(
 		IOE.TryCatchError(func() ([]r.Z, error) {
 			return rs.client.ZRevRangeWithScores(key, 0, count-1).Result()
 		}),
-		IOE.Map[error](toScoredMembers),
+		IOE.Map[error](scoredMembersOrEmpty),
 	)
 }
