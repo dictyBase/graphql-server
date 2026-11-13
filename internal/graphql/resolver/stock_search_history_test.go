@@ -310,7 +310,9 @@ func TestResolveRecentSearchLimit(t *testing.T) {
 		"over":     {&over, 250},
 		"huge":     {&huge, 250},
 	} {
-		require.Equal(t, tc.want, resolveRecentSearchLimit(tc.in), name)
+		require.Equal(
+			t, int64(tc.want), recentCount(recentSearchState{limit: tc.in}), name,
+		)
 	}
 }
 
