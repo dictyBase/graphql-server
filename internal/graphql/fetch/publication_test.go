@@ -12,6 +12,7 @@ import (
 	T "github.com/IBM/fp-go/v2/tuple"
 	ioeutils "github.com/dictyBase/fp-go-loom/ioeitherutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/repository"
 	"github.com/dictybase/literature"
 	"github.com/stretchr/testify/require"
 )
@@ -144,6 +145,13 @@ func (r *fakeRepo) HExists(hash, key string) (bool, error) {
 
 func (r *fakeRepo) AddRecentMember(_, _ string, _, _ int64) error {
 	return nil
+}
+
+func (r *fakeRepo) RecentMembers(
+	_ string,
+	_ int64,
+) ([]repository.ScoredMember, error) {
+	return []repository.ScoredMember{}, nil
 }
 
 func samplePubMedArticle() *literature.Article {

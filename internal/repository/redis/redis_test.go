@@ -6,6 +6,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/dictyBase/graphql-server/internal/repository"
 	r "github.com/go-redis/redis/v7"
 	"github.com/stretchr/testify/assert"
 )
@@ -304,4 +305,103 @@ func TestAddRecentMemberConcurrentCapacity(t *testing.T) {
 	oldest, err := repo.client.ZRange(key, 0, 0).Result()
 	assert.NoError(err)
 	assert.Equal([]string{"q050"}, oldest, "scores 0..49 must be evicted")
+}
+
+func addRecentMembers(
+	t *testing.T,
+	repo *RedisStorage,
+	key string,
+	members ...repository.ScoredMember,
+) {
+	t.Helper()
+	for _, m := range members {
+		assert.NoError(
+			t,
+			repo.AddRecentMember(key, m.Member, m.Score, testRecentCapacity),
+		)
+	}
+}
+
+func scoredMemberNames(ms []repository.ScoredMember) []string {
+	names := make([]string, 0, len(ms))
+	for _, m := range ms {
+		names = append(names, m.Member)
+	}
+	return names
+}
+
+func TestRecentMembersMissingKey(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	repo := newTestCache(t)
+	key := newRecentKey(t, repo)
+	got, err := repo.RecentMembers(key, 5)
+	assert.NoError(err)
+	assert.NotNil(got)
+	assert.Len(got, 0)
+}
+
+func TestRecentMembersNewestFirst(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	repo := newTestCache(t)
+	key := newRecentKey(t, repo)
+	addRecentMembers(t, repo, key,
+		repository.ScoredMember{Member: "a", Score: 1},
+		repository.ScoredMember{Member: "b", Score: 3},
+		repository.ScoredMember{Member: "c", Score: 2},
+	)
+	got, err := repo.RecentMembers(key, 5)
+	assert.NoError(err)
+	assert.Equal([]repository.ScoredMember{
+		{Member: "b", Score: 3},
+		{Member: "c", Score: 2},
+		{Member: "a", Score: 1},
+	}, got)
+}
+
+func TestRecentMembersLimit(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	repo := newTestCache(t)
+	key := newRecentKey(t, repo)
+	for i := int64(1); i <= 7; i++ {
+		addRecentMembers(t, repo, key, repository.ScoredMember{
+			Member: fmt.Sprintf("q%d", i), Score: i,
+		})
+	}
+	got, err := repo.RecentMembers(key, 5)
+	assert.NoError(err)
+	assert.Equal(
+		[]string{"q7", "q6", "q5", "q4", "q3"},
+		scoredMemberNames(got),
+	)
+}
+
+func TestRecentMembersEqualScores(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	repo := newTestCache(t)
+	key := newRecentKey(t, repo)
+	addRecentMembers(t, repo, key,
+		repository.ScoredMember{Member: "a", Score: 10},
+		repository.ScoredMember{Member: "b", Score: 10},
+	)
+	got, err := repo.RecentMembers(key, 2)
+	assert.NoError(err)
+	assert.Equal([]string{"b", "a"}, scoredMemberNames(got))
+}
+
+func TestRecentMembersNonPositiveCount(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	repo := newTestCache(t)
+	key := newRecentKey(t, repo)
+	addRecentMembers(t, repo, key, repository.ScoredMember{Member: "a", Score: 1})
+	for _, count := range []int64{0, -1} {
+		got, err := repo.RecentMembers(key, count)
+		assert.NoError(err)
+		assert.NotNil(got)
+		assert.Len(got, 0, "count %d", count)
+	}
 }
