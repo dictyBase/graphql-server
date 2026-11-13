@@ -13,7 +13,6 @@ import (
 	L "github.com/IBM/fp-go/v2/optics/lens"
 	O "github.com/IBM/fp-go/v2/option"
 	ioeutils "github.com/dictyBase/fp-go-loom/ioeitherutils"
-	predarrays "github.com/dictyBase/fp-go-loom/predicate/array"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	r "github.com/go-redis/redis/v7"
 )
@@ -110,13 +109,14 @@ var (
 			return m
 		},
 	)
-	// nonNilScoredMembers replaces the nil slice that A.Map returns for an
-	// empty input with an empty non-nil slice.
-	nonNilScoredMembers = F.Flow2(
-		O.FromPredicate(predarrays.IsNonEmpty[repository.ScoredMember]()),
-		O.GetOrElse(func() []repository.ScoredMember {
-			return []repository.ScoredMember{}
-		}),
+	// toScoredMembers maps the go-redis members and gives an empty
+	// non-nil slice for an empty input, because A.Map returns nil then.
+	toScoredMembers = F.Flow2(
+		A.Map(toScoredMember),
+		A.Match(
+			func() []repository.ScoredMember { return []repository.ScoredMember{} },
+			F.Identity[[]repository.ScoredMember],
+		),
 	)
 	emptyRecentMembers = IOE.Of[error]([]repository.ScoredMember{})
 	zMemberLens        = L.MakeLens(
@@ -204,11 +204,10 @@ func (rs *RedisStorage) readRecent(
 	key string,
 	count int64,
 ) IOE.IOEither[error, []repository.ScoredMember] {
-	return F.Pipe2(
+	return F.Pipe1(
 		IOE.TryCatchError(func() ([]r.Z, error) {
 			return rs.client.ZRevRangeWithScores(key, 0, count-1).Result()
 		}),
-		IOE.Map[error](A.Map(toScoredMember)),
-		IOE.Map[error](nonNilScoredMembers),
+		IOE.Map[error](toScoredMembers),
 	)
 }
