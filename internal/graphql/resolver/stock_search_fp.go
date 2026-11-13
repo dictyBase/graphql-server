@@ -26,6 +26,8 @@ import (
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
+	"github.com/dictyBase/graphql-server/internal/repository"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -82,6 +84,8 @@ type listStockSearchContext struct {
 	effectiveLimit int
 	mergedResults  []*models.StockSearchResult
 	bacterialIDs   map[string]bool
+	history        repository.Repository
+	logger         *logrus.Entry
 }
 
 type (

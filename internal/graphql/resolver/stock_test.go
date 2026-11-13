@@ -1325,7 +1325,7 @@ func TestSearchStocks(t *testing.T) {
 	require := require.New(t)
 
 	resolver := &QueryResolver{
-		Registry: &mocks.MockRegistry{},
+		Registry: &searchHistoryRegistry{Registry: &mocks.MockRegistry{}},
 		Logger:   mocks.TestLogger(),
 	}
 
@@ -1434,7 +1434,7 @@ func TestSearchStocksPlasmidSkipsAnnotationSearch(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 	limit := 25
 	entity := models.StockEntityTypePlasmid
 
@@ -1480,7 +1480,7 @@ func TestSearchStocksShortQuerySkipsAnnotationSearch(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	result, err := resolver.SearchStocks(
 		context.Background(),
@@ -1548,7 +1548,7 @@ func TestSearchStocksPassesExpectedParams(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 	limit := 25
 	entity := models.StockEntityTypeStrain
 
@@ -1613,7 +1613,7 @@ func TestSearchStocksDefaultsToBothEntities(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 	entity := models.StockEntityTypeAll
 
 	result, err := resolver.SearchStocks(
@@ -1674,7 +1674,7 @@ func TestSearchStocksClampsAnnotationLimitAboveFifty(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 	limit := 75
 
 	result, err := resolver.SearchStocks(
@@ -1725,7 +1725,7 @@ func TestSearchStocksEmptyAnnotationSkipsListStrainsByIds(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	result, err := resolver.SearchStocks(
 		context.Background(),
@@ -1808,7 +1808,7 @@ func TestSearchStocksDropsStaleAnnotationStrainID(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	result, err := resolver.SearchStocks(
 		context.Background(),
@@ -1873,7 +1873,7 @@ func TestSearchStocksAllStaleAnnotationIDsNotFound(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	result, err := resolver.SearchStocks(
 		context.Background(),
@@ -1911,7 +1911,7 @@ func TestSearchStocksError(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	result, err := resolver.SearchStocks(
 		context.Background(),
@@ -1951,7 +1951,7 @@ func TestSearchStocksAnnotationError(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	result, err := resolver.SearchStocks(
 		context.Background(),
@@ -1997,7 +1997,7 @@ func TestSearchStocksListStrainsByIdsError(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	result, err := resolver.SearchStocks(
 		context.Background(),
@@ -2053,7 +2053,7 @@ func TestSearchStocksInvalidEntityEnum(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	_, err := resolver.SearchStocks(
 		context.Background(),
@@ -2107,7 +2107,7 @@ func TestSearchStocksInvalidFieldEnum(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	_, err := resolver.SearchStocks(
 		context.Background(),
@@ -2160,7 +2160,7 @@ func TestSearchStocksInvalidAnnotationFieldEnum(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	_, err := resolver.SearchStocks(
 		context.Background(),
@@ -2219,7 +2219,7 @@ func TestSearchStocksConcurrentFetch(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	result, err := resolver.SearchStocks(
 		context.Background(),
@@ -2683,7 +2683,7 @@ func TestSearchStocksPromotesBacterialStrainsFromCharacteristics(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	result, err := resolver.SearchStocks(
 		context.Background(),
@@ -2739,7 +2739,7 @@ func TestSearchStocksBacterialLookupNotFoundKeepsRegular(t *testing.T) {
 		stockClient:  mockedStockClient,
 		annoClient:   mockedAnnoClient,
 	}
-	resolver := &QueryResolver{Registry: reg, Logger: mocks.TestLogger()}
+	resolver := &QueryResolver{Registry: &searchHistoryRegistry{Registry: reg}, Logger: mocks.TestLogger()}
 
 	result, err := resolver.SearchStocks(
 		context.Background(),
