@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"time"
 
+	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
 	ER "github.com/IBM/fp-go/v2/errors"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
+	N "github.com/IBM/fp-go/v2/number"
 	L "github.com/IBM/fp-go/v2/optics/lens"
+	O "github.com/IBM/fp-go/v2/option"
 	ioeutils "github.com/dictyBase/fp-go-loom/ioeitherutils"
+	predarrays "github.com/dictyBase/fp-go-loom/predicate/array"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	r "github.com/go-redis/redis/v7"
 )
@@ -92,7 +96,38 @@ var (
 			return z
 		},
 	)
-	zMemberLens = L.MakeLens(
+	// toScoredMember converts one go-redis member to the repository type.
+	toScoredMember = func(z r.Z) repository.ScoredMember {
+		return F.Pipe2(
+			repository.ScoredMember{},
+			scoredMemberNameLens.Set(fmt.Sprint(z.Member)),
+			scoredMemberScoreLens.Set(int64(z.Score)),
+		)
+	}
+	scoredMemberNameLens = L.MakeLens(
+		func(m repository.ScoredMember) string { return m.Member },
+		func(m repository.ScoredMember, v string) repository.ScoredMember {
+			m.Member = v
+			return m
+		},
+	)
+	scoredMemberScoreLens = L.MakeLens(
+		func(m repository.ScoredMember) int64 { return m.Score },
+		func(m repository.ScoredMember, v int64) repository.ScoredMember {
+			m.Score = v
+			return m
+		},
+	)
+	// nonNilScoredMembers replaces the nil slice that A.Map returns for an
+	// empty input with an empty non-nil slice.
+	nonNilScoredMembers = F.Flow2(
+		O.FromPredicate(predarrays.IsNonEmpty[repository.ScoredMember]()),
+		O.GetOrElse(func() []repository.ScoredMember {
+			return []repository.ScoredMember{}
+		}),
+	)
+	emptyRecentMembers = IOE.Of[error]([]repository.ScoredMember{})
+	zMemberLens        = L.MakeLens(
 		func(z r.Z) any { return z.Member },
 		func(z r.Z, v any) r.Z {
 			z.Member = v
@@ -138,5 +173,44 @@ func (rs *RedisStorage) addCapped(
 				return nil
 			})
 		})
+	}
+}
+
+// RecentMembers returns up to count members of the sorted set at key with
+// the highest scores, newest first. A count below 1 sends no command and
+// gives an empty non-nil slice. A missing key gives the same.
+func (rs *RedisStorage) RecentMembers(
+	key string,
+	count int64,
+) ([]repository.ScoredMember, error) {
+	result := F.Pipe4(
+		count,
+		O.FromPredicate(N.MoreThan(int64(0))),
+		O.Fold(
+			F.Constant(emptyRecentMembers),
+			rs.readRecent(key),
+		),
+		IOE.MapLeft[[]repository.ScoredMember](
+			ER.OnError("error in reading recent members of %s", key),
+		),
+		ioeutils.ToEither[error, []repository.ScoredMember],
+	)
+
+	return E.UnwrapError(result)
+}
+
+// readRecent returns the effect that runs ZREVRANGE WITHSCORES for the
+// count newest members.
+func (rs *RedisStorage) readRecent(
+	key string,
+) func(int64) IOE.IOEither[error, []repository.ScoredMember] {
+	return func(count int64) IOE.IOEither[error, []repository.ScoredMember] {
+		return F.Pipe2(
+			IOE.TryCatchError(func() ([]r.Z, error) {
+				return rs.client.ZRevRangeWithScores(key, 0, count-1).Result()
+			}),
+			IOE.Map[error](A.Map(toScoredMember)),
+			IOE.Map[error](nonNilScoredMembers),
+		)
 	}
 }
