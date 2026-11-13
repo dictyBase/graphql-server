@@ -1,19 +1,25 @@
 package resolver
 
 import (
+	"context"
 	"errors"
 	"strings"
 	"time"
 
+	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	IO "github.com/IBM/fp-go/v2/io"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
+	N "github.com/IBM/fp-go/v2/number"
 	L "github.com/IBM/fp-go/v2/optics/lens"
+	O "github.com/IBM/fp-go/v2/option"
 	P "github.com/IBM/fp-go/v2/predicate"
 	Str "github.com/IBM/fp-go/v2/string"
+	MO "github.com/dictyBase/fp-go-loom/matchopt"
 	predarrays "github.com/dictyBase/fp-go-loom/predicate/array"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	"github.com/sirupsen/logrus"
 )
@@ -26,9 +32,81 @@ const (
 	// stockSearchHistoryCapacity is the number of distinct texts that
 	// Redis keeps, newest first.
 	stockSearchHistoryCapacity = int64(250)
+	// defaultRecentSearchLimit is the number of entries that
+	// recentStockSearches returns when the client sends no limit.
+	defaultRecentSearchLimit = 5
+	// maxRecentSearchLimit is the stored capacity of the history.
+	maxRecentSearchLimit = int(stockSearchHistoryCapacity)
 )
 
+// recentSearchState carries the request of recentStockSearches through
+// its pipeline.
+type recentSearchState struct {
+	history repository.Repository
+	limit   *int
+}
+
 var (
+	recentHistoryLens = L.MakeLens(
+		func(s recentSearchState) repository.Repository { return s.history },
+		func(s recentSearchState, v repository.Repository) recentSearchState {
+			s.history = v
+			return s
+		},
+	)
+	recentLimitLens = L.MakeLens(
+		func(s recentSearchState) *int { return s.limit },
+		func(s recentSearchState, v *int) recentSearchState {
+			s.limit = v
+			return s
+		},
+	)
+	recentQueryLens = L.MakeLens(
+		func(m models.RecentStockSearch) string { return m.Query },
+		func(m models.RecentStockSearch, v string) models.RecentStockSearch {
+			m.Query = v
+			return m
+		},
+	)
+	recentSearchedAtLens = L.MakeLens(
+		func(m models.RecentStockSearch) time.Time { return m.SearchedAt },
+		func(m models.RecentStockSearch, v time.Time) models.RecentStockSearch {
+			m.SearchedAt = v
+			return m
+		},
+	)
+
+	isBelowRecentSearchLimit = N.LessThan(1)
+	isAboveRecentSearchLimit = N.MoreThan(maxRecentSearchLimit)
+	// clampRecentSearchLimit gives the default for a limit below 1, the
+	// maximum for a limit above it, and passes every other limit.
+	clampRecentSearchLimit = MO.Match(
+		defaultRecentSearchLimit,
+		[]O.Kleisli[int, int]{
+			MO.Const(isBelowRecentSearchLimit, defaultRecentSearchLimit),
+			MO.Const(isAboveRecentSearchLimit, maxRecentSearchLimit),
+			MO.Default(F.Identity[int]),
+		},
+	)
+	recentCount = F.Flow3(
+		recentLimitLens.Get,
+		resolveRecentSearchLimit,
+		toInt64,
+	)
+	hasRecentHistoryRepo = F.Pipe1(
+		P.IsNonZero[repository.Repository](),
+		P.ContraMap(recentHistoryLens.Get),
+	)
+	emptyRecentSearches  = []*models.RecentStockSearch{}
+	nonNilRecentSearches = F.Flow2(
+		O.FromPredicate(predarrays.IsNonEmpty[*models.RecentStockSearch]()),
+		O.GetOrElse(F.Constant(emptyRecentSearches)),
+	)
+	toRecentStockSearches = F.Flow2(
+		A.Map(toRecentStockSearch),
+		nonNilRecentSearches,
+	)
+
 	searchQueryLens = L.MakeLens(
 		func(s listStockSearchContext) string { return s.query },
 		func(s listStockSearchContext, v string) listStockSearchContext {
@@ -144,5 +222,78 @@ func (s listStockSearchContext) warnSearchHistoryFailure(err error) {
 		"could not save stock search history for %q: %s",
 		normalizedSearchText(s),
 		err,
+	)
+}
+
+// resolveRecentSearchLimit converts the optional GraphQL limit. An absent
+// limit or a limit below 1 gives defaultRecentSearchLimit, and a limit
+// above maxRecentSearchLimit gives maxRecentSearchLimit.
+func resolveRecentSearchLimit(limit *int) int {
+	return F.Pipe3(
+		limit,
+		O.FromNillable2[int],
+		O.Map(clampRecentSearchLimit),
+		O.GetOrElse(F.Constant(defaultRecentSearchLimit)),
+	)
+}
+
+// toRecentStockSearch maps one stored member to its GraphQL entry. The
+// time is UTC, because models.MarshalTimestamp writes a literal Z.
+func toRecentStockSearch(m repository.ScoredMember) *models.RecentStockSearch {
+	searchedAt := time.UnixMilli(m.Score).UTC()
+
+	return F.Pipe3(
+		models.RecentStockSearch{},
+		recentQueryLens.Set(m.Member),
+		recentSearchedAtLens.Set(searchedAt),
+		F.Ref[models.RecentStockSearch],
+	)
+}
+
+func readRecentSearches(
+	s recentSearchState,
+) IOE.IOEither[error, []repository.ScoredMember] {
+	return IOE.TryCatchError(func() ([]repository.ScoredMember, error) {
+		return recentHistoryLens.Get(s).RecentMembers(
+			StockSearchHistoryKey,
+			recentCount(s),
+		)
+	})
+}
+
+// RecentStockSearches returns the newest distinct texts of the
+// searchStocks query. A read error or a missing repository gives an empty
+// list and a logged warning, never a GraphQL error.
+func (qrs *QueryResolver) RecentStockSearches(
+	_ context.Context,
+	limit *int,
+) ([]*models.RecentStockSearch, error) {
+	history := qrs.GetRedisRepository(registry.REDISREPO)
+	list := F.Pipe7(
+		recentSearchState{},
+		recentHistoryLens.Set(history),
+		recentLimitLens.Set(limit),
+		IOE.Of[error, recentSearchState],
+		IOE.ChainEitherK(E.FromPredicate(
+			hasRecentHistoryRepo,
+			F.Constant1[recentSearchState](errNoSearchHistoryRepo),
+		)),
+		IOE.Chain(readRecentSearches),
+		IOE.Map[error](toRecentStockSearches),
+		IOE.GetOrElse(qrs.recoverRecentSearches),
+	)()
+
+	return list, nil
+}
+
+// recoverRecentSearches logs a warning and gives the empty list.
+func (qrs *QueryResolver) recoverRecentSearches(
+	err error,
+) IO.IO[[]*models.RecentStockSearch] {
+	return F.Pipe1(
+		IO.FromImpure(func() {
+			qrs.Logger.Warnf("could not read stock search history: %s", err)
+		}),
+		IO.MapTo[IO.Void](emptyRecentSearches),
 	)
 }

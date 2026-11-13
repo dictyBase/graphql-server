@@ -284,3 +284,118 @@ func TestSearchStocksHistorySkipsBacterialLookupFailure(t *testing.T) {
 	require.Error(err)
 	require.Empty(fake.Calls, "search that fails at the bacterial lookup must not be saved")
 }
+
+// newRecentResolver builds a resolver whose history repository is fake.
+// A nil fake gives a nil repository.
+func newRecentResolver(
+	fake *mocks.HistoryRepository,
+) (*QueryResolver, *logrustest.Hook) {
+	return newHookedHistoryResolver(fake)
+}
+
+func TestResolveRecentSearchLimit(t *testing.T) {
+	t.Parallel()
+	one, seven, max, over, huge := 1, 7, 250, 251, 1000
+	zero, neg := 0, -3
+	for name, tc := range map[string]struct {
+		in   *int
+		want int
+	}{
+		"nil":      {nil, 5},
+		"zero":     {&zero, 5},
+		"negative": {&neg, 5},
+		"one":      {&one, 1},
+		"seven":    {&seven, 7},
+		"max":      {&max, 250},
+		"over":     {&over, 250},
+		"huge":     {&huge, 250},
+	} {
+		require.Equal(t, tc.want, resolveRecentSearchLimit(tc.in), name)
+	}
+}
+
+func TestRecentStockSearchesMapsEntries(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+	fake := &mocks.HistoryRepository{Members: []repository.ScoredMember{
+		{Member: "csa", Score: 1763049600123},
+		{Member: "ax4", Score: 1763049500000},
+	}}
+	resolver, _ := newRecentResolver(fake)
+
+	result, err := resolver.RecentStockSearches(context.Background(), nil)
+
+	require.NoError(err)
+	require.Len(result, 2)
+	require.Equal("csa", result[0].Query)
+	require.True(result[0].SearchedAt.Equal(time.UnixMilli(1763049600123)))
+	require.Equal(time.UTC, result[0].SearchedAt.Location())
+	require.Equal("ax4", result[1].Query)
+	require.Equal([]int64{5}, fake.ReadCounts)
+}
+
+func TestRecentStockSearchesPassesLimit(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+	fake := &mocks.HistoryRepository{}
+	resolver, _ := newRecentResolver(fake)
+	three, huge := 3, 1000
+
+	_, err := resolver.RecentStockSearches(context.Background(), &three)
+	require.NoError(err)
+	_, err = resolver.RecentStockSearches(context.Background(), &huge)
+	require.NoError(err)
+
+	require.Equal([]int64{3, 250}, fake.ReadCounts)
+}
+
+func TestRecentStockSearchesEmptyHistory(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+	resolver, _ := newRecentResolver(&mocks.HistoryRepository{})
+
+	result, err := resolver.RecentStockSearches(context.Background(), nil)
+
+	require.NoError(err)
+	require.NotNil(result)
+	require.Len(result, 0)
+}
+
+func TestRecentStockSearchesRepoErrorReturnsEmpty(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+	ctx := graphql.WithResponseContext(
+		context.Background(),
+		graphql.DefaultErrorPresenter,
+		graphql.DefaultRecover,
+	)
+	fake := &mocks.HistoryRepository{ReadErr: errors.New("redis down")}
+	resolver, hook := newRecentResolver(fake)
+
+	result, err := resolver.RecentStockSearches(ctx, nil)
+
+	require.NoError(err)
+	require.NotNil(result)
+	require.Len(result, 0)
+	require.Empty(graphql.GetErrors(ctx), "redis error must not add a GraphQL error")
+	warn := hook.LastEntry()
+	require.NotNil(warn)
+	require.Equal(logrus.WarnLevel, warn.Level)
+	require.Contains(warn.Message, "could not read stock search history")
+	require.Contains(warn.Message, "redis down")
+}
+
+func TestRecentStockSearchesNilRepoReturnsEmpty(t *testing.T) {
+	t.Parallel()
+	require := require.New(t)
+	resolver, hook := newRecentResolver(nil)
+
+	result, err := resolver.RecentStockSearches(context.Background(), nil)
+
+	require.NoError(err)
+	require.NotNil(result)
+	require.Len(result, 0)
+	warn := hook.LastEntry()
+	require.NotNil(warn)
+	require.Equal(logrus.WarnLevel, warn.Level)
+}

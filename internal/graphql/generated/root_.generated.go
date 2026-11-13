@@ -340,12 +340,18 @@ type ComplexityRoot struct {
 		Permission                 func(childComplexity int, id string) int
 		Plasmid                    func(childComplexity int, id string) int
 		Publication                func(childComplexity int, id string) int
+		RecentStockSearches        func(childComplexity int, limit *int) int
 		Role                       func(childComplexity int, id string) int
 		SearchPhenotypes           func(childComplexity int, query string, limit *int) int
 		SearchStocks               func(childComplexity int, query string, limit *int, entity *models.StockEntityType) int
 		Strain                     func(childComplexity int, id string) int
 		User                       func(childComplexity int, id string) int
 		UserByEmail                func(childComplexity int, email string) int
+	}
+
+	RecentStockSearch struct {
+		Query      func(childComplexity int) int
+		SearchedAt func(childComplexity int) int
 	}
 
 	Role struct {
@@ -2028,6 +2034,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Query.Publication(childComplexity, args["id"].(string)), true
+	case "Query.recentStockSearches":
+		if e.ComplexityRoot.Query.RecentStockSearches == nil {
+			break
+		}
+
+		args, err := ec.field_Query_recentStockSearches_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Query.RecentStockSearches(childComplexity, args["limit"].(*int)), true
 	case "Query.role":
 		if e.ComplexityRoot.Query.Role == nil {
 			break
@@ -2094,6 +2111,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Query.UserByEmail(childComplexity, args["email"].(string)), true
+
+	case "RecentStockSearch.query":
+		if e.ComplexityRoot.RecentStockSearch.Query == nil {
+			break
+		}
+
+		return e.ComplexityRoot.RecentStockSearch.Query(childComplexity), true
+	case "RecentStockSearch.searchedAt":
+		if e.ComplexityRoot.RecentStockSearch.SearchedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.RecentStockSearch.SearchedAt(childComplexity), true
 
 	case "Role.created_at":
 		if e.ComplexityRoot.Role.CreatedAt == nil {
@@ -3182,6 +3212,18 @@ type Author {
     limit: Int
     entity: StockEntityType
   ): StockSearchResultList!
+  #
+  # Returns the most recent distinct texts of the searchStocks query,
+  # newest first. The history is shared by all users. The server saves
+  # a text only when the search succeeds and returns at least one
+  # result.
+  #
+  # Constraints:
+  # - limit defaults to 5 when omitted and never exceeds 250. A limit
+  #   below 1 uses the default.
+  # - An empty list is valid. The server also returns an empty list
+  #   when the history store is not available.
+  recentStockSearches(limit: Int): [RecentStockSearch!]!
   plasmid(id: ID!): Plasmid
   strain(id: ID!): Strain
   listStrainsWithGene(gene: String!): [Strain!]
@@ -3613,6 +3655,14 @@ type StockSearchResultList {
   limit: Int
   # Number of rows in results.
   totalCount: Int!
+}
+
+# RecentStockSearch is one entry of the stock center search history.
+type RecentStockSearch {
+  # Search text as the server saved it: trimmed and lowercased.
+  query: String!
+  # Time of the most recent searchStocks request that used this text.
+  searchedAt: Timestamp!
 }
 
 `, BuiltIn: false},
@@ -4211,6 +4261,16 @@ func (ec *executionContext) childFields_PublicationWithGene(ctx context.Context,
 		return ec.fieldContext_PublicationWithGene_authors(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type PublicationWithGene", field.Name)
+}
+
+func (ec *executionContext) childFields_RecentStockSearch(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "query":
+		return ec.fieldContext_RecentStockSearch_query(ctx, field)
+	case "searchedAt":
+		return ec.fieldContext_RecentStockSearch_searchedAt(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type RecentStockSearch", field.Name)
 }
 
 func (ec *executionContext) childFields_Role(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
