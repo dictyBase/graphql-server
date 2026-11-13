@@ -96,11 +96,7 @@ var (
 			return z
 		},
 	)
-	// toScoredMember converts one go-redis member to the repository type.
-	toScoredMember = func(z r.Z) repository.ScoredMember {
-		return F.Pipe2(
-			repository.ScoredMember{},
-			scoredMemberNameLens.Set(fmt.Sprint(z.Member)),
+	scoredMemberNameLens.Set(fmt.Sprint(z.Member)),
 			scoredMemberScoreLens.Set(int64(z.Score)),
 		)
 	}
@@ -135,6 +131,15 @@ var (
 		},
 	)
 )
+
+// toScoredMember converts one go-redis member to the repository type.
+func toScoredMember(z r.Z) repository.ScoredMember {
+	return F.Pipe2(
+		repository.ScoredMember{},
+		scoredMemberNameLens.Set(fmt.Sprint(z.Member)),
+		scoredMemberScoreLens.Set(int64(z.Score)),
+	)
+}
 
 // AddRecentMember saves member in the sorted set at key with the given
 // score, then trims the set to the capacity highest scores. A repeat of
