@@ -430,6 +430,14 @@ export const SearchStocks = gql`
   }
 }
     `;
+export const RecentStockSearches = gql`
+    query RecentStockSearches($limit: Int) {
+  recentStockSearches(limit: $limit) {
+    query
+    searchedAt
+  }
+}
+    `;
 export const SearchPhenotypes = gql`
     query SearchPhenotypes($query: String!, $limit: Int) {
   searchPhenotypes(query: $query, limit: $limit) {

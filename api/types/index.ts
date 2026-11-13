@@ -683,6 +683,7 @@ export type Query = {
   permission?: Maybe<Permission>;
   plasmid?: Maybe<Plasmid>;
   publication?: Maybe<Publication>;
+  recentStockSearches: Array<RecentStockSearch>;
   role?: Maybe<Role>;
   searchPhenotypes: StockSearchResultList;
   searchStocks: StockSearchResultList;
@@ -834,6 +835,11 @@ export type QueryPublicationArgs = {
 };
 
 
+export type QueryRecentStockSearchesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryRoleArgs = {
   id: Scalars['ID']['input'];
 };
@@ -864,6 +870,12 @@ export type QueryUserArgs = {
 
 export type QueryUserByEmailArgs = {
   email: Scalars['String']['input'];
+};
+
+export type RecentStockSearch = {
+  __typename?: 'RecentStockSearch';
+  query: Scalars['String']['output'];
+  searchedAt: Scalars['Timestamp']['output'];
 };
 
 export type Role = {
@@ -1371,6 +1383,13 @@ export type SearchStocksQueryVariables = Exact<{
 
 
 export type SearchStocksQuery = { __typename?: 'Query', searchStocks: { __typename?: 'StockSearchResultList', limit?: number | null, totalCount: number, results: Array<{ __typename?: 'StockSearchResult', id: string, entity: StockEntityType, field: StockSearchFieldEnum, display_text: string, score: number, summary: string, stock_label: string, in_stock: boolean, stock_type: string }> } };
+
+export type RecentStockSearchesQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type RecentStockSearchesQuery = { __typename?: 'Query', recentStockSearches: Array<{ __typename?: 'RecentStockSearch', query: string, searchedAt: string }> };
 
 export type SearchPhenotypesQueryVariables = Exact<{
   query: Scalars['String']['input'];
@@ -2634,6 +2653,42 @@ export function useSearchStocksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type SearchStocksQueryHookResult = ReturnType<typeof useSearchStocksQuery>;
 export type SearchStocksLazyQueryHookResult = ReturnType<typeof useSearchStocksLazyQuery>;
 export type SearchStocksQueryResult = Apollo.QueryResult<SearchStocksQuery, SearchStocksQueryVariables>;
+export const RecentStockSearchesDocument = gql`
+    query RecentStockSearches($limit: Int) {
+  recentStockSearches(limit: $limit) {
+    query
+    searchedAt
+  }
+}
+    `;
+
+/**
+ * __useRecentStockSearchesQuery__
+ *
+ * To run a query within a React component, call `useRecentStockSearchesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRecentStockSearchesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRecentStockSearchesQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useRecentStockSearchesQuery(baseOptions?: Apollo.QueryHookOptions<RecentStockSearchesQuery, RecentStockSearchesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RecentStockSearchesQuery, RecentStockSearchesQueryVariables>(RecentStockSearchesDocument, options);
+      }
+export function useRecentStockSearchesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RecentStockSearchesQuery, RecentStockSearchesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RecentStockSearchesQuery, RecentStockSearchesQueryVariables>(RecentStockSearchesDocument, options);
+        }
+export type RecentStockSearchesQueryHookResult = ReturnType<typeof useRecentStockSearchesQuery>;
+export type RecentStockSearchesLazyQueryHookResult = ReturnType<typeof useRecentStockSearchesLazyQuery>;
+export type RecentStockSearchesQueryResult = Apollo.QueryResult<RecentStockSearchesQuery, RecentStockSearchesQueryVariables>;
 export const SearchPhenotypesDocument = gql`
     query SearchPhenotypes($query: String!, $limit: Int) {
   searchPhenotypes(query: $query, limit: $limit) {

@@ -56,6 +56,18 @@ type Query {
     limit: Int
     entity: StockEntityType
   ): StockSearchResultList!
+  #
+  # Returns the most recent distinct texts of the searchStocks query,
+  # newest first. The history is shared by all users. The server saves
+  # a text only when the search succeeds and returns at least one
+  # result.
+  #
+  # Constraints:
+  # - limit defaults to 5 when omitted and never exceeds 250. A limit
+  #   below 1 uses the default.
+  # - An empty list is valid. The server also returns an empty list
+  #   when the history store is not available.
+  recentStockSearches(limit: Int): [RecentStockSearch!]!
   plasmid(id: ID!): Plasmid
   strain(id: ID!): Strain
   listStrainsWithGene(gene: String!): [Strain!]
