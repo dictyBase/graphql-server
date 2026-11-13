@@ -346,3 +346,11 @@ type StockSearchResultList {
   totalCount: Int!
 }
 
+# RecentStockSearch is one entry of the stock center search history.
+type RecentStockSearch {
+  # Search text as the server saved it: trimmed and lowercased.
+  query: String!
+  # Time of the most recent searchStocks request that used this text.
+  searchedAt: Timestamp!
+}
+
