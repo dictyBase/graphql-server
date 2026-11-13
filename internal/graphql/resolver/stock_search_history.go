@@ -74,19 +74,25 @@ var (
 		Str.IsNonEmpty,
 		P.ContraMap(normalizedSearchText),
 	)
-	shouldRecordSearchHistory = F.Pipe2(
-		hasSearchHistoryRepo,
-		P.And(hasMergedSearchResults),
+	shouldTrySearchHistory = F.Pipe1(
+		hasMergedSearchResults,
 		P.And(hasSearchHistoryText),
+	)
+
+	// saveOrWarnSearchHistory saves the text when a repository exists and
+	// logs a warning when it does not.
+	saveOrWarnSearchHistory = F.Pipe1(
+		hasSearchHistoryRepo,
+		P.Fold(warnMissingSearchHistoryRepo, saveStockSearchHistory),
 	)
 
 	// recordStockSearchHistory saves the search text of a successful
 	// search that has results. It never fails the search.
 	recordStockSearchHistory = F.Pipe1(
-		shouldRecordSearchHistory,
+		shouldTrySearchHistory,
 		P.Fold(
 			F.Constant1[listStockSearchContext](IO.Of(F.VOID)),
-			saveStockSearchHistory,
+			saveOrWarnSearchHistory,
 		),
 	)
 )
@@ -119,6 +125,15 @@ func logSearchHistoryFailure(
 			"could not save stock search history for %q: %s",
 			normalizedSearchText(s),
 			err,
+		)
+	})
+}
+
+func warnMissingSearchHistoryRepo(s listStockSearchContext) IO.IO[IO.Void] {
+	return IO.FromImpure(func() {
+		searchLoggerLens.Get(s).Warnf(
+			"no redis repository, stock search history not saved for %q",
+			normalizedSearchText(s),
 		)
 	})
 }

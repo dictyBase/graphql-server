@@ -462,11 +462,11 @@ func (qrs *QueryResolver) SearchStocks(
 			fetchStrainMetadataForAnnotationHits,
 		),
 		IOE.ChainEitherK(withMergedSearchResults),
-		IOE.ChainFirstIOK[error](recordStockSearchHistory),
 		IOE.Bind(
 			bacterialIDsLens.Set,
 			fetchBacterialStrainIDsForSearch,
 		),
+		IOE.ChainFirstIOK[error](recordStockSearchHistory),
 		IOE.Map[error](buildMergedSearchResultList),
 		ioeutils.ToEither[error, *models.StockSearchResultList],
 		E.Fold(onStockSearchListError, onStockSearchListSuccess),
