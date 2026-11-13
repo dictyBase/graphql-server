@@ -1,9 +1,11 @@
 package resolver
 
 import (
+	"errors"
 	"strings"
 	"time"
 
+	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	IO "github.com/IBM/fp-go/v2/io"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
@@ -79,41 +81,58 @@ var (
 		P.And(hasSearchHistoryText),
 	)
 
-	// saveOrWarnSearchHistory saves the text when a repository exists and
-	// logs a warning when it does not.
-	saveOrWarnSearchHistory = F.Pipe1(
-		hasSearchHistoryRepo,
-		P.Fold(warnMissingSearchHistoryRepo, saveStockSearchHistory),
-	)
+	// errSkipSearchHistory marks a search that has nothing to save. It is
+	// recovered silently. errNoSearchHistoryRepo is logged as a warning.
+	errSkipSearchHistory   = errors.New("skip stock search history")
+	errNoSearchHistoryRepo = errors.New("no redis repository")
 
-	// recordStockSearchHistory saves the search text of a successful
-	// search that has results. It never fails the search.
-	recordStockSearchHistory = F.Pipe1(
-		shouldTrySearchHistory,
+	// recoverSkippedSearchHistory turns the skip marker into success and
+	// keeps every other error.
+	recoverSkippedSearchHistory = F.Pipe1(
+		F.Bind2nd(errors.Is, errSkipSearchHistory),
 		P.Fold(
-			F.Constant1[listStockSearchContext](IO.Of(F.VOID)),
-			saveOrWarnSearchHistory,
+			IOE.Left[IO.Void, error],
+			F.Constant1[error](IOE.Of[error](F.VOID)),
 		),
 	)
 )
 
-// saveStockSearchHistory writes the normalized text with the time of the
-// write as the score. A Redis error is logged and dropped.
-func saveStockSearchHistory(s listStockSearchContext) IO.IO[IO.Void] {
-	return F.Pipe1(
-		IOE.TryCatchError(func() (IO.Void, error) {
-			return F.VOID, searchHistoryLens.Get(s).AddRecentMember(
-				StockSearchHistoryKey,
-				normalizedSearchText(s),
-				time.Now().UnixMilli(),
-				stockSearchHistoryCapacity,
-			)
-		}),
+// recordStockSearchHistory saves the search text of a successful search
+// that has results. It never fails the search: a Redis error or a missing
+// repository is logged as a warning.
+func recordStockSearchHistory(s listStockSearchContext) IO.IO[IO.Void] {
+	return F.Pipe5(
+		IOE.Of[error](s),
+		IOE.ChainEitherK(E.FromPredicate(
+			shouldTrySearchHistory,
+			F.Constant1[listStockSearchContext](errSkipSearchHistory),
+		)),
+		IOE.ChainEitherK(E.FromPredicate(
+			hasSearchHistoryRepo,
+			F.Constant1[listStockSearchContext](errNoSearchHistoryRepo),
+		)),
+		IOE.Chain(saveSearchHistory),
+		IOE.OrElse(recoverSkippedSearchHistory),
 		IOE.Fold(
 			F.Bind1st(logSearchHistoryFailure, s),
 			F.Constant1[IO.Void](IO.Of(F.VOID)),
 		),
 	)
+}
+
+// saveSearchHistory writes the normalized text with the time of the write
+// as the score.
+func saveSearchHistory(
+	s listStockSearchContext,
+) IOE.IOEither[error, IO.Void] {
+	return IOE.TryCatchError(func() (IO.Void, error) {
+		return F.VOID, searchHistoryLens.Get(s).AddRecentMember(
+			StockSearchHistoryKey,
+			normalizedSearchText(s),
+			time.Now().UnixMilli(),
+			stockSearchHistoryCapacity,
+		)
+	})
 }
 
 func logSearchHistoryFailure(
@@ -125,15 +144,6 @@ func logSearchHistoryFailure(
 			"could not save stock search history for %q: %s",
 			normalizedSearchText(s),
 			err,
-		)
-	})
-}
-
-func warnMissingSearchHistoryRepo(s listStockSearchContext) IO.IO[IO.Void] {
-	return IO.FromImpure(func() {
-		searchLoggerLens.Get(s).Warnf(
-			"no redis repository, stock search history not saved for %q",
-			normalizedSearchText(s),
 		)
 	})
 }
