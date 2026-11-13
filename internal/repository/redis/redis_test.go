@@ -263,7 +263,7 @@ func TestAddRecentMemberConcurrentSameMember(t *testing.T) {
 	repo := newTestCache(t)
 	key := newRecentKey(t, repo)
 	var wg sync.WaitGroup
-	for i := 0; i < 50; i++ {
+	for i := range 50 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
@@ -288,7 +288,7 @@ func TestAddRecentMemberConcurrentCapacity(t *testing.T) {
 	repo := newTestCache(t)
 	key := newRecentKey(t, repo)
 	var wg sync.WaitGroup
-	for i := 0; i < 300; i++ {
+	for i := range 300 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
