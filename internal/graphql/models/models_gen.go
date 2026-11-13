@@ -336,6 +336,11 @@ func (PublicationWithGene) IsBasePublication() {}
 type Query struct {
 }
 
+type RecentStockSearch struct {
+	Query      string    `json:"query"`
+	SearchedAt time.Time `json:"searchedAt"`
+}
+
 type StockSearchResult struct {
 	ID          string               `json:"id"`
 	Entity      StockEntityType      `json:"entity"`

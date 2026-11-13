@@ -793,6 +793,52 @@ func (ec *executionContext) fieldContext_PlasmidListWithCursor_totalCount(_ cont
 	return graphql.NewScalarFieldContext("PlasmidListWithCursor", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
+func (ec *executionContext) _RecentStockSearch_query(ctx context.Context, field graphql.CollectedField, obj *models.RecentStockSearch) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_RecentStockSearch_query(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Query, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_RecentStockSearch_query(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("RecentStockSearch", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _RecentStockSearch_searchedAt(ctx context.Context, field graphql.CollectedField, obj *models.RecentStockSearch) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_RecentStockSearch_searchedAt(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.SearchedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTimestamp2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_RecentStockSearch_searchedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("RecentStockSearch", field, false, false, errors.New("field of type Timestamp does not have child fields"))
+}
+
 func (ec *executionContext) _StockSearchResult_id(ctx context.Context, field graphql.CollectedField, obj *models.StockSearchResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3502,6 +3548,49 @@ func (ec *executionContext) _PlasmidListWithCursor(ctx context.Context, sel ast.
 	return out
 }
 
+var recentStockSearchImplementors = []string{"RecentStockSearch"}
+
+func (ec *executionContext) _RecentStockSearch(ctx context.Context, sel ast.SelectionSet, obj *models.RecentStockSearch) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recentStockSearchImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferredFieldSet := graphql.NewFieldSet(nil)
+	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecentStockSearch")
+		case "query":
+			out.Values[i] = ec._RecentStockSearch_query(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "searchedAt":
+			out.Values[i] = ec._RecentStockSearch_searchedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
+
+	ec.ProcessDeferredGroup(graphql.DeferredGroup{
+		Defers:   deferLabelToView,
+		Path:     graphql.GetPath(ctx),
+		FieldSet: deferredFieldSet,
+		Context:  ctx,
+	})
+
+	return out
+}
+
 var stockSearchResultImplementors = []string{"StockSearchResult"}
 
 func (ec *executionContext) _StockSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models.StockSearchResult) graphql.Marshaler {
@@ -4503,6 +4592,32 @@ func (ec *executionContext) unmarshalNPlasmidType2githubᚗcomᚋdictyBaseᚋgra
 
 func (ec *executionContext) marshalNPlasmidType2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐPlasmidType(ctx context.Context, sel ast.SelectionSet, v models.PlasmidType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNRecentStockSearch2ᚕᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐRecentStockSearchᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.RecentStockSearch) graphql.Marshaler {
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNRecentStockSearch2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐRecentStockSearch(ctx, sel, v[i])
+	})
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNRecentStockSearch2ᚖgithubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐRecentStockSearch(ctx context.Context, sel ast.SelectionSet, v *models.RecentStockSearch) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RecentStockSearch(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNStock2githubᚗcomᚋdictyBaseᚋgraphqlᚑserverᚋinternalᚋgraphqlᚋmodelsᚐStock(ctx context.Context, sel ast.SelectionSet, v models.Stock) graphql.Marshaler {
