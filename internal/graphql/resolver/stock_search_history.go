@@ -101,7 +101,7 @@ var (
 // that has results. It never fails the search: a Redis error or a missing
 // repository is logged as a warning.
 func recordStockSearchHistory(s listStockSearchContext) IO.IO[IO.Void] {
-	return F.Pipe5(
+	return F.Pipe7(
 		IOE.Of[error](s),
 		IOE.ChainEitherK(E.FromPredicate(
 			shouldTrySearchHistory,
@@ -113,9 +113,11 @@ func recordStockSearchHistory(s listStockSearchContext) IO.IO[IO.Void] {
 		)),
 		IOE.Chain(saveSearchHistory),
 		IOE.OrElse(recoverSkippedSearchHistory),
+		IOE.Swap[error, IO.Void],
+		IOE.ChainConsumer[IO.Void](s.warnSearchHistoryFailure),
 		IOE.Fold(
-			F.Bind1st(logSearchHistoryFailure, s),
-			F.Constant1[IO.Void](IO.Of(F.VOID)),
+			IO.Of[IO.Void],
+			F.Constant1[struct{}](IO.Of(F.VOID)),
 		),
 	)
 }
@@ -135,15 +137,12 @@ func saveSearchHistory(
 	})
 }
 
-func logSearchHistoryFailure(
-	s listStockSearchContext,
-	err error,
-) IO.IO[IO.Void] {
-	return IO.FromImpure(func() {
-		searchLoggerLens.Get(s).Warnf(
-			"could not save stock search history for %q: %s",
-			normalizedSearchText(s),
-			err,
-		)
-	})
+// warnSearchHistoryFailure is the consumer of a save failure. It logs a
+// warning on the logger of the state.
+func (s listStockSearchContext) warnSearchHistoryFailure(err error) {
+	searchLoggerLens.Get(s).Warnf(
+		"could not save stock search history for %q: %s",
+		normalizedSearchText(s),
+		err,
+	)
 }
