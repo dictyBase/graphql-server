@@ -20,6 +20,13 @@ query SearchStocks(
   }
 }
 
+query RecentStockSearches($limit: Int) {
+  recentStockSearches(limit: $limit) {
+    query
+    searchedAt
+  }
+}
+
 query SearchPhenotypes($query: String!, $limit: Int) {
   searchPhenotypes(query: $query, limit: $limit) {
     results {
