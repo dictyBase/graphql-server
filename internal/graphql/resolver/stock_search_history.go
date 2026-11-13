@@ -88,6 +88,14 @@ var (
 			MO.Default(F.Identity[int]),
 		},
 	)
+	// resolveRecentSearchLimit converts the optional GraphQL limit. An
+	// absent limit or a limit below 1 gives defaultRecentSearchLimit, and
+	// a limit above maxRecentSearchLimit gives maxRecentSearchLimit.
+	resolveRecentSearchLimit = F.Flow3(
+		O.FromNillable2[int],
+		O.Map(clampRecentSearchLimit),
+		O.GetOrElse(F.Constant(defaultRecentSearchLimit)),
+	)
 	recentCount = F.Flow3(
 		recentLimitLens.Get,
 		resolveRecentSearchLimit,
@@ -222,18 +230,6 @@ func (s listStockSearchContext) warnSearchHistoryFailure(err error) {
 		"could not save stock search history for %q: %s",
 		normalizedSearchText(s),
 		err,
-	)
-}
-
-// resolveRecentSearchLimit converts the optional GraphQL limit. An absent
-// limit or a limit below 1 gives defaultRecentSearchLimit, and a limit
-// above maxRecentSearchLimit gives maxRecentSearchLimit.
-func resolveRecentSearchLimit(limit *int) int {
-	return F.Pipe3(
-		limit,
-		O.FromNillable2[int],
-		O.Map(clampRecentSearchLimit),
-		O.GetOrElse(F.Constant(defaultRecentSearchLimit)),
 	)
 }
 
