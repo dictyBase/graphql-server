@@ -269,7 +269,7 @@ func (qrs *QueryResolver) RecentStockSearches(
 	limit *int,
 ) ([]*models.RecentStockSearch, error) {
 	history := qrs.GetRedisRepository(registry.REDISREPO)
-	list := F.Pipe7(
+	list := F.Pipe8(
 		recentSearchState{},
 		recentHistoryLens.Set(history),
 		recentLimitLens.Set(limit),
@@ -280,20 +280,17 @@ func (qrs *QueryResolver) RecentStockSearches(
 		)),
 		IOE.Chain(readRecentSearches),
 		IOE.Map[error](toRecentStockSearches),
-		IOE.GetOrElse(qrs.recoverRecentSearches),
+		IOE.TapLeft[[]*models.RecentStockSearch](F.Flow2(
+			IO.FromConsumer(qrs.warnRecentSearchesFailure),
+			IOE.FromIO[error, IO.Void],
+		)),
+		IOE.GetOrElse(F.Constant1[error](IO.Of(emptyRecentSearches))),
 	)()
 
 	return list, nil
 }
 
-// recoverRecentSearches logs a warning and gives the empty list.
-func (qrs *QueryResolver) recoverRecentSearches(
-	err error,
-) IO.IO[[]*models.RecentStockSearch] {
-	return F.Pipe1(
-		IO.FromImpure(func() {
-			qrs.Logger.Warnf("could not read stock search history: %s", err)
-		}),
-		IO.MapTo[IO.Void](emptyRecentSearches),
-	)
+// warnRecentSearchesFailure logs a warning for a failed history read.
+func (qrs *QueryResolver) warnRecentSearchesFailure(err error) {
+	qrs.Logger.Warnf("could not read stock search history: %s", err)
 }

@@ -398,10 +398,16 @@ func TestRecentMembersNonPositiveCount(t *testing.T) {
 	repo := newTestCache(t)
 	key := newRecentKey(t, repo)
 	addRecentMembers(t, repo, key, repository.ScoredMember{Member: "a", Score: 1})
+	// A closed client fails every command, so a nil error proves that a
+	// non-positive count sends none.
+	closed := newTestCache(t)
+	assert.NoError(closed.client.Close())
 	for _, count := range []int64{0, -1} {
-		got, err := repo.RecentMembers(key, count)
-		assert.NoError(err)
+		got, err := closed.RecentMembers(key, count)
+		assert.NoError(err, "count %d", count)
 		assert.NotNil(got)
 		assert.Len(got, 0, "count %d", count)
 	}
+	_, err := closed.RecentMembers(key, 1)
+	assert.Error(err, "closed client must fail a real read")
 }
