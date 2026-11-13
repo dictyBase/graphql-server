@@ -4,6 +4,11 @@ import (
 	"fmt"
 	"time"
 
+	E "github.com/IBM/fp-go/v2/either"
+	ER "github.com/IBM/fp-go/v2/errors"
+	F "github.com/IBM/fp-go/v2/function"
+	IOE "github.com/IBM/fp-go/v2/ioeither"
+	ioeutils "github.com/dictyBase/fp-go-loom/ioeitherutils"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	r "github.com/go-redis/redis/v7"
 )
@@ -76,4 +81,29 @@ func (rs *RedisStorage) HExists(key, field string) (bool, error) {
 		return false, err
 	}
 	return h, err
+}
+
+// AddRecentMember saves member in the sorted set at key with the given
+// score, then trims the set to the capacity highest scores. A repeat of
+// a member overwrites its score. ZADD and ZREMRANGEBYRANK run in one
+// MULTI/EXEC transaction, so concurrent writes never leave the set over
+// capacity.
+func (rs *RedisStorage) AddRecentMember(
+	key, member string,
+	score, capacity int64,
+) error {
+	return F.Pipe3(
+		IOE.TryCatchError(func() ([]r.Cmder, error) {
+			return rs.client.TxPipelined(func(pipe r.Pipeliner) error {
+				pipe.ZAdd(key, &r.Z{Score: float64(score), Member: member})
+				pipe.ZRemRangeByRank(key, 0, -(capacity + 1))
+				return nil
+			})
+		}),
+		IOE.MapLeft[[]r.Cmder](
+			ER.OnError("error in adding recent member to %s", key),
+		),
+		ioeutils.ToEither[error, []r.Cmder],
+		E.Fold(F.Identity[error], F.Constant1[[]r.Cmder, error](nil)),
+	)
 }
