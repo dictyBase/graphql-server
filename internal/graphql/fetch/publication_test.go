@@ -142,6 +142,10 @@ func (r *fakeRepo) HExists(hash, key string) (bool, error) {
 	return false, nil
 }
 
+func (r *fakeRepo) AddRecentMember(_, _ string, _, _ int64) error {
+	return nil
+}
+
 func samplePubMedArticle() *literature.Article {
 	return &literature.Article{
 		PMID:        testPMID,
