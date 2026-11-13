@@ -102,14 +102,12 @@ var (
 		P.IsNonZero[repository.Repository](),
 		P.ContraMap(recentHistoryLens.Get),
 	)
-	emptyRecentSearches  = []*models.RecentStockSearch{}
-	nonNilRecentSearches = F.Flow2(
-		O.FromPredicate(predarrays.IsNonEmpty[*models.RecentStockSearch]()),
-		O.GetOrElse(F.Constant(emptyRecentSearches)),
-	)
-	toRecentStockSearches = F.Flow2(
+	// toRecentStockSearches maps the stored members and replaces the nil
+	// slice that A.Map gives for an empty input with an empty slice.
+	toRecentStockSearches = F.Flow3(
 		A.Map(toRecentStockSearch),
-		nonNilRecentSearches,
+		O.FromPredicate(predarrays.IsNonEmpty[*models.RecentStockSearch]()),
+		O.GetOrElse(F.Constant([]*models.RecentStockSearch{})),
 	)
 
 	searchQueryLens = L.MakeLens(
@@ -277,7 +275,7 @@ func (qrs *QueryResolver) RecentStockSearches(
 			IO.FromConsumer(qrs.warnRecentSearchesFailure),
 			IOE.FromIO[error, IO.Void],
 		)),
-		IOE.GetOrElse(F.Constant1[error](IO.Of(emptyRecentSearches))),
+		IOE.GetOrElse(F.Constant1[error](IO.Of([]*models.RecentStockSearch{}))),
 	)()
 
 	return list, nil
