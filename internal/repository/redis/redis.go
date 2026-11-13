@@ -96,10 +96,6 @@ var (
 			return z
 		},
 	)
-	scoredMemberNameLens.Set(fmt.Sprint(z.Member)),
-			scoredMemberScoreLens.Set(int64(z.Score)),
-		)
-	}
 	scoredMemberNameLens = L.MakeLens(
 		func(m repository.ScoredMember) string { return m.Member },
 		func(m repository.ScoredMember, v string) repository.ScoredMember {
