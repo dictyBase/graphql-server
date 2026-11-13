@@ -150,7 +150,7 @@ func (rs *RedisStorage) AddRecentMember(
 		zScoreLens.Set(float64(score)),
 		zMemberLens.Set(member),
 		F.Ref[r.Z],
-		rs.addCapped(key, capacity),
+		F.Bind12of3(rs.addCapped)(key, capacity),
 		IOE.MapLeft[[]r.Cmder](
 			ER.OnError("error in adding recent member to %s", key),
 		),
@@ -159,21 +159,20 @@ func (rs *RedisStorage) AddRecentMember(
 	)
 }
 
-// addCapped returns the effect that runs ZADD for one member and then
-// ZREMRANGEBYRANK in one MULTI/EXEC transaction.
+// addCapped runs ZADD for one member and then ZREMRANGEBYRANK in one
+// MULTI/EXEC transaction.
 func (rs *RedisStorage) addCapped(
 	key string,
 	capacity int64,
-) func(*r.Z) IOE.IOEither[error, []r.Cmder] {
-	return func(z *r.Z) IOE.IOEither[error, []r.Cmder] {
-		return IOE.TryCatchError(func() ([]r.Cmder, error) {
-			return rs.client.TxPipelined(func(pipe r.Pipeliner) error {
-				pipe.ZAdd(key, z)
-				pipe.ZRemRangeByRank(key, 0, -(capacity + 1))
-				return nil
-			})
+	z *r.Z,
+) IOE.IOEither[error, []r.Cmder] {
+	return IOE.TryCatchError(func() ([]r.Cmder, error) {
+		return rs.client.TxPipelined(func(pipe r.Pipeliner) error {
+			pipe.ZAdd(key, z)
+			pipe.ZRemRangeByRank(key, 0, -(capacity + 1))
+			return nil
 		})
-	}
+	})
 }
 
 // RecentMembers returns up to count members of the sorted set at key with
@@ -188,7 +187,7 @@ func (rs *RedisStorage) RecentMembers(
 		O.FromPredicate(N.MoreThan(int64(0))),
 		O.Fold(
 			F.Constant(emptyRecentMembers),
-			rs.readRecent(key),
+			F.Bind1st(rs.readRecent, key),
 		),
 		IOE.MapLeft[[]repository.ScoredMember](
 			ER.OnError("error in reading recent members of %s", key),
@@ -199,18 +198,16 @@ func (rs *RedisStorage) RecentMembers(
 	return E.UnwrapError(result)
 }
 
-// readRecent returns the effect that runs ZREVRANGE WITHSCORES for the
-// count newest members.
+// readRecent runs ZREVRANGE WITHSCORES for the count newest members.
 func (rs *RedisStorage) readRecent(
 	key string,
-) func(int64) IOE.IOEither[error, []repository.ScoredMember] {
-	return func(count int64) IOE.IOEither[error, []repository.ScoredMember] {
-		return F.Pipe2(
-			IOE.TryCatchError(func() ([]r.Z, error) {
-				return rs.client.ZRevRangeWithScores(key, 0, count-1).Result()
-			}),
-			IOE.Map[error](A.Map(toScoredMember)),
-			IOE.Map[error](nonNilScoredMembers),
-		)
-	}
+	count int64,
+) IOE.IOEither[error, []repository.ScoredMember] {
+	return F.Pipe2(
+		IOE.TryCatchError(func() ([]r.Z, error) {
+			return rs.client.ZRevRangeWithScores(key, 0, count-1).Result()
+		}),
+		IOE.Map[error](A.Map(toScoredMember)),
+		IOE.Map[error](nonNilScoredMembers),
+	)
 }
