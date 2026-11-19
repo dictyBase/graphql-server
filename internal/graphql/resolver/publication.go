@@ -88,6 +88,7 @@ func (qrs *QueryResolver) Publication(
 ) (*models.Publication, error) {
 	pub, err := fetch.FetchPublication(
 		ctx,
+		fetch.PublicationParamsFromRegistry(qrs.Registry),
 		qrs.GetRedisRepository(cache.RedisKey),
 		id,
 	)
@@ -328,6 +329,7 @@ func fetchPublicationDetails(
 ) (*models.PublicationWithGene, error) {
 	pub, err := fetch.FetchPublication(
 		params.Ctx,
+		fetch.PublicationParamsFromRegistry(params.Qrs.Registry),
 		params.Qrs.GetRedisRepository(cache.RedisKey),
 		params.PubID,
 	)

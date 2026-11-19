@@ -189,6 +189,21 @@ func nonGRPCFlags() []cli.Flag {
 			Usage:  "deprecated and unused publication api endpoint",
 		},
 		cli.StringFlag{
+			Name:   "ncbi-api-key",
+			EnvVar: "NCBI_API_KEY",
+			Usage:  "NCBI api key; it raises the eUtils request limit. Set it with --ncbi-email and --ncbi-tool",
+		},
+		cli.StringFlag{
+			Name:   "ncbi-email",
+			EnvVar: "NCBI_EMAIL",
+			Usage:  "contact email sent with NCBI and Europe PMC requests. Required with --ncbi-api-key",
+		},
+		cli.StringFlag{
+			Name:   "ncbi-tool",
+			EnvVar: "NCBI_TOOL",
+			Usage:  "tool name without spaces sent with NCBI requests. Required with --ncbi-api-key",
+		},
+		cli.StringFlag{
 			Name:   "organism-api, org",
 			EnvVar: "ORGANISM_API_ENDPOINT",
 			Usage:  "json endpoint for organisms (downloads page)",

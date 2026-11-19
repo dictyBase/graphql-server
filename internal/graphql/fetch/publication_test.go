@@ -12,6 +12,7 @@ import (
 	T "github.com/IBM/fp-go/v2/tuple"
 	ioeutils "github.com/dictyBase/fp-go-loom/ioeitherutils"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	"github.com/dictybase/literature"
 	"github.com/stretchr/testify/require"
@@ -434,4 +435,38 @@ func TestIsResolvableIdentifier(t *testing.T) {
 	} {
 		req.Equal(want, IsResolvableIdentifier(id), id)
 	}
+}
+
+func TestPublicationParamsFromRegistry(t *testing.T) {
+	t.Parallel()
+	reg := registry.NewRegistry()
+	reg.AddRecord(registry.NcbiAPIKey, "key")
+	reg.AddRecord(registry.NcbiTool, "graphql-server")
+	reg.AddRecord(registry.NcbiEmail, "dev@dictybase.org")
+	params := PublicationParamsFromRegistry(reg)
+	require.Equal(t, "key", params.APIKey)
+	require.Equal(t, "graphql-server", params.Tool)
+	require.Equal(t, "dev@dictybase.org", params.Email)
+	require.Len(t, pubMedOptions(params), 3)
+	require.Len(t, europePMCOptions(params), 2)
+}
+
+func TestPublicationParamsFromUnconfiguredRegistry(t *testing.T) {
+	t.Parallel()
+	params := PublicationParamsFromRegistry(registry.NewRegistry())
+	require.Empty(t, params.APIKey)
+	require.Empty(t, params.Tool)
+	require.Empty(t, params.Email)
+	require.Empty(t, pubMedOptions(params))
+	require.Empty(t, europePMCOptions(params))
+}
+
+func TestNilPublicationParamsAreUnconfigured(t *testing.T) {
+	t.Parallel()
+	require.NotNil(t, publicationParamsOrEmpty(nil))
+	given := &PublicationParams{APIKey: "key"}
+	require.Same(t, given, publicationParamsOrEmpty(given))
+	src, err := E.UnwrapError(NewPublication(nil)())
+	require.NoError(t, err)
+	require.NotNil(t, src)
 }
