@@ -2,9 +2,16 @@ package server
 
 import (
 	"fmt"
+
 	"net/http"
 	"os"
 	"time"
+
+	A "github.com/IBM/fp-go/v2/array"
+	F "github.com/IBM/fp-go/v2/function"
+	O "github.com/IBM/fp-go/v2/option"
+	P "github.com/IBM/fp-go/v2/predicate"
+	S "github.com/IBM/fp-go/v2/string"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -31,6 +38,9 @@ import (
 func RunGraphQLServer(cltx *cli.Context) error {
 	authEnabled := cltx.Bool("auth-enabled")
 	if err := validateAuthFlags(cltx, authEnabled); err != nil {
+		return cli.NewExitError(err.Error(), 2)
+	}
+	if err := validateNcbiFlags(cltx); err != nil {
 		return cli.NewExitError(err.Error(), 2)
 	}
 	nreg := registry.NewRegistry()
@@ -117,6 +127,42 @@ func validateAuthFlags(cltx *cli.Context, authEnabled bool) error {
 	return nil
 }
 
+// ncbiFlags are the NCBI identity flags. NCBI asks every client to send the
+// tool name and the contact email, so the server takes the three together or
+// none of them.
+var ncbiFlags = []string{"ncbi-api-key", "ncbi-email", "ncbi-tool"}
+
+func hasFlagValue(cltx *cli.Context, name string) bool {
+	return S.IsNonEmpty(cltx.String(name))
+}
+
+// isPartialNcbi reports whether some, but not all, NCBI flags are missing.
+func isPartialNcbi(missing []string) bool {
+	return len(missing) > 0 && len(missing) < len(ncbiFlags)
+}
+
+func missingNcbiFlagsError(missing []string) error {
+	return fmt.Errorf(
+		"%s required when an NCBI flag is set",
+		F.Pipe2(
+			missing,
+			A.Map(S.Prepend("--")),
+			S.Join(", "),
+		),
+	)
+}
+
+// validateNcbiFlags fails when the NCBI flags are only partly set. A server
+// without any NCBI flag stays valid and calls NCBI without a key.
+func validateNcbiFlags(cltx *cli.Context) error {
+	return F.Pipe3(
+		ncbiFlags,
+		A.Filter(P.Not(F.Bind1st(hasFlagValue, cltx))),
+		O.FromPredicate(isPartialNcbi),
+		O.Fold(F.Constant[error](nil), missingNcbiFlagsError),
+	)
+}
+
 func setupServices(cltx *cli.Context, nreg registry.Registry) error {
 	if err := establishGrpcConnnections(cltx, nreg); err != nil {
 		return err
@@ -128,8 +174,17 @@ func setupServices(cltx *cli.Context, nreg registry.Registry) error {
 		return err
 	}
 	addEndpoints(cltx, nreg)
+	addNcbiRecords(cltx, nreg)
 
 	return nil
+}
+
+// addNcbiRecords stores the optional NCBI identity values in the registry.
+// The publication fetchers read them from there on every request.
+func addNcbiRecords(ctx *cli.Context, nreg registry.Registry) {
+	nreg.AddRecord(registry.NcbiAPIKey, ctx.String("ncbi-api-key"))
+	nreg.AddRecord(registry.NcbiEmail, ctx.String("ncbi-email"))
+	nreg.AddRecord(registry.NcbiTool, ctx.String("ncbi-tool"))
 }
 
 func establishGrpcConnnections(

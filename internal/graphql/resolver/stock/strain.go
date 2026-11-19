@@ -17,6 +17,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/authentication"
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
+	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
@@ -91,10 +92,11 @@ func (srs *StrainResolver) Publications(
 	ctx context.Context,
 	obj *models.Strain,
 ) ([]*models.Publication, error) {
-	res := F.Pipe6(
+	res := F.Pipe7(
 		stockPubsState{},
 		stockPubsCtxLens.Set(ctx),
 		stockPubsRedisLens.Set(srs.Registry.GetRedisRepository(cache.RedisKey)),
+		stockPubsParamsLens.Set(fetch.PublicationParamsFromRegistry(srs.Registry)),
 		stockPubsIDLens.Set(obj.ID),
 		stockPubsLoggerLens.Set(srs.Logger),
 		stockPubsRawIDsLens.Set(obj.Publications),

@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/urfave/cli"
 )
 
@@ -81,5 +82,94 @@ func TestNewGraphQLServerWriteTimeout(t *testing.T) {
 	srv := newGraphQLServer(http.NotFoundHandler())
 	if want := 60 * time.Second; srv.WriteTimeout != want {
 		t.Fatalf("expected WriteTimeout %s, got %s", want, srv.WriteTimeout)
+	}
+}
+
+func ncbiTestContext(t *testing.T, values map[string]string) *cli.Context {
+	t.Helper()
+	fset := flag.NewFlagSet("ncbi-test", flag.ContinueOnError)
+	for _, f := range []cli.Flag{
+		cli.StringFlag{Name: "ncbi-api-key"},
+		cli.StringFlag{Name: "ncbi-email"},
+		cli.StringFlag{Name: "ncbi-tool"},
+	} {
+		f.Apply(fset)
+	}
+	for name, val := range values {
+		if err := fset.Set(name, val); err != nil {
+			t.Fatalf("unexpected error setting %s: %s", name, err)
+		}
+	}
+	return cli.NewContext(nil, fset, nil)
+}
+
+func TestAddNcbiRecordsStoresFlagValues(t *testing.T) {
+	nreg := registry.NewRegistry()
+	addNcbiRecords(ncbiTestContext(t, map[string]string{
+		"ncbi-api-key": "key-1",
+		"ncbi-email":   "ops@example.org",
+		"ncbi-tool":    "dictybase-graphql",
+	}), nreg)
+	if got := nreg.GetRecord(registry.NcbiAPIKey); got != "key-1" {
+		t.Fatalf("expected the api key, got %q", got)
+	}
+	if got := nreg.GetRecord(registry.NcbiEmail); got != "ops@example.org" {
+		t.Fatalf("expected the email, got %q", got)
+	}
+	if got := nreg.GetRecord(registry.NcbiTool); got != "dictybase-graphql" {
+		t.Fatalf("expected the tool, got %q", got)
+	}
+}
+
+func TestAddNcbiRecordsUnconfigured(t *testing.T) {
+	nreg := registry.NewRegistry()
+	addNcbiRecords(ncbiTestContext(t, nil), nreg)
+	for _, key := range []string{
+		registry.NcbiAPIKey, registry.NcbiEmail, registry.NcbiTool,
+	} {
+		if got := nreg.GetRecord(key); got != "" {
+			t.Fatalf("expected an empty %s record, got %q", key, got)
+		}
+	}
+}
+
+func TestValidateNcbiFlags(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		values map[string]string
+		want   string
+	}{
+		{name: "none set", values: nil},
+		{name: "all set", values: map[string]string{
+			"ncbi-api-key": "key-1",
+			"ncbi-email":   "ops@example.org",
+			"ncbi-tool":    "dictybase-graphql",
+		}},
+		{
+			name:   "api key only",
+			values: map[string]string{"ncbi-api-key": "key-1"},
+			want:   "--ncbi-email, --ncbi-tool required when an NCBI flag is set",
+		},
+		{
+			name: "tool missing",
+			values: map[string]string{
+				"ncbi-api-key": "key-1",
+				"ncbi-email":   "ops@example.org",
+			},
+			want: "--ncbi-tool required when an NCBI flag is set",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			err := validateNcbiFlags(ncbiTestContext(t, tc.values))
+			if tc.want == "" {
+				if err != nil {
+					t.Fatalf("expected no error, got %s", err)
+				}
+				return
+			}
+			if err == nil || err.Error() != tc.want {
+				t.Fatalf("expected %q, got %v", tc.want, err)
+			}
+		})
 	}
 }

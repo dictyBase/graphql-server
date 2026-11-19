@@ -48,6 +48,10 @@ const (
 	EmptyValue               = "novalue"
 	S3Bucket                 = "s3bucket"
 	S3BucketPath             = "s3bucket_path"
+	// NcbiAPIKey is the registry record key of the NCBI api key, not the key.
+	NcbiAPIKey = "ncbi_api_key" //nolint:gosec
+	NcbiEmail  = "ncbi_email"
+	NcbiTool   = "ncbi_tool"
 )
 
 const (

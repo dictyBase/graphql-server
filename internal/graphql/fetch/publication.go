@@ -23,6 +23,7 @@ import (
 	"github.com/dictyBase/fp-go-loom/strutils"
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/publication"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
+	"github.com/dictyBase/graphql-server/internal/registry"
 	"github.com/dictyBase/graphql-server/internal/repository"
 	"github.com/dictybase/literature"
 )
@@ -79,6 +80,13 @@ type pubFetchState struct {
 }
 
 var (
+	isNonNilPublicationParams = P.IsNonZero[*PublicationParams]()
+	// publicationParamsOrEmpty keeps a nil params value from reaching the
+	// option builders.
+	publicationParamsOrEmpty = F.Flow2(
+		O.FromPredicate(isNonNilPublicationParams),
+		O.GetOrElse(emptyPublicationParams),
+	)
 	buildParamsLens = L.MakeLens(
 		func(s clientBuildState) *PublicationParams { return s.params },
 		func(s clientBuildState, v *PublicationParams) clientBuildState {
@@ -103,6 +111,27 @@ var (
 		) clientBuildState {
 			s.europePMC = v
 			return s
+		},
+	)
+	publicationAPIKeyLens = L.MakeLensRef(
+		func(p *PublicationParams) string { return p.APIKey },
+		func(p *PublicationParams, v string) *PublicationParams {
+			p.APIKey = v
+			return p
+		},
+	)
+	publicationToolLens = L.MakeLensRef(
+		func(p *PublicationParams) string { return p.Tool },
+		func(p *PublicationParams, v string) *PublicationParams {
+			p.Tool = v
+			return p
+		},
+	)
+	publicationEmailLens = L.MakeLensRef(
+		func(p *PublicationParams) string { return p.Email },
+		func(p *PublicationParams, v string) *PublicationParams {
+			p.Email = v
+			return p
 		},
 	)
 	pubMedClientLens = L.MakeLensRef(
@@ -381,6 +410,25 @@ func someOption[T any](
 	)
 }
 
+// PublicationParamsFromRegistry reads the NCBI identity values that the
+// server start stored in the registry. An unset value stays empty, so an
+// unconfigured server keeps the unauthenticated behavior.
+func PublicationParamsFromRegistry(reg registry.Registry) *PublicationParams {
+	apiKey := reg.GetRecord(registry.NcbiAPIKey)
+	tool := reg.GetRecord(registry.NcbiTool)
+	email := reg.GetRecord(registry.NcbiEmail)
+	return F.Pipe3(
+		&PublicationParams{},
+		publicationAPIKeyLens.Set(apiKey),
+		publicationToolLens.Set(tool),
+		publicationEmailLens.Set(email),
+	)
+}
+
+func emptyPublicationParams() *PublicationParams {
+	return &PublicationParams{}
+}
+
 func pubMedOptions(p *PublicationParams) []literature.Option {
 	return F.Pipe1(
 		[]O.Option[literature.Option]{
@@ -453,9 +501,10 @@ func assemblePublication(s clientBuildState) *Publication {
 func NewPublication(
 	p *PublicationParams,
 ) IOE.IOEither[error, *Publication] {
-	return F.Pipe5(
+	return F.Pipe6(
 		clientBuildState{},
 		buildParamsLens.Set(p),
+		buildParamsLens.Modify(publicationParamsOrEmpty),
 		IOE.Of[error, clientBuildState],
 		IOE.Bind(buildPubMedLens.Set, createPubMedFromState),
 		IOE.Bind(buildEuropeLens.Set, createEuropeFromState),
@@ -744,10 +793,11 @@ func onPublicationSuccess(
 // FetchPublicationIOE fetches a publication by PMID or DOI as a lazy IOEither
 // using Redis caching and the literature NCBI and EuropePMC clients.
 func FetchPublicationIOE(
+	params *PublicationParams,
 	repo repository.Repository,
 	id string,
 ) IOE.IOEither[error, *models.Publication] {
-	newSource := NewPublication(&PublicationParams{})
+	newSource := NewPublication(params)
 	return F.Pipe10(
 		pubFetchState{},
 		identifierLens.Set(id),
@@ -767,11 +817,12 @@ func FetchPublicationIOE(
 // and the literature NCBI and EuropePMC clients.
 func FetchPublication(
 	_ context.Context,
+	params *PublicationParams,
 	repo repository.Repository,
 	id string,
 ) (*models.Publication, error) {
 	result := F.Pipe2(
-		FetchPublicationIOE(repo, id),
+		FetchPublicationIOE(params, repo, id),
 		ioeutils.ToEither[error, *models.Publication],
 		E.Fold(onPublicationError, onPublicationSuccess),
 	)

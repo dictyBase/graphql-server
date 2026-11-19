@@ -14,6 +14,7 @@ import (
 	"github.com/dictyBase/graphql-server/internal/collection"
 	"github.com/dictyBase/graphql-server/internal/graphql/cache"
 	"github.com/dictyBase/graphql-server/internal/graphql/errorutils"
+	"github.com/dictyBase/graphql-server/internal/graphql/fetch"
 	"github.com/dictyBase/graphql-server/internal/graphql/models"
 	"github.com/dictyBase/graphql-server/internal/graphql/resolverutils"
 	"github.com/dictyBase/graphql-server/internal/registry"
@@ -86,10 +87,11 @@ func (prs *PlasmidResolver) Publications(
 	ctx context.Context,
 	obj *models.Plasmid,
 ) ([]*models.Publication, error) {
-	res := F.Pipe6(
+	res := F.Pipe7(
 		stockPubsState{},
 		stockPubsCtxLens.Set(ctx),
 		stockPubsRedisLens.Set(prs.Registry.GetRedisRepository(cache.RedisKey)),
+		stockPubsParamsLens.Set(fetch.PublicationParamsFromRegistry(prs.Registry)),
 		stockPubsIDLens.Set(obj.ID),
 		stockPubsLoggerLens.Set(prs.Logger),
 		stockPubsRawIDsLens.Set(obj.Publications),

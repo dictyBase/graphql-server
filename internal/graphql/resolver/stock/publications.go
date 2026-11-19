@@ -30,11 +30,20 @@ import (
 type stockPubsState struct {
 	ctx        context.Context
 	redis      repository.Repository
+	pubParams  *fetch.PublicationParams
 	stockID    string
 	logger     *logrus.Entry
 	ids        []string
 	resolvable []string
 	skipped    []string
+}
+
+// fetchPublication is the one entry to the publication source of the stock
+// resolvers. It hands the NCBI identity values of the state to the fetch.
+func (s stockPubsState) fetchPublication(
+	id string,
+) IOE.IOEither[error, *models.Publication] {
+	return fetch.FetchPublicationIOE(s.pubParams, s.redis, id)
 }
 
 var (
@@ -49,6 +58,13 @@ var (
 		func(s stockPubsState) repository.Repository { return s.redis },
 		func(s stockPubsState, v repository.Repository) stockPubsState {
 			s.redis = v
+			return s
+		},
+	)
+	stockPubsParamsLens = L.MakeLens(
+		func(s stockPubsState) *fetch.PublicationParams { return s.pubParams },
+		func(s stockPubsState, v *fetch.PublicationParams) stockPubsState {
+			s.pubParams = v
 			return s
 		},
 	)
@@ -259,7 +275,6 @@ func onPublicationsSuccess(
 func fetchStockPublications(
 	s stockPubsState,
 ) T.Tuple2[error, []*models.Publication] {
-	redis := stockPubsRedisLens.Get(s)
 	return F.Pipe11(
 		s,
 		IOE.Of[error, stockPubsState],
@@ -268,9 +283,7 @@ func fetchStockPublications(
 		IOE.ChainFirstIOK[error](warnSkippedStockPubs),
 		IOE.Map[error](stockPubsResolvableLens.Get),
 		IOE.Chain(
-			IOE.TraverseArraySeq(
-				F.Bind1st(fetch.FetchPublicationIOE, redis),
-			),
+			IOE.TraverseArraySeq(s.fetchPublication),
 		),
 		IOE.Map[error](nonNilPublications),
 		IOE.MapLeft[[]*models.Publication](
@@ -329,10 +342,7 @@ func setFetchedPhenoPub(
 	anno *annotation.TaggedAnnotationGroup_Data,
 ) func(*models.Phenotype) *models.Phenotype {
 	pub := F.Pipe3(
-		fetch.FetchPublicationIOE(
-			stockPubsRedisLens.Get(s),
-			annoValue(anno),
-		),
+		s.fetchPublication(annoValue(anno)),
 		IOE.TapLeft[*models.Publication](
 			F.Bind1st(recordStockPubsError, s),
 		),
@@ -403,10 +413,11 @@ func getPhenotypes(
 	r *StrainResolver,
 	data []*annotation.TaggedAnnotationGroupCollection_Data,
 ) []*models.Phenotype {
-	state := F.Pipe3(
+	state := F.Pipe4(
 		stockPubsState{},
 		stockPubsCtxLens.Set(ctx),
 		stockPubsRedisLens.Set(r.Registry.GetRedisRepository(cache.RedisKey)),
+		stockPubsParamsLens.Set(fetch.PublicationParamsFromRegistry(r.Registry)),
 		stockPubsLoggerLens.Set(r.Logger),
 	)
 	return F.Pipe2(
