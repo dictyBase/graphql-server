@@ -364,7 +364,7 @@ func TestPublicationOptions(t *testing.T) {
 		{
 			name:       "api key only",
 			args:       &PublicationParams{APIKey: "key"},
-			wantPubMed: 1,
+			wantPubMed: 2,
 			wantEurope: 0,
 		},
 		{
@@ -386,7 +386,7 @@ func TestPublicationOptions(t *testing.T) {
 				Tool:   "graphql-server",
 				Email:  "dev@dictybase.org",
 			},
-			wantPubMed: 3,
+			wantPubMed: 4,
 			wantEurope: 2,
 		},
 	} {
@@ -447,7 +447,7 @@ func TestPublicationParamsFromRegistry(t *testing.T) {
 	require.Equal(t, "key", params.APIKey)
 	require.Equal(t, "graphql-server", params.Tool)
 	require.Equal(t, "dev@dictybase.org", params.Email)
-	require.Len(t, pubMedOptions(params), 3)
+	require.Len(t, pubMedOptions(params), 4)
 	require.Len(t, europePMCOptions(params), 2)
 }
 
