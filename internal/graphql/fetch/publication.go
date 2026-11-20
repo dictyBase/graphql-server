@@ -429,10 +429,21 @@ func emptyPublicationParams() *PublicationParams {
 	return &PublicationParams{}
 }
 
+// ncbiKeyedRateLimit stays under the NCBI limit of 10 requests per second
+// for an API key, because event-messenger uses the same key.
+const ncbiKeyedRateLimit = 8
+
+// keyedRateLimit applies the rate limit for a request with an API key. It
+// is set only with a key, because the no-key NCBI limit is 3.
+func keyedRateLimit(string) literature.Option {
+	return literature.WithRateLimit(ncbiKeyedRateLimit)
+}
+
 func pubMedOptions(p *PublicationParams) []literature.Option {
 	return F.Pipe1(
 		[]O.Option[literature.Option]{
 			someOption(literature.WithAPIKey, p.APIKey),
+			someOption(keyedRateLimit, p.APIKey),
 			someOption(literature.WithTool, p.Tool),
 			someOption(literature.WithEmail, p.Email),
 		},
